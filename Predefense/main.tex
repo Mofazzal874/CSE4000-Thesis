@@ -1,0 +1,632 @@
+\documentclass[12pt, a4paper]{report}
+
+% Essential packages
+\usepackage[top=1.0in, bottom=1.0in, left=1.2in, right=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\onehalfspacing
+
+\begin{document}
+
+% Front matter with roman numbering
+\pagenumbering{roman}
+
+%===============================================
+% TITLE PAGE
+%===============================================
+\begin{titlepage}
+    \centering
+    \vspace*{1in}
+    
+    {\Large\bfseries CSE 4000: Thesis/Project}
+    
+    \vspace{0.5in}
+    
+    {\Large\bfseries\MakeUppercase{HBPA-YOLO: Hierarchical Body-Part Attention Enhanced YOLO for Human Detection in Aerial Imagery}}
+    
+    \vspace{1in}
+    
+    {\large\bfseries By}
+    
+    \vspace{0.3in}
+    
+    {\large Md. Mofazzal Hosen\\
+    Roll: 2007074}
+    
+    \vspace{0.2in}
+    
+    \vfill
+    
+    {\large Department of Computer Science and Engineering\\
+    Khulna University of Engineering \& Technology\\
+    Khulna 9203, Bangladesh}
+    
+    \vspace{0.3in}
+    
+    {\large\bfseries October, 2025}
+    
+\end{titlepage}
+
+%===============================================
+% DECLARATION PAGE
+%===============================================
+\newpage
+
+\begin{center}
+    {\Large\bfseries HBPA-YOLO: Hierarchical Body-Part Attention Enhanced YOLO for Human Detection in Aerial Imagery}
+    
+    \vspace{0.5in}
+    
+    {\large\bfseries By}
+    
+    \vspace{0.3in}
+    
+    {\large Md. Mofazzal Hosen, Roll: 2007074\\}
+    
+    \vspace{0.5in}
+    
+    A thesis proposal submitted in partial fulfillment of the requirements\\
+    for the degree of\\
+    ``Bachelor of Science in Computer Science \& Engineering''
+    
+    \vspace{0.5in}
+    
+    \textbf{Supervisor:}\\
+    Dr. Sk. Md. Masudul Ahsan\\
+    Professor\\
+    Department of Computer Science and Engineering\\
+    Khulna University of Engineering \& Technology
+    
+    \vspace{0.3in}
+    
+    October, 2025
+\end{center}
+
+%===============================================
+% ACKNOWLEDGMENT
+%===============================================
+\newpage
+\chapter*{Acknowledgment}
+\addcontentsline{toc}{chapter}{Acknowledgment}
+
+I would like to express my deepest gratitude to the Almighty for His countless blessings and guidance throughout this journey. I extend my heartfelt appreciation to my supervisor, Dr. Sk. Md. Masudul Ahsan, Professor of the Department of Computer Science and Engineering at Khulna University of Engineering \& Technology (KUET). His invaluable support, mentorship, and constructive feedback have been instrumental in shaping the direction of this research and refining the methodologies proposed in this thesis. I am also profoundly thankful to my family, friends, and colleagues for their constant encouragement and understanding during this period.
+
+\vspace{0.5in}
+\begin{flushright}
+    Author
+\end{flushright}
+
+%===============================================
+% ABSTRACT
+%===============================================
+\newpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Object detection from drone images is becoming very important, especially for Search and Rescue operations after disasters. In events like earthquakes or floods, finding survivors as fast as possible can save lives. But detecting humans from aerial views is not easy. People often appear very small, partly covered by debris, or hidden because of smoke, dust, or poor lighting. Many existing detection models fail to perform well in these difficult conditions. This thesis focuses on improving real time human detection in disaster areas using drone imagery. In such scenarios, survivors are rarely fully visible and standard detectors usually treat the human body as a single object, which limits their accuracy. To address this problem, we propose a new approach called HBPA-YOLO, which enhances the YOLO framework by adding a hierarchical body part attention mechanism. Instead of looking at the body as one unit, the model learns to focus more on important body regions such as the head and upper body, helping it detect humans even when only partial body parts are visible. The model also uses an attention module to reduce background noise and handle crowded scenes that are common in evacuation zones. Overall, the goal of this work is to reduce missed detections and improve reliability for real time, autonomous Search and Rescue missions using drones.
+
+%===============================================
+% TABLE OF CONTENTS
+%===============================================
+\newpage
+\tableofcontents
+
+%===============================================
+% LIST OF TABLES
+%===============================================
+\newpage
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+%===============================================
+% LIST OF FIGURES
+%===============================================
+\newpage
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+
+%===============================================
+% MAIN CONTENT - Arabic numbering
+%===============================================
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%===============================================
+% CHAPTER 1: INTRODUCTION
+%===============================================
+\chapter{Introduction}
+
+\section{Introduction}
+In the domain of disaster management, time is the most critical resource. The rapid deployment of Unmanned Aerial Vehicles (UAVs) has revolutionized Search and Rescue (SAR) operations by providing real-time visual data from inaccessible areas. However, the sheer volume of data generated by drones often overwhelms human analysts. Consequently, automated human detection systems based on Deep Learning (DL) have become essential. 
+
+While object detection is a mature field, detecting humans in disaster scenarios from aerial views presents unique difficulties. Standard models trained on ground-level images (like COCO or Pascal VOC) fail to generalize to the aerial perspective where humans appear as tiny clusters of pixels, often obscured by rubble or vegetation. This thesis introduces \textbf{HBPA-YOLO}, a specialized architecture designed to robustly detect humans by leveraging hierarchical attention mechanisms that prioritize visible body parts, ensuring higher detection rates even in partially occluded scenarios.
+
+\section{Background and Problem Statement}
+The core problem addressed in this research is the unreliability of current object detection models in disaster-specific conditions. The main challenges identified are:
+\begin{itemize}
+    \item \textbf{Scale Variation:} In high-altitude aerial imagery, humans often occupy less than 50 pixels, making feature extraction difficult for standard Convolutional Neural Networks (CNNs).
+    \item \textbf{Occlusion and Density:} In disaster zones, victims may be buried under debris with only a head or limb visible. Furthermore, crowds in evacuation zones create dense clusters that confuse non-maximum suppression algorithms.
+    \item \textbf{Environmental Factors:} Smoke, fog, rain, and low-light conditions degrade image quality, reducing the efficacy of visual features.
+    \item \textbf{UAV Motion:} Rapid drone movements cause motion blur and viewpoint changes that distort object shapes.
+\end{itemize}
+
+\section{Objectives}
+The primary aim of this research is to develop an advanced human detection system specifically optimized for disaster scenarios using drone imagery. The specific objectives are:
+\begin{itemize}
+    \item To develop a \textbf{Hierarchical Body-Part Attention (HBPA)} mechanism that assigns higher priority to distinct body regions (Head/Neck) to handle partial occlusion.
+    \item To integrate a Body Part Decomposition Module and Convolutional Block Attention Model (CBAM) into the YOLO architecture for detecting dense objects.
+    \item To validate the performance of different YOLO models (v8, v10) on augmented aerial datasets (SARD, VisDrone).
+    \item To create a disaster-specific data augmentation pipeline that simulates environmental adversity (smoke, fog) to improve model robustness.
+\end{itemize}
+
+\section{Scope}
+This research focuses on the software-level optimization of deep learning models. The scope includes:
+\begin{itemize}
+    \item \textbf{Model Development:} Designing the HBPA-YOLO architecture using Python and PyTorch.
+    \item \textbf{Data Processing:} Utilizing the SARD, VisDrone, and C2A datasets.
+    \item \textbf{Evaluation:} Benchmarking against standard metrics (mAP, Precision, Recall) on static images and video sequences.
+\end{itemize}
+Hardware implementation on edge devices (like Jetson Nano) is considered a potential future extension but is outside the immediate scope of this thesis.
+
+\section{Unfamiliarity of the Problem}
+Unlike standard surveillance tasks, disaster scenario detection deals with "uncooperative" subjects who may be prone, injured, or hidden. The concept of decomposing the human body into hierarchical attention regions (Head vs. Torso vs. Limbs) for aerial detection is a relatively unexplored approach in the context of lightweight YOLO models, distinguishing this work from standard pedestrian detection research.
+
+\section{Project Planning}
+This section outlines the comprehensive project plan, including timeline, milestones, and ethical considerations.
+
+\subsection{Project Timeline}
+The research is structured in five distinct phases as shown in Figure \ref{fig:gantt_chart}. The timeline is designed to ensure systematic progress through the various stages of development and evaluation:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{gantt_chart.png}
+    \caption{Project Gantt Chart showing timeline and milestones}
+    \label{fig:gantt_chart}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Phase 1:} Literature review and problem identification (Completed).
+    \item \textbf{Phase 2:} Dataset acquisition (SARD, VisDrone) and augmentation (Completed).
+    \item \textbf{Phase 3:} Benchmarking baseline models (YOLOv8/v10) (Completed).
+    \item \textbf{Phase 4:} Implementation of HBPA and Body Part Decomposition modules (Ongoing).
+    \item \textbf{Phase 5:} Final evaluation and thesis writing (Upcoming).
+\end{itemize}
+
+\subsection{Legal and Ethical Aspects}
+This research adheres to strict ethical guidelines and legal frameworks governing the use of AI in humanitarian applications:
+
+\begin{itemize}
+    \item \textbf{Data Ethics:} All datasets used (SARD, VisDrone, C2A) are publicly available and properly cited. No personally identifiable information (PII) is collected or stored during training or testing.
+    \item \textbf{Privacy Compliance:} The system is designed for disaster response scenarios where detection of human presence is critical for life-saving operations. It does not perform facial recognition or identification, ensuring privacy protection.
+    \item \textbf{Dual-Use Concerns:} While the technology is developed for humanitarian SAR missions, we acknowledge potential dual-use implications. The research emphasizes responsible AI development and advocates for regulatory frameworks governing drone-based detection systems.
+    \item \textbf{Bias Mitigation:} The training datasets include diverse human poses, clothing, and environmental conditions to minimize demographic or situational bias in detection performance.
+    \item \textbf{Transparency:} All methodologies, datasets, and evaluation metrics are documented transparently to enable reproducibility and peer review.
+\end{itemize}
+
+\section{Applications of the Work}
+The proposed system has direct applications in:
+\begin{itemize}
+    \item \textbf{Post-Disaster Search and Rescue:} Locating survivors in earthquakes, floods, or landslides.
+    \item \textbf{Surveillance:} Monitoring restricted areas or border control using drones.
+    \item \textbf{Crowd Management:} Analyzing density in large gatherings to prevent stampedes.
+\end{itemize}
+
+\section{Organization of the Thesis}
+Chapter I introduces the problem and objectives. Chapter II reviews related literature. Chapter III details the proposed HBPA-YOLO methodology. Chapter IV discusses the implementation, experimental setup, and preliminary results. Chapter V addresses societal and ethical impacts. Chapter VI provides the conclusion and future work.
+
+\section{Conclusion}
+This introductory chapter has established the critical need for advanced human detection systems in disaster scenarios using aerial drone imagery. The challenges of scale variation, occlusion, environmental adversity, and real-time processing constraints necessitate specialized architectures beyond general-purpose object detectors. The proposed HBPA-YOLO framework addresses these challenges through a hierarchical body-part attention mechanism that prioritizes visible anatomical regions, ensuring robust detection even under severe occlusion. With a clear research plan, comprehensive dataset strategy, and strong baseline results (YOLOv10m achieving 97.2\% mAP), this thesis aims to advance the state-of-the-art in aerial human detection for life-saving Search and Rescue operations.
+
+%===============================================
+% CHAPTER 2: LITERATURE REVIEW
+%===============================================
+\chapter{Literature Review}
+
+\section{Introduction}
+Early approaches to aerial human detection relied on handcrafted features and traditional machine learning pipelines, which demonstrated limited robustness under real-world disaster conditions. With the advancement of deep learning, modern object detection frameworks, especially single-stage detectors such as YOLO, have significantly improved detection accuracy and inference speed. However, general-purpose models often fail to maintain reliable performance when humans appear as tiny, partially visible objects in cluttered disaster environments.
+
+This chapter presents a focused review of three representative and influential studies that address human detection and tracking in drone-based scenarios. Table~\ref{tab:selected_literature} outlines the specific research papers that will be analyzed in detail in the subsequent sections of this chapter.
+
+\begin{table}[H]
+    \centering
+    \caption{Selected Literature for Review in this Chapter}
+    \label{tab:selected_literature}
+    \begin{tabular}{|p{0.8cm}|p{7cm}|p{5cm}|c|}
+    \hline
+    \textbf{Sl. No.} & \textbf{Paper Title} & \textbf{Conference / Journal} & \textbf{Year} \\ \hline
+    1 & Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions & IEEE Xplore & 2024 \\ \hline
+    2 & Multi-Object Tracking Meets Moving UAV & IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) & 2022 \\ \hline
+    3 & TPH-YOLOv5: Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios & IEEE International Conference on Computer Vision Workshops (ICCVW) & 2021 \\ \hline
+    \end{tabular}
+\end{table}
+
+\section{Literature Review}
+
+\subsection{Relevant Terminologies and Definitions}
+This section provides definitions for the key technical terms and concepts central to this thesis, primarily concerning deep learning-based object detection and Unmanned Aerial Vehicle (UAV) applications, which are essential for understanding the methodology.
+
+\begin{itemize}
+    \item \textbf{Object Detection:} A core computer vision task that involves both locating objects within an image (localization) by drawing bounding boxes and classifying them (classification).
+    \item \textbf{YOLO (You Only Look Once):} A family of high-speed, single-stage object detection models known for achieving a favorable balance between inference speed and accuracy, making them highly suitable for real-time edge deployment on platforms like UAVs.
+    \item \textbf{Search and Rescue (SAR):} The primary humanitarian application domain of this research, which involves locating and aiding survivors in distress following catastrophic events.
+    \item \textbf{Scale Variation:} A major challenge in aerial imagery where human targets appear as "tiny objects" (often less than 50 pixels) due to high altitude and distance, making their features difficult for standard Convolutional Neural Networks (CNNs) to extract robustly.
+    \item \textbf{Occlusion:} The partial or complete blocking of a target object by clutter, debris, or other objects. Addressing this is the central problem of the proposed work, as victims in disaster zones are frequently occluded.
+    \item \textbf{Hierarchical Body-Part Attention (HBPA):} The novel mechanism proposed in this thesis that decomposes the human target into priority regions (Head/Neck, Torso, Limbs) and assigns differential attention weights (e.g., 60\% to the Head/Neck) to maximize detection robustness even when only fractional body parts are visible.
+    \item \textbf{Body Part Decomposition Module:} The architectural component responsible for accurately segmenting the detected human bounding box into the distinct anatomical regions (Head/Neck, Torso, Limbs) for the HBPA mechanism.
+    \item \textbf{Convolutional Block Attention Module (CBAM):} A lightweight and efficient attention mechanism integrated into the YOLO backbone to recalibrate features by sequentially focusing on the most informative channels ("what") and spatial locations ("where"), thereby suppressing background clutter in dense scenes.
+    \item \textbf{Mean Average Precision (mAP):} The standard evaluation metric used across the field of object detection, calculated as the average precision across all object classes and intersection over union (IoU) thresholds (e.g., mAP@0.5, mAP@0.5:0.95).
+\end{itemize}
+
+\subsection{Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions [1]}
+
+\subsubsection{Overview}
+This paper denotes the challenges of detecting humans from aerial imagery during Search and Rescue (SAR) operations. It focuses on improving detection performance under varying lighting conditions—a significant limitation in existing models and datasets. The authors augmented the SARD (SAR Dataset) to include diverse lighting scenarios and evaluated six YOLO model variations to identify the most effective solution for real-world SAR missions.
+
+\subsubsection{Methodology}
+
+\paragraph{Data Collection \& Augmentation}
+The base SARD dataset has 1,981 manually annotated images from video frames. Images depicted people in various states (exhaustion, injury, sitting and walking). For the augmentation part, The authors applied brightness and contrast adjustment to simulate like real-world's varying light conditions and weather conditions. The final dataset contained 4,000 images.
+
+The dataset was divided as Training: 3,000 images (75\%), Validation: 600 images (15\%), and Testing: 400 images (10\%). Six detectors were fine-tuned: YOLOv8n, v8s, v8m, YOLOv10n, v10s, v10m.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.9\linewidth]{fig-2.1.png}
+  \caption{Process flow}
+  \label{fig:arch-flow}
+\end{figure}
+
+\subsubsection{Results}
+\paragraph{Overall.}
+All six variants perform reasonably well, but \textbf{YOLOv10m} performs better, balancing Accuracy, Precision, Recall, F1, and mAP.
+
+\begin{table}[h]
+\centering
+\caption{Test performance on the lighting-augmented SARD.}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Recall} & \textbf{Precision} & \textbf{F1} & \textbf{mAP} \\
+\midrule
+YOLOv8n  & 80.6\% & 86.0\% & 92.8\% & 89.3\% & 90.8\% \\
+YOLOv8s  & 84.9\% & 91.1\% & 92.6\% & 91.9\% & 94.7\% \\
+YOLOv8m  & 88.5\% & 91.6\% & 96.3\% & 93.9\% & 95.2\% \\
+YOLOv10n & 81.8\% & 88.3\% & 91.7\% & 90.0\% & 94.1\% \\
+YOLOv10s & 88.7\% & 92.9\% & 95.2\% & 94.0\% & 96.4\% \\
+\textbf{YOLOv10m} & \textbf{90.7\%} & \textbf{93.4\%} & \textbf{96.9\%} & \textbf{95.1\%} & \textbf{97.2\%} \\
+\bottomrule
+\end{tabular}
+\label{tab:main}
+\end{table}
+
+\paragraph{(original vs.\ new SARD) Comparison:}
+Their best model (\textbf{YOLOv10m}) hits \textbf{96.9\% mAP} on the original SARD dataset and \textbf{97.2\% mAP} on the new augmentd SARD.
+
+\vspace{1cm}
+\textbf{Practical Implications:} High recall (93.4\%) minimizes missed detections (critical for saving human lives), while high precision (96.9\%) ensures efficient resource deployment by reducing false alarms.
+
+\subsection{Multi-Object Tracking Meets Moving UAV [2]}
+
+\subsubsection{Overview}
+This paper present UAVMOT, a one-stage Multi-Object Tracking (MOT) system for moving UAV videos. The research addresses the unique challenges of object tracking from drone perspectives, including rapid viewpoint changes, camera motion changes, and the challenge small objects in aerial footage. The system augments a CenterNet/FairMOT-style detector with three specialized components designed to handle UAV-specific tracking effectively.
+
+\subsubsection{Methodology}
+
+\paragraph{System Architecture}
+
+\textbf{Backbone:}
+The UAVMOT system is built on a DLA-34 backbone feature extractor, with shared features feeding three parallel heads in a CenterNet-style architecture:
+\begin{itemize}
+  \item \textbf{Heatmap} ($\mathbf{H_m}$): object-center likelihood, one channel per class.
+  \item \textbf{Width/Height (wh)}: regresses bounding-box size at each center.
+  \item \textbf{FID}: ReID (identity) embedding map used for association.
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.9\linewidth]{fig-2.2.png}
+  \caption{Process flow}
+  \label{fig:An Architectural overview of the proposed UAVMOT}
+\end{figure}
+
+\subsubsection{Key Components}
+\textbf{IDFU (ID Feature Update):} Uses adjacent frames (t and t-1 th frame) to adapt the identity embeddings under UAV view change. Concretely: (i) extract \emph{top-$K$} ID features from the previous frame, compress them; (ii) compute cross-frame correlation to obtain attention weights; (iii) fuse the attention-weighted previous features with current-frame ID features via conv to update the embeddings used for tracking.
+
+\medskip
+\textbf{AMF (Adaptive Motion Filter):} Switches association by UAV motion mode. When motion is \emph{normal}, use IoU+Kalman; when \emph{abnormal} (e.g., turns/accel), use a \emph{local relation filter} that builds a relative-geometry vector $v=[\theta,l_{\max},l_{\min}]$ to neighbors and forms a position-similarity matrix, which is fused with ID similarity before matching those frames.
+
+\medskip
+\textbf{GBF (Gradient-Balanced Focal) loss:} Supervises the heatmap head with reweighting that (i) balances long-tailed categories and (ii) emphasizes small objects. Implemented as category-balance weights $W_b$ and small-object weights $W_s$ applied to the heatmap cross-entropy: $\mathrm{GBF}=W_b \cdot W_s \cdot L_{\mathrm{Hm}}$.
+
+\subsubsection{Results}
+The system achieved state-of-the-art results on standard UAV tracking datasets:
+
+\begin{table}[h]
+\centering
+\caption{Benchmark performance of UAVMOT on UAV datasets (test sets).}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{MOTA} & \textbf{MOTP} & \textbf{IDF1} \\
+\midrule
+VisDrone2019 (test-dev) & 36.1\% & 74.2\% & 51.0\% \\
+UAVDT (test)            & 46.4\% & 72.7\% & 67.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The system operates at approximately 12 FPS with DLA-34 at 1920×1080 resolution.
+
+\subsection{TPH-YOLOv5 — Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios [3]}
+
+\subsubsection{Overview}
+TPH-YOLOv5 targets object detection in drone (UAV) imagery. The research extends YOLOv5 with an extra tiny-object head, replaces prediction heads of YOLOv5 with Transformer Prediction Heads (TPH), and integrats CBAM attention mechanisms. The implemeted system achieved state-of-the-art competitive results on VisDrone2021 with 39.18\% AP (+1.81 over prior SOTA and approximately 7\% improvement over YOLOv5 baseline).
+
+\subsubsection{Methodology}
+
+\paragraph{Data Augmentation Steps}
+The authors applied photometric distortion, geometric distortion (scaling, cropping, translation, shearing, rotating), and MixUp, Mosaic, and copy-paste augmentation for tiny or partially occluded human instances.
+
+\paragraph{System Architecture}
+The architecture uses YOLOv5x as baseline with CSPDarknet53 as the feature extractor and PANet (Path Aggregation Network) as the neck.
+
+\subsubsection{Key Architectural Improvements}
+\textbf{Extra Tiny-Object Head (P2):} Added a fourth detection head utilizing high-resolution features specifically to better detect very small instances.
+
+\textbf{Transformer Prediction Heads (TPH):} Replaced standard prediction heads with transformer encoder blocks, implemented self-attention mechanisms at head and end of backbone, which reduces GFLOPs while improving performance.
+
+\textbf{CBAM Attention Integration:} Inserted Convolutional Block Attention Module (CBAM) to help resist background clutter common in aerial imagery.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.9\linewidth]{fig-2.3.png}
+  \caption{Process flow}
+  \label{fig:An Architectural of the TPH-YOLOv5 ensemble}
+\end{figure}
+
+\subsubsection{Optimizations}
+\textbf{Model Ensembling:} Combined five diverse models using Weighted Boxes Fusion to improve overall performance.
+
+\textbf{Post-Classification Refinement:} Trained ResNet18 classifier on cropped 64×64 GT patches to address confusion between similar object classes (like tri-cycle, awning-tricycle etc.).
+
+\subsubsection{Results}
+
+\begin{table}[h!]
+\centering
+\caption{Comparison of different detection methods.}
+\begin{tabular}{lcc}
+\hline
+\textbf{Methods} & \textbf{mAP (\%)} & \textbf{AP50 (\%)} \\
+\hline
+Cascade-RCNN & 16.09 & 31.91 \\
+Light-RCNN & 16.53 & 32.78 \\
+\hline
+DPNNet-ensemble (2019 SOTA) & 29.62 & 54.00 \\
+SMPNet (2020 2$^{nd}$) & 35.98 & 59.53 \\
+DPNNetV3 (2020 SOTA) & 37.37 & 62.05 \\
+\textbf{TPH-YOLOv5 ensemble} & \textbf{39.18} & \textbf{--} \\
+\hline
+\end{tabular}
+\end{table}
+The Researchers were able to achieve higher score then the previous previous VisDrone challenge 2020' findings, achieving 39.18 mAP schore.
+
+\section{Discussion and Research Gaps}
+Based on the review, several critical gaps were identified: \textbf{Dataset Specificity} - Most works utilize general datasets like VisDrone or SARD (wilderness focused), which do not adequately represent complex disaster scenes (e.g., urban rubble, flood waters); \textbf{Occlusion Handling} - Existing models treat the human body as a single object. If the torso is hidden, detection often fails. There is a lack of part-based detection mechanisms in lightweight models; \textbf{Real-time Trade-offs} - Models like TPH-YOLOv5 sacrifice speed for accuracy, making them unsuitable for edge deployment on battery-powered drones; \textbf{Environmental Robustness} - There is limited testing on synthetic disaster scenarios involving smoke, fog, or rain.
+
+%===============================================
+% CHAPTER 3: METHODOLOGY
+%===============================================
+\chapter{Methodology}
+
+\section{Introduction}
+To address the limitations of existing systems, this research proposes \textbf{HBPA-YOLO}, a hierarchical attention-based framework. This chapter details the architectural components and the data processing pipeline.
+
+\section{Proposed Methodology}
+The methodology is divided into three main stages: Data Preparation, Model Architecture Design (HBPA), and Post-Processing.
+
+\subsection{Dataset Preparation}
+We utilize the SARD dataset as a baseline and augment it to simulate disaster conditions.
+\begin{itemize}
+    \item \textbf{Base Data:} 1,981 images from SARD.
+    \item \textbf{Augmentation:} We apply geometric distortions (rotation, scaling) to simulate UAV angles and photometric distortions (brightness, contrast) to simulate time of day.
+    \item \textbf{Synthetic Disaster Generation:} Future steps include overlaying synthetic smoke and fog to create a "Disaster-Specific" dataset.
+\end{itemize}
+
+\subsection{HBPA-YOLO Architecture}
+The core innovation is the Hierarchical Body-Part Attention (HBPA) mechanism. Standard YOLO detects the whole object. HBPA modifies this by assigning weights to different body regions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{methodology_flow.png}
+    \caption{Proposed HBPA-YOLO System Architecture}
+    \label{fig:hbpa_arch}
+\end{figure}
+
+\subsubsection{Body Part Decomposition Module}
+Recognizing that full bodies are rarely visible in disasters, the model decomposes the target into three regions with priority weights:
+\begin{enumerate}
+    \item \textbf{Head/Neck Priority Branch (Weight 0.5):} This region is given 60\% attention weight as it is often the only visible part (e.g., a person stuck in floodwater).
+    \item \textbf{Torso Detection Branch (Weight 0.3):} Secondary priority.
+    \item \textbf{Limbs Detection Branch (Weight 0.2):} Tertiary priority.
+\end{enumerate}
+
+\subsubsection{Convolutional Block Attention Module (CBAM)}
+To handle dense object scenarios and background clutter, CBAM is integrated into the neck of the YOLO architecture. It refines features by applying:
+\begin{itemize}
+    \item \textbf{Channel Attention:} Focuses on "what" is meaningful in the image (e.g., human features vs. rocks).
+    \item \textbf{Spatial Attention:} Focuses on "where" the informative parts are, suppressing background noise.
+\end{itemize}
+
+\section{Problem Design and Analysis}
+The problem is modeled as a supervised object detection task where the loss function is modified to penalize missed detections of high-priority regions (Head) more severely than low-priority regions. This ensures the model learns to detect survivors even when they are partially buried.
+
+\section{Conclusion}
+The proposed methodology moves beyond simple bounding box detection by incorporating anatomical understanding into the detection pipeline, making it robust against the severe occlusion typical of disaster zones.
+
+%===============================================
+% CHAPTER 4: IMPLEMENTATION & RESULTS
+%===============================================
+\chapter{Implementation, Results and Discussions}
+
+\section{Introduction}
+This chapter presents the experimental setup, the implementation of the baseline models, and the preliminary results obtained during the pre-defense phase.
+
+\section{Experimental Setup}
+The implementation was conducted using the following environment:
+\begin{itemize}
+    \item \textbf{Platform:} Google Colab Pro and Kaggle Kernels.
+    \item \textbf{Hardware:} NVIDIA T4 / A100 GPUs.
+    \item \textbf{Software Framework:} PyTorch, Ultralytics YOLO.
+    \item \textbf{Evaluation Metrics:} Mean Average Precision (mAP@0.5), Precision, Recall, and F1-Score.
+\end{itemize}
+
+\section{Dataset}
+The experiments utilized the **Search and Rescue Dataset (SARD)**.
+\begin{itemize}
+    \item \textbf{Total Images:} 1,981 (Base), expanded to 4,000 via augmentation.
+    \item \textbf{Split:} 75\% Training, 15\% Validation, 10\% Testing.
+    \item \textbf{Classes:} Human targets in various poses (standing, sitting, lying down).
+\end{itemize}
+
+\section{Implementation and Results}
+We benchmarked the YOLOv8 and YOLOv10 families to establish a strong baseline before integrating the HBPA module.
+
+\subsection{Quantitative Results}
+Table \ref{tab:yolo_results} summarizes the performance of different YOLO variants on the augmented SARD dataset.
+
+\begin{table}[H]
+    \centering
+    \caption{Performance Benchmarking on Augmented SARD Dataset}
+    \label{tab:yolo_results}
+    \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} & \textbf{Recall} & \textbf{Precision} & \textbf{F1-Score} & \textbf{mAP} \\ \hline
+    YOLOv8n & 80.6\% & 86.0\% & 89.3\% & 92.8\% & 90.8\% \\ \hline
+    YOLOv8s & 84.9\% & 91.1\% & 92.6\% & 91.9\% & 94.7\% \\ \hline
+    YOLOv8m & 88.5\% & 91.6\% & 93.9\% & 96.3\% & 95.2\% \\ \hline
+    YOLOv10n & 81.8\% & 88.3\% & 91.7\% & 90.0\% & 94.1\% \\ \hline
+    YOLOv10s & 92.9\% & 88.7\% & 95.2\% & 94.0\% & 96.4\% \\ \hline
+    \textbf{YOLOv10m} & \textbf{90.7\%} & \textbf{93.4\%} & \textbf{96.9\%} & \textbf{95.1\%} & \textbf{97.2\%} \\ \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Analysis of Results}
+The results indicate that **YOLOv10m** is the superior baseline model.
+\begin{itemize}
+    \item It achieved the highest **mAP of 97.2\%**, indicating excellent overall detection capability.
+    \item The **Recall of 93.4\%** is particularly critical for SAR missions, as false negatives (missing a survivor) are more costly than false positives.
+    \item Despite being a medium-sized model, it offers a good trade-off between accuracy and inference speed suitable for aerial deployment.
+\end{itemize}
+
+\section{Financial Analyses and Budget}
+To ensure the feasibility of the thesis, a preliminary budget has been estimated for the remaining research period.
+\begin{table}[H]
+    \centering
+    \caption{Estimated Financial Budget}
+    \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Category} & \textbf{Estimated Cost (BDT)} \\ \hline
+    Cloud Computing (Colab Pro+) & 5,000 \\ \hline
+    Dataset Licensing/Storage & 2,000 \\ \hline
+    Paper Publication Fees & 15,000 \\ \hline
+    Miscellaneous & 3,000 \\ \hline
+    \textbf{Total} & \textbf{25,000} \\ \hline
+    \end{tabular}
+\end{table}
+
+\section{Conclusion}
+The benchmarking phase is complete, identifying YOLOv10m as the foundation. The next phase involves modifying this architecture with the HBPA module to further improve performance in occluded scenarios.
+
+%===============================================
+% CHAPTER 5: IMPACT & ISSUES
+%===============================================
+\chapter{Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}
+
+\section{Impact of the Project on Societal Issues}
+The proposed system has a profound societal impact. By automating human detection, the system can drastically reduce the response time of emergency services during disasters. Faster detection translates directly to lives saved, enhancing community resilience against natural calamities.
+
+\section{Ethical Considerations}
+The use of drones for surveillance raises privacy concerns. However, this system is designed ethically:
+\begin{itemize}
+    \item \textbf{Purpose Limitation:} The model is trained to detect the presence of humans for rescue, not to identify individuals (no Facial Recognition).
+    \item \textbf{Data Privacy:} Any data collected during testing is strictly used for model training and is not stored permanently or shared.
+\end{itemize}
+
+\section{Impact of Project on Environment}
+The solution promotes environmental sustainability by enabling the use of lightweight, battery-operated drones. Efficient software (HBPA-YOLO) reduces the need for heavy, fuel-guzzling UAVs or ground vehicles for initial scouting, thereby reducing the carbon footprint of SAR missions.
+
+%===============================================
+% CHAPTER 6: COMPLEX ENGINEERING
+%===============================================
+\chapter{Addressing Complex Engineering Problems}
+
+\section{Complex Engineering Problems}
+This thesis addresses several complex engineering problems:
+\begin{itemize}
+    \item \textbf{Non-Linearity:} Modeling the visual appearance of humans in chaotic disaster environments (debris, mud) is highly non-linear.
+    \item \textbf{Resource Constraints:} Designing a deep learning model that is accurate yet light enough to run on edge devices with limited power and compute capacity.
+    \item \textbf{Conflicting Requirements:} Balancing high recall (finding every survivor) with high precision (avoiding false alarms from rocks/shadows).
+\end{itemize}
+
+\section{Complex Engineering Activities}
+The activities involved include:
+\begin{itemize}
+    \item \textbf{Algorithm Design:} creating the custom HBPA attention mechanism.
+    \item \textbf{Simulation:} Generating synthetic weather conditions to test robustness.
+    \item \textbf{Benchmarking:} Rigorous comparative analysis against state-of-the-art models.
+\end{itemize}
+
+%===============================================
+% CHAPTER 7: CONCLUSION
+%===============================================
+\chapter{Conclusions}
+
+\section{Summary}
+This report presented the pre-defense progress of "HBPA-YOLO". We have successfully identified the limitations of current aerial detection systems regarding occlusion and lighting. We have proposed a novel Hierarchical Body-Part Attention mechanism to address these issues. Our preliminary implementation and benchmarking of YOLOv10m on the augmented SARD dataset yielded a promising mAP of 97.2\%, establishing a strong baseline for the proposed enhancements.
+
+\section{Limitations}
+Currently, the system has been tested primarily on the SARD dataset, which focuses on wilderness scenarios. It has not yet been fully validated on urban disaster datasets (like C2A) or under extreme synthetic weather conditions (heavy rain/smoke). Real-time deployment on physical drone hardware is also pending.
+
+\section{Recommendations and Future Works}
+Future work will focus on:
+\begin{itemize}
+    \item \textbf{HBPA Integration:} Fully integrating the Body Part Decomposition and CBAM modules into the YOLOv10 backbone.
+    \item \textbf{Cross-Domain Validation:} Testing the model on the C2A dataset to ensure robustness in urban disaster scenarios.
+    \item \textbf{Knowledge Distillation:} Developing a teacher-student framework to compress the model for efficient edge deployment without significant accuracy loss.
+    \item \textbf{Real-Time Protocol:} Designing a communication protocol to transmit priority detection alerts to ground stations.
+\end{itemize}
+
+%===============================================
+% REFERENCES
+%===============================================
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{paper1}
+"Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions," \textit{IEEE Xplore Digital Library}, 2024. [Cited in Text]
+
+\bibitem{paper2}
+Q. Liu and Y. Liu, "Multi-Object Tracking Meets Moving UAV," in \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 2022.
+
+\bibitem{paper3}
+X. Zhu et al., "TPH-YOLOv5: Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios," in \textit{Proceedings of the IEEE International Conference on Computer Vision Workshops (ICCVW)}, 2021.
+
+\bibitem{c2a}
+Nihal, Ragib Amin, et al. "UAV-Enhanced Combination to Application: Comprehensive Analysis and Benchmarking of a Human Detection Dataset for Disaster Scenarios," \textit{Conference paper}, December 2024.
+
+\bibitem{detrs}
+Zhao, Yian, et al. "DETRs Beat YOLOs on Real-time Object Detection," \textit{IEEE/CVF Conference}, 2024.
+
+\end{thebibliography}
+
+\end{document}

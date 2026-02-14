@@ -1,0 +1,8 @@
+claude: 
+basic explanation & implementation (iteration 1)
+https://claude.ai/public/artifacts/81d8e36a-969e-4b7b-b81e-ebb3335d6864
+
+
+wandb api key: 
+
+6903ea3443a1ddb3fc1f128e7207a2103d76fb92

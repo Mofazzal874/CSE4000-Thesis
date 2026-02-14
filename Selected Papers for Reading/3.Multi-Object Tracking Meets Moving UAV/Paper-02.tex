@@ -1,0 +1,89 @@
+% One-page summary for: Multi-Object Tracking Meets Moving UAV (CVPR 2022)
+\documentclass[10pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\setlist{itemsep=2pt, topsep=2pt, leftmargin=12pt}
+\titlespacing*{\section}{0pt}{4pt}{3pt}
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+\renewcommand{\baselinestretch}{0.98}
+
+\begin{document}
+\small
+\begin{center}
+  {\LARGE \textbf{Multi-Object Tracking Meets Moving UAV}\\}
+  {\large CVPR 2022 \;--\; 1-Page Summary Sheet}
+\end{center}
+
+\section*{Overview (What They Did)}
+\textbf{UAVMOT} is a one-stage MOT system tailored for \textbf{moving UAV} videos. It augments a CenterNet/FairMOT-style detector with three components to cope with UAV-specific challenges: \textbf{IDFU} (ID Feature Update) for robust cross-frame identity features under rapid viewpoint change, \textbf{AMF} (Adaptive Motion Filter) to switch association strategy based on the drone's motion mode, and \textbf{GBF} (Gradient-Balanced Focal) loss to tackle \textit{long-tailed categories} and numerous \textit{small objects}.
+
+\section*{Methodology (How)}
+\textbf{Backbone \\}
+\quad DLA-34 feature extractor. Shared features feed parallel heads.
+
+\textbf{Heads (CenterNet-style) \\}
+\quad \textit{Heatmap} $\mathbf{H_m}$ (object centers, one channel per class), \textit{wh} (width/height), \textit{offset} (sub-pixel refine), and \textit{FID} (ReID embedding map). \textbf{Top-$K$} peaks from $\mathbf{H_m}$ index the other heads and \emph{gather} ID features.
+
+\textbf{IDFU (ID Feature Update) \\}
+\quad Uses \emph{previous-frame} top-$K$ ID features, compresses them, computes \emph{cross-frame correlation/attention} with current features, and \emph{fuses} the result to \textbf{update} current ID embeddings (stabilizes identity under moving-camera appearance shift).
+
+\textbf{AMF (Adaptive Motion Filter) \\}
+\quad Classifies motion per step: \emph{normal} (smooth) vs. \emph{abnormal} (turn/acceleration). Normal mode uses IoU+Kalman. Abnormal mode switches to a \emph{local relation filter} that compares \textbf{relative geometry vectors} among nearby detections, then fuses with ID similarity for association.
+
+\textbf{GBF loss (for heatmaps) \\}
+\quad Reweights cross-entropy with a \textbf{category-balance} term and a \textbf{small-object emphasis} term, addressing long-tail imbalance and tiny objects common in UAV footage.
+
+\vspace{2pt}
+\noindent\textit{Figure pointer:} For architecture and IDFU internals, see \textbf{Fig.~2} (overall) and \textbf{Fig.~3} (IDFU) in the paper.
+
+\section*{Results}
+\textbf{Benchmark SOTA (test sets)}
+\begin{center}
+\begin{tabular}{>{\raggedright}p{2.8cm} >{\centering}p{2.2cm} >{\centering\arraybackslash}p{2.2cm}}
+\toprule
+\textbf{Dataset} & \textbf{MOTA} & \textbf{IDF1} \\
+\midrule
+VisDrone2019 (test-dev) & 36.1 & 51.0 \\
+UAVDT (test) & 46.4 & 67.3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{4pt}
+\textbf{Ablation on VisDrone (val)} (baseline: FairMOT + DLA-34)
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Variant} & \textbf{MOTA} & \textbf{IDF1} & \textbf{IDs} \\
+\midrule
+Baseline & 20.1 & 40.6 & 2079 \\
++ IDFU & 23.3 & 43.8 & 1974 \\
++ AMF & 23.7 & 45.5 & 867 \\
++ GBF (full) & 26.7 & 45.8 & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Key Findings}
+\begin{itemize}
+  \item \textbf{Cross-frame ID adaptation matters:} IDFU markedly reduces ID switches and boosts IDP/IDR/IDF1.
+  \item \textbf{Motion-mode awareness improves recall:} AMF raises recall during abnormal UAV motion with a small precision trade-off; big cut in ID switches.
+  \item \textbf{Long-tail \,\&\, small-object handling helps tracking:} GBF rebalances gradients and emphasizes tiny targets, improving tail classes and overall MOTA.
+  \item \textbf{Efficient one-stage design:} Heatmap peak decoding (top-$K$) doubles as NMS and offers a clean hook to gather ID embeddings. Reported speed is about $\sim$12 FPS with DLA-34 at 1920$\times$1080; lighter backbones can push real-time.
+\end{itemize}
+
+\section*{Glossary (metrics)}
+\textbf{IDF1} (Identity F1), \textbf{IDP} (Identity Precision), \textbf{IDR} (Identity Recall), \textbf{MOTA}, \textbf{FP/FN} (false positives/negatives), \textbf{IDs} (ID switches), \textbf{FM} (fragmentations), \textbf{MT/ML} (mostly tracked/lost). Higher is better except FP/FN/IDs/FM/ML.
+
+\vfill
+\footnotesize\textit{Citation:} Q. Liu, Y. Liu, \emph{Multi-Object Tracking Meets Moving UAV}, CVPR 2022.\\
+\textit{Notes:} Numbers reproduced from the paper's tables; see their Figs.~2--3 for diagrams.
+
+\end{document}

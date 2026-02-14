@@ -1,0 +1,86 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Model Weights & Data
+*.pt
+*.pth
+*.onnx
+*.engine
+*.h5
+*.keras
+*.ckpt
+*.safetensors
+*.tflite
+*.pb
+*.weights
+
+# Archives & Compressed Files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.iso
+*.bz2
+*.xz
+
+# Large Data & Documents
+*.tsv
+*.pptx
+*.ppt
+*.doc
+*.docx
+*.pdf
+# Keep allowed files
+!*.txt
+!*.csv
+!*.xls
+!*.xlsx
+
+# Dataset directories
+*dataset*/
+*Dataset*/
+
+# Directories with heavy artifacts
+results/**/*.png
+results/**/*.jpg
+runs/
+wandb/
+mlruns/
+# Keeping results folder itself visible to track CSVs
+# results/
+YOLO11m_vs_YOLO11m_ECA_working_dir_of_kaggle/
+5-2-26/kaggle/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

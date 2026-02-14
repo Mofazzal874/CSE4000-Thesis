@@ -1,0 +1,70 @@
+
+================================================================================
+BENCHMARK REPORT: yolov9m
+================================================================================
+
+Configuration:
+--------------
+Model Family: yolov9
+Variant: m
+Dataset Sample: 50.0%
+Training Images: 3064/6129
+Validation Images: 1021/2043
+Test Images: 1021/2043
+Epochs: 25 (Early stopping patience: 5)
+Image Size: 640x640
+Batch Size: 12
+
+Model Specifications:
+--------------------
+Parameters: 0.00M
+GFLOPs: 0.00
+Model Size: 38.93 MB
+
+Training Results:
+-----------------
+Training Time: 77.20 minutes (4632.18 seconds)
+Best Epoch: 23
+Final Epoch: 24
+Early Stopped: False
+
+Final Losses:
+  Train - Box: 0.9791, Cls: 0.5574, DFL: 0.9199
+  Val   - Box: 0.9570, Cls: 0.5567, DFL: 0.9104
+
+Validation Set Performance:
+---------------------------
+Precision: 0.8624
+Recall: 0.7655
+F1 Score: 0.8110
+mAP50: 0.8168
+mAP50-95: 0.5539
+
+Test Set Performance:
+---------------------
+Precision: 0.8630
+Recall: 0.7723
+F1 Score: 0.8151
+mAP50: 0.8226
+mAP50-95: 0.5647
+
+Inference Performance:
+----------------------
+Average Inference Time: 42.09 ms
+Std Dev: 25.27 ms
+Min: 27.38 ms
+Max: 246.96 ms
+
+Files Generated:
+----------------
+- Model Weights: /kaggle/working/trained_models/yolov9m/weights/best.pt
+- Metrics: /kaggle/working/excel_reports/yolov9m_metrics.xlsx
+- Training Curves CSV: /kaggle/working/excel_reports/yolov9m_training_curves.csv
+- Detailed Test Results: /kaggle/working/excel_reports/yolov9m_detailed_test.xlsx
+- Training Curves Plot: /kaggle/working/plots/yolov9m_training_curves.png
+- Test Predictions Plot: /kaggle/working/plots/yolov9m_test_predictions.png
+- Validation Predictions Plot: /kaggle/working/plots/yolov9m_val_predictions.png
+
+================================================================================
+Timestamp: 2026-01-24 20:47:33
+================================================================================

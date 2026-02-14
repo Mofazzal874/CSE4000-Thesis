@@ -1,0 +1,9 @@
+D. Detection Head Variants (Extra Scale, Anchor Strategy)
+
+YOLOv11m by default predicts on 3 scales. For very small objects (like tiny people), you can add a fourth prediction scale. Practically, this means adding one more upsampling path: take the highest-resolution feature (e.g. P2 from early backbone) and feed it through an upsample+Concat into the head, then a Detect layer on that. Several works do this for tiny-object tasks. For example, Shi et al. (2024) created “SED-YOLO” by adding an extra small-object detection head to YOLOv5s (making 4 total). They report this significantly improved small-object detection performance. So for YOLOv11m, you could similarly upsample to a fourth scale. Ultralytics YAML is flexible: just replicate the head section for an additional scale.
+
+Another head variant is anchor assignment strategy. The default YOLO uses preset anchors + fixed IoU assignment. You could try ATSS or PAA, both methods for selecting positive anchors adaptively. ATSS (CVPR 2020) picks anchors based on center distance statistics, and PAA (ECCV 2020) models anchor scores probabilistically. These have been shown to improve dense or small-object detection. The PAA paper reports that using its probabilistic assignment “significantly boosted detection performance” over heuristic methods. Incorporating ATSS/PAA typically requires modifying the training code (anchor matching), but Ultralytics’ code is modular and may support custom assigners or you can implement a callback. In short, try replacing the default label assignment with ATSS/PAA logic to see if it yields better mAP, especially on crowded/small targets.
+
+
+SED-YOLO based multi-scale attention for small object detection in remote sensing - Xiaotan Wei, Zhensong Li & Yutong Wang
+Probabilistic Anchor Assignment with IoU Prediction for Object Detection kang Kim and Hee seok Lee

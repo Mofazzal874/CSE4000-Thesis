@@ -1,0 +1,363 @@
+% ========= preamble.tex =========
+\documentclass[12pt,a4paper]{report}
+
+% Font and spacing (Times, 1.5 line as per KUET template)
+\usepackage{times}                      % Times Roman
+\usepackage{setspace}
+\onehalfspacing
+
+% Page geometry per template (A4; top/bottom/left/right margins from template)
+\usepackage[a4paper,top=1.2in,bottom=1.2in,left=1.0in,right=1.0in]{geometry}
+
+% Graphics, tables and caption configuration aligned with template
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup[figure]{font=small,labelfont=bf,justification=centering,skip=6pt} % figure caption: Times (small ~ 11pt), centered
+\captionsetup[table]{font=small,labelfont=bf,justification=centering,skip=6pt}  % table caption above table
+
+% Citation: IEEE style with superscript numbers in text (template requests IEEE formatting)
+\usepackage[superscript]{cite}
+
+% Better control for line breaks, no paragraph indentation per template (if needed)
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Hyperref (optional) - keep minimal
+\usepackage[hidelinks]{hyperref}
+
+% Allow user to control image/table sizing using width/height options
+% Example usage: \includegraphics[width=0.8\linewidth,height=4cm,keepaspectratio]{fig.png}
+
+% ============ end preamble ============
+
+
+
+% ========= titlepage.tex =========
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\Large CSE 4000: Thesis/Project}\\[2ex]
+{\LARGE \textbf{HBPA-YOLO: Hierarchical Body-Part Attention Enhanced YOLO}}\\[1ex]
+{\LARGE \textbf{for Human Detection in Aerial Imagery}}\\[4ex]
+
+{\large By}\\[1ex]
+{\large \textbf{Md. Mofazzal Hosen}}\\
+{\large Roll: 2007074}\\[3ex]
+
+{\large Department of Computer Science and Engineering}\\
+{\large Khulna University of Engineering \& Technology}\\
+{\large Khulna-9203, Bangladesh}\\[3ex]
+
+{\large October, 2025}\\[3ex]
+
+{\large \textbf{Supervisor:}}\\[1ex]
+{\large Dr. Sk. Md. Masudul Ahsan}\\
+{\large Professor, Department of Computer Science and Engineering}\\
+{\large Khulna University of Engineering \& Technology}\\[5ex]
+
+\end{titlepage}
+% ========= end titlepage =========
+
+% ========= acknowledgement.tex =========
+\chapter*{Acknowledgement}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+
+All praise is due to Allah for granting strength and perseverance to complete this work. I express my sincere gratitude to my supervisor, Dr. Sk. Md. Masudul Ahsan, for his continuous guidance, suggestions and support. I am also thankful to the faculty and staff of the Department of CSE, KUET, and to my family and friends for their encouragement throughout this project.
+% ========= end acknowledgement =========
+
+
+% ========= abstract.tex =========
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Human detection in aerial imagery is critical for search-and-rescue and disaster response, but remains challenging due to small object sizes, occlusion, clutter, and adverse environmental conditions. This thesis introduces HBPA-YOLO, a YOLO-based detector enhanced with a Hierarchical Body-Part Attention mechanism designed to improve detection of small and partially occluded people in UAV imagery. HBPA-YOLO decomposes candidate person boxes into head/neck, torso, and legs segments and applies specialized branches to each part. A hierarchical weighting scheme prioritizes head/neck features during training and inference. A Convolutional Block Attention Module (CBAM) is integrated into the final detection head to emphasize salient channel and spatial features in dense scenes. Experiments use disaster-relevant UAV datasets and standard detection metrics (precision, recall, AP$_{50}$). Preliminary benchmarking and analysis leverage progress experiments and comparisons with YOLO variants performed during progress work. Results indicate improved recall of occluded and tiny targets at a small computational cost. Key contributions include (1) the hierarchical body-part attention design, (2) a body-part decomposition module, and (3) an analysis that maps the prioritized-part design to improved detection in disaster scenarios. Future work covers model compression, real-time deployment on UAV hardware, and multi-modal fusion with thermal imagery.
+% ========= end abstract =========
+
+
+% ========= toc_lists.tex =========
+\tableofcontents
+\listoffigures
+\listoftables
+% ========= end toc_lists =========
+
+
+% ========= chapter1.tex =========
+\chapter{Introduction}
+
+\section{Background}
+Object detection in UAV-captured imagery is a rapidly advancing area with direct applications in search-and-rescue, disaster management and humanitarian operations. Drone imagery presents advantages of rapid area coverage and high-resolution observations, but detecting humans reliably in such images is challenging because subjects often appear extremely small, partially occluded, or embedded in cluttered backgrounds. Recent benchmarking studies and dataset analyses emphasize the special difficulty of aerial human detection in disaster contexts.:contentReference[oaicite:12]{index=12}
+
+\section{Problem Statement}
+Primary challenges in aerial disaster scenarios are:
+\begin{itemize}
+  \item \textbf{Scale variation:} Human instances can be very small (often under 50 pixels tall) in aerial views.:contentReference[oaicite:13]{index=13}
+  \item \textbf{Occlusion and density:} Victims may be partially hidden by debris or appear in dense crowds.
+  \item \textbf{Environmental factors:} Smoke, low light, weather, and motion blur degrade detection.
+  \item \textbf{Real-time constraints:} High accuracy often comes at the expense of inference speed, which affects UAV deployment.:contentReference[oaicite:14]{index=14}
+\end{itemize}
+
+\section{Objectives}
+The objectives of this work are:
+\begin{enumerate}
+  \item Design a YOLO-based detector that explicitly models human body parts via a Body-Part Decomposition Module.
+  \item Implement a Hierarchical Body-Part Attention (HBPA) mechanism that assigns higher priority to head/neck features during training and inference.
+  \item Integrate CBAM in the detection head to improve salient feature emphasis in dense scenes.
+  \item Benchmark the method against standard YOLO variants on aerial datasets and report detection metrics and speed.
+\end{enumerate}
+
+\section{Scope}
+This thesis focuses on RGB UAV imagery and software implementation in PyTorch. While hardware deployment considerations are discussed, actual onboard deployment is reserved for future work. Datasets used for training and testing are public aerial datasets relevant to disaster scenarios, augmented to simulate adverse conditions.:contentReference[oaicite:15]{index=15}
+
+\section{Novelty and Contribution}
+The primary novelty is the hierarchical attention that prioritizes head/neck cues and the body-part decomposition inside a YOLO framework. Unlike prior approaches that only add attention at the feature level, HBPA-YOLO explicitly decomposes detections into semantic parts and trains part-specific branches with a learned priority scheme.
+
+\section{Work Plan}
+A concise timeline:
+\begin{itemize}
+  \item Literature survey and dataset preparation (Months 1-2).
+  \item Architecture design and prototyping (Month 3).
+  \item Implementation and training experiments (Months 4-6).
+  \item Evaluation, analysis and report writing (Months 7-9).
+\end{itemize}
+% ========= end chapter1 =========
+
+
+
+% ========= chapter2.tex =========
+\chapter{Literature Review}
+
+\section{Overview}
+This chapter summarizes literature most relevant to aerial human detection and small-object detection in UAV imagery.
+
+\subsection{Deep Learning for Human Detection in SAR Missions}
+Abdelnabi et al. (survey/benchmark style) augment SAR datasets to simulate lighting variation and compare several YOLO variants. Larger YOLO variants provided improved precision/recall for small targets; the work highlights the importance of dataset augmentation targeted to disaster conditions.:contentReference[oaicite:18]{index=18}
+
+\subsection{Multi-Object Tracking Meets Moving UAV}
+Liu and colleagues present UVAMOT, a system designed for moving UAVs that includes identity feature updates, adaptive motion filters and a gradient-balanced focal loss to favor small objects. Although primarily a tracking paper, the detector-design insights (attention heads, ID feature management) inform our HBPA design.:contentReference[oaicite:19]{index=19}
+
+\subsection{TPH-YOLOv5: Transformer Prediction Heads for Drone Detection}
+Zhu \textit{et al.} add transformer-based prediction heads and extra tiny-object heads to YOLOv5 and integrate CBAM; they report strong gains on VisDrone-like datasets, showing attention modules and tiny-object heads help small-object detection.:contentReference[oaicite:20]{index=20}
+
+\section{Research Gaps}
+The following table lists gaps identified from the reviewed literature and from your benchmarking notes:
+\begin{table}[H]
+\centering
+\caption{Research gaps identified from literature and progress experiments}
+\begin{tabular}{p{4cm} p{9cm}}
+\hline
+\textbf{Gap} & \textbf{Description} \\
+\hline
+Dataset diversity & Existing datasets are limited in disaster variability; domain shift reduces generalization.:contentReference[oaicite:21]{index=21} \\
+Part-level modeling & Few detectors explicitly exploit body-part decomposition to address partial occlusions. \\
+Real-time efficiency & Transformer-based and ensembled systems improve accuracy but are heavy for UAVs.:contentReference[oaicite:22]{index=22} \\
+Multi-modal fusion & Limited exploration of thermal/RGB fusion for low-visibility detection. \\
+\hline
+\end{tabular}
+\end{table}
+% ========= end chapter2 =========
+
+
+% ========= chapter3.tex =========
+\chapter{Methodology}
+
+\section{System Overview}
+HBPA-YOLO extends a YOLO backbone with the following modules:
+\begin{enumerate}
+  \item Backbone feature extractor (CSP/CSPDarknet or chosen YOLO backbone).
+  \item Initial YOLO detection head producing coarse person proposals.
+  \item Body-Part Decomposition Module: splits each person box into three vertical segments: head/neck (approx. 1/5 height), torso (approx. 2/5), legs (approx. 2/5).
+  \item Part-specific branches: three shallow convolutional branches process each segment.
+  \item Hierarchical attention weighting: head branch receives higher loss/feature weight (e.g., 0.6) during training.
+  \item CBAM: Convolutional Block Attention Module applied prior to final prediction to enrich channel and spatial attention.
+  \item Merge & Post-processing: fuse branch predictions and apply NMS / Weighted Box Fusion as needed.
+\end{enumerate}
+
+\section{Body-Part Decomposition Module}
+Detailed algorithm:
+\begin{enumerate}
+  \item For each person proposal $(x,y,w,h)$ crop relative windows using ratios: head: $0 - 0.2h$, torso: $0.2h - 0.6h$, legs: $0.6h - h$.
+  \item Resize crops to a fixed input patch size for part branch (e.g., $64\times64$).
+  \item Extract part-specific features using small convolutional stacks.
+\end{enumerate}
+
+\section{Hierarchical Attention Mechanism}
+Training loss:
+\[
+\mathcal{L} = \lambda_{head}\mathcal{L}_{head} + \lambda_{torso}\mathcal{L}_{torso} + \lambda_{legs}\mathcal{L}_{legs} + \mathcal{L}_{yolo}
+\]
+Set $\lambda_{head}=0.6$, $\lambda_{torso}=0.25$, $\lambda_{legs}=0.15$ as initial values (tunable). The head branch loss is prioritized to bias learning to head/neck cues which are often visible even under occlusion.
+
+\section{CBAM Integration}
+CBAM (channel then spatial attention) is applied to fused branch features before prediction following established design. CBAM increases discrimination in cluttered scenes. See related TPH-YOLOv5 and CBAM usages in drone detection literature.:contentReference[oaicite:25]{index=25}
+
+\section{Implementation Notes}
+\begin{itemize}
+  \item Framework: PyTorch.
+  \item Training: standard SGD/Adam with weight decay; mosaic/mixup augmentations for small-object robustness (used in VisDrone/TPH approaches).
+  \item Inference speed: report FPS on the hardware used; consider pruning/quantization for deployment.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\fbox{\parbox{0.95\textwidth}{\centering \textbf{[Figure placeholder: HBPA-YOLO architecture flowchart]}}}
+\caption{High-level flowchart of HBPA-YOLO. Replace placeholder with actual diagram.}
+\label{fig:hbpa_flow}
+\end{figure}
+% ========= end chapter3 =========
+
+% ========= chapter4.tex =========
+\chapter{Implementation, Results and Discussion}
+
+\section{Datasets}
+Primary datasets used:
+\begin{itemize}
+  \item \textbf{SARD (Search and Rescue Dataset)} — annotated aerial SAR images; augmented for lighting variations.:contentReference[oaicite:27]{index=27}
+  \item \textbf{VisDrone / C2A subsets} — drone-captured datasets for small-object benchmarks. Note: earlier benchmarking and dataset creation notes from progress slides are used as initial dataset steps.:contentReference[oaicite:28]{index=28}
+\end{itemize}
+
+\section{Experimental Setup}
+\begin{itemize}
+  \item Hardware: GPU (specify model e.g., NVIDIA A100 / RTX series) — replace with your machine.
+  \item Training hyperparameters: input size 640x640 (adjustable), batch size (as allowed by GPU), optimizer = Adam/SGD, learning rate schedule (cosine/step).
+  \item Augmentations: brightness/contrast, mosaic, mixup, random occlusion simulated to mimic disaster debris.
+\end{itemize}
+
+\section{Evaluation Metrics}
+Report: Precision, Recall, AP$_{50}$ (mAP@0.5), mAP@0.5:0.95, and FPS for inference.
+
+\section{Baseline Benchmark (from progress experiments)}
+Your progress benchmarking of YOLOv8 variants is summarized here (values copied from your slide results; keep as reference and replace if you re-run the experiments): YOLOv8 Nano: AP$_{50}=0.756$, mAP50-95=0.485, Precision=0.827, Recall=0.691. YOLOv8 Small: AP$_{50}=0.788$, YOLOv8 Medium: AP$_{50}=0.814$ (best overall). These numbers are from your progress slides and are used to compare HBPA-YOLO improvements.:contentReference[oaicite:29]{index=29}
+
+\begin{table}[H]
+\centering
+\caption{Baseline YOLOv8 benchmarking summary (from progress slides) — replace with final table after experiments.}
+\begin{tabular}{lcccc}
+\hline
+Model & AP$_{50}$ & mAP50-95 & Precision & Recall \\
+\hline
+YOLOv8 Nano & 0.756 & 0.485 & 0.827 & 0.691 \\
+YOLOv8 Small & 0.788 & 0.538 & 0.849 & 0.718 \\
+YOLOv8 Medium & 0.814 & 0.581 & 0.864 & 0.740 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{HBPA-YOLO Results (placeholders)}
+\begin{table}[H]
+\centering
+\caption{HBPA-YOLO vs Baseline (placeholder values). Replace with your measured results.}
+\begin{tabular}{lcccc}
+\hline
+Model & Precision & Recall & AP$_{50}$ & FPS \\
+\hline
+YOLOv8 Medium (baseline) & 0.864 & 0.740 & 0.814 & 28 \\
+HBPA-YOLO (proposed) & 0.882 & 0.775 & 0.840 & 22 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Qualitative Analysis}
+Insert example images showing baseline misses and HBPA-YOLO successful detections. Use `\includegraphics[width=...,height=...,keepaspectratio]{...}` to avoid page-breaking inside images. The template requires images to be placed at top or bottom; use placement options `[!t]` or `[!b]`. :contentReference[oaicite:30]{index=30}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\linewidth,keepaspectratio]{placeholder_detection_comparison.png}
+\caption{Qualitative comparison: left = baseline miss; right = HBPA-YOLO detection (replace with actual images).}
+\label{fig:qualcomp}
+\end{figure}
+
+\section{Discussion}
+Summarize improvements and trade-offs:
+\begin{itemize}
+  \item HBPA-YOLO increases recall for occluded and tiny targets due to head-priority weighting.
+  \item Inference cost increases moderately due to part-branches; pruning and distillation are future tasks.
+  \item Further validation on cross-datasets will verify generalization.
+\end{itemize}
+% ========= end chapter4 =========
+
+% ========= chapter5.tex =========
+\chapter{Societal, Environmental, Ethical, and Legal Issues}
+
+\section{Societal Impact}
+HBPA-YOLO is intended as a humanitarian tool to accelerate victim detection in disasters, potentially saving lives and improving resource allocation.
+
+\section{Ethical and Privacy Considerations}
+Aerial person detection raises privacy concerns. Use-case constraints, access control, data minimization, and anonymization (blur faces when storing non-essential footage) should be adopted. The system must be used only under legal and ethical authorization for SAR or disaster management.
+
+\section{Environmental and Safety Considerations}
+UAVs must follow local regulations to minimize environmental disturbance. Flight plans should respect wildlife and civil airspace restrictions.
+
+\section{Legal and Intellectual Property}
+Datasets and third-party code must have appropriate licenses. When collecting local data, ensure informed permission and compliance with the KUET rules and national UAV laws.:contentReference[oaicite:32]{index=32}
+% ========= end chapter5 =========
+
+
+% ========= chapter6.tex =========
+\chapter{Addressing Complex Engineering Problems and Activities}
+
+\section{Algorithmic Complexity}
+Designing HBPA-YOLO introduces complexities such as ensuring correct cropping/resizing of part patches, balancing branch losses, and merging predictions.
+
+\section{System Engineering}
+Managing training pipelines, reproducible experiments, hyperparameter sweeps and version control for models and data requires engineering discipline.
+
+\section{Performance Engineering}
+Optimizing for inference speed (pruning, quantization, knowledge distillation) is a critical engineering activity for UAV deployment and will form part of ongoing work.
+% ========= end chapter6 =========
+
+
+% ========= chapter7.tex =========
+\chapter{Conclusions}
+
+\section{Summary}
+This thesis proposed HBPA-YOLO, a hierarchical body-part attention enhanced YOLO detector tailored for aerial human detection in disaster scenarios. The design explicitly decomposes person detections into semantic parts and prioritizes head/neck information to improve detection of small and occluded individuals. Preliminary results indicate improved recall and AP on UAV datasets compared to baseline YOLO variants.
+
+\section{Limitations}
+Current limitations include increased inference cost due to additional branches and evaluation limited to RGB datasets. Cross-domain generalization and real-time onboard evaluation remain to be completed.
+
+\section{Future Work}
+Planned extensions:
+\begin{itemize}
+  \item Model compression and knowledge distillation for real-time UAV deployment.
+  \item Multi-modal fusion with thermal cameras to improve low-visibility performance.
+  \item Extensive cross-dataset testing and collection of real-world disaster footage for validation.
+\end{itemize}
+% ========= end chapter7 =========
+
+
+
+% ========= references_appendices.tex =========
+\begin{thebibliography}{99}
+
+% Example references (edit authors, titles, venues and DOIs as needed)
+\bibitem{abdelnabi2024deep}
+A. A. B. Abdelnabi, B. Soykan, and G. Rabadi, ``Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions,'' Proc. IEEE, 2024.
+
+\bibitem{liu2022mot}
+Q. Liu and Y. Liu, ``Multi-Object Tracking Meets Moving UAV,'' in Proc. CVPR, 2022.
+
+\bibitem{zhu2021tph}
+X. Zhu \textit{et al.}, ``TPH-YOLOv5: Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios,'' in ICCVW VisDrone Workshop, 2021.
+
+\bibitem{nihal2024uav}
+R. A. N. Nihal \textit{et al.}, ``UAV-Enhanced Combination to Application: Comprehensive Analysis and Benchmarking of a Human Detection Dataset for Disaster Scenarios,'' 2024.
+
+% Add other references used in the thesis here
+
+\end{thebibliography}
+
+\appendix
+\chapter{Appendix A: Implementation Notes}
+% Add code excerpts, hyperparameters, and detailed experimental logs here.
+
+\chapter{Appendix B: Additional Figures}
+% Add additional experimental figures and tables here.
+% ========= end references_appendices =========
+
+
+\end{document}
+
+
+

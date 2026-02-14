@@ -1,0 +1,70 @@
+
+================================================================================
+BENCHMARK REPORT: yolo11l
+================================================================================
+
+Configuration:
+--------------
+Model Family: yolo11
+Variant: l
+Dataset Sample: 50.0%
+Training Images: 3064/6129
+Validation Images: 1021/2043
+Test Images: 1021/2043
+Epochs: 25 (Early stopping patience: 5)
+Image Size: 640x640
+Batch Size: 10
+
+Model Specifications:
+--------------------
+Parameters: 0.00M
+GFLOPs: 0.00
+Model Size: 48.81 MB
+
+Training Results:
+-----------------
+Training Time: 86.64 minutes (5198.12 seconds)
+Best Epoch: 24
+Final Epoch: 24
+Early Stopped: False
+
+Final Losses:
+  Train - Box: 0.9167, Cls: 0.5337, DFL: 0.8950
+  Val   - Box: 0.8765, Cls: 0.5224, DFL: 0.8846
+
+Validation Set Performance:
+---------------------------
+Precision: 0.8786
+Recall: 0.7916
+F1 Score: 0.8328
+mAP50: 0.8434
+mAP50-95: 0.5956
+
+Test Set Performance:
+---------------------
+Precision: 0.8759
+Recall: 0.7963
+F1 Score: 0.8342
+mAP50: 0.8474
+mAP50-95: 0.6029
+
+Inference Performance:
+----------------------
+Average Inference Time: 46.76 ms
+Std Dev: 26.85 ms
+Min: 31.99 ms
+Max: 274.82 ms
+
+Files Generated:
+----------------
+- Model Weights: /kaggle/working/trained_models/yolo11l/weights/best.pt
+- Metrics: /kaggle/working/excel_reports/yolo11l_metrics.xlsx
+- Training Curves CSV: /kaggle/working/excel_reports/yolo11l_training_curves.csv
+- Detailed Test Results: /kaggle/working/excel_reports/yolo11l_detailed_test.xlsx
+- Training Curves Plot: /kaggle/working/plots/yolo11l_training_curves.png
+- Test Predictions Plot: /kaggle/working/plots/yolo11l_test_predictions.png
+- Validation Predictions Plot: /kaggle/working/plots/yolo11l_val_predictions.png
+
+================================================================================
+Timestamp: 2026-01-25 20:09:04
+================================================================================

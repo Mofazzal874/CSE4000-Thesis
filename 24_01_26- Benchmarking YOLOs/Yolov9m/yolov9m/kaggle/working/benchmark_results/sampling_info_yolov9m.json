@@ -1,0 +1,17 @@
+{
+    "model": "yolov9m",
+    "sample_ratio": 0.5,
+    "train": {
+        "total": 6129,
+        "sampled": 3064
+    },
+    "val": {
+        "total": 2043,
+        "sampled": 1021
+    },
+    "test": {
+        "total": 2043,
+        "sampled": 1021
+    },
+    "timestamp": "2026-01-24 19:28:31"
+}

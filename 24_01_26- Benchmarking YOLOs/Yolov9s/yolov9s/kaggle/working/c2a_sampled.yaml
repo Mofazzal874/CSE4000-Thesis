@@ -1,0 +1,7 @@
+names:
+  0: human
+nc: 1
+path: /kaggle/input/c2a-dataset/C2A_Dataset/new_dataset3
+test: /kaggle/working/benchmark_results/test_sampled_files.txt
+train: /kaggle/working/benchmark_results/train_sampled_files.txt
+val: /kaggle/working/benchmark_results/val_sampled_files.txt

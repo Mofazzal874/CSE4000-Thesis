@@ -1,0 +1,20 @@
+Paper 1: An Infrared Dataset for Partially Occluded Person Detection in Complex Environment for Search and Rescue
+Paper & Link: Song et al., 2025, Nature Scientific Data (Q1 Journal)
+https://www.nature.com/articles/s41597-025-04600-0
+
+
+
+Paper 2: Detection and Tracking Meet Drones Challenge
+Paper & Link: Cao et al., 2021, IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)
+https://ieeexplore.ieee.org/document/9573394/
+citation: 604
+
+
+
+FFCA-YOLO for Small Object Detection in Remote Sensing Images
+https://ieeexplore.ieee.org/document/10423050
+do not yet know the dataset etc. 
+
+
+
+

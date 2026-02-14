@@ -1,0 +1,417 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{xcolor}
+\usepackage{tocbibind}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+% Listings configuration for code blocks
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title{HUMAN DETECTION IN DISASTER SCENARIOS USING Drone IMAGERY}
+\author{Md Mofazzal Hosen}
+\date{2007074}
+
+
+\begin{document}
+
+
+\begin{titlepage}
+    \centering
+    
+    {\large CSE 4000: Thesis/Project\par}
+    {\large Literature Summary Report}
+    
+    \vspace{1.5cm}
+    {\Huge \bfseries \textsc{HUMAN DETECTION IN DISASTER SCENARIOS USING Drone IMAGERY} \par}
+    
+    \vfill
+    
+    \textbf{By}\par
+    
+    \vspace{ 2 cm}
+    
+    {\Large \textbf{Md Mofazzal Hosen}\par}
+    \vspace{0.5cm}
+    {\large Roll: 2007074\par}
+    
+    \vfill 
+
+    \includegraphics[width=0.20\textwidth]{kuet_logo.png}\par
+    
+    \vfill 
+    
+    {\large
+    Department of Computer Science and Engineering\par
+    % \vspace{0.3cm}
+    Khulna University of Engineering \& Technology\par
+    % \vspace{0.3cm}
+    Khulna 9203, Bangladesh\par
+    }
+    {\large October, 2025\par}
+
+\end{titlepage}
+
+\tableofcontents
+\chapter{Introduction}
+
+\section{Overview}
+This summary report examines three research papers in the field of real-time human detection in disaster scenarios using drone imagery. The first paper focuses on deep learning approaches for human detection from aerial images in search and rescue missions, emphasizing the problems in real-world search and rescue missions with varying lighting conditions. The second paper presents a multi-object tracking system for moving UAV platforms, addressing challenges of rapid viewpoint changes and camera motion. The third paper introduces TPH-YOLOv5, an improved object detection framework that integrates transformer prediction heads to enhance performance with small and densely packed objects.
+
+\section{Problem Statement}
+Our primary goal is to achieve \textbf{human detection in disaster scenarios using aerial devices like drones.}. The main challenges include:
+
+\begin{itemize}
+\item \textbf{Scale Variations:} Humans appear as extremely small objects in aerial imagery.
+\item \textbf{Occlusion and Partial Visibility and Dense Object:} Humans are occluded by debris, buildings, or structures and can appear multiple in close proximity.
+\item \textbf{Environmental Conditions:} Varying light conditions, weather effects and smoke.
+% \item \textbf{Real-time Processing Requirements:} Emergency response scenarios demand immediate results, constraining computational complexity and processing time
+\item \textbf{UAV Motion Effects:} Camera shake, rapid viewpoint changes,  motion blur etc.
+\item \textbf{Class Imbalance:} The vast background creates  imbalance between human objects and background regions
+\end{itemize}
+
+
+\chapter{Paper Summary}
+
+\section{Paper 1: Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions}
+
+\subsection{Overview}
+This paper denotes  the  challenges of detecting humans from aerial imagery during Search and Rescue (SAR) operations. It focuses on improving detection performance under varying lighting conditions—a significant limitation in existing models and datasets. The authors augmented the SARD (SAR Dataset) to include diverse lighting scenarios and evaluated six YOLO model variations to identify the most effective solution for real-world SAR missions.
+
+\subsection{Methodology}
+
+\subsubsection{Data Collection \& Augmentation}
+The base SARD dataset has 1,981 manually annotated images from video frames. Images depicted people in various states (exhaustion, injury, sitting and walking ) . For the augmentation part , The authors applied brightness and contrast adjustment to simulate like real-world's varying light conditions and weather conditions. The final dataset contained 4,000 images
+
+The dataset was divided as:
+\begin{itemize}
+\item Training: 3,000 images (75\%)
+\item Validation: 600 images (15\%)
+\item Testing: 400 images (10\%)
+\end{itemize}
+
+Six detectors, all fine-tuned:
+\[
+\text{YOLOv8n, v8s, v8m, \; YOLOv10n, v10s, v10m.}
+\]
+\begin{figure}[h]
+  \centering
+  % Replace the filename below with your actual flow/architecture image
+  \includegraphics[width=.9\linewidth]{fig-2.1.png}
+  \caption{Process flow}
+  \label{fig:arch-flow}
+\end{figure}
+
+\subsection{Results}
+\paragraph{Overall.}
+All six variants perform reasonably well, but \textbf{YOLOv10m} performs better . it balances Accuracy, Precision, Recall, F1, and mAP.
+
+\begin{table}[h]
+\centering
+\caption{Test performance on the lighting-augmented SARD.}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Recall} & \textbf{Precision} & \textbf{F1} & \textbf{mAP} \\
+\midrule
+YOLOv8n  & 80.6\% & 86.0\% & 92.8\% & 89.3\% & 90.8\% \\
+YOLOv8s  & 84.9\% & 91.1\% & 92.6\% & 91.9\% & 94.7\% \\
+YOLOv8m  & 88.5\% & 91.6\% & 96.3\% & 93.9\% & 95.2\% \\
+YOLOv10n & 81.8\% & 88.3\% & 91.7\% & 90.0\% & 94.1\% \\
+YOLOv10s & 88.7\% & 92.9\% & 95.2\% & 94.0\% & 96.4\% \\
+\textbf{YOLOv10m} & \textbf{90.7\%} & \textbf{93.4\%} & \textbf{96.9\%} & \textbf{95.1\%} & \textbf{97.2\%} \\
+\bottomrule
+\end{tabular}
+\label{tab:main}
+\end{table}
+
+\paragraph{(original vs.\ new SARD) Comparison:}
+Their best model (\textbf{YOLOv10m}) hits \textbf{96.9\% mAP} on the original SARD dataset and \textbf{97.2\% mAP} on the new augmentd SARD.
+
+
+
+
+\vspace{1.5cm}
+\textbf{Practical Implications:}
+\begin{itemize}
+    \item High recall (93.4\%) minimizes missed detections (critical for saving human lives)
+    \item High precision (96.9\%) ensures efficient resource deployment by reducing false alarms
+\end{itemize}
+
+\section{Paper 2: Multi-Object Tracking Meets Moving UAV}
+
+\subsection{Overview}
+This paper present UAVMOT, a one-stage Multi-Object Tracking (MOT) system  for moving UAV videos. The research addresses the unique challenges of object tracking from drone perspectives, including rapid viewpoint changes, camera motion changes, and the challenge small objects in aerial footage. The system augments a CenterNet/FairMOT-style detector with three specialized components designed to handle UAV -specific tracking effectively.
+
+\subsection{Methodology}
+
+\subsubsection{System Architecture}
+
+\paragraph{Backbone:}
+The UAVMOT system is built on a DLA-34 backbone feature extractor, with shared features feeding three parallel heads in a CenterNet-style architecture:
+\begin{itemize}
+  \item \textbf{Heatmap} ($\mathbf{H_m}$): object-center likelihood, one channel per class.
+  \item \textbf{Width/Height (wh)}: regresses bounding-box size at each center.
+  \item \textbf{FID}: ReID (identity) embedding map used for association.
+\end{itemize}
+
+
+\begin{figure}[h]
+  \centering
+  % Replace the filename below with your actual flow/architecture image
+  \includegraphics[width=.9\linewidth]{fig-2.2.png}
+  \caption{Process flow}
+  \label{fig:An Architectural overview of the proposed UAVMOT}
+\end{figure}
+
+\subsubsection{Key Components}
+
+\textbf{IDFU (ID Feature Update):} Uses adjacent frames(t and t-1 th frame) to adapt the identity embeddings under UAV view change. Concretely: (i) extract \emph{top-$K$} ID features from the previous frame, compress them; (ii) compute cross-frame correlation to obtain attention weights; (iii) fuse the attention-weighted previous features with current-frame ID features via conv to update the embeddings used for tracking.
+
+\medskip
+\textbf{AMF (Adaptive Motion Filter):} Switches association by UAV motion mode. When motion is \emph{normal}, use IoU+Kalman; when \emph{abnormal} (e.g., turns/accel), use a \emph{local relation filter} that builds a relative-geometry vector $v=[\theta,l_{\max},l_{\min}]$ to neighbors and forms a position-similarity matrix, which is fused with ID similarity before matching those frames.
+
+\medskip
+\textbf{GBF (Gradient-Balanced Focal) loss:} Supervises the heatmap head with reweighting that (i) balances long-tailed categories and (ii) emphasizes small objects. Implemented as category-balance weights $W_b$ and small-object weights $W_s$ applied to the heatmap cross-entropy: $\mathrm{GBF}=W_b \cdot W_s \cdot L_{\mathrm{Hm}}$.
+
+\subsection{Results}
+
+\subsubsection{Benchmark Performance}
+The system achieved state-of-the-art results on standard UAV tracking datasets:
+
+\begin{table}[h]
+\centering
+\caption{Benchmark performance of UAVMOT on UAV datasets (test sets).}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{MOTA} & \textbf{MOTP} & \textbf{IDF1} \\
+\midrule
+VisDrone2019 (test-dev) & 36.1\% & 74.2\% & 51.0\% \\
+UAVDT (test)            & 46.4\% & 72.7\% & 67.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+The system operates at approximately 12 FPS with DLA-34 at 1920×1080 resolution.
+
+
+
+\section{Paper 3: TPH-YOLOv5 — Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios}
+
+\subsection{Overview}
+TPH-YOLOv5 targets object detection in drone (UAV) imagery.The research extends YOLOv5 with an extra tiny-object head, replaces prediction heads of YOLOv5 with Transformer Prediction Heads (TPH), and integrats CBAM attention mechanisms.The implemeted system achieved state-of-the-art competitive results on VisDrone2021 with 39.18\% AP (+1.81 over prior SOTA and approximately 7\% improvement over YOLOv5 baseline).
+
+\subsection{Methodology}
+
+\subsection{Data Augmentation Steps}
+\begin{itemize}
+    \item Photometric Distortion
+    \item Geometric distortion(scaling , cropping , translation, shearing, rotating)
+    \item MixUp, Mosaic, and copy-paste augmentation for tiny or partially occluded human instances.
+\end{itemize}
+
+\subsubsection{System Architecture}
+Architecture: 
+  \begin{itemize}
+      \item baseline: YOLOv5x
+      \item Backbone:CSPDarknet53 ( as the feature extractor) 
+      \item Neck: PANet (Path Aggregation Network) 
+  \end{itemize}
+
+\subsubsection{Key Architectural Improvements}
+
+\textbf{Extra Tiny-Object Head (P2):}
+\begin{itemize}
+\item Added a fourth detection head utilizing high-resolution features specifically to better detect very small instances.
+\end{itemize}
+
+\textbf{Transformer Prediction Heads (TPH):}
+\begin{itemize}
+\item Replaced standard prediction heads with transformer encoder blocks
+\item Implemented self-attention mechanisms at head and end of backbone
+\item Reduces GFLOPs while improving performance
+\end{itemize}
+
+\textbf{CBAM Attention Integration:}
+\begin{itemize}
+\item Inserted Convolutional Block Attention Module (CBAM)
+\item Helps resist background clutter common in aerial imagery
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  % Replace the filename below with your actual flow/architecture image
+  \includegraphics[width=.9\linewidth]{fig-2.3.png}
+  \caption{Process flow}
+  \label{fig:An Architectural of the TPH-YOLOv5 ensemble}
+\end{figure}
+\subsubsection{Optimizations}
+\textbf{Model Ensembling:}
+\begin{itemize}
+\item Combined five diverse models using Weighted Boxes Fusion
+\item Improved overall performance
+\end{itemize}
+
+\textbf{Post-Classification Refinement:}
+\begin{itemize}
+\item Trained ResNet18 classifier on cropped 64×64 GT patches
+\item Addresses confusion between similar object classes(like tri-cycle, awning-tricycle etc.)
+\end{itemize}
+
+\subsection{Results}
+
+
+\begin{table}[h!]
+\centering
+\caption{Comparison of different detection methods.}
+\begin{tabular}{lcc}
+\hline
+\textbf{Methods} & \textbf{mAP (\%)} & \textbf{AP50 (\%)} \\
+\hline
+Cascade-RCNN\cite{cascade} & 16.09 & 31.91 \\
+Light-RCNN\cite{lightrcnn} & 16.53 & 32.78 \\
+\hline
+DPNNet-ensemble (2019 SOTA)\cite{dpnnet} & 29.62 & 54.00 \\
+SMPNet (2020 2$^{nd}$)\cite{smpnet} & 35.98 & 59.53 \\
+DPNNetV3 (2020 SOTA)\cite{dpnnetv3} & 37.37 & 62.05 \\
+\textbf{TPH-YOLOv5 ensemble} & \textbf{39.18} & \textbf{--} \\
+\hline
+\end{tabular}
+\end{table}
+The Researchers were able to achieve higher score then the previous previous VisDrone challenge 2020' findings , achieving 39.18 mAP schore. 
+
+
+
+\chapter{My Observations}
+
+\section{Paper 1: Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions}
+
+\begin{itemize}
+\item \textbf{Dataset Limitations:} Though the augmented dataset (4,000 images) addresses lighting variations, it may still be insufficient for real-world deployment. The original SARD dataset's wilderness focus might not adequately represent different disaster scenarios like flood , traffic accident, fire or urban search and rescue. 
+
+\item \textbf{Environmental Robustness:} Although lighting conditions are addressed, other critical factors like weather conditions (rain, fog, smoke), motion blur from UAV movement, and varying altitudes are not evaluated.
+
+\item \textbf{Evaluation Scope:} The comparison focuses mainly on YOLO variants but lacks evaluation against other state-of-the-art detection frameworks that might be more suitable for aerial imagery.
+
+\end{itemize}
+
+\section{Paper 2: Multi-Object Tracking Meets Moving UAV}
+
+\begin{itemize}
+\item \textbf{Real-time Performance Trade-offs:} The computational overhead of IDFU and AMF  could be problematic for mobile UAV platforms.
+\item \textbf{Low FPS:} While achieving 12 FPS with DLA-34, it is not very suitable for even moderate speed drones.
+
+\item \textbf{Environmental Adversary:} The system's performance under adverse weather conditions, varying lighting, or when tracking partially occluded objects (common in debris-filled disaster zones) requires further validation.
+
+\end{itemize}
+
+\section{Paper 3: TPH-YOLOv5 — Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios}
+
+\begin{itemize}
+\item \textbf{Computational and Memory Constraints:} The added P2 head significantly increases parameters and forces batch size limitations (batch size 2). This creates problem for mobile UAV deployments.
+
+\item \textbf{Inference Latency Trade-offs:} Multi-scale testing with 6 views and Weighted Boxes Fusion ensembling improve accuracy but introduce notable inference latency.
+
+\item \textbf{Dataset Specificity Concerns:} The evaluation focuses primarily on VisDrone dataset. Cross-dataset generalization to other UAV domains, particularly disaster scenarios with different object classes and environmental conditions, remains unverified and could limit practical applicability.
+
+\end{itemize}
+
+\chapter{Research Gaps \& Proposed Methods}
+
+\section{Research Gaps in the Discussed Papers}
+
+The comprehensive analysis of the three papers reveals several critical research gaps that limit their practical applicability in real-world disaster scenarios:
+
+\subsection{Cross-Domain Generalization}
+\begin{itemize}
+\item \textbf{Dataset Specificity:} All three papers focus on specific datasets (SARD, VisDrone, UAVDT) to detect humans but in Disaster scenarios , They may not perform bare minimum. 
+\item \textbf{Environmental Adversity:} Though all of them worked on adverse condition ,Limited evaluation under extreme weather conditions, smoke-filled environments, or low-visibility scenarios commonly encountered in disaster zones, which may create problem.
+\item \textbf{Terrain Variation:} Insufficient consideration of varying geographical terrains (urban, rural, coastal, mountainous) that affect detection and tracking performance
+\end{itemize}
+
+\subsection{Real-time Deployment Challenges}
+\begin{itemize}
+\item \textbf{Inference Speed vs. Accuracy Trade-offs:} Inadequate exploration of lightweight architectures.
+\item \textbf{Edge Computing Optimization:} Lack of optimization for edge devices, mobile devices like drones .
+\end{itemize}
+
+\subsection{Multi-modal Integration}
+\begin{itemize}
+\item \textbf{Thermal-RGB Fusion:} Limited exploration of thermal imaging integration, which is crucial for detecting humans in smoke, darkness, or debris-covered areas
+\end{itemize}
+
+
+\section{Proposed Methods}
+
+Based on the identified research gaps, we propose several methodological improvements and approachs:
+
+\subsection{  Attention heads/filter optimized for Disaster scenarios}
+\begin{itemize}
+\item \textbf{New Attention heads mechanism:} New attention head mechanism that will improve performance for disaster specific scenarios.
+\item \textbf{Two-stage filtering:} Instead of Single-stage filtering , we can work with Two-stage filtering with a small trade-off with detection speed.
+\end{itemize}
+
+\subsection{Lightweight Real-time Architecture}
+\begin{itemize}
+\item \textbf{Knowledge Distillation Pipeline:} Develop teacher-student frameworks to compress complex models while preserving critical detection capabilities
+\end{itemize}
+
+\subsection{Disaster-specific Data Augmentation}
+\begin{itemize}
+\item \textbf{Synthetic Disaster Scenarios:} Generate realistic disaster environments using advanced simulation techniques for training data augmentation
+\end{itemize}
+
+\subsection{Integrated Operational Framework}
+\begin{itemize}
+\item \textbf{Real-time Communication Protocol:} Develop efficient protocols for transmitting detection results to ground control with priority-based filtering so that we can get rid of edge device computation problem.
+\end{itemize}
+\subsection{Proposed Sytem: Hierarchical Body-Part Attention (HBPA) Mechanism}
+\begin{itemize}
+\item \textbf{Priority-based detection:} Priority-based detection with head/neck getting 60\% attention weight
+\item \textbf{Body Part Decomposition Module:} Body Part Decomposition Module to split body into three major region
+\item \textbf{Convolutional Block Attention Model (CBAM):} Convolutional block attention model(CBAM) to find attention region on scenarios with dense objects.
+\end{itemize}
+\begin{figure}[h]
+  \centering
+  % Replace the filename below with your actual flow/architecture image
+  \includegraphics[width=.9\linewidth]{fig-4.1.png}
+  \caption{Process flow}
+  \label{fig-4.1:Proposed  system }
+\end{figure}
+
+\AtBeginDocument{\renewcommand{\bibname}{References}}
+\begin{thebibliography}{9}
+\bibitem{paper1}
+\href{https://ieeexplore.ieee.org/document/10878144}{``Deep Learning for Human Detection from Aerial Images in Search and Rescue Missions,''} 
+\textit{IEEE Xplore Digital Library}, 2024.
+
+\bibitem{paper2}
+Q.~Liu and Y.~Liu, 
+\href{https://openaccess.thecvf.com/content/CVPR2022/papers/Liu_Multi-Object_Tracking_Meets_Moving_UAV_CVPR_2022_paper.pdf}{``Multi-Object Tracking Meets Moving UAV,''} 
+in \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)}, 2022.
+
+\bibitem{paper3}
+X.~Zhu et al., 
+\href{https://openaccess.thecvf.com/content/ICCV2021W/VisDrone/papers/Zhu_TPH-YOLOv5_Improved_YOLOv5_Based_on_Transformer_Prediction_Head_for_Object_ICCVW_2021_paper.pdf}{``TPH-YOLOv5: Improved YOLOv5 Based on Transformer Prediction Head for Object Detection on Drone-Captured Scenarios,''} 
+in \textit{Proc. IEEE Int. Conf. Comput. Vis. Workshops (ICCVW)}, 2021.
+
+
+
+\end{thebibliography}
+
+\end{document}

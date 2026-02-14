@@ -1,0 +1,30 @@
+
+================================================================================
+DISASTER HUMAN DETECTION: ABLATION STUDY (CBAM) COMPLETE
+================================================================================
+
+TEST SET:
+  Baseline: P=0.8257 R=0.8488 F1=0.8371
+  CBAM:     P=0.8306 R=0.8539 F1=0.8421
+
+VALIDATION SET:
+  Baseline: P=0.8129 R=0.7938 F1=0.8032
+  CBAM:     P=0.8075 R=0.7893 F1=0.7983
+
+COMPARISON WITH PREVIOUS ECA RESULTS:
+  ECA Test Recall: 0.8458
+  CBAM Test Recall: 0.8539
+  CBAM > ECA
+
+RECOMMENDATION: CBAM for disaster detection (recall priority)
+
+CBAM ADVANTAGES:
+  - Spatial attention captures object location
+  - Better for partially occluded objects
+  - More modeling capacity than ECA
+
+OUTPUTS:
+  Excel: /kaggle/working/excel_reports
+  Plots: /kaggle/working/plots
+  Reports: /kaggle/working/benchmark_reports
+================================================================================

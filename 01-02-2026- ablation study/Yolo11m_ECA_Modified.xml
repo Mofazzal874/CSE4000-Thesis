@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="YOLOv11m + ECA">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Input -->
+        <mxCell id="input" value="Input Image&#10;640×640×3" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Backbone -->
+        <mxCell id="backbone" value="Backbone&#10;C2f Blocks&#10;+ SPPF" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="260" y="260" width="240" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- ECA -->
+        <mxCell id="eca" value="ECA&#10;(Efficient Channel Attention)&#10;✔ Replaces C2PSA" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="260" y="410" width="240" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Neck -->
+        <mxCell id="neck" value="Neck (PAN-FPN)&#10;Feature Aggregation" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="300" width="240" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Heads -->
+        <mxCell id="head_p3" value="Detection Head P3&#10;Small Humans" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="860" y="220" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="head_p4" value="Detection Head P4&#10;Medium Humans" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="860" y="320" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="head_p5" value="Detection Head P5&#10;Large Humans" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="860" y="420" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="e1" edge="1" parent="1" source="input" target="backbone">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="backbone" target="eca">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="eca" target="neck">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="neck" target="head_p3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="neck" target="head_p4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="neck" target="head_p5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

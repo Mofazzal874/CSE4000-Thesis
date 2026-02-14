@@ -1,0 +1,217 @@
+\documentclass[12pt]{article}
+\usepackage{cite} % Optional, for better citation formatting
+\usepackage{graphicx}
+\usepackage[a4paper, top=1.2in, bottom=1in, left=1.2in, right=1in]{geometry}
+\usepackage{txfonts} % or use: \usepackage{newtxtext}
+\usepackage{setspace} % Load the setspace package
+\onehalfspacing % Set line spacing to 1.5
+\usepackage[absolute,overlay]{textpos}
+\usepackage{tikz}
+\usepackage{titletoc}
+\usepackage{tocloft}
+\usepackage{array} % Needed for custom column width
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % Custom column type for centered content
+
+\begin{document}
+\setstretch{1.5}   % Set to 1.5 for 1.5x spacing
+
+
+\setcounter{tocdepth}{2}
+
+\newcommand{\modsection}{%
+  \titlecontents{section}% <section-type>
+    []% <left> Adjust this value to set the indentation
+    {}% <above-code>
+    {\contentslabel[\textbullet]{1.5em}{}}% <numbered-entry-format>
+    {}% <numberless-entry-format> Remove the numbers
+    {\titlerule*[1pc]{}\contentspage\hspace*{1em}}% <filler-page-format>
+}
+
+% Define a command to add bullet points
+\newcommand{\modsubsection}{%
+  \titlecontents{subsection}% <section-type>
+    [1in]% <left> Adjust this value to set the indentation
+    {}% <above-code>
+    {\contentslabel[\textbullet]{1.5em}{}}% <numbered-entry-format>
+    {}% <numberless-entry-format> Remove the numbers
+    {\titlerule*[1pc]{}\contentspage\hspace*{1em}}% <filler-page-format>
+}
+
+% \setlength{\cftbeforesecskip}{20pt} % Adjust spacing before sections
+% \setlength{\cftbeforesubsecskip}{12pt} % Adjust spacing before subsections
+
+\begin{titlepage}
+    \begin{center}
+    \pagenumbering{roman} % Set page numbering to Arabic numerals
+    \setcounter{page}{0} % Start from page 2
+    {\fontsize{14}{1.5}\selectfont \textbf{CSE 4000: Thesis/Project}}\\
+    \vspace{12pt}
+    {\fontsize{18}{1.5}\selectfont \textbf{Blockchain-Based Offline Payment Protocol: A Secure and Versatile Solution}}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    {\fontsize{14}{1.5}\selectfont By}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    {\fontsize{14}{1.5}\selectfont \textbf{Md. Zakaria Hossain}}\\
+    \vspace{12pt}
+    {\fontsize{14}{1.5}\selectfont Roll: 1907056}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \begin{figure}[htp!]
+        \centering
+        \includegraphics[height=1.2in, width=1in]{img/Logo_KUET.svg.png}
+    \end{figure}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    
+    {\fontsize{12}{1.5}\selectfont \textbf{Department of Computer Science and Engineering}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{Khulna University of Engineering \& Technology}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{Khulna 9203, Bangladesh}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{October, 2024}}\\
+    
+    {\fontsize{18}{1.5}\selectfont \textbf{Blockchain-Based Offline Payment Protocol: A Secure and Versatile Solution}}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont By}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{Md. Zakaria Hossain}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont Roll: 1907056}\\
+    \vspace{12pt}
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont A thesis submitted in partial fulfillment of the requirements for the degree of \\
+    "Bachelor of Science in Computer Science \& Engineering" }\\
+    \vspace{12pt}
+    \vspace{12pt}
+    \begin{flushleft}
+    {\fontsize{12}{1.5}\selectfont \textbf{Supervisor:}}\\
+    \hspace*{0.8in} % Adjust the horizontal position
+    {\fontsize{12}{1.5}\selectfont \textbf{Dr. Kazi Md. Rokibul Alam}}\\
+    \hspace*{0.8in} % Adjust the horizontal position
+    {\fontsize{12}{1.5}\selectfont Professor}\\
+    \hspace*{0.8in} % Adjust the horizontal position
+    {\fontsize{12}{1.5}\selectfont Department of Computer Science and Engineering \hspace{.65in}\tikz{\draw (0,0) -- (3,0);}}\\
+    \hspace*{0.8in} % Adjust the horizontal position
+    {\fontsize{12}{1.5}\selectfont Khulna University of Engineering \& Technology \hspace{1in} Signature}\\
+    \end{flushleft}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    \vspace{12pt}
+    
+    {\fontsize{12}{1.5}\selectfont \textbf{Department of Computer Science and Engineering}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{Khulna University of Engineering \& Technology}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{Khulna 9203, Bangladesh}}\\
+    \vspace{12pt}
+    {\fontsize{12}{1.5}\selectfont \textbf{October, 2024}}\\
+    \section*{
+        \begin{center}
+            {\fontsize{16}{1.5}\selectfont \textbf{Acknowledgement}}\\
+        \end{center}
+        }
+        \vspace{12pt}
+        \vspace{12pt}
+        {\fontsize{12}{1.5}\normalfont 
+        {\begin{flashleft}
+            
+        
+        All the praise to the almighty Allah, whose blessing and mercy succeeded me to complete this thesis work fairly. I gratefully acknowledge the valuable suggestions, advice and
+        sincere co-operation of my supervisor.
+        \end{flashleft}}}\\
+        \vspace{12pt}
+        \vspace{12pt}
+        {\fontsize{12}{1.5}\selectfont \textbf{\hfill Author}}\\
+    
+    \clearpage
+    
+    \section*{
+\begin{center}
+    {\fontsize{16}{1.5}\selectfont \textbf{Abstract}}\\
+    \vspace{12pt}
+\end{center}
+}
+
+{
+\begin{flashleft}
+    
+Off-chain transactions aim to address the limited scalability of on-chain systems and enable blockchain-based payments over unreliable networks. However, existing solutions often struggle to balance security and flexibility in their design. This paper proposes a novel blockchain-based offline payment protocol that addresses this challenge. We hypothesize that two offline parties with loosely synchronized clocks and communication channels of known, bounded latency can securely conduct off-chain transactions while preserving flexibility. Our protocol integrates on-chain smart contracts with offline wallet interactions to ensure resilience against intermittent blockchain connectivity. It also leverages platform-agnostic Trusted Execution Environments (TEEs), such as Intel Software Guard Extensions (SGX), to provide secure and flexible computations. We empirically evaluate the protocol's performance, demonstrating its high efficiency and advanced security in comparison to existing state-of-the-art solutions. Through rigorous security analysis and comparison against real-world attack scenarios, we prove the robustness of our scheme within a universally composable framework, making it a secure and user-friendly solution for offline blockchain payments.
+\end{flashleft}
+
+}
+    
+    \clearpage
+    \tableofcontents
+    \clearpage
+    \listoffigures
+    \clearpage
+    \addcontentsline{toc}{section}{List of Tables}  % Add List of Tables to TOC
+\listoftables  % Generate the List of Tables
+    \modsection
+    \modsubsection
+    \addtocontents{toc}{\protect\hfill \textbf{PAGE}\\}
+    \addtocontents{toc}{
+        \begin{flushleft}
+            \protect\hspace{0.5in} Title Page \hspace{11.55cm} i\\
+            \protect\hspace{0.5in} Acknowledgement \hspace{10cm} ii\\
+            \protect\hspace{0.5in} Abstract \hspace{11.7cm} iii\\
+            \protect\hspace{0.5in} Contents \hspace{11.6cm} iv\\
+    
+            \protect\hspace{0.5in} List of Figures \hspace{10.6cm} vi
+        \end{flushleft}
+    }
+    \end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic} % Set page numbering to Arabic numerals
+\setcounter{page}{1}
+
+\include{Introduction}
+\include{Literature Review}
+\include{Methodology}
+\include{Implementation, Results and Discussions}
+\include{Conclusions}
+
+
+\newpage
+\addcontentsline{toc}{chapter}{Reference}
+\renewcommand\bibname{References}
+\bibliographystyle{unsrt} 
+\bibliography{References}
+\nocite{*}
+
+
+\end{document}

@@ -1,0 +1,41 @@
+So i am a 4th year Computer Science and Engineering student and I have interest to do thesis on topic Drone or image or video processing.
+I have already done some searching on this about vehicle detection using drone footage.
+
+But I want find some more and rigoriously now. I want to find problems : 
+-> Human detection in disaster situation with drone 
+-> Vehicle detection , speed . accident detection using drone.
+-> or i can work with : something on image processing like resolution enhancement and satellite imagery etc. I couldn't find anything on it now.
+-> Domain can be anything but realistic
+
+
+So,  you need to find 5 to 10 research paper on each area.
+The requirement is : 
+- papers should be published in a good sites, publishers journal with very good number of citations. sites like ArXiv, MDPI or low level sites are not good enough.
+PAMI, IJCV , IEEE , JMLR on Image processing etc or renowned university publisher.
+
+
+In what format you should give me the answer: 
+paper & link: 
+
+impact: 
+citations & other information: 
+Dataset available: 
+(Dataset is of utmost important, find if it has available datasets, one or more that i can work with)
+Dataset sources: github , google drive , huggingface , Kaggle, Mendeley or other platforms where the dataset can be for this paper or can be used with this paper.
+Dataset description: is annotation available or not , can be worked with or not and small description.  
+What it solves: 
+Methodology: how it solves(small description of the method using little technical terms) 
+complexity:
+Problem findings: (requirement discussed below):  
+
+Check Implementability: 
+To check implementability , follow this criterias: 
+- I have 6 to 8 months time with 3 to 5 hours in each week.
+- I am a 4th year computer science engineering student who have done machine learning , statistics , networking, image processing , AI and other engineering courses.
+- Should solve a small problem , not an entire system. work with problems where at least 3 class of result you have to work with.
+- should have SMART Objectivity and achievable by me within time. 
+- if there need to train a model , I have no problem. just mention system or requirements.  
+
+way to go: 
+- first understand all the requirement and format. Then take your time and search rigoriously. 
+- try to find Q1, Q2 , Q3 journals first. 
