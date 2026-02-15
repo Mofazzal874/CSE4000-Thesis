@@ -269,16 +269,31 @@ Without this, Ultralytics would crash with `"Unknown module: CBAM"` when parsing
 
 ---
 
-## 7. Effect on Model Performance
+## 7. Actual Results (From Our Run)
 
-### Expected Benefits
-- **Better feature selection** → CBAM highlights the most informative channels and regions
-- **Improved small object detection** → Spatial attention helps focus on small person-shaped regions
-- **Minimal parameter overhead** → Almost zero extra parameters vs C2PSA
+### CBAM vs Baseline (70 epochs, C2A dataset)
 
-### Expected Trade-offs
-- **Slightly different convergence** → May need different training dynamics
-- **Adaptive max pool** → Non-deterministic on GPU (you may see the `UserWarning` about this)
+| Metric | Baseline | CBAM | Δ Change |
+|--------|----------|------|----------|
+| **Parameters** | 20,053,779 | **19,095,669** | **−4.8%** |
+| **GFLOPs** | 34.1 | **33.7** | −1.2% |
+| **Layers** | 410 | 391 | −19 |
+| **mAP@0.5** | 0.8558 | 0.8557 | −0.01% (no change) |
+| **mAP@0.5:0.95** | 0.6256 | 0.6230 | −0.4% |
+| **Precision** | 0.8257 | 0.8306 | +0.5% |
+| **Recall** | 0.8488 | 0.8539 | +0.5% |
+| **Very Tiny Recall** | 0.7839 | 0.7812 | **−0.3%** |
+| **Small Recall** | 0.8807 | **0.8920** | **+1.1%** |
+| **FPS @ 640** | 32.6 | 32.8 | +0.6% |
+| **Best Epoch** | 70 | 66 | Converges 4 epochs earlier |
+
+### Key Takeaways
+1. ✅ **CBAM is lighter** (−4.8% params, −1.2% GFLOPs). Replacing C2PSA with CBAM saves ~1M parameters.
+2. ⚠️ **CBAM alone does NOT improve very-tiny recall** (−0.3%). Attention can't compensate for lost spatial resolution.
+3. ✅ **Small object recall improves** (+1.1%). CBAM helps with 16-32px objects by focusing on relevant features.
+4. ✅ **Faster convergence** (epoch 66 vs 70). Attention helps the model focus earlier.
+
+> **Full analysis:** See [docs/08_results_analysis.md](08_results_analysis.md) for the 3-way comparison.
 
 ---
 
@@ -301,13 +316,15 @@ CBAM(16, 7)
 ## Summary
 
 ```
-CBAM at a glance:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CBAM at a glance (ACTUAL from our runs):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 What:     Attention module (Channel → Spatial)
 Where:    Replaces C2PSA (layer 10 in backbone)
-Why:      Better feature selection, lightweight
-Params:   ~0 extra (uses shared MLP with reduction)
-YAML:     One line change
+Params:   19,095,669 (−4.8% vs baseline 20,053,779)
+GFLOPs:   33.7 (−1.2% vs baseline 34.1)
+mAP@0.5:  0.8557 (≈ same as baseline 0.8558)
+Recall:   0.8539 (+0.5% vs baseline)
+V.Tiny:   0.7812 (−0.3% — needs P2 head for tiny!)
 Paper:    Woo et al., ECCV 2018 (10K+ citations)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

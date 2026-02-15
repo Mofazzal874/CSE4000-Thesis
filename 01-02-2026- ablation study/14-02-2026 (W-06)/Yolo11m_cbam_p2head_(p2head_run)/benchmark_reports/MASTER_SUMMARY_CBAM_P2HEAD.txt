@@ -1,0 +1,41 @@
+
+================================================================================
+DISASTER HUMAN DETECTION: CBAM + P2 HEAD ABLATION STUDY (3-WAY)
+================================================================================
+
+CONFIG: Test=False | Epochs=70 | Fraction=100% | ImgSz=640
+
+MODEL COMPLEXITY:
+  Baseline:    20,053,779 params |   34.1 GFLOPs
+  CBAM:        19,095,669 params |   33.7 GFLOPs (-4.8%)
+  CBAM+P2:     19,592,246 params |   43.7 GFLOPs (-2.3%)
+
+OFFICIAL mAP (test split):
+  Baseline: mAP50=0.8558 mAP50-95=0.6256
+  CBAM:     mAP50=0.8557 mAP50-95=0.6230
+  CBAM+P2:  mAP50=0.8723 mAP50-95=0.6418
+
+TEST SET (custom eval):
+  Baseline: P=0.8257 R=0.8488 F1=0.8371
+  CBAM:     P=0.8306 R=0.8539 F1=0.8421
+  CBAM+P2:  P=0.8351 R=0.8619 F1=0.8483
+
+SMALL OBJECT RECALL (TEST):
+  Very Tiny (<8²px):  Base=0.7839 | CBAM=0.7812 | CBAM+P2=0.8089
+  Tiny (8-16px):      Base=0.8901 | CBAM=0.8972 | CBAM+P2=0.8972
+  Small (16-32px):    Base=0.8807 | CBAM=0.8920 | CBAM+P2=0.8864
+
+VALIDATION SET:
+  Baseline: P=0.8129 R=0.7938 F1=0.8032
+  CBAM:     P=0.8075 R=0.7893 F1=0.7983
+  CBAM+P2:  P=0.8190 R=0.7970 F1=0.8078
+
+CALIBRATION (ECE):
+  Baseline: 0.09332915234571934
+  CBAM:     0.10222424839889312
+  CBAM+P2:  0.11603908164375776
+
+BEST MODEL: yolo11m_cbam_p2 (very-tiny recall priority)
+
+OUTPUTS: /kaggle/working/excel_reports | /kaggle/working/plots | /kaggle/working/benchmark_reports
+================================================================================

@@ -426,14 +426,18 @@ After NMS (remove overlaps):      ~15 final detections
 ## Summary
 
 ```
-YOLOv11m at a glance:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+YOLOv11m at a glance (ACTUAL from our runs):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Input:       640×640×3 (RGB image)
 Backbone:    11 layers (Conv + C3k2 + SPPF + C2PSA)
 Neck:        12 layers (FPN upsampling + PAN downsampling)
 Head:        Detect on 3 scales (P3, P4, P5)
-Parameters:  ~20M
-GFLOPs:      ~68
-Output:      Bounding boxes + class + confidence
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Parameters:  20,053,779 (20.05M)
+GFLOPs:      34.1
+Layers:      410
+FPS @ 640:   32.6 (Tesla T4)
+mAP@0.5:     0.8558 (on C2A test set)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+> **Full Results:** See [docs/08_results_analysis.md](08_results_analysis.md) for the 3-way comparison with CBAM and P2 variants.
