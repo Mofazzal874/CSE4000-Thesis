@@ -3,11 +3,13 @@
 DISASTER HUMAN DETECTION: CBAM + P2 EXTRA DETECTION HEAD ABLATION STUDY
 ================================================================================
 
-MODIFICATIONS:
-  1. CBAM replaces C2PSA in backbone (channel + spatial attention)
-  2. P2/4 extra detection head for small objects (4-scale detection)
+TRAINS ONLY: CBAM+P2-Head (Baseline & CBAM-only loaded from previous run)
 
 THREE-WAY COMPARISON: Baseline vs CBAM-only vs CBAM+P2-Head
+
+PRE-TRAINED MODELS (uploaded to Kaggle input):
+  - Baseline:  /kaggle/input/yolo11vm-cbam/runs/detect/yolo11m_baseline/weights/best.pt
+  - CBAM-only: /kaggle/input/yolo11vm-cbam/runs/detect/yolo11m_cbam/weights/best.pt
 
 Based on:
   - CBAM: Woo et al. (2018) - "CBAM: Convolutional Block Attention Module"
@@ -23,10 +25,9 @@ CHECKPOINT RESUME: Saves checkpoints every 5 epochs for Kaggle 12h limit.
 # ============================================================================
 
 # ===================== CONTROL FLAGS =====================
-TEST_MODE = True          # True = 5% data, 2 epochs | False = full run
-RESUME_TRAINING = False   # Set True to resume from checkpoint
-RESUME_CBAM_PT = ""       # Path to cbam last.pt (if resuming)
-RESUME_CBAM_P2_PT = ""    # Path to cbam+p2 last.pt (if resuming)
+TEST_MODE = True           # True = 5% data, 2 epochs | False = full run
+RESUME_TRAINING = False    # Set True to resume CBAM+P2 from checkpoint
+RESUME_CBAM_P2_PT = ""     # Path to cbam+p2 last.pt (if resuming)
 # =========================================================
 
 !pip uninstall ultralytics -y -q 2>/dev/null
@@ -57,6 +58,44 @@ print(f"  Epochs: {NUM_EPOCHS} | Fraction: {TRAIN_FRACTION} | Save every: {SAVE_
 num_gpus = torch.cuda.device_count()
 gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
 print(f"\nGPUs: {num_gpus} | GPU 0: {torch.cuda.get_device_name(0)} ({gpu_mem:.1f} GB)")
+
+# ===================== PRE-TRAINED MODEL PATHS =====================
+# Auto-detect the Kaggle input dataset containing baseline & CBAM models
+INPUT_DIR = None
+_SEARCH_FILE = os.path.join("runs", "detect", "yolo11m_baseline", "weights", "best.pt")
+print("Searching for pre-trained models in /kaggle/input/...")
+
+for root, dirs, files in os.walk("/kaggle/input"):
+    candidate = os.path.join(root, _SEARCH_FILE)
+    if os.path.isfile(candidate):
+        INPUT_DIR = root
+        print(f"  ✓ Found dataset at: {INPUT_DIR}")
+        break
+
+if INPUT_DIR is None:
+    print("  ❌ Could not auto-detect! Listing /kaggle/input/ contents:")
+    for root, dirs, files in os.walk("/kaggle/input"):
+        level = root.replace("/kaggle/input", "").count(os.sep)
+        if level < 4:
+            indent = "     " + "  " * level
+            print(f"{indent}📁 {os.path.basename(root)}/")
+            for f in files[:5]:
+                print(f"{indent}  📄 {f}")
+    raise FileNotFoundError("Pre-trained models not found! Check your Kaggle input dataset.")
+
+BASELINE_BEST = f"{INPUT_DIR}/runs/detect/yolo11m_baseline/weights/best.pt"
+CBAM_BEST = f"{INPUT_DIR}/runs/detect/yolo11m_cbam/weights/best.pt"
+BASELINE_RESULTS_CSV = f"{INPUT_DIR}/runs/detect/yolo11m_baseline/results.csv"
+CBAM_RESULTS_CSV = f"{INPUT_DIR}/runs/detect/yolo11m_cbam/results.csv"
+
+# Validate
+for path, label in [(BASELINE_BEST, "Baseline best.pt"), (CBAM_BEST, "CBAM best.pt"),
+                     (BASELINE_RESULTS_CSV, "Baseline results.csv"), (CBAM_RESULTS_CSV, "CBAM results.csv")]:
+    if os.path.exists(path):
+        print(f"  ✓ {label}")
+    else:
+        print(f"  ❌ MISSING: {path}")
+# ===================================================================
 
 
 # ============================================================================
@@ -208,29 +247,8 @@ print("✓ CBAM registered in ultralytics")
 # ============================================================================
 from ultralytics import YOLO
 
-model = YOLO("yolo11m.pt")
-model.info()
-base_cfg = model.model.yaml
-
-with open("yolov11m_original.yaml", "w") as f:
-    yaml.dump(base_cfg, f)
-print("✓ Extracted base YOLOv11m YAML")
-
-# --- YAML 1: CBAM-only (replace C2PSA, keep 3-scale head) ---
-with open("yolov11m_original.yaml", "r") as f:
-    cbam_cfg = yaml.safe_load(f)
-
-replaced = 0
-for i, layer in enumerate(cbam_cfg["backbone"]):
-    if len(layer) >= 3 and layer[2] == "C2PSA":
-        cbam_cfg["backbone"][i] = [-1, 1, "CBAM", [16, 7]]
-        replaced += 1
-        print(f"  Layer {i}: C2PSA → CBAM [lazy init]")
-assert replaced > 0, "No C2PSA found!"
-
-with open("yolov11m_cbam.yaml", "w") as f:
-    yaml.dump(cbam_cfg, f)
-print(f"✓ CBAM-only YAML: {replaced} C2PSA replaced")
+# Only need the CBAM+P2 YAML (baseline and CBAM-only are pre-trained)
+print("✓ Skipping CBAM-only YAML generation (using pre-trained model)")
 
 # --- YAML 2: CBAM + P2 Head (CBAM in backbone + 4-scale head) ---
 cbam_p2_yaml = """# YOLOv11m + CBAM + P2 Extra Detection Head
@@ -297,75 +315,22 @@ print(f"✓ CBAM+P2 YAML: CBAM in backbone + {len(detect[0])}-scale detection")
 
 
 # ============================================================================
-# CELL 7: Train Baseline YOLOv11m
+# CELL 7: Load Pre-trained Baseline & CBAM (SKIP TRAINING)
 # ============================================================================
 from ultralytics import YOLO
 import torch
 
 print("=" * 80)
-print("PHASE 1/3: TRAINING BASELINE YOLOv11m")
+print("PHASE 1/3: LOADING PRE-TRAINED BASELINE (from uploaded input)")
 print("=" * 80)
-
-baseline_batch = 16 if gpu_mem >= 15 else 8
-
-baseline = YOLO("yolo11m.pt")
-if num_gpus >= 2:
-    device_config = [0, 1]
-    baseline_batch *= 2
-else:
-    device_config = 0
-
-print(f"Device: {device_config}, batch={baseline_batch}")
-
-baseline.train(
-    data="c2a.yaml", epochs=NUM_EPOCHS, imgsz=640, batch=baseline_batch,
-    device=device_config, name="yolo11m_baseline", patience=PATIENCE,
-    save=True, save_period=SAVE_PERIOD, verbose=True, plots=True,
-    fraction=TRAIN_FRACTION, amp=True, cache=False, workers=4, exist_ok=True,
-)
-print("✓ Baseline training complete")
-
-# Save baseline best.pt to a reusable location (no retraining needed later)
-baseline_best_src = "runs/detect/yolo11m_baseline/weights/best.pt"
-baseline_best_dst = "/kaggle/working/yolo11m_baseline_best.pt"
-if os.path.exists(baseline_best_src):
-    shutil.copy2(baseline_best_src, baseline_best_dst)
-    print(f"✓ Baseline model saved to: {baseline_best_dst}")
-    print(f"  → Reuse later: YOLO('{baseline_best_dst}')")
-
-del baseline; torch.cuda.empty_cache(); gc.collect()
-
-
-# ============================================================================
-# CELL 8: Train CBAM-only YOLOv11m
-# ============================================================================
-from ultralytics import YOLO
+assert os.path.exists(BASELINE_BEST), f"Baseline model not found: {BASELINE_BEST}"
+print(f"✓ Baseline loaded from: {BASELINE_BEST}")
 
 print("\n" + "=" * 80)
-print("PHASE 2/3: TRAINING CBAM-ONLY YOLOv11m")
+print("PHASE 2/3: LOADING PRE-TRAINED CBAM (from uploaded input)")
 print("=" * 80)
-
-cbam_batch = 16 if gpu_mem >= 15 else 8  # No extra memory needed
-
-if RESUME_TRAINING and RESUME_CBAM_PT:
-    print(f"⚡ RESUMING CBAM from: {RESUME_CBAM_PT}")
-    cbam_model = YOLO(RESUME_CBAM_PT)
-    cbam_model.train(resume=True)
-else:
-    cbam_model = YOLO("yolov11m_cbam.yaml")
-    cbam_model.load("yolo11m.pt")
-    print("✓ CBAM architecture loaded + pretrained weights")
-
-    # Single GPU for custom CBAM module (DDP incompatible)
-    cbam_model.train(
-        data="c2a.yaml", epochs=NUM_EPOCHS, imgsz=640, batch=cbam_batch,
-        device=0, name="yolo11m_cbam", patience=PATIENCE,
-        save=True, save_period=SAVE_PERIOD, verbose=True, plots=True,
-        fraction=TRAIN_FRACTION, amp=True, cache=False, workers=4, exist_ok=True,
-    )
-
-print("✓ CBAM-only training complete")
-del cbam_model; torch.cuda.empty_cache(); gc.collect()
+assert os.path.exists(CBAM_BEST), f"CBAM model not found: {CBAM_BEST}"
+print(f"✓ CBAM loaded from: {CBAM_BEST}")
 
 
 # ============================================================================
@@ -377,9 +342,9 @@ print("\n" + "=" * 80)
 print("PHASE 3/3: TRAINING CBAM + P2-HEAD YOLOv11m")
 print("=" * 80)
 
-# P2 head uses more memory
-p2_batch = 8 if gpu_mem >= 15 else 4
-print(f"Batch size: {p2_batch} (reduced for P2 extra scale)")
+# P2 head uses more memory (stride-4 feature maps are 4x larger spatially)
+# batch=8 is safe for T4 (14.6GB), batch=16 will OOM
+p2_batch = 8 if gpu_mem >= 14 else 4
 
 if RESUME_TRAINING and RESUME_CBAM_P2_PT:
     print(f"⚡ RESUMING CBAM+P2 from: {RESUME_CBAM_P2_PT}")
@@ -414,14 +379,15 @@ REPORT_DIR = f"{BASE_DIR}/benchmark_reports"
 for d in [EXCEL_DIR, PLOT_DIR, REPORT_DIR]:
     os.makedirs(d, exist_ok=True)
 
-BASELINE_RUN = "runs/detect/yolo11m_baseline"
-CBAM_RUN = "runs/detect/yolo11m_cbam"
+# Baseline & CBAM results from uploaded input, CBAM+P2 from local training
+BASELINE_RUN = f"{INPUT_DIR}/runs/detect/yolo11m_baseline"
+CBAM_RUN = f"{INPUT_DIR}/runs/detect/yolo11m_cbam"
 CBAM_P2_RUN = "runs/detect/yolo11m_cbam_p2head"
 
 # Load training CSVs
 runs = {
-    "baseline": pd.read_csv(f"{BASELINE_RUN}/results.csv"),
-    "cbam": pd.read_csv(f"{CBAM_RUN}/results.csv"),
+    "baseline": pd.read_csv(BASELINE_RESULTS_CSV),
+    "cbam": pd.read_csv(CBAM_RESULTS_CSV),
     "cbam_p2": pd.read_csv(f"{CBAM_P2_RUN}/results.csv"),
 }
 
@@ -490,8 +456,8 @@ print("✓ Training curves with total loss exported")
 from ultralytics import YOLO
 
 models_loaded = {
-    "Baseline": YOLO(f"{BASELINE_RUN}/weights/best.pt"),
-    "CBAM": YOLO(f"{CBAM_RUN}/weights/best.pt"),
+    "Baseline": YOLO(BASELINE_BEST),
+    "CBAM": YOLO(CBAM_BEST),
     "CBAM+P2": YOLO(f"{CBAM_P2_RUN}/weights/best.pt"),
 }
 

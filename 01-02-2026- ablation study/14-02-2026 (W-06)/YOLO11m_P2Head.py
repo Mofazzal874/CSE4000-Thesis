@@ -23,11 +23,10 @@ To resume: Set RESUME_TRAINING = True and point to last.pt
 # ============================================================================
 
 # ===================== CONTROL FLAGS =====================
-TEST_MODE = True          # True = 5% data, 2 epochs (dry run)
+TEST_MODE = False          # True = 5% data, 2 epochs (dry run)
                           # False = 100% data, 70 epochs (full run)
 
-RESUME_TRAINING = False   # Set True to resume from checkpoint
-RESUME_BASELINE_PT = ""   # Path to baseline last.pt (if resuming)
+RESUME_TRAINING = False   # Set True to resume P2-Head from checkpoint
 RESUME_P2HEAD_PT = ""     # Path to p2head last.pt (if resuming)
 # =========================================================
 
@@ -74,10 +73,43 @@ print(f"  Checkpoint save period: every {SAVE_PERIOD} epochs")
 
 # GPU info
 num_gpus = torch.cuda.device_count()
-print(f"\nGPUs: {num_gpus}")
-for i in range(num_gpus):
-    gpu = torch.cuda.get_device_properties(i)
-    print(f"  GPU {i}: {gpu.name} ({gpu.total_memory / 1024**3:.1f} GB)")
+gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
+print(f"\nGPUs: {num_gpus} | GPU 0: {torch.cuda.get_device_name(0)} ({gpu_mem:.1f} GB)")
+
+# ===================== PRE-TRAINED MODEL PATHS =====================
+# Auto-detect the Kaggle input dataset containing baseline model
+INPUT_DIR = None
+_SEARCH_FILE = os.path.join("runs", "detect", "yolo11m_baseline", "weights", "best.pt")
+print("Searching for pre-trained baseline in /kaggle/input/...")
+
+for root, dirs, files in os.walk("/kaggle/input"):
+    candidate = os.path.join(root, _SEARCH_FILE)
+    if os.path.isfile(candidate):
+        INPUT_DIR = root
+        print(f"  ✓ Found dataset at: {INPUT_DIR}")
+        break
+
+if INPUT_DIR is None:
+    print("  ❌ Could not auto-detect! Listing /kaggle/input/ contents:")
+    for root, dirs, files in os.walk("/kaggle/input"):
+        level = root.replace("/kaggle/input", "").count(os.sep)
+        if level < 4:
+            indent = "     " + "  " * level
+            print(f"{indent}📁 {os.path.basename(root)}/")
+            for f in files[:5]:
+                print(f"{indent}  📄 {f}")
+    raise FileNotFoundError("Pre-trained baseline not found! Check your Kaggle input dataset.")
+
+BASELINE_BEST = f"{INPUT_DIR}/runs/detect/yolo11m_baseline/weights/best.pt"
+BASELINE_RESULTS_CSV = f"{INPUT_DIR}/runs/detect/yolo11m_baseline/results.csv"
+
+# Validate
+for path, label in [(BASELINE_BEST, "Baseline best.pt"), (BASELINE_RESULTS_CSV, "Baseline results.csv")]:
+    if os.path.exists(path):
+        print(f"  ✓ {label}")
+    else:
+        print(f"  ❌ MISSING: {path}")
+# ===================================================================
 
 
 # ============================================================================
@@ -182,70 +214,16 @@ print(f"  ✓ Detect layer verified: {detect_layer[0]} → 4 scales")
 
 
 # ============================================================================
-# CELL 5: Train Baseline YOLOv11m
+# CELL 5: Load Pre-trained Baseline (SKIP TRAINING)
 # ============================================================================
 from ultralytics import YOLO
 import torch
 
 print("=" * 80)
-print("PHASE 1: TRAINING BASELINE YOLOv11m (3-scale P3/P4/P5)")
+print("PHASE 1/2: LOADING PRE-TRAINED BASELINE (from uploaded input)")
 print("=" * 80)
-
-# Determine batch size based on GPU memory
-gpu_mem = torch.cuda.get_device_properties(0).total_memory / 1024**3
-baseline_batch = 16 if gpu_mem >= 15 else 8
-print(f"GPU memory: {gpu_mem:.1f} GB → baseline batch={baseline_batch}")
-
-if RESUME_TRAINING and RESUME_BASELINE_PT:
-    print(f"⚡ RESUMING baseline from: {RESUME_BASELINE_PT}")
-    baseline = YOLO(RESUME_BASELINE_PT)
-    baseline.train(resume=True)
-else:
-    baseline = YOLO("yolo11m.pt")
-
-    # Multi-GPU for baseline (no custom modules)
-    if num_gpus >= 2:
-        device_config = [0, 1]
-        baseline_batch = baseline_batch * 2
-        print(f"✓ Multi-GPU: {device_config}, batch={baseline_batch}")
-    else:
-        device_config = 0
-        print(f"✓ Single GPU, batch={baseline_batch}")
-
-    baseline.train(
-        data="c2a.yaml",
-        epochs=NUM_EPOCHS,
-        imgsz=640,
-        batch=baseline_batch,
-        device=device_config,
-        name="yolo11m_baseline",
-        patience=PATIENCE,
-        save=True,
-        save_period=SAVE_PERIOD,  # Checkpoint for Kaggle 12h limit
-        verbose=True,
-        plots=True,
-        fraction=TRAIN_FRACTION,
-        amp=True,           # Mixed precision to save memory
-        cache=False,         # Don't cache to avoid OOM on large datasets
-        workers=4,
-        exist_ok=True,       # Allow resuming into same directory
-    )
-
-print("✓ Baseline training complete")
-
-# Save baseline best.pt to a reusable location (no retraining needed later)
-baseline_best_src = "runs/detect/yolo11m_baseline/weights/best.pt"
-baseline_best_dst = "/kaggle/working/yolo11m_baseline_best.pt"
-if os.path.exists(baseline_best_src):
-    shutil.copy2(baseline_best_src, baseline_best_dst)
-    print(f"✓ Baseline model saved to: {baseline_best_dst}")
-    print(f"  → Reuse later: YOLO('{baseline_best_dst}')")
-
-# Free GPU memory before next training
-del baseline
-torch.cuda.empty_cache()
-import gc; gc.collect()
-print("✓ GPU memory cleared")
+assert os.path.exists(BASELINE_BEST), f"Baseline model not found: {BASELINE_BEST}"
+print(f"✓ Baseline loaded from: {BASELINE_BEST}")
 
 
 # ============================================================================
@@ -255,11 +233,12 @@ from ultralytics import YOLO
 import torch
 
 print("\n" + "=" * 80)
-print("PHASE 2: TRAINING P2-HEAD YOLOv11m (4-scale P2/P3/P4/P5)")
+print("PHASE 2/2: TRAINING P2-HEAD YOLOv11m (4-scale P2/P3/P4/P5)")
 print("=" * 80)
 
-# P2 head uses more memory → reduce batch size
-p2_batch = 8 if gpu_mem >= 15 else 4
+# P2 head uses more memory (stride-4 feature maps are 4x larger spatially)
+# batch=8 is safe for T4 (14.6GB), batch=16 will OOM
+p2_batch = 8 if gpu_mem >= 14 else 4
 print(f"P2 head batch size: {p2_batch} (reduced due to extra P2 scale)")
 
 if RESUME_TRAINING and RESUME_P2HEAD_PT:
@@ -322,7 +301,8 @@ REPORT_DIR = f"{BASE_DIR}/benchmark_reports"
 for d in [EXCEL_DIR, PLOT_DIR, REPORT_DIR]:
     os.makedirs(d, exist_ok=True)
 
-BASELINE_RUN = "runs/detect/yolo11m_baseline"
+# Baseline results from uploaded input, P2-Head from local training
+BASELINE_RUN = f"{INPUT_DIR}/runs/detect/yolo11m_baseline"
 P2HEAD_RUN = "runs/detect/yolo11m_p2head"
 
 print("✓ Output directories ready")
@@ -410,7 +390,7 @@ print("✓ Training curves (with total loss) exported")
 # ============================================================================
 from ultralytics import YOLO
 
-baseline_model = YOLO(f"{BASELINE_RUN}/weights/best.pt")
+baseline_model = YOLO(BASELINE_BEST)
 p2head_model = YOLO(f"{P2HEAD_RUN}/weights/best.pt")
 
 def get_model_info(model, name):
@@ -785,7 +765,7 @@ TEST_LBL_DIR = f"{DATASET_ROOT}/test/labels"
 VAL_IMG_DIR = f"{DATASET_ROOT}/val/images"
 VAL_LBL_DIR = f"{DATASET_ROOT}/val/labels"
 
-baseline_model = YOLO(f"{BASELINE_RUN}/weights/best.pt")
+baseline_model = YOLO(BASELINE_BEST)
 p2head_model = YOLO(f"{P2HEAD_RUN}/weights/best.pt")
 
 print("\n" + "=" * 80 + f"\nPHASE 3: TEST SET ({TEST_IMAGES} images)\n" + "=" * 80)
