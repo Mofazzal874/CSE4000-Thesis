@@ -1,0 +1,48 @@
+
+================================================================================
+DISASTER HUMAN DETECTION: P2 EXTRA DETECTION HEAD ABLATION STUDY
+================================================================================
+
+CONFIGURATION:
+  Test Mode:      False
+  Epochs:         70
+  Data Fraction:  100%
+  Image Size:     640px
+
+MODEL COMPLEXITY:
+  Baseline Params:   20,053,779
+  P2-Head Params:    20,550,356
+  Param Overhead:    496,577 (2.5%)
+
+TRAINING (Best Epoch):
+  Baseline: epoch 70 | val_total_loss=2.2002
+  P2-Head:  epoch 69 | val_total_loss=2.4184
+
+OFFICIAL METRICS:
+  Baseline: mAP50=0.8558 mAP50-95=0.6256
+  P2-Head:  mAP50=0.8733 mAP50-95=0.6460
+
+TEST SET:
+  Baseline: P=0.8257 R=0.8488 F1=0.8371
+  P2-Head:  P=0.8496 R=0.8649 F1=0.8571
+
+SMALL OBJECT RECALL (TEST):
+  Very Tiny (<8²px):  Baseline=0.7839 | P2-Head=0.8006
+  Tiny (8-16px):      Baseline=0.8901 | P2-Head=0.9113
+  Small (16-32px):    Baseline=0.8807 | P2-Head=0.8920
+
+VALIDATION SET:
+  Baseline: P=0.8129 R=0.7938 F1=0.8032
+  P2-Head:  P=0.8116 R=0.8095 F1=0.8106
+
+CALIBRATION:
+  Baseline ECE: 0.09332915234571934
+  P2-Head ECE:  0.12364702149332903
+
+RECOMMENDATION: P2-Head (very-tiny recall priority for disaster detection)
+
+OUTPUTS:
+  Excel:   /kaggle/working/excel_reports
+  Plots:   /kaggle/working/plots
+  Reports: /kaggle/working/benchmark_reports
+================================================================================
