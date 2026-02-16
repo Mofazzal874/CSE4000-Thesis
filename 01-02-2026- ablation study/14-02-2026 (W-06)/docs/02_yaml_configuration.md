@@ -128,14 +128,43 @@ Detect [nc]          # nc = 1 for our single-class task
 
 ```yaml
 scales:
-  n: [0.50, 0.25, 1024]  # nano:        tiny model
-  s: [0.50, 0.50, 1024]  # small:       small model
-  m: [0.50, 1.00, 512]   # medium:      ← OUR MODEL
-  l: [1.00, 1.00, 512]   # large:       bigger model
-  x: [1.00, 1.50, 512]   # extra-large: biggest model
+  n: [0.50, 0.25, 1024]  # nano:   Lightest, fastest, least accurate
+  s: [0.50, 0.50, 1024]  # small:  Good for mobile
+  m: [0.50, 1.00, 512]   # medium: Best balance (Thesis Choice)
+  l: [1.00, 1.00, 512]   # large:  Accurate but slow
+  x: [1.00, 1.50, 512]   # extra:  Heavy, max accuracy
 ```
 
 The three numbers are `[depth_multiple, width_multiple, max_channels]`:
+
+### 1. Depth Multiple (D)
+Controls **how many layers** are in each block.
+- `D=0.50`: If YAML says `repeats=2`, the model builds `2 * 0.5 = 1` layer.
+- `D=1.00`: If YAML says `repeats=2`, the model builds `2 * 1.0 = 2` layers.
+- **Effect**: Higher depth = more complex features, slower speed.
+
+### 2. Width Multiple (W)
+Controls **how many channels** (filters) are in each layer.
+- `W=0.50`: If YAML says `channels=256`, the model uses `256 * 0.5 = 128` channels.
+- `W=1.00`: If YAML says `channels=256`, the model uses `256 * 1.0 = 256` channels.
+- **Effect**: Wider layers = can learn more patterns, uses more VRAM.
+
+### 3. Max Channels (C_max)
+A safety cap. Even if `width * channels` is huge, it won't exceed this number (usually 512 or 1024).
+
+### 📊 Comparing the Variants
+| Scale | Name | Depth | Width | Params (Approx) | Use Case |
+|---|---|---|---|---|---|
+| **n** | Nano | 0.50 | 0.25 | ~2.6M | Edge devices, real-time video |
+| **s** | Small | 0.50 | 0.50 | ~9.4M | Mobile apps, reasonable accuracy |
+| **m** | **Medium** | **0.50** | **1.00** | **~20.1M** | **General purpose (Our Thesis)** |
+| **l** | Large | 1.00 | 1.00 | ~25.3M | High accuracy, GPU needed |
+| **x** | X-Large | 1.00 | 1.50 | ~56.9M | Server-side, max accuracy |
+
+> **Why we chose 'm' (Medium):** 
+> - **'n'/'s'** are too weak for tiny 5px objects (too few channels).
+> - **'l'/'x'** are too slow for real-time drone inference on T4 GPUs.
+> - **'m'** offers the best trade-off: enough width (1.00) to capture fine details, but shallow enough (0.50) to run fast.
 
 ### Example: How scaling works for one layer
 
