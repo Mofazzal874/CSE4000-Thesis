@@ -72,13 +72,27 @@ The backbone reduces spatial size while increasing feature depth. For your **640
 ```
 Stage     Resolution    Channels    What it "sees" in C2A Dataset
 ──────────────────────────────────────────────────────────────────
-Input     640 × 640     3 (RGB)     Raw drone image (houses, water)
 P1/2      320 × 320     64          Edges of roofs, water lines
 P2/4      160 × 160     128         Textures (tiles, waves)
 P3/8       80 × 80      256         Small debris, limbs
 P4/16      40 × 40      512         Whole objects (person on roof)
 P5/32      20 × 20      512→1024    Scene context (flooded street)
 ```
+
+### 💡 Understanding the Notation: Px / Stride
+
+This is standard computer vision terminology:
+
+| Notation | **P** (Pyramid) | **Stride** (Divisor) | Math (for 640px) | Detectable Object Size |
+|---|---|---|---|---|
+| **P1 / 2** | Level 1 | **2** | $640 \div 2 = 320$px | (Not used for detection) |
+| **P2 / 4** | Level 2 | **4** | $640 \div 4 = 160$px | **Very Tiny** (4-8 px) |
+| **P3 / 8** | Level 3 | **8** | $640 \div 8 = 80$px | **Small** (8-16 px) |
+| **P4 / 16** | Level 4 | **16** | $640 \div 16 = 40$px | **Medium** (16-32 px) |
+| **P5 / 32** | Level 5 | **32** | $640 \div 32 = 20$px | **Large** (>32 px) |
+
+- **Stride**: How many pixels the filter "steps" over. Stride 2 means we skip every other pixel, halving the resolution.
+- **P-Level**: The depth in the network. Higher P = deeper, smaller resolution, more semantic meaning (context). Lower P = shallower, higher resolution, more geometric detail.
 
 > **Why this matters for you:** Your dataset has many small victims. Standard YOLO compresses everything to P5 (20×20). A small 5px person disappears by P5! This is why we are adding the **P2 head** later (to keep the 160×160 detail).
 
