@@ -1,0 +1,59 @@
+next model you can try and modify : 
+- Faster R-CNN
+-SSD 
+- DETR
+- Vision Transformer
+
+Potential contribution point
+- Backbones : 
+ - Vision Transformers as backbones to extract richer long-range dependencies than CNNs alone. These transformer features can improve occlusion handling, context modeling, and small-human        detection.
+ - Diffusion models used as feature priors that help represent uncertainty or ambiguous regions in images. Models like 2D generative priors have been used to synthesize human views from multiple angles (e.g. for 3D human synthesis), showing that diffusion generative components can assist dense prediction tasks.
+ - CNN-Mamba backbones
+   - Models use CNNs for spatial feature extraction and Mamba modules for temporal or sequence modeling to improve change detection in remote sensing imagery. This hybrid approach is shown to handle complex, fine-grained alterations in disaster scenarios.
+
+
+Potential contribution point: 
+- Object detection enhancements
+- Emerging work like FF-Mamba-YOLO combines Mamba state-space backbones with YOLO detectors, showing improved detection under complex backgrounds and scale variations, for example in forest fire detection.)https://pmc.ncbi.nlm.nih.gov/articles/PMC12842753/?utm_source=chatgpt.com
+
+Potential contribution point
+-Integrate diffusion-based latent priors with discriminative detectors to improve detection under heavy occlusion, motion blur, or low resolution.
+
+Potential contribution point
+- Unified detection + prediction model that outputs not just bounding boxes but predicted future locations or activities.
+- Potential contribution point
+Multitask system that detects humans and classifies their action or gaze pattern in real time
+- Potential contribution point
+Adaptive real-time pipeline that trades off latency and accuracy dynamically.
+
+
+
+
+Main Points: 
+- 1. Hybrid detection pipelines
+Use strong object detectors like YOLO or DETR but enhance them with:
+
+Mamba-based context features to model temporal or spatial dependencies across frames,
+
+Diffusion priors for noise and occlusion resilience,
+
+Sequence modelling for aerial surveillance video streams rather than static images.
+
+This targets situational awareness in motion rather than static detection.
+
+2. Change and motion focus
+Instead of just classifying humans frame by frame:
+
+Use Mamba and diffusion frameworks for change motion patterns over time to detect human movement,
+
+Combine temporal context with detection scores to reduce false positives in disaster debris.
+
+This moves beyond plain bounding boxes into behavioral or context inference.
+
+
+
+Other models that you can use for intermediate states: 
+- Data augmentation
+Generate synthetic human images to improve training of your detector.(maybe diffusion models)
+- Preprocessing
+Use diffusion for denoising or enhancement in low-light or noisy surveillance footage, then pass frames to a detector.
