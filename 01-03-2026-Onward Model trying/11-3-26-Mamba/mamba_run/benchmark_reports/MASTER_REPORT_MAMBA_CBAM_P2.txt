@@ -1,0 +1,33 @@
+================================================================================
+DISASTER HUMAN DETECTION — MAMBA+CBAM+P2 HEAD ABLATION REPORT
+================================================================================
+Generated : 2026-03-12 09:43:59
+TEST MODE : False  |  Epochs: 120  |  Fraction: 100%
+
+MODEL COMPLEXITY
+  Mamba+CBAM+P2       : 19.592M params  43.7 GFLOPs  38874 KB
+
+OFFICIAL mAP (test split — Ultralytics val):
+  Mamba_CBAM_P2       : mAP50=0.8770  mAP50-95=0.6539
+
+TEST SET (custom evaluation):
+  Mamba_CBAM_P2       : P=0.8512  R=0.8419  F1=0.8465  F2=0.8437  Lat=51.2137ms
+
+SMALL OBJECT RECALL — TEST:
+  very_tiny   :  Mamba_CBAM_P2=0.7589
+  tiny        :  Mamba_CBAM_P2=0.8736
+  small       :  Mamba_CBAM_P2=0.8954
+  medium      :  Mamba_CBAM_P2=0.8959
+
+CALIBRATION (ECE):
+  Mamba_CBAM_P2       : ECE=0.1309
+
+TRAINING CONVERGENCE:
+  Mamba+CBAM+P2 best epoch 103: F2=0.8351  mAP50=0.8750
+
+F2 EARLY STOPPING LOG:
+
+NaN STOP TRIGGERED:
+  False
+
+================================================================================

@@ -1,0 +1,29 @@
+[
+  {
+    "Model": "Mamba_CBAM_P2",
+    "Split": "test",
+    "N_images": 2043,
+    "Total_GT": 72523,
+    "Total_Pred": 71729,
+    "TP": 61057,
+    "FP": 10672,
+    "FN": 11466,
+    "Precision": 0.8512177780256123,
+    "Recall": 0.8418984322214905,
+    "F1": 0.8465324565889866,
+    "F2": 0.8437459404736303,
+    "very_tiny_recall": 0.7589342693044033,
+    "very_tiny_count": 25072,
+    "tiny_recall": 0.8735867446393762,
+    "tiny_count": 20520,
+    "small_recall": 0.8953558277598257,
+    "small_count": 26614,
+    "medium_recall": 0.8958990536277602,
+    "medium_count": 317,
+    "large_recall": 0.0,
+    "large_count": 0,
+    "Avg_Inf_ms": 51.21370096237493,
+    "Std_Inf_ms": 49.5997423081628,
+    "P95_Inf_ms": 68.83355689969903
+  }
+]
