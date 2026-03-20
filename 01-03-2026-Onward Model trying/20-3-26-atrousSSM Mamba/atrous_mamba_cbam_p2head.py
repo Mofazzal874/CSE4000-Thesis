@@ -141,15 +141,13 @@ warnings.filterwarnings("ignore", category=UserWarning)
 num_gpus = torch.cuda.device_count()
 gpu_name = torch.cuda.get_device_name(0) if num_gpus > 0 else "CPU"
 gpu_mem  = torch.cuda.get_device_properties(0).total_memory / 1024**3 if num_gpus > 0 else 0
-# CRITICAL: Must use SINGLE GPU ("0") — NOT "0,1".
-# DDP (multi-GPU) spawns a new subprocess that rebuilds the model from YAML,
-# which completely bypasses our post-init AtrousSSM injection. The injected
-# modules are lost and the model trains as vanilla CBAM+P2.
-# Single GPU is fine: T4 has 14.6GB, AtrousSSM needs ~12-14GB at batch=8.
-DEVICE   = "0" if num_gpus >= 1 else "cpu"
+# Multi-GPU is safe now: DetectionTrainer.get_model() is monkey-patched
+# to re-inject AtrousSSM after every model rebuild. DDP subprocesses on
+# Linux/Kaggle use fork(), so the patch survives into each worker.
+DEVICE   = "0,1" if num_gpus >= 2 else "0" if num_gpus >= 1 else "cpu"
 if num_gpus >= 2:
-    print(f"  ⚠  {num_gpus} GPUs detected but using SINGLE GPU (DEVICE='0')")
-    print(f"     Reason: DDP bypasses post-init module injection")
+    print(f"  ✓ {num_gpus} GPUs detected — using DEVICE='{DEVICE}'")
+    print(f"     get_model() patch ensures AtrousSSM survives DDP rebuild")
 print(f"GPU(s): {num_gpus}  |  GPU 0: {gpu_name} ({gpu_mem:.1f} GB)  |  DEVICE: {DEVICE}")
 
 # ── BF16 support check (P100 does NOT support BF16) ─────────────────────────
@@ -165,7 +163,7 @@ if TEST_MODE:
     TEST_IMAGES    = 10
     VAL_IMAGES     = 20
     SAVE_PERIOD    = 1
-    BATCH_SIZE     = 4
+    BATCH_SIZE     = 12
     print("⚠  TEST MODE  — 5% data, 2 epochs")
 else:
     TRAIN_FRACTION = 1.0
@@ -175,7 +173,7 @@ else:
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 8 if gpu_mem >= 14 else 4
+    BATCH_SIZE     = 12 if gpu_mem >= 14 else 4
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
 
 GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
@@ -1194,12 +1192,12 @@ ATROUS_RUN_DIR = "runs/detect/yolo11m_atrousmamba_cbam_p2head"
 ATROUS_BEST    = f"{ATROUS_RUN_DIR}/weights/best.pt"
 
 def _verify_injection_callback(trainer):
-    """Runs once at training start to verify AtrousSSM modules are present."""
+    """Runs once at on_train_start to verify AtrousSSM modules are present."""
     n_params = sum(p.numel() for p in trainer.model.parameters())
     has_mamba = any(isinstance(m, C3K2Mamba) for m in trainer.model.modules())
     n_mamba = sum(1 for m in trainer.model.modules() if isinstance(m, C3K2Mamba))
     print(f"\n{'='*70}")
-    print(f"  INJECTION VERIFICATION (on_pretrain_routine_start)")
+    print(f"  INJECTION VERIFICATION (on_train_start)")
     print(f"  Params: {n_params/1e6:.2f}M  |  C3K2Mamba layers: {n_mamba}")
     print(f"  Status: {'✓ AtrousSSM ACTIVE' if has_mamba else '✗ MISSING — training as vanilla!'}")
     if not has_mamba:
@@ -1209,7 +1207,7 @@ def _verify_injection_callback(trainer):
 
 
 def _register_callbacks(model):
-    model.add_callback("on_pretrain_routine_start", _verify_injection_callback)
+    model.add_callback("on_train_start", _verify_injection_callback)
     model.add_callback("on_train_batch_end", nan_cb.on_train_batch_end)
     model.add_callback("on_fit_epoch_end",   f2_cb.on_fit_epoch_end)
     model.add_callback("on_fit_epoch_end",   ckpt_mgr.on_fit_epoch_end)
