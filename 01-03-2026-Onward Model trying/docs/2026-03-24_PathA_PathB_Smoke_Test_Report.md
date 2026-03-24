@@ -190,3 +190,28 @@ I just added auto-detect to both files — it scans /kaggle/input/ for session_l
 Important: The session_meta.json must be in the same directory as session_last.pt (upload them together in the same dataset). It restores the F2/mAP50 tracking for early stopping continuity.
 
 
+
+
+
+Yes, the resume mechanism is fully active. Here's how it works:
+
+Resume Flow for Path B (Dual GPU)
+During training:
+
+SessionCheckpointManager saves session_last.pt + session_meta.json to /kaggle/working/ every 5 epochs
+Also saves session_best.pt (best weights so far)
+Prints resume instructions in the output each time it checkpoints
+If session times out (12h limit):
+
+Save the output — download session_last.pt + session_meta.json from /kaggle/working/ (Kaggle keeps output files after timeout)
+Upload both files as a new Kaggle Dataset
+In Cell 1, change two lines:
+
+RESUME_TRAINING = True
+RESUME_PT       = ""    # leave empty — auto-detect will find it
+Run the notebook — it auto-detects session_last.pt in /kaggle/input/, copies it to the run directory, and calls mamba_model.train(resume=True)
+Why it's safe for DDP: Path B uses YAML-native C3K2Mamba. When ultralytics rebuilds the model from YAML during resume (which DDP subprocesses do), C3K2Mamba is already in the YAML — so all SSM weights load correctly from the checkpoint. No re-injection needed.
+
+Worst case timing: At batch=12, each epoch takes ~30min (384 iterations × 4.5s). In 12h you get ~24 epochs. With patience=15, if the model plateaus around epoch 60-80, early stopping kicks in. If not, you'll need 1-2 resume sessions to finish 120 epochs.
+
+
