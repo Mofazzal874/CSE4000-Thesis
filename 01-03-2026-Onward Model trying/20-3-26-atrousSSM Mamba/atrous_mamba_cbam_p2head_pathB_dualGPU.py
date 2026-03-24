@@ -186,12 +186,12 @@ else:
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 16 if gpu_mem >= 14 else 4
+    BATCH_SIZE     = 12 if gpu_mem >= 14 else 4   # 6/GPU — batch=16 OOMs on T4 (13.7GB/14.9GB)
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~10-12h on 2×T4 (tight for 12h — early stopping helps)")
+    print(f"    ⏱  Estimated: ~12-14h on 2×T4 (early stopping helps stay within 12h)")
     print(f"    Resume built-in as backup if session times out")
 
-GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
+GRAD_ACCUM = max(1, 24 // BATCH_SIZE)   # effective batch ~24 (was 16)
 print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SIZE*GRAD_ACCUM}")
 
 # ── Checkpoint / session-resume config ──────────────────────────────────────
@@ -1608,8 +1608,20 @@ else:
             print(f"\n✓ Training complete (batch_size={_batch_attempt})")
             break
 
-        except torch.cuda.OutOfMemoryError as _oom:
-            print(f"\n💥 OOM at batch_size={_batch_attempt}: {_oom}")
+        except (torch.cuda.OutOfMemoryError, subprocess.CalledProcessError, RuntimeError) as _oom:
+            # DDP OOM manifests as CalledProcessError (SIGKILL exit code -9),
+            # not torch.cuda.OutOfMemoryError, because the subprocess is killed
+            # by the Linux OOM killer before Python can raise the exception.
+            _is_oom = (
+                isinstance(_oom, torch.cuda.OutOfMemoryError)
+                or (isinstance(_oom, subprocess.CalledProcessError) and _oom.returncode in (-9, 137))
+                or ("CUDA out of memory" in str(_oom))
+                or ("OutOfMemoryError" in str(_oom))
+            )
+            if not _is_oom:
+                raise  # re-raise non-OOM errors
+
+            print(f"\n  OOM at batch_size={_batch_attempt}: {type(_oom).__name__}: {_oom}")
 
             _partial_last = Path(ATROUS_RUN_DIR) / "weights" / "last.pt"
             if _partial_last.exists():
