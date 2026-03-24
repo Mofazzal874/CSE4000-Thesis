@@ -25,9 +25,11 @@ AtrousSSM novelty:
   ✓ Each dilation branch has independent SSM weights — specialization
   ✓ Gated per-position fusion learns optimal scale weighting
 
-Implementation strategy (same as previous):
+Implementation strategy (Path B — YAML-native):
   ✓ Pure PyTorch — zero CUDA kernel compilation
-  ✓ Post-init surgical injection — no parse_model patching
+  ✓ C3K2Mamba registered natively in ultralytics → YAML parser builds it directly
+  ✓ NO post-init injection needed — model is correct from the start
+  ✓ DDP-safe — both processes parse the same YAML with registered modules
   ✓ Bidirectional local-window scan (forward + backward) per branch
   ✓ Adaptive window size per channel depth
   ✓ FP16/AMP safe (all SSM intermediates forced to FP32)
@@ -48,20 +50,20 @@ Metrics & data saved:
   ✓ Master summary report (text + JSON)
   ✓ Everything packaged as downloadable ZIP
 
-PATH A — SINGLE GPU VERSION
-  Uses 1 GPU to avoid DDP subprocess issue that strips C3K2Mamba modules.
-  Training uses post-init injection + get_model() monkey-patch.
-  ~14-16h for 120 epochs on T4 → needs 2 Kaggle sessions (resume built-in).
+PATH B — DUAL GPU VERSION (YAML-NATIVE REGISTRATION)
+  C3K2Mamba is registered as a first-class ultralytics module.
+  The YAML references C3K2Mamba directly — no post-init injection needed.
+  DDP works because both processes parse the same YAML with registered modules.
+  ~8h for 120 epochs on 2×T4 → fits in one Kaggle session.
 
-COMPUTE NOTES (Kaggle T4 — SINGLE GPU):
-  Batch size  : 8 (T4) or 4 (P100)
+COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
+  Batch size  : 12 (T4) or 4 (P100)
   d_state     : 4  (safe for T4 16GB)
   Window size : adaptive (4→512ch, 6→256ch, 8→128ch)
   Dilations   : [1, 2, 4] (3 branches, ~1.34× scan overhead)
   Gradient clipping : max_norm=10.0 (prevents epoch-1 explosion)
-  Expected VRAM: ~10-12GB at batch=8 (T4 has 16GB)
-  Expected training time: ~14-16h for 120 epochs (single GPU)
-  Session plan: Session 1 → ~65 epochs, Session 2 → remaining epochs
+  Expected VRAM: ~6-8GB per GPU at batch=12 (T4 has 16GB)
+  Expected training time: ~8h for 120 epochs (fits in 1 session)
 ================================================================================
 """
 
@@ -147,14 +149,12 @@ warnings.filterwarnings("ignore", category=UserWarning)
 num_gpus = torch.cuda.device_count()
 gpu_name = torch.cuda.get_device_name(0) if num_gpus > 0 else "CPU"
 gpu_mem  = torch.cuda.get_device_properties(0).total_memory / 1024**3 if num_gpus > 0 else 0
-# PATH A: Force single GPU to guarantee C3K2Mamba survives.
-# DDP (multi-GPU) spawns a subprocess that rebuilds from YAML, losing injection.
-# Single GPU keeps everything in one process — injection persists.
-DEVICE = "0" if num_gpus >= 1 else "cpu"
+# PATH B: Dual GPU is safe because C3K2Mamba is registered natively in YAML.
+# DDP subprocesses parse the same YAML → C3K2Mamba is built directly.
+DEVICE = "0,1" if num_gpus >= 2 else "0" if num_gpus >= 1 else "cpu"
 if num_gpus >= 2:
-    print(f"  ⚠ {num_gpus} GPUs detected — but using DEVICE='0' (single GPU)")
-    print(f"    Reason: DDP subprocess rebuilds model from YAML, losing C3K2Mamba.")
-    print(f"    For dual-GPU, use Path B (atrous_mamba_cbam_p2head_pathB_dualGPU.py)")
+    print(f"  ✓ {num_gpus} GPUs detected — using DEVICE='{DEVICE}' (DDP-safe)")
+    print(f"    C3K2Mamba is YAML-native → survives DDP subprocess rebuild")
 print(f"GPU(s): {num_gpus}  |  GPU 0: {gpu_name} ({gpu_mem:.1f} GB)  |  DEVICE: {DEVICE}")
 
 # ── BF16 support check (P100 does NOT support BF16) ─────────────────────────
@@ -180,9 +180,9 @@ else:
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 8 if gpu_mem >= 14 else 4
+    BATCH_SIZE     = 12 if gpu_mem >= 14 else 4
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~14-16h on T4 → needs 2 Kaggle sessions")
+    print(f"    ⏱  Estimated: ~8h on 2×T4 → fits in 1 Kaggle session")
 
 GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
 print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SIZE*GRAD_ACCUM}")
@@ -710,22 +710,203 @@ assert run_smoke_test(), "Smoke test failed — fix errors before training!"
 
 
 # ============================================================================
-# CELL 7: Register Modules in Ultralytics Namespace (DDP-safe)
+# CELL 7: Register CBAM + C3K2Mamba in Ultralytics (YAML-native for DDP)
 # ============================================================================
+#
+# PATH B STRATEGY:
+#   Instead of injecting C3K2Mamba after model build (which DDP destroys),
+#   we register C3K2Mamba as a native ultralytics module. The YAML parser
+#   then builds C3K2Mamba directly — no injection needed. DDP subprocesses
+#   parse the same YAML and find C3K2Mamba in the module registry.
+#
 import site as _site
 
+# ── Step 1: Write atrous_mamba_module.py (contains all SSM classes) ────────
+# This file will be copied to site-packages so DDP subprocesses can import it.
+
+_atrous_module_code = '''
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
+
+
+def _get_window_size(channels: int) -> int:
+    if channels >= 512: return 4
+    if channels >= 256: return 6
+    return 8
+
+
+class _SelectiveScan1D(nn.Module):
+    """One-direction selective scan. u: (B, L, D) -> (B, L, D)"""
+    def __init__(self, d_model: int, d_state: int = 4, dt_rank_ratio: int = 16):
+        super().__init__()
+        D, N = d_model, d_state
+        dt_rank = max(D // dt_rank_ratio, 1)
+        self.D, self.N, self.dt_rank = D, N, dt_rank
+        self.conv1d = nn.Conv1d(D, D, kernel_size=4, padding=3, groups=D, bias=True)
+        self.x_proj  = nn.Linear(D, dt_rank + 2 * N, bias=False)
+        self.dt_proj = nn.Linear(dt_rank, D, bias=True)
+        A = torch.arange(1, N + 1, dtype=torch.float32).unsqueeze(0).repeat(D, 1)
+        self.A_log = nn.Parameter(torch.log(A))
+        self.D_skip = nn.Parameter(torch.ones(D))
+        dt_init = torch.exp(
+            torch.rand(D) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
+        inv_dt = dt_init + torch.log(-torch.expm1(-dt_init))
+        with torch.no_grad():
+            self.dt_proj.bias.copy_(inv_dt)
+
+    def forward(self, u):
+        B_win, L, D = u.shape
+        in_dtype = u.dtype
+        u_conv = self.conv1d(u.transpose(1, 2))[:, :, :L].transpose(1, 2)
+        u_act = F.silu(u_conv)
+        xBC_dt = self.x_proj(u_act)
+        dt_raw, B_param, C_param = xBC_dt.split([self.dt_rank, self.N, self.N], dim=-1)
+        dt = F.softplus(self.dt_proj(dt_raw)).float()
+        B_param, C_param, u_f = B_param.float(), C_param.float(), u_act.float()
+        A = -torch.exp(self.A_log.float())
+        deltaA = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
+        x = torch.zeros(B_win, D, self.N, device=u.device, dtype=torch.float32)
+        ys = []
+        for i in range(L):
+            x = deltaA[:, i] * x + deltaB_u[:, i]
+            ys.append((x * C_param[:, i, :].unsqueeze(1)).sum(-1))
+        y = torch.stack(ys, dim=1).to(in_dtype)
+        return y + u_act * self.D_skip.to(in_dtype)
+
+
+class AtrousSSM(nn.Module):
+    """Multi-Scale Dilated Window State Space Model."""
+    def __init__(self, d_model, d_state=4, window_size=8, dilations=None):
+        super().__init__()
+        self.ws = window_size
+        self.dilations = dilations or [1, 2, 4]
+        D = d_model
+        n_br = len(self.dilations)
+        self.branches = nn.ModuleList()
+        for _ in self.dilations:
+            branch = nn.ModuleDict({
+                'norm':     nn.LayerNorm(D),
+                'in_proj':  nn.Linear(D, D * 2, bias=False),
+                'scan_fwd': _SelectiveScan1D(D, d_state),
+                'scan_bwd': _SelectiveScan1D(D, d_state),
+                'out_proj': nn.Linear(D, D, bias=False),
+            })
+            nn.init.normal_(branch['out_proj'].weight, std=0.02)
+            nn.init.xavier_uniform_(branch['in_proj'].weight)
+            self.branches.append(branch)
+        self.fusion_gate = nn.Sequential(nn.Conv2d(D * n_br, D, 1, bias=False), nn.Sigmoid())
+        self.fusion_proj = nn.Conv2d(D * n_br, D, 1, bias=False)
+        self.out_norm = nn.LayerNorm(D)
+        nn.init.normal_(self.fusion_gate[0].weight, std=0.01)
+        nn.init.normal_(self.fusion_proj.weight, std=0.02)
+
+    def _dilated_partition(self, x, dilation):
+        B, C, H, W = x.shape
+        ws, region = self.ws, self.ws * dilation
+        ph, pw = (region - H % region) % region, (region - W % region) % region
+        if ph or pw:
+            x = F.pad(x, (0, pw, 0, ph))
+        _, _, Hp, Wp = x.shape
+        nH, nW = Hp // region, Wp // region
+        x = x.reshape(B, C, nH, region, nW, region).permute(0, 2, 4, 1, 3, 5)
+        x = x[:, :, :, :, ::dilation, ::dilation].contiguous()
+        return x.reshape(B * nH * nW, C, ws * ws).transpose(1, 2), (B, C, H, W, Hp, Wp, nH, nW)
+
+    def _dilated_reverse(self, tokens, meta, dilation):
+        B, C, H, W, Hp, Wp, nH, nW = meta
+        ws, region = self.ws, self.ws * dilation
+        windows = tokens.transpose(1, 2).reshape(B * nH * nW, C, ws, ws)
+        if dilation > 1:
+            windows = F.interpolate(windows, size=(region, region), mode='bilinear', align_corners=False)
+        x = windows.reshape(B, nH, nW, C, region, region).permute(0, 3, 1, 4, 2, 5)
+        return x.reshape(B, C, Hp, Wp)[:, :, :H, :W].contiguous()
+
+    def forward(self, x):
+        branch_outputs = []
+        for branch, dilation in zip(self.branches, self.dilations):
+            tokens, meta = self._dilated_partition(x, dilation)
+            residual = tokens
+            tokens_n = branch['norm'](tokens)
+            xz = branch['in_proj'](tokens_n)
+            x_in, z = xz.chunk(2, dim=-1)
+            y_fwd = branch['scan_fwd'](x_in)
+            y_bwd = branch['scan_bwd'](x_in.flip(1)).flip(1)
+            y = (y_fwd + y_bwd) * F.silu(z)
+            y = branch['out_proj'](y) + residual
+            branch_outputs.append(self._dilated_reverse(y, meta, dilation))
+        concat = torch.cat(branch_outputs, dim=1)
+        gate = self.fusion_gate(concat)
+        fused = self.fusion_proj(concat)
+        out = fused * gate + x * (1 - gate)
+        out = self.out_norm(out.permute(0, 2, 3, 1)).permute(0, 3, 1, 2)
+        return out
+
+
+class _MambaBottleneck(nn.Module):
+    def __init__(self, c, shortcut, d_state, window_size, dilations=None):
+        super().__init__()
+        from ultralytics.nn.modules.conv import Conv
+        self.cv1 = Conv(c, c, 3, 1)
+        self.ssm = AtrousSSM(c, d_state=d_state, window_size=window_size, dilations=dilations)
+        self.cv2 = Conv(c, c, 3, 1)
+        self.add = shortcut
+
+    def forward(self, x):
+        y = self.cv2(self.ssm(self.cv1(x)))
+        return x + y if self.add else y
+
+
+class C3K2Mamba(nn.Module):
+    """C2f-style block with AtrousSSM bottleneck. Drop-in for C3k2 in YOLO11m neck.
+    YAML args: [c2, shortcut, g, e, d_state, dilations]
+    After parse_model inserts n: C3K2Mamba(c1, c2, n, shortcut, g, e, d_state, dilations)
+    """
+    def __init__(self, c1, c2, n=1, shortcut=False, g=1, e=0.5,
+                 d_state=4, dilations=None):
+        super().__init__()
+        from ultralytics.nn.modules.conv import Conv
+        self.c = int(c2 * e)
+        ws = _get_window_size(self.c)
+        self.cv1 = Conv(c1, 2 * self.c, 1, 1)
+        self.cv2 = Conv((2 + n) * self.c, c2, 1)
+        self.m = nn.ModuleList(
+            _MambaBottleneck(self.c, shortcut and c1 == c2,
+                             d_state, ws, dilations=dilations or [1, 2, 4])
+            for _ in range(n)
+        )
+
+    def forward(self, x):
+        y = list(self.cv1(x).chunk(2, 1))
+        y.extend(m(y[-1]) for m in self.m)
+        return self.cv2(torch.cat(y, 1))
+'''
+
+with open("/kaggle/working/atrous_mamba_module.py", "w") as f:
+    f.write(_atrous_module_code)
+print("✓ atrous_mamba_module.py written")
+
+# Also write CBAM module
 _cbam_src = "/kaggle/working/cbam_module.py"
-_installed = False
+
+# ── Step 2: Copy both modules to site-packages ────────────────────────────
+_installed_sp = None
 for _sp in _site.getsitepackages():
     try:
         shutil.copy(_cbam_src, os.path.join(_sp, "cbam_module.py"))
+        shutil.copy("/kaggle/working/atrous_mamba_module.py",
+                     os.path.join(_sp, "atrous_mamba_module.py"))
         print(f"  ✓ cbam_module.py → site-packages: {_sp}")
-        _installed = True
+        print(f"  ✓ atrous_mamba_module.py → site-packages: {_sp}")
+        _installed_sp = _sp
         break
     except Exception:
         continue
-if not _installed:
-    print("  ⚠  Could not install to site-packages; DDP may still fail")
+
+if _installed_sp is None:
+    print("  ⚠  Could not install to site-packages")
 
 if "/kaggle/working" not in sys.path:
     sys.path.insert(0, "/kaggle/working")
@@ -734,102 +915,159 @@ _existing_pypath = os.environ.get("PYTHONPATH", "")
 os.environ["PYTHONPATH"] = "/kaggle/working" + (
     ":" + _existing_pypath if _existing_pypath else "")
 
+# ── Step 3: Patch ultralytics source to import CBAM + C3K2Mamba ────────────
 import ultralytics.nn.tasks as _ult_tasks_mod
 _tasks_file = _ult_tasks_mod.__file__
-_inject     = "from cbam_module import CBAM, ChannelAttention, SpatialAttention\n"
+
+_cbam_inject   = "from cbam_module import CBAM, ChannelAttention, SpatialAttention\n"
+_mamba_inject  = "from atrous_mamba_module import C3K2Mamba, AtrousSSM, _MambaBottleneck, _SelectiveScan1D\n"
 
 with open(_tasks_file, "r") as _f:
     _tasks_src = _f.read()
 
+_tasks_changed = False
 if "from cbam_module import" not in _tasks_src:
-    _tasks_src = _inject + _tasks_src
+    _tasks_src = _cbam_inject + _tasks_src
+    _tasks_changed = True
+if "from atrous_mamba_module import" not in _tasks_src:
+    _tasks_src = _mamba_inject + _tasks_src
+    _tasks_changed = True
+
+if _tasks_changed:
     with open(_tasks_file, "w") as _f:
         _f.write(_tasks_src)
-    print(f"  ✓ Patched ultralytics/nn/tasks.py with CBAM import")
+    print(f"  ✓ Patched ultralytics/nn/tasks.py with CBAM + C3K2Mamba imports")
 else:
     print(f"  ✓ ultralytics/nn/tasks.py already patched")
 
+# Patch modules/__init__.py too
 import ultralytics.nn.modules as _ult_modules_mod
 _modules_init = os.path.join(os.path.dirname(_ult_modules_mod.__file__), "__init__.py")
 with open(_modules_init, "r") as _f:
     _modules_src = _f.read()
 
+_modules_changed = False
 if "from cbam_module import" not in _modules_src:
-    _modules_src = _inject + _modules_src
+    _modules_src = _cbam_inject + _modules_src
+    _modules_changed = True
+if "from atrous_mamba_module import" not in _modules_src:
+    _modules_src = _mamba_inject + _modules_src
+    _modules_changed = True
+
+if _modules_changed:
     with open(_modules_init, "w") as _f:
         _f.write(_modules_src)
-    print(f"  ✓ Patched ultralytics/nn/modules/__init__.py with CBAM import")
+    print(f"  ✓ Patched ultralytics/nn/modules/__init__.py with CBAM + C3K2Mamba imports")
 else:
     print(f"  ✓ ultralytics/nn/modules/__init__.py already patched")
 
+# ── Step 4: Patch parse_model to recognize C3K2Mamba ──────────────────────
+# parse_model has sets of module classes that need special handling:
+#   Set A: modules where c1,c2 are extracted from args (channel scaling)
+#   Set B: modules where n (repeat count) is inserted into args
+# We add C3K2Mamba to both sets by patching the source code.
+
+with open(_tasks_file, "r") as _f:
+    _tasks_src = _f.read()
+
+# Find and patch the set that contains C3k2 for the n-insertion logic
+# Pattern: "if m in {C3k2," or "if m in (C3k2,"
+import re as _re
+
+_patched_parse = False
+
+# Strategy: find lines containing "C3k2" in a set/tuple check and add C3K2Mamba
+for _pattern in [
+    # Match: "if m in {C3k2, C2f, ..." and add C3K2Mamba
+    r'(if m in \{[^}]*C3k2)',
+    r'(if m in \([^)]*C3k2)',
+    # Also match lines like "{C3k2, C2f}" as standalone sets
+    r'(\{[^}]*C3k2[^}]*\})',
+]:
+    for _match in _re.finditer(_pattern, _tasks_src):
+        _orig = _match.group(0)
+        if "C3K2Mamba" not in _orig:
+            _new = _orig.replace("C3k2", "C3k2, C3K2Mamba")
+            _tasks_src = _tasks_src.replace(_orig, _new, 1)
+            _patched_parse = True
+
+if _patched_parse:
+    with open(_tasks_file, "w") as _f:
+        _f.write(_tasks_src)
+    print(f"  ✓ Patched parse_model() to recognize C3K2Mamba")
+else:
+    print(f"  ⚠ Could not patch parse_model — C3K2Mamba may not be recognized in YAML")
+    print(f"    Falling back: will verify during dry-run")
+
+# ── Step 5: Reload modules ────────────────────────────────────────────────
 import importlib
 importlib.reload(_ult_tasks_mod)
 importlib.reload(_ult_modules_mod)
 
 from cbam_module import CBAM, ChannelAttention, SpatialAttention
+from atrous_mamba_module import C3K2Mamba as _C3K2Mamba_ext
 import ultralytics.nn.modules as ult_modules
 import ultralytics.nn.tasks  as ult_tasks
 
 for name, obj in [("CBAM", CBAM),
                    ("ChannelAttention", ChannelAttention),
-                   ("SpatialAttention", SpatialAttention)]:
+                   ("SpatialAttention", SpatialAttention),
+                   ("C3K2Mamba", _C3K2Mamba_ext),
+                   ("AtrousSSM", AtrousSSM),
+                   ("_MambaBottleneck", _MambaBottleneck),
+                   ("_SelectiveScan1D", _SelectiveScan1D)]:
     setattr(ult_modules, name, obj)
     setattr(ult_tasks,   name, obj)
 
+# Also ensure they're in the global scope of tasks.py for parse_model eval()
+import types
+_tasks_module = importlib.import_module("ultralytics.nn.tasks")
+for name, obj in [("C3K2Mamba", C3K2Mamba),
+                   ("AtrousSSM", AtrousSSM),
+                   ("_MambaBottleneck", _MambaBottleneck),
+                   ("_SelectiveScan1D", _SelectiveScan1D)]:
+    setattr(_tasks_module, name, obj)
+
 assert hasattr(ult_modules, "CBAM"), "CBAM registration failed"
-print("✓ CBAM registered in ultralytics namespace (DDP-safe)")
+assert hasattr(ult_tasks, "C3K2Mamba"), "C3K2Mamba registration failed"
+print("✓ CBAM + C3K2Mamba registered in ultralytics namespace (DDP-safe)")
 
 
 # ============================================================================
-# CELL 8: Post-Init Injection Function + Trainer Monkey-Patch
+# CELL 8: YAML with C3K2Mamba (NATIVE — no injection needed) + Gradient Clipping
 # ============================================================================
+#
+# The YAML below uses C3K2Mamba directly in the neck layers (13,16,19,22,25,28).
+# Since C3K2Mamba is registered in ultralytics, parse_model builds it natively.
+# No post-init injection needed. DDP subprocesses build the same architecture.
+#
 
-def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
-                             max_channels: int = 512,
-                             d_state: int = 4,
-                             dilations: list = None,
-                             verbose: bool = True) -> list:
-    """
-    Core injection logic: replace eligible C3k2/C2f layers in an nn.Sequential
-    with C3K2Mamba (AtrousSSM).  Works on both YOLO.model.model (nn.Sequential)
-    and DetectionModel.model (nn.Sequential).
-    """
+# NOTE: inject_mamba_neck is still defined for evaluation model loading fallback
+def inject_mamba_neck(yolo_model, min_layer_idx=11, max_channels=512,
+                       d_state=4, dilations=None, verbose=True):
+    """Fallback injection for models loaded from checkpoint that lost C3K2Mamba."""
     try:
         from ultralytics.nn.modules.block import C3k2, C2f
     except ImportError:
         from ultralytics.nn.modules import C3k2, C2f
 
+    nn_model = yolo_model.model.model
     replaced = []
-
     for idx, layer in enumerate(nn_model):
-        if idx < min_layer_idx:
-            continue
-        if not isinstance(layer, (C3k2, C2f)):
+        if idx < min_layer_idx or not isinstance(layer, (C3k2, C2f)):
             continue
         if not (hasattr(layer, "cv1") and hasattr(layer, "cv2")):
             continue
-
         c1 = layer.cv1.conv.in_channels
-        c_ = getattr(layer, "c", layer.cv1.conv.out_channels // 2)
         c2 = layer.cv2.conv.out_channels
         n  = len(layer.m)
         shortcut = getattr(layer.m[0], "add", False) if len(layer.m) > 0 else False
-
         if c2 > max_channels:
-            if verbose:
-                print(f"  SKIP  layer {idx:2d}: {type(layer).__name__}"
-                      f"({c1}→{c2}) — c2 > {max_channels}")
             continue
-
-        dev   = next(layer.parameters()).device
-        new   = C3K2Mamba(c1, c2, n=n, shortcut=shortcut,
-                          d_state=d_state, dilations=dilations)
-        new   = new.to(device=dev)
-
-        # Transfer pretrained weights from original C3k2 → C3K2Mamba
-        # Outer cv1/cv2: same shapes → direct transfer
-        # Bottleneck cv1/cv2: C3k2.Bottleneck.cv1/cv2 → MambaBottleneck.cv1/cv2
-        # Only the SSM (AtrousSSM) parts start from random initialization.
+        dev = next(layer.parameters()).device
+        new = C3K2Mamba(c1, c2, n=n, shortcut=shortcut,
+                        d_state=d_state, dilations=dilations or DILATIONS)
+        new = new.to(device=dev)
         try:
             new.cv1.load_state_dict(layer.cv1.state_dict())
             new.cv2.load_state_dict(layer.cv2.state_dict())
@@ -841,90 +1079,20 @@ def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
                     m_new.cv1.load_state_dict(layer.m[i].cv1.state_dict())
                     m_new.cv2.load_state_dict(layer.m[i].cv2.state_dict())
                 except Exception:
-                    pass  # shape mismatch — use random init
-
+                    pass
         for attr in ("f", "i", "np"):
             if hasattr(layer, attr):
                 setattr(new, attr, getattr(layer, attr))
         new.type = type(new).__name__
-
         nn_model[idx] = new
         replaced.append((idx, c1, c2, n))
         if verbose:
-            ws = _get_window_size(c_)
-            print(f"  ✓ layer {idx:2d}: {type(layer).__name__:8s}"
-                  f"({c1}→{c2}, n={n}) → C3K2Mamba(AtrousSSM)  "
-                  f"[ws={ws}, d={d_state}, dil={dilations}]")
-
+            print(f"  ✓ layer {idx:2d}: → C3K2Mamba ({c1}→{c2}, n={n})")
     if verbose:
-        print(f"\n  Total injected: {len(replaced)} layer(s)")
-        if len(replaced) == 0:
-            print("  ⚠  Nothing was injected — check min_layer_idx / max_channels")
+        print(f"  Total injected: {len(replaced)} layer(s)")
     return replaced
 
-
-def inject_mamba_neck(yolo_model, min_layer_idx: int = 11,
-                       max_channels: int = 512,
-                       d_state: int = 4,
-                       dilations: list = None,
-                       verbose: bool = True) -> list:
-    """
-    Surgically replace eligible C3k2/C2f neck layers with C3K2Mamba (AtrousSSM).
-    Accepts a YOLO model wrapper (accesses .model.model for nn.Sequential).
-    """
-    nn_model = yolo_model.model.model
-    return _inject_into_sequential(nn_model, min_layer_idx, max_channels,
-                                   d_state, dilations, verbose)
-
-
-# ── CRITICAL FIX: Monkey-patch DetectionTrainer.get_model() ─────────────────
-#
-# WHY THIS IS NEEDED:
-#   Ultralytics' Model.train() internally calls trainer.get_model(cfg=yaml, weights=model)
-#   which REBUILDS a fresh model from the YAML config and then transfers weights.
-#   Since the YAML only has C3k2 (not C3K2Mamba), the rebuilt model loses ALL
-#   injected AtrousSSM modules.  The model trains as vanilla CBAM+P2 (19.59M params)
-#   instead of AtrousMamba (25.03M params).
-#
-# FIX:
-#   We monkey-patch get_model() to re-inject AtrousSSM AFTER the model is rebuilt
-#   from YAML.  This ensures:
-#   1. The trainer's model has AtrousSSM modules
-#   2. The optimizer includes AtrousSSM parameters
-#   3. Saved checkpoints contain the full AtrousMamba architecture
-#
-from ultralytics.models.yolo.detect.train import DetectionTrainer
-
-_orig_get_model = DetectionTrainer.get_model
-
-def _patched_get_model(self, cfg=None, weights=None, verbose=True):
-    """Build model from YAML, transfer base weights, then inject AtrousSSM."""
-    model = _orig_get_model(self, cfg, weights, verbose)
-
-    # Re-inject AtrousSSM into the freshly built model
-    print("\n  ── Re-injecting AtrousSSM into trainer model (post-get_model patch) ──")
-    nn_model = model.model  # DetectionModel.model is nn.Sequential
-    replaced = _inject_into_sequential(
-        nn_model, min_layer_idx=11, max_channels=512,
-        d_state=D_STATE, dilations=DILATIONS, verbose=True
-    )
-
-    if len(replaced) == 0:
-        raise RuntimeError(
-            "CRITICAL: AtrousSSM re-injection failed inside trainer.get_model()! "
-            "No layers were replaced. The model would train as vanilla CBAM+P2."
-        )
-
-    n_params = sum(p.numel() for p in model.parameters())
-    print(f"  ✓ Trainer model params after injection: {n_params/1e6:.2f}M")
-    print(f"  ── Re-injection complete ──\n")
-
-    return model
-
-DetectionTrainer.get_model = _patched_get_model
-print("✓ DetectionTrainer.get_model() PATCHED — AtrousSSM survives model rebuild")
-
-# ── Gradient clipping (prevents epoch-1 explosion with new SSM params) ────
+# ── Gradient clipping ────────────────────────────────────────────────────
 from ultralytics.engine.trainer import BaseTrainer
 _orig_opt_step = BaseTrainer.optimizer_step
 
@@ -942,19 +1110,53 @@ BaseTrainer.optimizer_step = _clipped_optimizer_step
 print("✓ Gradient clipping enabled (max_norm=10.0)")
 
 
-def _dry_run_injection():
-    from ultralytics import YOLO
-    print("\n--- Injection dry-run ---")
-    _m = YOLO("yolov11m_cbam_p2head.yaml")
-    _m.load("yolo11m.pt")
-    replaced = inject_mamba_neck(_m, verbose=True, dilations=DILATIONS)
-    n_params = sum(p.numel() for p in _m.model.parameters())
-    print(f"  Params after injection: {n_params/1e6:.2f}M")
-    del _m; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
-    assert len(replaced) > 0, "Dry-run injection found nothing to replace!"
-    print("--- Injection dry-run PASSED ---\n")
+# ── YAML: C3K2Mamba is used DIRECTLY in neck layers ──────────────────────
+# Neck layers 13,16,19,22,25,28 use C3K2Mamba instead of C3k2.
+# Args: [c2, shortcut, g, e, d_state, dilations_list]
+# parse_model will: prepend c1, insert n → C3K2Mamba(c1, c2, n, shortcut, g, e, d_state, dil)
 
-cbam_p2_yaml = """# YOLO11m + CBAM + P2 (base for AtrousSSM injection)
+_ATROUS_YAML = f"""# YOLO11m + CBAM + P2 + AtrousMamba neck (YAML-NATIVE)
+nc: 1
+scales:
+  m: [0.50, 1.00, 512]
+
+backbone:
+  - [-1, 1, Conv, [64, 3, 2]]
+  - [-1, 1, Conv, [128, 3, 2]]
+  - [-1, 2, C3k2, [256, False, 0.25]]
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [-1, 2, C3k2, [512, False, 0.25]]
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [-1, 2, C3k2, [512, True]]
+  - [-1, 1, Conv, [1024, 3, 2]]
+  - [-1, 2, C3k2, [1024, True]]
+  - [-1, 1, SPPF, [1024, 5]]
+  - [-1, 1, CBAM, [16, 7]]
+
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 6], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 4], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 2], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [128, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 1, Conv, [128, 3, 2]]
+  - [[-1, 16], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 13], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [1]]
+  - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [[19, 22, 25, 28], 1, Detect, [nc]]
+"""
+
+# Also write the base C3k2 YAML (needed for comparison model loading)
+_BASE_YAML = """# YOLO11m + CBAM + P2 (base — for comparison loading)
 nc: 1
 scales:
   m: [0.50, 1.00, 512]
@@ -993,11 +1195,46 @@ head:
   - [-1, 2, C3k2, [1024, True]]
   - [[19, 22, 25, 28], 1, Detect, [nc]]
 """
-with open("yolov11m_cbam_p2head.yaml", "w") as f:
-    f.write(cbam_p2_yaml)
-print("✓ CBAM+P2 YAML written")
 
-_dry_run_injection()
+with open("yolov11m_atrousmamba_cbam_p2head.yaml", "w") as f:
+    f.write(_ATROUS_YAML)
+with open("yolov11m_cbam_p2head.yaml", "w") as f:
+    f.write(_BASE_YAML)
+print("✓ AtrousMamba YAML written (C3K2Mamba native in neck)")
+print("✓ Base CBAM+P2 YAML written (for comparison loading)")
+
+
+# ── Dry-run: verify YAML parses correctly with C3K2Mamba ────────────────
+def _dry_run_yaml():
+    from ultralytics import YOLO
+    print("\n--- YAML dry-run (no injection — C3K2Mamba is native) ---")
+    _m = YOLO("yolov11m_atrousmamba_cbam_p2head.yaml")
+    _m.load("yolo11m.pt")
+
+    has_mamba = any(isinstance(mod, C3K2Mamba) for mod in _m.model.modules())
+    n_mamba = sum(1 for mod in _m.model.modules() if isinstance(mod, C3K2Mamba))
+    n_params = sum(p.numel() for p in _m.model.parameters())
+
+    print(f"  C3K2Mamba layers: {n_mamba}")
+    print(f"  Total params: {n_params/1e6:.2f}M")
+    print(f"  Status: {'✓ NATIVE C3K2Mamba' if has_mamba else '✗ MISSING'}")
+
+    if not has_mamba:
+        print("\n  ⚠ YAML parsing did NOT produce C3K2Mamba modules!")
+        print("  Dumping model layers for diagnosis:")
+        for idx, layer in enumerate(_m.model.model):
+            print(f"    [{idx:2d}] {type(layer).__name__}")
+        raise RuntimeError(
+            "YAML dry-run FAILED: C3K2Mamba not found in parsed model.\n"
+            "The parse_model patch may have failed. Check the output above.")
+
+    assert n_mamba >= 5, f"Expected ≥5 C3K2Mamba layers, got {n_mamba}"
+    assert n_params > 20e6, f"Expected >20M params, got {n_params/1e6:.2f}M"
+
+    del _m; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
+    print("--- YAML dry-run PASSED ---\n")
+
+_dry_run_yaml()
 
 
 # ============================================================================
@@ -1222,12 +1459,12 @@ def _verify_injection_callback(trainer):
     has_mamba = any(isinstance(m, C3K2Mamba) for m in trainer.model.modules())
     n_mamba = sum(1 for m in trainer.model.modules() if isinstance(m, C3K2Mamba))
     print(f"\n{'='*70}")
-    print(f"  INJECTION VERIFICATION (on_train_start)")
+    print(f"  YAML-NATIVE VERIFICATION (on_train_start)")
     print(f"  Params: {n_params/1e6:.2f}M  |  C3K2Mamba layers: {n_mamba}")
-    print(f"  Status: {'✓ AtrousSSM ACTIVE' if has_mamba else '✗ MISSING — training as vanilla!'}")
+    print(f"  Status: {'✓ AtrousSSM ACTIVE (YAML-native)' if has_mamba else '✗ MISSING — training as vanilla!'}")
     if not has_mamba:
         print(f"  ⚠  CRITICAL: Model does NOT contain C3K2Mamba!")
-        print(f"  ⚠  The trainer.get_model() patch may have failed.")
+        print(f"  ⚠  C3K2Mamba registration may have failed — check Cell 7 output.")
     print(f"{'='*70}\n")
 
 
@@ -1286,7 +1523,7 @@ if RESUME_TRAINING and RESUME_PT:
         print(f"  ✓ C3K2Mamba PRESENT in checkpoint ({_n_p/1e6:.2f}M)")
     else:
         print(f"  ⚠ C3K2Mamba MISSING from checkpoint ({_n_p/1e6:.2f}M)")
-        print(f"    → get_model() patch will re-inject during resume setup")
+        print(f"    → YAML-native registration should rebuild C3K2Mamba during resume")
 
     _register_callbacks(mamba_model)
     print(f"\n⚡ RESUMING training from {_local_last}")
@@ -1299,17 +1536,19 @@ else:
     for _batch_attempt in OOM_RETRY_BATCHES:
         print(f"\n→ Attempting training with batch_size={_batch_attempt} …")
 
-        mamba_model = YOLO("yolov11m_cbam_p2head.yaml")
+        # PATH B: Load AtrousMamba YAML directly — C3K2Mamba is native
+        mamba_model = YOLO("yolov11m_atrousmamba_cbam_p2head.yaml")
         mamba_model.load("yolo11m.pt")
-        print("  ✓ Architecture + ImageNet weights loaded")
+        print("  ✓ AtrousMamba YAML loaded + ImageNet weights transferred")
 
-        print("  Injecting AtrousSSM blocks into neck …")
-        replaced = inject_mamba_neck(
-            mamba_model, d_state=D_STATE, dilations=DILATIONS,
-            verbose=(_batch_attempt == OOM_RETRY_BATCHES[0])
-        )
-        if len(replaced) == 0:
-            raise RuntimeError("Injection produced no replacements — abort!")
+        # Verify C3K2Mamba is present (should be — it's in the YAML)
+        _n_mamba = sum(1 for m in mamba_model.model.modules() if isinstance(m, C3K2Mamba))
+        _n_p = sum(p.numel() for p in mamba_model.model.parameters())
+        print(f"  C3K2Mamba layers: {_n_mamba}  |  Params: {_n_p/1e6:.2f}M")
+        if _n_mamba == 0:
+            raise RuntimeError(
+                "YAML parsed but C3K2Mamba NOT found! "
+                "Registration in Cell 7 may have failed. Check dry-run output.")
 
         mamba_model.info(verbose=False)
         _register_callbacks(mamba_model)
@@ -1555,9 +1794,8 @@ def _load_atrous_model(weights_path: str, label: str = "model",
             print(f"  ✗ Cannot extract state_dict — using base model")
             return model
 
-        # Build fresh model with injection
-        fresh = YOLO("yolov11m_cbam_p2head.yaml")
-        inject_mamba_neck(fresh, d_state=D_STATE, dilations=DILATIONS, verbose=False)
+        # PATH B: Build fresh model from AtrousMamba YAML (native C3K2Mamba)
+        fresh = YOLO("yolov11m_atrousmamba_cbam_p2head.yaml")
 
         # Load state_dict with strict=False (base weights match, Mamba weights may differ)
         missing, unexpected = fresh.model.load_state_dict(src_sd, strict=False)
