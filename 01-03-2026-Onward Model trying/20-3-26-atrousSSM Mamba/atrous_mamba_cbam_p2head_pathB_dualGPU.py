@@ -54,16 +54,21 @@ PATH B — DUAL GPU VERSION (YAML-NATIVE REGISTRATION)
   C3K2Mamba is registered as a first-class ultralytics module.
   The YAML references C3K2Mamba directly — no post-init injection needed.
   DDP works because both processes parse the same YAML with registered modules.
-  ~8h for 120 epochs on 2×T4 → fits in one Kaggle session.
+  Resume-safe: YAML stores C3K2Mamba → checkpoint rebuild preserves architecture.
 
 COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
-  Batch size  : 12 (T4) or 4 (P100)
+  Batch size  : 16 (T4×2) or 4 (P100)
   d_state     : 4  (safe for T4 16GB)
   Window size : adaptive (4→512ch, 6→256ch, 8→128ch)
-  Dilations   : [1, 2, 4] (3 branches, ~1.34× scan overhead)
+  Dilations   : [1, 2, 4] (3 branches — sequential Python scan)
   Gradient clipping : max_norm=10.0 (prevents epoch-1 explosion)
-  Expected VRAM: ~6-8GB per GPU at batch=12 (T4 has 16GB)
-  Expected training time: ~8h for 120 epochs (fits in 1 session)
+  Expected VRAM: ~8-10GB per GPU at batch=16 (T4 has 16GB)
+
+  TIMING (reference: base model = 7.768h on 2×T4 @ batch=12):
+    AtrousMamba SSM scan adds ~1.5-2× overhead on neck layers.
+    Realistic estimate: ~10-12h for 120 epochs on 2×T4.
+    TIGHT for 12h session — early stopping should help.
+    Resume built-in as backup if session times out.
 ================================================================================
 """
 
@@ -72,9 +77,10 @@ COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
 # ============================================================================
 
 TEST_MODE       = True   # True = 2 epochs, 5% data | False = full 120 epochs
-RESUME_TRAINING = False   # Set True + set RESUME_PT to resume from a checkpoint
-RESUME_PT       = ""      # Path to last.pt from a previous session, e.g.:
+RESUME_TRAINING = False   # Set True to resume from a checkpoint
+RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT, e.g.:
                           # "/kaggle/input/atrous-mamba-checkpoint/session_last.pt"
+                          # AUTO-DETECT: if empty, scans /kaggle/input/ for session_last.pt
 
 import subprocess, sys, re
 
@@ -180,9 +186,10 @@ else:
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 12 if gpu_mem >= 14 else 4
+    BATCH_SIZE     = 16 if gpu_mem >= 14 else 4
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~8h on 2×T4 → fits in 1 Kaggle session")
+    print(f"    ⏱  Estimated: ~10-12h on 2×T4 (tight for 12h — early stopping helps)")
+    print(f"    Resume built-in as backup if session times out")
 
 GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
 print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SIZE*GRAD_ACCUM}")
@@ -1489,6 +1496,20 @@ except AttributeError:
     pass  # older PyTorch — pickle will still find classes in __main__
 
 # ── RESUME PATH ──────────────────────────────────────────────────────────────
+# Auto-detect: if RESUME_TRAINING=True but RESUME_PT is empty, scan /kaggle/input/
+if RESUME_TRAINING and not RESUME_PT:
+    print("  Auto-detecting checkpoint in /kaggle/input/ …")
+    for _root, _dirs, _files in os.walk("/kaggle/input"):
+        if "session_last.pt" in _files:
+            RESUME_PT = os.path.join(_root, "session_last.pt")
+            print(f"  ✓ Found: {RESUME_PT}")
+            break
+    if not RESUME_PT:
+        print("  ✗ No session_last.pt found in /kaggle/input/")
+        print("    Upload your checkpoint as a Kaggle Dataset and re-run,")
+        print("    or set RESUME_PT manually.")
+        raise FileNotFoundError("Auto-detect failed: no session_last.pt in /kaggle/input/")
+
 if RESUME_TRAINING and RESUME_PT:
     _resume_src = Path(RESUME_PT)
     if not _resume_src.exists():

@@ -51,17 +51,22 @@ Metrics & data saved:
 PATH A — SINGLE GPU VERSION
   Uses 1 GPU to avoid DDP subprocess issue that strips C3K2Mamba modules.
   Training uses post-init injection + get_model() monkey-patch.
-  ~14-16h for 120 epochs on T4 → needs 2 Kaggle sessions (resume built-in).
+  Resume-safe: trained SSM weights survive checkpoint reload (re-transfer fix).
 
 COMPUTE NOTES (Kaggle T4 — SINGLE GPU):
   Batch size  : 8 (T4) or 4 (P100)
   d_state     : 4  (safe for T4 16GB)
   Window size : adaptive (4→512ch, 6→256ch, 8→128ch)
-  Dilations   : [1, 2, 4] (3 branches, ~1.34× scan overhead)
+  Dilations   : [1, 2, 4] (3 branches — sequential Python scan)
   Gradient clipping : max_norm=10.0 (prevents epoch-1 explosion)
   Expected VRAM: ~10-12GB at batch=8 (T4 has 16GB)
-  Expected training time: ~14-16h for 120 epochs (single GPU)
-  Session plan: Session 1 → ~65 epochs, Session 2 → remaining epochs
+
+  TIMING (reference: base model = 7.768h on 2×T4 @ batch=12):
+    AtrousMamba has sequential SSM scan → ~1.5-2× slower per step vs base C3k2.
+    Single GPU halves throughput vs 2-GPU DDP.
+    Realistic estimate: ~18-24h for 120 epochs (depends on dataset size).
+    Plan: Session 1 (~12h) → Session 2 (remaining).
+    Early stopping (patience=15 / F2 patience=10) may finish sooner.
 ================================================================================
 """
 
@@ -69,10 +74,11 @@ COMPUTE NOTES (Kaggle T4 — SINGLE GPU):
 # CELL 1: Control Flags & Dependencies
 # ============================================================================
 
-TEST_MODE       = True   # True = 2 epochs, 5% data | False = full 120 epochs
-RESUME_TRAINING = False   # Set True + set RESUME_PT to resume from a checkpoint
-RESUME_PT       = ""      # Path to last.pt from a previous session, e.g.:
+TEST_MODE       = False   # True = 2 epochs, 5% data | False = full 120 epochs
+RESUME_TRAINING = False   # Set True to resume from a checkpoint
+RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT, e.g.:
                           # "/kaggle/input/atrous-mamba-checkpoint/session_last.pt"
+                          # AUTO-DETECT: if empty, scans /kaggle/input/ for session_last.pt
 
 import subprocess, sys, re
 
@@ -182,7 +188,8 @@ else:
     SAVE_PERIOD    = 5
     BATCH_SIZE     = 8 if gpu_mem >= 14 else 4
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~14-16h on T4 → needs 2 Kaggle sessions")
+    print(f"    ⏱  Estimated: ~18-24h on single T4 → needs 2 Kaggle sessions")
+    print(f"    Early stopping may finish sooner (patience={PATIENCE})")
 
 GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
 print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SIZE*GRAD_ACCUM}")
@@ -898,10 +905,36 @@ from ultralytics.models.yolo.detect.train import DetectionTrainer
 _orig_get_model = DetectionTrainer.get_model
 
 def _patched_get_model(self, cfg=None, weights=None, verbose=True):
-    """Build model from YAML, transfer base weights, then inject AtrousSSM."""
+    """Build model from YAML, transfer base weights, then inject AtrousSSM.
+
+    RESUME FIX: ultralytics calls get_model() even during resume.  It rebuilds
+    the model from the YAML (which has C3k2, not C3K2Mamba), then does
+    intersect_dicts weight transfer — which SILENTLY DROPS all SSM keys because
+    the rebuilt C3k2 model doesn't have them.
+
+    Our fix:
+      1. Let orig get_model() build + transfer base weights (C3k2 keys match)
+      2. Re-inject C3K2Mamba (SSM weights are random at this point)
+      3. Re-transfer ALL weights from checkpoint (now SSM keys exist in both
+         the source and destination → trained SSM weights are restored)
+
+    For fresh training, step 3 just re-applies ImageNet + random SSM weights
+    (a no-op in practice).  For resume, step 3 restores the trained SSM weights
+    from session 1.
+    """
     model = _orig_get_model(self, cfg, weights, verbose)
 
-    # Re-inject AtrousSSM into the freshly built model
+    # If model already has C3K2Mamba (e.g. loaded from a YAML-native checkpoint),
+    # skip injection entirely.
+    has_mamba = any(isinstance(m, C3K2Mamba) for m in model.model)
+    if has_mamba:
+        n_mamba = sum(1 for m in model.model if isinstance(m, C3K2Mamba))
+        print(f"\n  ✓ Model already has {n_mamba} C3K2Mamba layers — skipping injection")
+        return model
+
+    # Step 1 already done: orig get_model() built C3k2 model + transferred base weights
+
+    # Step 2: Re-inject AtrousSSM into the freshly built model
     print("\n  ── Re-injecting AtrousSSM into trainer model (post-get_model patch) ──")
     nn_model = model.model  # DetectionModel.model is nn.Sequential
     replaced = _inject_into_sequential(
@@ -915,8 +948,22 @@ def _patched_get_model(self, cfg=None, weights=None, verbose=True):
             "No layers were replaced. The model would train as vanilla CBAM+P2."
         )
 
-    n_params = sum(p.numel() for p in model.parameters())
-    print(f"  ✓ Trainer model params after injection: {n_params/1e6:.2f}M")
+    # Step 3: Re-transfer ALL weights from checkpoint now that C3K2Mamba keys
+    # exist in both source (checkpoint) and destination (re-injected model).
+    # This restores trained SSM weights that were lost in step 1.
+    if weights is not None:
+        try:
+            model.load(weights)
+            n_params = sum(p.numel() for p in model.parameters())
+            print(f"  ✓ Re-transferred weights (including trained SSM params): {n_params/1e6:.2f}M")
+        except Exception as e:
+            print(f"  ⚠ Weight re-transfer failed: {e} — SSM weights use fresh init")
+            n_params = sum(p.numel() for p in model.parameters())
+            print(f"    Params: {n_params/1e6:.2f}M")
+    else:
+        n_params = sum(p.numel() for p in model.parameters())
+        print(f"  ✓ Trainer model params after injection: {n_params/1e6:.2f}M")
+
     print(f"  ── Re-injection complete ──\n")
 
     return model
@@ -1252,6 +1299,20 @@ except AttributeError:
     pass  # older PyTorch — pickle will still find classes in __main__
 
 # ── RESUME PATH ──────────────────────────────────────────────────────────────
+# Auto-detect: if RESUME_TRAINING=True but RESUME_PT is empty, scan /kaggle/input/
+if RESUME_TRAINING and not RESUME_PT:
+    print("  Auto-detecting checkpoint in /kaggle/input/ …")
+    for _root, _dirs, _files in os.walk("/kaggle/input"):
+        if "session_last.pt" in _files:
+            RESUME_PT = os.path.join(_root, "session_last.pt")
+            print(f"  ✓ Found: {RESUME_PT}")
+            break
+    if not RESUME_PT:
+        print("  ✗ No session_last.pt found in /kaggle/input/")
+        print("    Upload your checkpoint as a Kaggle Dataset and re-run,")
+        print("    or set RESUME_PT manually.")
+        raise FileNotFoundError("Auto-detect failed: no session_last.pt in /kaggle/input/")
+
 if RESUME_TRAINING and RESUME_PT:
     _resume_src = Path(RESUME_PT)
     if not _resume_src.exists():

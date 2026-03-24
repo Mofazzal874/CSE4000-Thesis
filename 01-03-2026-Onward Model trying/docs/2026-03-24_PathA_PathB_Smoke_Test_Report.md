@@ -1,10 +1,11 @@
 # Path A & Path B — Smoke Test & Bug Fix Report
-**Date**: 2026-03-24
+**Date**: 2026-03-24 (Updated: second review pass)
 
 ## Summary
 
 Both Path A (single GPU) and Path B (dual GPU YAML-native) files were reviewed end-to-end.
-Four bugs were fixed in Path B. Both files are now ready for Kaggle deployment.
+**5 bugs fixed total** (4 in Path B, 1 critical resume bug in Path A). Timing estimates updated.
+Both files verified and ready for Kaggle deployment.
 
 ---
 
@@ -14,6 +15,22 @@ Four bugs were fixed in Path B. Both files are now ready for Kaggle deployment.
 |------|----------|-----|--------|
 | `atrous_mamba_cbam_p2head.py` | get_model() monkey-patch + injection | Single (DEVICE="0") | Ready |
 | `atrous_mamba_cbam_p2head_pathB_dualGPU.py` | YAML-native C3K2Mamba registration | Dual (DEVICE="0,1") | Ready (after fixes below) |
+
+---
+
+## CRITICAL Bug Fixed in Path A
+
+### 5. Resume loses trained SSM weights (get_model rebuild)
+**Severity**: CRITICAL
+**Root cause**: Even with `resume=True`, ultralytics calls `get_model()` which rebuilds from YAML (C3k2). The `intersect_dicts` weight transfer silently drops all SSM keys because the rebuilt model doesn't have them. Our `_inject_into_sequential` then re-creates C3K2Mamba with **random SSM weights** — all training from session 1 is lost for the novel SSM components.
+**Fix**: Added 3-step flow in `_patched_get_model()`:
+1. `_orig_get_model()` builds C3k2 + transfers base weights
+2. `_inject_into_sequential()` re-injects C3K2Mamba (SSM random at this point)
+3. **NEW**: `model.load(weights)` re-transfers ALL weights — now SSM keys exist in both source and destination, so trained SSM weights from session 1 are restored.
+
+Also added `has_mamba` guard: if model already has C3K2Mamba (e.g. loaded from YAML-native checkpoint), skip injection entirely.
+
+**Path B not affected**: YAML stores C3K2Mamba directly → rebuild produces correct architecture → all keys match on first transfer.
 
 ---
 
@@ -94,19 +111,82 @@ Detect references `[19, 22, 25, 28]` — verified correct for both ATROUS and BA
 
 ---
 
+## Updated Timing Estimates
+
+Reference: base model (C3k2) = 7.768h on 2×T4 @ batch=12.
+AtrousMamba SSM scan adds ~1.5-2× overhead on neck layers.
+
+| Path | GPUs | Batch | Est. Time (120 ep) | Sessions |
+|------|------|-------|---------------------|----------|
+| A | 1×T4 | 8 | ~18-24h | 2 (resume) |
+| B | 2×T4 | 16 | ~10-12h | 1 (tight) or 2 |
+
+Early stopping (patience=15 / F2=10) may finish well before 120 epochs.
+
 ## Deployment Instructions
 
 ### Path A (Single GPU — 2 Kaggle sessions)
 1. Upload `atrous_mamba_cbam_p2head.py` to Kaggle
-2. Set `TEST_MODE = False` for full training
-3. First session: ~7-8h training, checkpoint auto-saved
-4. Download `session_last.pt` + `session_meta.json`
-5. Upload as new Kaggle Dataset
-6. Second session: Set `RESUME_TRAINING = True`, `RESUME_PT = "/kaggle/input/<dataset>/session_last.pt"`
+2. Set `TEST_MODE = True` first → verify smoke test passes (2 epochs, ~5 min)
+3. Set `TEST_MODE = False` for full training
+4. Session 1: runs until 12h timeout, checkpoint auto-saved every 5 epochs
+5. Download `session_last.pt` + `session_meta.json` from `/kaggle/working/`
+6. Upload them as a new Kaggle Dataset
+7. Session 2: Set `RESUME_TRAINING = True`, `RESUME_PT = "/kaggle/input/<dataset>/session_last.pt"`
+8. Trained SSM weights are preserved across resume (re-transfer fix)
 
-### Path B (Dual GPU — 1 Kaggle session)
+### Path B (Dual GPU — 1-2 Kaggle sessions)
 1. Upload `atrous_mamba_cbam_p2head_pathB_dualGPU.py` to Kaggle
-2. Set `TEST_MODE = False` for full training
-3. Select "GPU T4 x2" accelerator
-4. ~8h for 120 epochs — fits in single 12h session
-5. No resume needed (but available if session crashes)
+2. Select **"GPU T4 x2"** accelerator
+3. Set `TEST_MODE = True` first → verify YAML dry-run + smoke test passes
+4. Set `TEST_MODE = False` for full training
+5. ~10-12h on 2×T4 — tight for 12h session but early stopping should help
+6. If session times out: resume works same as Path A (checkpoint every 5 epochs)
+7. batch=16 (8/GPU) — if OOM, auto-retries at batch=8 then batch=4
+
+
+
+
+
+
+
+
+
+1. Will the DDP problem happen again?
+No. Here's why each path is safe:
+
+Path A — No DDP at all. DEVICE="0" forces single GPU. Everything runs in one process. The _patched_get_model ensures C3K2Mamba survives the trainer's internal model rebuild. The new 3-step flow (build → inject → re-transfer) preserves trained SSM weights even during resume.
+
+Path B — DDP is safe because the fix addresses the root cause:
+
+What went wrong before	What's different now
+DDP subprocess rebuilt model from YAML with C3k2	YAML now has C3K2Mamba directly
+Subprocess didn't know about C3K2Mamba class	tasks.py is patched on disk with from atrous_mamba_module import C3K2Mamba
+Subprocess couldn't import custom module	atrous_mamba_module.py is copied to site-packages + PYTHONPATH set
+No way to verify before training	_dry_run_yaml() builds the model from YAML and crashes if C3K2Mamba is missing
+The DDP subprocess reads the same patched source files from disk, imports C3K2Mamba from site-packages, and builds it natively from the YAML. Both processes get the correct architecture.
+
+2. Resume — Do NOT upload the zip file
+The zip file is for results (plots, excels, reports). It does NOT contain the checkpoint needed for resume.
+
+What you need for resume:
+
+Download these 2 specific files from /kaggle/working/ (they're saved every 5 epochs, even if the session times out):
+
+
+session_last.pt        ← the checkpoint (~50-100MB)
+session_meta.json      ← metadata (epoch count, best metrics)
+Resume steps:
+
+After session 1 times out, go to the notebook output
+Download session_last.pt and session_meta.json
+Create a new Kaggle Dataset → upload both files together
+Add that dataset as input to your notebook
+Change only ONE line: RESUME_TRAINING = True
+Leave RESUME_PT = "" — it will auto-detect session_last.pt in /kaggle/input/
+Run the notebook
+I just added auto-detect to both files — it scans /kaggle/input/ for session_last.pt so you don't need to manually set the path.
+
+Important: The session_meta.json must be in the same directory as session_last.pt (upload them together in the same dataset). It restores the F2/mAP50 tracking for early stopping continuity.
+
+
