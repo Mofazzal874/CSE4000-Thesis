@@ -18,25 +18,29 @@ Architecture:
 
 A100 Optimizations:
   ✓ Single GPU — no DDP overhead
-  ✓ Batch 48 (A100 80GB has plenty of VRAM)
+  ✓ Batch 32 (A100 80GB, ~20-30GB VRAM with optimized arch)
   ✓ 8 workers (match 8 vCPUs)
   ✓ BF16 native (A100 full BF16 throughput)
   ✓ TF32 enabled for float32 matmuls (~3x speedup)
   ✓ cuDNN benchmark mode (auto-tunes convolutions)
   ✓ JIT-compiled selective scan loop (eliminates Python overhead)
-  ✓ Pre-allocated output tensors in scan
+  ✓ Frozen backbone (layers 0-10) — only neck SSM + head train
+  ✓ C3K2Mamba at deep layers only (40×40, 20×20) — P2/P3 use standard C3k2
 
 COMPUTE NOTES (ThunderCompute A100 80GB, 8 vCPUs, 64GB RAM):
-  Batch size  : 48 (single A100 80GB)
+  Batch size  : 64 start (A100 80GB, OOM fallback → 48 → 40 → 36 → 32 → 24 → 16 → ...)
   d_state     : 4
   Dilations   : [1, 2, 4]
   Workers     : 8
-  Gradient clipping : max_norm=10.0
-  Expected VRAM: ~35-50GB at batch=48
+  Gradient clipping : max_norm=1.0
+  Backbone freeze : layers 0-10 (pretrained, not retrained)
+  Expected VRAM: ~20-30GB at batch=32
+  C3K2Mamba layers: 3 (at 512ch / 40×40 and 20×20 resolutions)
+  Standard C3k2  : 3 (at P2 160×160 and P3 80×80 — too expensive for SSM)
 
-  TIMING (reference: 2×T4 @ batch=12 took ~36 min/epoch):
-    A100 single GPU with JIT scan: ~8-12 min/epoch
-    100 epochs: ~13-20h total (early stopping helps)
+  TIMING:
+    A100 single GPU: ~3-5 min/epoch (frozen backbone + 3 SSM layers)
+    80 epochs: ~4-7h total (fits in 4-8h A100 session)
 ================================================================================
 """
 
@@ -56,8 +60,8 @@ DATA_DIR = os.path.expanduser("~/data")             # Dataset root
 CKPT_DIR = os.path.join(BASE_DIR, "checkpoints")    # Session checkpoints
 
 # ── OPTIONAL: comparison model paths (upload manually if you have them) ────
-OLD_MAMBA_BEST = ""   # e.g. "~/atrousmamba/comparison_models/mamba_best.pt"
-CBAM_P2_BEST   = ""   # e.g. "~/atrousmamba/comparison_models/cbam_p2_best.pt"
+OLD_MAMBA_BEST = "~/atrousmamba/comparison_models/cbam_p2head_mamba.pt"   # e.g. "~/atrousmamba/comparison_models/mamba_best.pt"
+CBAM_P2_BEST   = "~/atrousmamba/comparison_models/cbam_p2head_best.pt"   # e.g. "~/atrousmamba/comparison_models/cbam_p2_best.pt"
 
 os.makedirs(BASE_DIR, exist_ok=True)
 os.makedirs(CKPT_DIR, exist_ok=True)
@@ -104,6 +108,14 @@ def pip_install(pkg, extra=""):
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
 
+# Fix headless OpenCV for servers without display libs (libxcb, libGL, etc.)
+# MUST uninstall GUI opencv first — pip install alone won't replace it
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y",
+                "opencv-python", "opencv-contrib-python"],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-q",
+                       "opencv-python-headless"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 pip_install("ultralytics")
 pip_install("timm")
 pip_install("thop")
@@ -142,6 +154,54 @@ if hasattr(torch, 'set_float32_matmul_precision'):
     torch.set_float32_matmul_precision('high')
 print("✓ A100 optimizations: TF32, cuDNN benchmark enabled")
 
+_CUDA_SAFE_MODE = False
+
+def _is_thunder_proto_kernel_error(exc: Exception) -> bool:
+    msg = str(exc)
+    needles = (
+        "cuLaunchCooperativeKernel",
+        "unsupported function",
+        "prototyping instances",
+        "CUDNN_STATUS_EXECUTION_FAILED",
+        "not implemented"
+    )
+    return any(s in msg for s in needles)
+
+def _enable_cuda_safe_mode(reason: str):
+    """
+    Thunder prototyping mode can reject some cooperative kernel launches.
+    Disable cuDNN to force safer CUDA fallback kernels.
+    """
+    global _CUDA_SAFE_MODE
+    if _CUDA_SAFE_MODE:
+        return
+
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.enabled = False
+    if hasattr(torch.backends.cudnn, "deterministic"):
+        torch.backends.cudnn.deterministic = True
+    torch.cuda.empty_cache()
+    _CUDA_SAFE_MODE = True
+    print(f"⚠ CUDA safe mode enabled ({reason}) — cuDNN disabled for prototyping compatibility")
+
+def _probe_conv_bn_backend():
+    """Quick sanity check to catch unsupported cuDNN kernels early."""
+    if not torch.cuda.is_available():
+        return
+    try:
+        conv = nn.Conv2d(16, 16, kernel_size=3, padding=1, bias=False).cuda()
+        bn = nn.BatchNorm2d(16).cuda()
+        x = torch.randn(2, 16, 32, 32, device="cuda")
+        with torch.no_grad():
+            _ = bn(conv(x))
+        torch.cuda.synchronize()
+        del conv, bn, x
+    except RuntimeError as e:
+        if _is_thunder_proto_kernel_error(e):
+            _enable_cuda_safe_mode("cooperative kernel not available")
+        else:
+            raise
+
 # ── GPU fingerprint ─────────────────────────────────────────────────────────
 num_gpus = torch.cuda.device_count()
 gpu_name = torch.cuda.get_device_name(0) if num_gpus > 0 else "CPU"
@@ -160,6 +220,9 @@ elif num_gpus > 0:
 BF16_SUPPORTED = torch.cuda.is_bf16_supported() if num_gpus > 0 else False
 print(f"BF16 support: {BF16_SUPPORTED}  |  AMP will use: {'BF16' if BF16_SUPPORTED else 'FP16'}")
 
+if torch.cuda.is_available():
+    _probe_conv_bn_backend()
+
 # ── Training hyper-params (A100-optimized) ──────────────────────────────────
 if TEST_MODE:
     TRAIN_FRACTION = 0.05
@@ -173,16 +236,16 @@ if TEST_MODE:
     print("⚠  TEST MODE  — 5% data, 2 epochs")
 else:
     TRAIN_FRACTION = 1.0
-    NUM_EPOCHS     = 100     # 100 with patience=20 (early stopping)
-    PATIENCE       = 20
-    F2_PATIENCE    = 15
+    NUM_EPOCHS     = 80      # 80 with patience=15 (early stopping) — fits 4-8h A100
+    PATIENCE       = 15
+    F2_PATIENCE    = 12
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    # A100 80GB: batch=48 is safe (~35-50GB VRAM)
-    # Falls back to 32→16→8 if OOM
+    # Start aggressive, OOM retry ladder steps down gracefully
+    # A100 80GB with 3 C3K2Mamba + frozen backbone: batch=64 likely fits (~40-50GB VRAM)
     if gpu_mem >= 70:
-        BATCH_SIZE = 48
+        BATCH_SIZE = 64
     elif gpu_mem >= 30:
         BATCH_SIZE = 32
     elif gpu_mem >= 14:
@@ -190,7 +253,7 @@ else:
     else:
         BATCH_SIZE = 8
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~12-16h on A100 (early stopping helps)")
+    print(f"    ⏱  Estimated: ~4-7h on A100 (frozen backbone + 3 SSM layers)")
     print(f"    Checkpoints saved every {SAVE_PERIOD} epochs")
 
 print(f"  Batch={BATCH_SIZE} | Workers=8")
@@ -198,8 +261,12 @@ print(f"  Batch={BATCH_SIZE} | Workers=8")
 # ── Checkpoint / session-resume config ──────────────────────────────────────
 CHECKPOINT_EVERY = 5 if not TEST_MODE else 1
 
-# ── OOM retry ladder ────────────────────────────────────────────────────────
-OOM_RETRY_BATCHES = [BATCH_SIZE, max(BATCH_SIZE // 2, 4), max(BATCH_SIZE // 4, 2)]
+# ── OOM retry ladder (granular step-down) ───────────────────────────────────
+# Starts at BATCH_SIZE and steps down gradually for maximum GPU utilization
+_ALL_STEPS = [64, 48, 40, 36, 32, 24, 16, 12, 8, 4]
+OOM_RETRY_BATCHES = [b for b in _ALL_STEPS if b <= BATCH_SIZE]
+if not OOM_RETRY_BATCHES:
+    OOM_RETRY_BATCHES = [BATCH_SIZE]
 print(f"  OOM retry ladder: {OOM_RETRY_BATCHES}")
 
 # ── AtrousSSM config ────────────────────────────────────────────────────────
@@ -441,7 +508,9 @@ class _SelectiveScan1D(nn.Module):
         u_f     = u_act.float()
         A       = -torch.exp(self.A_log.float())
 
-        deltaA   = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        # Clamp dt*A to prevent exponential blowup → NaN losses
+        _dtA = torch.einsum("bld,dn->bldn", dt, A)
+        deltaA   = torch.exp(_dtA.clamp(-20.0, 0.0))
         deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
 
         # JIT-optimized scan (or Python fallback)
@@ -719,7 +788,16 @@ def run_smoke_test():
     print("=" * 70)
     return passed == 8
 
-assert run_smoke_test(), "Smoke test failed — fix errors before training!"
+try:
+    _smoke_ok = run_smoke_test()
+except RuntimeError as _smoke_err:
+    if torch.cuda.is_available() and _is_thunder_proto_kernel_error(_smoke_err):
+        _enable_cuda_safe_mode("smoke test fallback after kernel launch failure")
+        _smoke_ok = run_smoke_test()
+    else:
+        raise
+
+assert _smoke_ok, "Smoke test failed — fix errors before training!"
 
 
 # ============================================================================
@@ -794,7 +872,8 @@ class _SelectiveScan1D(nn.Module):
         dt = F.softplus(self.dt_proj(dt_raw)).float()
         B_param, C_param, u_f = B_param.float(), C_param.float(), u_act.float()
         A = -torch.exp(self.A_log.float())
-        deltaA = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        _dtA = torch.einsum("bld,dn->bldn", dt, A)
+        deltaA = torch.exp(_dtA.clamp(-20.0, 0.0))
         deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
         y = _ssm_scan_fn(deltaA, deltaB_u, C_param, B_win, L, self.D, self.N)
         return y.to(in_dtype) + u_act * self.D_skip.to(in_dtype)
@@ -1093,9 +1172,9 @@ from ultralytics.engine.trainer import BaseTrainer
 _orig_opt_step = BaseTrainer.optimizer_step
 
 def _clipped_optimizer_step(self):
-    """Optimizer step with gradient clipping (max_norm=10)."""
+    """Optimizer step with gradient clipping (max_norm=1.0 — tight for SSM stability)."""
     self.scaler.unscale_(self.optimizer)
-    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10.0)
+    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
     self.scaler.step(self.optimizer)
     self.scaler.update()
     self.optimizer.zero_grad()
@@ -1103,11 +1182,13 @@ def _clipped_optimizer_step(self):
         self.ema.update(self.model)
 
 BaseTrainer.optimizer_step = _clipped_optimizer_step
-print("✓ Gradient clipping enabled (max_norm=10.0)")
+print("✓ Gradient clipping enabled (max_norm=1.0)")
 
 
 # ── YAML: C3K2Mamba native in neck layers ──────────────────────────────────
-_ATROUS_YAML = f"""# YOLO11m + CBAM + P2 + AtrousMamba neck (YAML-NATIVE)
+_ATROUS_YAML = f"""# YOLO11m + CBAM + P2 + AtrousMamba neck (OPTIMIZED)
+# C3K2Mamba at deep layers (512ch, 40×40 and 20×20) — long-range context
+# Standard C3k2 at P2/P3 (128-256ch, 80-160×160) — fast, fine-grained
 nc: 1
 scales:
   m: [0.50, 1.00, 512]
@@ -1131,13 +1212,13 @@ head:
   - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
   - [[-1, 4], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [256, False]]
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
   - [[-1, 2], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [128, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [128, False]]
   - [-1, 1, Conv, [128, 3, 2]]
   - [[-1, 16], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [256, False]]
   - [-1, 1, Conv, [256, 3, 2]]
   - [[-1, 13], 1, Concat, [1]]
   - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
@@ -1218,7 +1299,7 @@ def _dry_run_yaml():
             print(f"    [{idx:2d}] {type(layer).__name__}")
         raise RuntimeError("YAML dry-run FAILED: C3K2Mamba not found.")
 
-    assert n_mamba >= 5, f"Expected ≥5 C3K2Mamba layers, got {n_mamba}"
+    assert n_mamba >= 3, f"Expected ≥3 C3K2Mamba layers, got {n_mamba}"
     assert n_params > 20e6, f"Expected >20M params, got {n_params/1e6:.2f}M"
 
     del _m; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
@@ -1539,6 +1620,7 @@ else:
             fraction     = TRAIN_FRACTION,
             cache        = True,        # RAM cache (64GB available)
             workers      = 8,           # Match 8 vCPUs
+            freeze       = 11,          # Freeze backbone (layers 0-10) — only neck SSM + head train
             name         = "yolo11m_atrousmamba_cbam_p2head",
             exist_ok     = True,
             project      = os.path.join(BASE_DIR, "runs/detect"),
