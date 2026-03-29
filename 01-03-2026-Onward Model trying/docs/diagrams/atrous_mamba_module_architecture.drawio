@@ -1,0 +1,318 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="24.0.0">
+  <diagram id="atrous-mamba" name="C3K2Mamba Module (AtrousSSM)">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ============================================================ -->
+        <!-- TITLE -->
+        <!-- ============================================================ -->
+        <mxCell id="main_title" value="&lt;b&gt;C3K2Mamba Module — AtrousSSM (Dilated Scanning)&lt;/b&gt;&lt;br&gt;Novel multi-scale dilated State Space Model for YOLO11m neck" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="250" y="10" width="600" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- C3K2Mamba OUTER BLOCK (Left side, same as standard) -->
+        <!-- ============================================================ -->
+        <mxCell id="c3k2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#e65100;strokeWidth=3;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="70" width="350" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="c3k2_title" value="&lt;b&gt;C3K2Mamba Block&lt;/b&gt;&lt;br&gt;(same C2f-style wrapper)" style="text;html=1;align=center;fontSize=12;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="80" y="75" width="250" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_input" value="&lt;b&gt;Input Feature Map&lt;/b&gt;&lt;br&gt;(B, C1, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="105" y="120" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_cv1" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;C1 → 2×C_inner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="105" y="180" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_split" value="&lt;b&gt;chunk(2)&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="155" y="235" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_x0" value="x₀&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="295" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="c_x1" value="x₁&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="295" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="c_mamba_bn" value="&lt;b&gt;MambaBottleneck&lt;/b&gt;&lt;br&gt;Conv3×3 → &lt;font color=&quot;#d32f2f&quot;&gt;&lt;b&gt;AtrousSSM&lt;/b&gt;&lt;/font&gt; → Conv3×3&lt;br&gt;+ residual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;fontSize=10;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="220" y="350" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="c_y1" value="y₁" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="425" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c_concat" value="&lt;b&gt;Concat&lt;/b&gt; [x₀, x₁, y₁, ...]&lt;br&gt;(B, (2+n)×C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="105" y="480" width="200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="c_cv2" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;(2+n)×C → C2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="105" y="545" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_output" value="&lt;b&gt;Output Feature Map&lt;/b&gt;&lt;br&gt;(B, C2, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="105" y="605" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- C3K2Mamba arrows -->
+        <mxCell id="ca1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_input" target="c_cv1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_cv1" target="c_split" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_split" target="c_x0" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca4" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_split" target="c_x1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca5" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_x1" target="c_mamba_bn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca6" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_mamba_bn" target="c_y1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca7" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_x0" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca8" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_x1" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca9" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_y1" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca10" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_concat" target="c_cv2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca11" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_cv2" target="c_output" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============================================================ -->
+        <!-- AtrousSSM DETAIL (Right side — the key novel part) -->
+        <!-- ============================================================ -->
+        <mxCell id="atrous_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#d32f2f;strokeWidth=3;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="70" width="800" height="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="atrous_title" value="&lt;b&gt;AtrousSSM — Multi-Scale Dilated Window State Space Model&lt;/b&gt;&lt;br&gt;Novel contribution: applies dilated (atrous) scanning to SSM sequence processing" style="text;html=1;align=center;fontSize=13;fontColor=#d32f2f;" vertex="1" parent="1">
+          <mxGeometry x="480" y="75" width="700" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- AtrousSSM Input -->
+        <mxCell id="a_input" value="&lt;b&gt;Feature Map x&lt;/b&gt;&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- 3 Parallel Branches Label -->
+        <mxCell id="branch_label" value="&lt;b&gt;3 Parallel Dilated Branches&lt;/b&gt;" style="text;html=1;align=center;fontSize=12;fontColor=#d32f2f;fontStyle=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="185" width="440" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ============ BRANCH 1: d=1 ============ -->
+        <mxCell id="br1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="450" y="220" width="220" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_title" value="&lt;b&gt;Branch 1: d=1&lt;/b&gt;&lt;br&gt;Standard (local context)" style="text;html=1;align=center;fontSize=11;fontColor=#2e7d32;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="225" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="br1_part" value="&lt;b&gt;Dilated Partition&lt;/b&gt;&lt;br&gt;d=1, ws=8&lt;br&gt;region=8×8&lt;br&gt;sample every 1st token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="470" y="270" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_norm" value="LayerNorm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="500" y="340" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_proj" value="Linear → (x, z)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="500" y="375" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_fwd" value="&lt;b&gt;Scan FWD →&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="470" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_bwd" value="&lt;b&gt;← Scan BWD&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="565" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_gate" value="(fwd+bwd) × SiLU(z)&lt;br&gt;+ out_proj + residual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="480" y="460" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_rev" value="&lt;b&gt;Reverse Partition&lt;/b&gt;&lt;br&gt;→ (B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="480" y="510" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br1_out" value="&lt;b&gt;out₁&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;fontColor=#fff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="560" width="80" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Branch 1 arrows -->
+        <mxCell id="b1a1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_part" target="br1_norm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a2" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_norm" target="br1_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a3" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_proj" target="br1_fwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a3b" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_proj" target="br1_bwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a4" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_fwd" target="br1_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a5" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_bwd" target="br1_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a6" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_gate" target="br1_rev" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b1a7" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br1_rev" target="br1_out" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============ BRANCH 2: d=2 ============ -->
+        <mxCell id="br2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="690" y="220" width="220" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_title" value="&lt;b&gt;Branch 2: d=2&lt;/b&gt;&lt;br&gt;Skip-1 (medium context)" style="text;html=1;align=center;fontSize=11;fontColor=#1565c0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="225" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="br2_part" value="&lt;b&gt;Dilated Partition&lt;/b&gt;&lt;br&gt;d=2, ws=8&lt;br&gt;region=16×16&lt;br&gt;sample every 2nd token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="710" y="270" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_norm" value="LayerNorm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="740" y="340" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_proj" value="Linear → (x, z)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="740" y="375" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_fwd" value="&lt;b&gt;Scan FWD →&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="710" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_bwd" value="&lt;b&gt;← Scan BWD&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="805" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_gate" value="(fwd+bwd) × SiLU(z)&lt;br&gt;+ out_proj + residual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="720" y="460" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_rev" value="&lt;b&gt;Reverse Partition&lt;/b&gt;&lt;br&gt;bilinear upsample&lt;br&gt;16×16 → H×W" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="720" y="510" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br2_out" value="&lt;b&gt;out₂&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565c0;fontColor=#fff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="760" y="560" width="80" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Branch 2 arrows -->
+        <mxCell id="b2a1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_part" target="br2_norm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a2" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_norm" target="br2_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a3" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_proj" target="br2_fwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a3b" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_proj" target="br2_bwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a4" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_fwd" target="br2_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a5" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_bwd" target="br2_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a6" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_gate" target="br2_rev" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b2a7" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br2_rev" target="br2_out" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============ BRANCH 3: d=4 ============ -->
+        <mxCell id="br3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#ad1457;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="930" y="220" width="220" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_title" value="&lt;b&gt;Branch 3: d=4&lt;/b&gt;&lt;br&gt;Skip-3 (long-range context)" style="text;html=1;align=center;fontSize=11;fontColor=#ad1457;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="225" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="br3_part" value="&lt;b&gt;Dilated Partition&lt;/b&gt;&lt;br&gt;d=4, ws=8&lt;br&gt;region=32×32&lt;br&gt;sample every 4th token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd0;strokeColor=#ad1457;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="950" y="270" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_norm" value="LayerNorm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="980" y="340" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_proj" value="Linear → (x, z)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="980" y="375" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_fwd" value="&lt;b&gt;Scan FWD →&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="950" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_bwd" value="&lt;b&gt;← Scan BWD&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1045" y="415" width="85" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_gate" value="(fwd+bwd) × SiLU(z)&lt;br&gt;+ out_proj + residual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="960" y="460" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_rev" value="&lt;b&gt;Reverse Partition&lt;/b&gt;&lt;br&gt;bilinear upsample&lt;br&gt;32×32 → H×W" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8bbd0;strokeColor=#ad1457;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="960" y="510" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="br3_out" value="&lt;b&gt;out₃&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ad1457;fontColor=#fff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="560" width="80" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Branch 3 arrows -->
+        <mxCell id="b3a1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_part" target="br3_norm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a2" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_norm" target="br3_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a3" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_proj" target="br3_fwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a3b" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_proj" target="br3_bwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a4" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_fwd" target="br3_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a5" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_bwd" target="br3_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a6" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_gate" target="br3_rev" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="b3a7" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1;" edge="1" source="br3_rev" target="br3_out" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Input to branches -->
+        <mxCell id="in_br1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#333;" edge="1" source="a_input" target="br1_part" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="in_br2" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#333;" edge="1" source="a_input" target="br2_part" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="in_br3" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#333;" edge="1" source="a_input" target="br3_part" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============ GATED FUSION ============ -->
+        <mxCell id="fusion_label" value="&lt;b&gt;Gated Fusion&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontColor=#d32f2f;fontStyle=5;" vertex="1" parent="1">
+          <mxGeometry x="650" y="690" width="300" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f_concat" value="&lt;b&gt;Concat&lt;/b&gt;&lt;br&gt;[out₁, out₂, out₃]&lt;br&gt;(B, 3×C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="660" y="720" width="280" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Two parallel paths from concat -->
+        <mxCell id="f_gate_conv" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;3C → C&lt;br&gt;→ Sigmoid&lt;br&gt;&lt;b&gt;(gate)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#ad1457;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="790" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="f_proj_conv" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;3C → C&lt;br&gt;&lt;b&gt;(projection)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="910" y="790" width="130" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Gated combination -->
+        <mxCell id="f_gated" value="&lt;b&gt;fused × gate&lt;/b&gt;&lt;br&gt;+ x × (1 - gate)&lt;br&gt;&lt;i&gt;(learnable skip connection)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="660" y="880" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Original input skip to gated -->
+        <mxCell id="f_skip_label" value="&lt;font color=&quot;#999&quot;&gt;&lt;i&gt;original input x&lt;br&gt;(skip connection)&lt;/i&gt;&lt;/font&gt;" style="text;html=1;align=center;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="500" width="100" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- LayerNorm out -->
+        <mxCell id="f_outnorm" value="&lt;b&gt;LayerNorm&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="955" width="160" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="a_output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1010" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Fusion arrows -->
+        <mxCell id="fa1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;" edge="1" source="br1_out" target="f_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa2" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;" edge="1" source="br2_out" target="f_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa3" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=2;" edge="1" source="br3_out" target="f_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa4" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_concat" target="f_gate_conv" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa5" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_concat" target="f_proj_conv" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa6" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_gate_conv" target="f_gated" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa7" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_proj_conv" target="f_gated" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa8" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_gated" target="f_outnorm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="fa9" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="f_outnorm" target="a_output" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Skip connection arrow (original x) -->
+        <mxCell id="fa_skip" style="edgeStyle=elbowEdgeStyle;dashed=1;strokeColor=#999;strokeWidth=2;" edge="1" source="a_input" target="f_gated" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="905" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- DILATED SCANNING VISUALIZATION -->
+        <!-- ============================================================ -->
+        <mxCell id="vis_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="700" width="350" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="vis_title" value="&lt;b&gt;Dilated Scanning Pattern Visualization&lt;/b&gt;&lt;br&gt;Example: 8×8 feature map, ws=4" style="text;html=1;align=center;fontSize=11;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="40" y="705" width="330" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vis_d1" value="&lt;b&gt;d=1: Standard&lt;/b&gt;&lt;br&gt;■ ■ ■ ■ □ □ □ □&lt;br&gt;■ ■ ■ ■ □ □ □ □&lt;br&gt;■ ■ ■ ■ □ □ □ □&lt;br&gt;■ ■ ■ ■ □ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;&lt;i&gt;4×4 contiguous window&lt;br&gt;LOCAL context only&lt;/i&gt;" style="text;html=1;align=center;fontSize=10;fontColor=#2e7d32;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="45" y="750" width="160" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vis_d2" value="&lt;b&gt;d=2: Dilated&lt;/b&gt;&lt;br&gt;■ □ ■ □ ■ □ ■ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;■ □ ■ □ ■ □ ■ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;■ □ ■ □ ■ □ ■ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;&lt;i&gt;Skip every other token&lt;br&gt;MEDIUM-range context&lt;/i&gt;" style="text;html=1;align=center;fontSize=10;fontColor=#1565c0;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="215" y="750" width="160" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vis_d4" value="&lt;b&gt;d=4: Wide Dilated&lt;/b&gt;&lt;br&gt;■ □ □ □ ■ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;■ □ □ □ ■ □ □ □&lt;br&gt;□ □ □ □ □ □ □ □&lt;br&gt;&lt;i&gt;Skip every 3 tokens&lt;br&gt;LONG-range context&lt;/i&gt;" style="text;html=1;align=center;fontSize=10;fontColor=#ad1457;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="120" y="920" width="170" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- KEY DIFFERENCES BOX -->
+        <!-- ============================================================ -->
+        <mxCell id="diff_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#666;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="430" y="1140" width="800" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="diff_title" value="&lt;b&gt;AtrousSSM vs Standard Mamba — Key Differences&lt;/b&gt;" style="text;html=1;align=center;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="1145" width="800" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="diff_text" value="&lt;b&gt;Standard Mamba (LocalWindowSSM):&lt;/b&gt; 1 branch, standard ws×ws window partition, bidirectional scan, no gating fusion&lt;br&gt;&lt;b&gt;AtrousSSM:&lt;/b&gt; 3 parallel branches with dilations [1,2,4], each has own weights, dilated window partition, gated fusion with learnable skip&lt;br&gt;&lt;br&gt;&lt;b&gt;Params:&lt;/b&gt; AtrousSSM adds ~4.56M (+23%) params due to 3× branch weights + fusion layers&lt;br&gt;&lt;b&gt;Speed:&lt;/b&gt; 2.3× slower (105ms vs 46ms) due to 3 sequential branches + fusion overhead&lt;br&gt;&lt;b&gt;Placement:&lt;/b&gt; AtrousSSM at 3 neck layers (13, 25, 28) vs standard Mamba at 6 neck layers (13, 16, 19, 22, 25, 28)" style="text;html=1;align=left;fontSize=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1170" width="780" height="95" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

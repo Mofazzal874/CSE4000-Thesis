@@ -1,0 +1,246 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="24.0.0">
+  <diagram id="mamba-module" name="C3K2Mamba Module (Standard Mamba)">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ============================================================ -->
+        <!-- TITLE -->
+        <!-- ============================================================ -->
+        <mxCell id="main_title" value="&lt;b&gt;C3K2Mamba Module — Standard Mamba (LocalWindowSSM)&lt;/b&gt;&lt;br&gt;Drop-in replacement for C3k2 in YOLO11m neck" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="550" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- C3K2Mamba OUTER BLOCK (Left side) -->
+        <!-- ============================================================ -->
+        <mxCell id="c3k2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#e65100;strokeWidth=3;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="70" width="400" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="c3k2_title" value="&lt;b&gt;C3K2Mamba Block&lt;/b&gt;&lt;br&gt;(replaces C3k2 in neck)" style="text;html=1;align=center;fontSize=13;fontColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="100" y="75" width="260" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Input to C3K2Mamba -->
+        <mxCell id="c_input" value="&lt;b&gt;Input Feature Map&lt;/b&gt;&lt;br&gt;(B, C1, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="120" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Conv 1x1 split -->
+        <mxCell id="c_cv1" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;C1 → 2×C_inner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="130" y="180" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Chunk split -->
+        <mxCell id="c_split" value="&lt;b&gt;chunk(2)&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="180" y="235" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Two branches after split -->
+        <mxCell id="c_x0" value="x₀&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="295" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="c_x1" value="x₁&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="295" width="110" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- MambaBottleneck -->
+        <mxCell id="c_mamba_bn" value="&lt;b&gt;MambaBottleneck&lt;/b&gt;&lt;br&gt;Conv3×3 → LocalWindowSSM → Conv3×3&lt;br&gt;+ residual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=10;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="250" y="350" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_y1" value="y₁&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="425" width="110" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Optional n bottlenecks note -->
+        <mxCell id="c_n_note" value="&lt;i&gt;(repeat n times,&lt;br&gt;each feeds next)&lt;/i&gt;" style="text;html=1;align=center;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="310" y="460" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Concat -->
+        <mxCell id="c_concat" value="&lt;b&gt;Concat&lt;/b&gt;&lt;br&gt;[x₀, x₁, y₁, ...]&lt;br&gt;(B, (2+n)×C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="130" y="500" width="200" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Conv 1x1 output -->
+        <mxCell id="c_cv2" value="&lt;b&gt;Conv 1×1&lt;/b&gt;&lt;br&gt;(2+n)×C → C2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="130" y="570" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="c_output" value="&lt;b&gt;Output Feature Map&lt;/b&gt;&lt;br&gt;(B, C2, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="630" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- C3K2Mamba arrows -->
+        <mxCell id="ca1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_input" target="c_cv1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_cv1" target="c_split" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_split" target="c_x0" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca4" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_split" target="c_x1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca5" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_x1" target="c_mamba_bn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca6" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_mamba_bn" target="c_y1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca7" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_x0" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca8" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_x1" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca9" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="c_y1" target="c_concat" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca10" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_concat" target="c_cv2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ca11" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="c_cv2" target="c_output" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============================================================ -->
+        <!-- LocalWindowSSM DETAIL (Right side) -->
+        <!-- ============================================================ -->
+        <mxCell id="ssm_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1565c0;strokeWidth=3;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="70" width="450" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm_title" value="&lt;b&gt;LocalWindowSSM — Bidirectional Scanning&lt;/b&gt;&lt;br&gt;Inside each MambaBottleneck" style="text;html=1;align=center;fontSize=13;fontColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="75" width="350" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- SSM Input -->
+        <mxCell id="s_input" value="&lt;b&gt;Feature Map&lt;/b&gt;&lt;br&gt;(B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="120" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Window Partition -->
+        <mxCell id="s_partition" value="&lt;b&gt;Window Partition&lt;/b&gt;&lt;br&gt;Pad → reshape into ws×ws windows&lt;br&gt;(B×nH×nW, ws², C)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="590" y="180" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Save residual -->
+        <mxCell id="s_residual" value="residual" style="text;html=1;align=center;fontSize=9;fontColor=#999;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="840" y="200" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- LayerNorm -->
+        <mxCell id="s_norm" value="&lt;b&gt;LayerNorm&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="255" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Linear Projection -->
+        <mxCell id="s_proj" value="&lt;b&gt;Linear Projection&lt;/b&gt;&lt;br&gt;C → 2C (split to x, z)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="300" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Split x and z -->
+        <mxCell id="s_split_xz" value="&lt;b&gt;chunk(2)&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="355" width="100" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s_x" value="&lt;b&gt;x&lt;/b&gt;&lt;br&gt;(B_w, L, C)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="410" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="s_z" value="&lt;b&gt;z&lt;/b&gt; (gate)&lt;br&gt;(B_w, L, C)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#e91e63;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="780" y="410" width="100" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Forward scan -->
+        <mxCell id="s_fwd" value="&lt;b&gt;SelectiveScan1D&lt;/b&gt;&lt;br&gt;FORWARD →&lt;br&gt;Conv1D → SiLU → SSM recurrence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="470" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Backward scan -->
+        <mxCell id="s_bwd" value="&lt;b&gt;SelectiveScan1D&lt;/b&gt;&lt;br&gt;← BACKWARD&lt;br&gt;flip → scan → flip back" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="470" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Merge -->
+        <mxCell id="s_merge" value="&lt;b&gt;y = (y_fwd + y_bwd)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="555" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Gate with z -->
+        <mxCell id="s_gate" value="&lt;b&gt;y × SiLU(z)&lt;/b&gt;&lt;br&gt;Gated output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="605" width="180" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Output projection -->
+        <mxCell id="s_out_proj" value="&lt;b&gt;Linear&lt;/b&gt; (out_proj)&lt;br&gt;C → C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="660" width="140" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Add residual -->
+        <mxCell id="s_add_res" value="&lt;b&gt;+ residual&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#43a047;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="715" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- LayerNorm out -->
+        <mxCell id="s_outnorm" value="&lt;b&gt;LayerNorm&lt;/b&gt; (out_norm)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="760" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Reverse partition -->
+        <mxCell id="s_reverse" value="&lt;b&gt;Reverse Window Partition&lt;/b&gt;&lt;br&gt;(B×nH×nW, ws², C) → (B, C, H, W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="590" y="805" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- SSM arrows -->
+        <mxCell id="sa1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_input" target="s_partition" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_partition" target="s_norm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_norm" target="s_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa4" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_proj" target="s_split_xz" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa5" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_split_xz" target="s_x" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa6" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_split_xz" target="s_z" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa7" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_x" target="s_fwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa7b" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_x" target="s_bwd" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa8" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_fwd" target="s_merge" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa9" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_bwd" target="s_merge" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa10" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_merge" target="s_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa10b" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#e91e63;" edge="1" source="s_z" target="s_gate" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa11" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_gate" target="s_out_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa12" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_out_proj" target="s_add_res" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa13" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_add_res" target="s_outnorm" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sa14" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s_outnorm" target="s_reverse" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============================================================ -->
+        <!-- SSM RECURRENCE DETAIL (Bottom) -->
+        <!-- ============================================================ -->
+        <mxCell id="ssm_detail_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2e7d32;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="870" width="450" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm_detail_title" value="&lt;b&gt;SelectiveScan1D — SSM Recurrence Detail&lt;/b&gt;" style="text;html=1;align=center;fontSize=12;fontColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="550" y="875" width="350" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sd_input" value="&lt;b&gt;u&lt;/b&gt; (B_w, L, D)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="910" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sd_conv1d" value="&lt;b&gt;DepthwiseConv1D&lt;/b&gt;&lt;br&gt;k=4, groups=D → SiLU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="950" width="180" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sd_proj" value="&lt;b&gt;x_proj (Linear)&lt;/b&gt;&lt;br&gt;D → dt_rank + 2N&lt;br&gt;Produces: Δt, B, C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="1000" width="180" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sd_discretize" value="&lt;b&gt;Discretize (ZOH)&lt;/b&gt;&lt;br&gt;ΔA = exp(Δt × A)&lt;br&gt;ΔB_u = Δt × B × u" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="1060" width="180" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sd_recurrence" value="&lt;b&gt;Sequential Scan (L steps)&lt;/b&gt;&lt;br&gt;h[t] = ΔA[t] × h[t-1] + ΔB_u[t]&lt;br&gt;y[t] = C[t] × h[t]&lt;br&gt;&lt;i&gt;(L ≤ 64 tokens per window)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=10;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="590" y="1120" width="240" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sda1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="sd_input" target="sd_conv1d" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sda2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="sd_conv1d" target="sd_proj" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sda3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="sd_proj" target="sd_discretize" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="sda4" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="sd_discretize" target="sd_recurrence" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ============================================================ -->
+        <!-- KEY INFO BOX -->
+        <!-- ============================================================ -->
+        <mxCell id="info_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="30" y="700" width="400" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="info_title" value="&lt;b&gt;Key Properties&lt;/b&gt;" style="text;html=1;align=center;fontSize=12;fontStyle=1;fontColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="705" width="400" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="info_text" value="&lt;b&gt;Window Size:&lt;/b&gt; adaptive (C≥512→ws=4, C≥256→ws=6, else→ws=8)&lt;br&gt;&lt;b&gt;d_state:&lt;/b&gt; 4 (SSM hidden state dimension)&lt;br&gt;&lt;b&gt;Scan length:&lt;/b&gt; ws² tokens per window (16-64)&lt;br&gt;&lt;b&gt;Bidirectional:&lt;/b&gt; separate weights for fwd and bwd scans&lt;br&gt;&lt;b&gt;Gating:&lt;/b&gt; y = (y_fwd + y_bwd) × SiLU(z)&lt;br&gt;&lt;br&gt;&lt;b&gt;Injected at 6 neck layers:&lt;/b&gt; 13, 16, 19, 22, 25, 28&lt;br&gt;&lt;b&gt;Parameters:&lt;/b&gt; 19.592M (same as CBAM+P2 base)&lt;br&gt;&lt;b&gt;Method:&lt;/b&gt; Post-init surgical replacement (not YAML-native)" style="text;html=1;align=left;fontSize=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="40" y="730" width="380" height="160" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

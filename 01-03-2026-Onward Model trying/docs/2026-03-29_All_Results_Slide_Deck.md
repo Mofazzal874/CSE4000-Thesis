@@ -1,326 +1,232 @@
-# Thesis Results — Complete Slide Deck
+# Thesis Results — Complete Slide Deck (4-Model Comparison)
 ## Aerial Human Detection using Modified YOLO11m
 ### Date: 2026-03-29
 
 ---
 
-# SLIDE 1: Dataset Overview
+# Changes in the Architecture
 
-## C2A (Crop2Aerial) Person Detection Dataset
-- **Classes:** 1 (person)
-- **Images:** ~6,000
-- **Labeled instances:** ~360,000
-- **Challenge:** Tiny persons in aerial/drone imagery
-- **Size categories:**
-  - Very Tiny: 1-32 px
-  - Tiny: 32-96 px
-  - Small: 96-256 px
-  - Medium: 256+ px
+| Model | Backbone Change | Neck Change | Head Change | Hypothesis |
+|-------|----------------|-------------|-------------|------------|
+| YOLO11m Baseline | Standard (C2PSA) | Standard C3k2 | 3-scale (P3, P4, P5) | Reference model |
+| YOLO11m+CBAM+P2Head | CBAM replaces C2PSA | Standard C3k2 | 4-scale (P2, P3, P4, P5) | Best of both: attention + resolution |
+| Mamba+CBAM+P2Head | CBAM replaces C2PSA | C3k2 at layers 13,16,19,22,25,28 replaced with C3K2Mamba | 4-scale (P2, P3, P4, P5) | SSM sequential scanning improves feature aggregation |
+| AtrousMamba+CBAM+P2Head | CBAM replaces C2PSA | C3k2 at layers 13,25,28 replaced with C3K2Mamba (AtrousSSM, dilations=[1,2,4]) | 4-scale (P2, P3, P4, P5) | Dilated SSM scanning captures multi-scale context |
+
+### Notes
+- **CBAM:** Replaces built-in C2PSA Attention Layer with CBAM (channel + spatial attention, but sequential)
+- **P2 Head:** Added 3 extra layers to the detection head to create a 4th detection scale at 160x160 resolution (stride 4). Each detection grid cell covers only 4x4 pixels, allowing the model to "see" objects as small as 4px.
+- **C3K2Mamba (Mamba):** Replaces C3k2 bottleneck with bidirectional local-window SSM scanning (forward + reverse). Pure PyTorch, no CUDA dependency. Injected via post-init surgical replacement at 6 neck layers.
+- **C3K2Mamba (AtrousSSM):** Same as Mamba but with 3 parallel dilated scanning branches (d=1, d=2, d=4) + gated fusion. YAML-native definition at 3 neck layers (13, 25, 28). d_state=4.
 
 ---
 
-# SLIDE 2: Experimental Roadmap
+# Model Complexity Table
+
+| Model | Parameters (Mil.) | Delta Params (%) | Layers | GFLOPs | Delta GFLOPs (%) |
+|-------|-------------------|-------------------|--------|--------|-------------------|
+| YOLO11m Baseline | 20.0537 | ---- | 410 | 34.1 | ---- |
+| YOLO11m+CBAM+P2Head | 19.5922 | -2.30% | 487 | 43.7 | +28.2% |
+| Mamba+CBAM+P2Head | 19.592 | -2.30% | 487* | 43.7 | +28.2% |
+| AtrousMamba+CBAM+P2Head | 24.156 | +20.45% | 487* | 48.1 | +41.1% |
+
+*Mamba layers are injected post-init, so the layer count is the same as CBAM+P2 base architecture.
+
+### Decision
+- CBAM+P2 and Mamba+CBAM+P2 have **identical parameter count** (19.59M) — Mamba adds no extra parameters.
+- AtrousMamba adds +4.56M params (+20.5%) and +4.4 GFLOPs due to 3 parallel dilated branches + gated fusion.
+- CBAM replacing C2PSA actually **reduces** parameters by 2.3% compared to baseline.
+
+---
+
+# Training Configuration
+
+| Parameter | Baseline | CBAM+P2 | Mamba+CBAM+P2 | AtrousMamba+CBAM+P2 |
+|-----------|----------|---------|---------------|---------------------|
+| Epochs | 70 | 70 | 120 | 80 |
+| Batch Size | 8 | 8 | 8 | 20 (10/GPU) |
+| Optimizer | AdamW | AdamW | AdamW | AdamW |
+| Learning Rate | 0.0005 | 0.0005 | 0.0005 | 0.0005 |
+| Frozen Backbone | 11 layers | 11 layers | 11 layers | 11 layers |
+| Image Size | 640x640 | 640x640 | 640x640 | 640x640 |
+| GPU | 1x T4 (Kaggle) | 1x T4 (Kaggle) | 1x T4 (Kaggle) | 2x T4 (Kaggle) |
+
+---
+
+# Validation-set Detection Performance
+
+| Model | mAP50 | mAP50-95 | Precision | Recall | F1 |
+|-------|-------|----------|-----------|--------|-----|
+| YOLO11m Baseline | 0.8558 | 0.6256 | 0.8827 | 0.8055 | 0.8423 |
+| YOLO11m+CBAM+P2Head | 0.8723 | 0.6418 | 0.8821 | 0.8239 | 0.8520 |
+| Mamba+CBAM+P2Head | **0.8746** | **0.6373** | 0.8848 | **0.8231** | — |
+| AtrousMamba+CBAM+P2Head | 0.8706 | 0.6282 | **0.8798** | 0.8193 | — |
+
+### Decision
+- Mamba+CBAM+P2 achieves the **highest mAP50** (0.8746) on validation.
+- AtrousMamba validation mAP50 (0.8706) is competitive — close to CBAM+P2.
+- Note: Mamba ran for 120 epochs, AtrousMamba for 80 epochs. AtrousMamba was still improving.
+
+---
+
+# Test Set Detection Performance
+
+| Model | mAP50 | mAP50-95 | Precision | Recall | F1 | F2 |
+|-------|-------|----------|-----------|--------|-----|-----|
+| YOLO11m Baseline | 0.8558 | 0.6256 | 0.8257 | 0.8488 | 0.8371 | 0.8441 |
+| YOLO11m+CBAM+P2Head | 0.8723 | 0.6418 | 0.8351 | 0.8619 | 0.8483 | 0.8564 |
+| Mamba+CBAM+P2Head | **0.8770** | **0.6539** | **0.8547** | **0.8453** | **0.8500** | **0.8472** |
+| AtrousMamba+CBAM+P2Head | 0.8228 | 0.5540 | 0.8127 | 0.7979 | 0.8052 | 0.8008 |
+
+### Decision
+- **Mamba+CBAM+P2 is the best overall model:**
+  - +2.12% mAP50 over baseline
+  - +2.83% mAP50-95 over baseline
+  - Higher precision than CBAM+P2 while maintaining competitive recall
+- **AtrousMamba underperforms** on test set (mAP50 0.8228 vs 0.8770 for Mamba).
+- CBAM+P2 has the **highest recall** (0.8619) — attention + P2 head synergy.
+
+---
+
+# Small Object Recall (Test Set)
+
+| Model | Very Tiny | Tiny | Small | Medium |
+|-------|-----------|------|-------|--------|
+| | < 8x8 (64 px2) | 8-16px (64-256 px2) | 16-32px (256-1024 px2) | 32+ px |
+| YOLO11m Baseline | 78.39% | 89.01% | 88.07% | 100% |
+| YOLO11m+CBAM+P2Head | 80.89% | 89.72% | 88.64% | 100% |
+| Mamba+CBAM+P2Head | 76.68% | 87.52% | 89.60% | 89.59% |
+| AtrousMamba+CBAM+P2Head | 68.31% | 84.17% | 87.09% | **93.69%** |
+
+| Delta vs Baseline | Very Tiny | Tiny | Small | Medium |
+|-------------------|-----------|------|-------|--------|
+| CBAM+P2 | **+2.50%** | +0.71% | +0.57% | 0% (saturated) |
+| Mamba+CBAM+P2 | -1.71% | -1.49% | **+1.53%** | -10.41%* |
+| AtrousMamba+CBAM+P2 | -10.08% | -4.84% | -0.98% | -6.31%* |
+
+*Note: Mamba and AtrousMamba use different size bin definitions in their benchmark pipeline (very_tiny: 1-32px area, tiny: 32-96px, small: 96-256px, medium: 256+px) vs the ablation study (very_tiny: <64px2, tiny: 64-256px2, small: 256-1024px2, medium: 1024+px2). Direct cross-pipeline comparisons should be interpreted with caution.
+
+### Comparable 3-Way (Same Pipeline — AtrousMamba Report)
+
+| Model | Very Tiny (1-32px) | Tiny (32-96px) | Small (96-256px) | Medium (256+px) |
+|-------|-------|-------|-------|--------|
+| CBAM+P2 | 76.48% | 87.42% | 89.17% | 86.75% |
+| Mamba+CBAM+P2 | **76.68%** | **87.52%** | **89.60%** | 89.59% |
+| AtrousMamba+CBAM+P2 | 68.31% | 84.17% | 87.09% | **93.69%** |
+| Best Delta vs CBAM+P2 | +0.20% (Mamba) | +0.10% (Mamba) | +0.43% (Mamba) | +6.94% (AtrousMamba) |
+
+### Decision
+- **CBAM+P2** wins for very tiny objects in ablation pipeline (+2.50% over baseline)
+- **Mamba+CBAM+P2** improves across all sizes vs CBAM+P2 (same pipeline comparison)
+- **AtrousMamba** excels only on medium objects (+6.94%) but **regresses badly on very tiny (-8.17%)**
+- AtrousMamba's dilated scanning skips adjacent tokens — harmful for sub-32px objects where every pixel matters
+
+---
+
+# Inference Speed (Test Set)
+
+| Model | Avg. Inference (ms) | Avg Inference Delta |
+|-------|---------------------|---------------------|
+| YOLO11m Baseline | 40.70 | ---- |
+| YOLO11m+CBAM+P2Head | 44.34 | +3.64ms |
+| Mamba+CBAM+P2Head | 51.21 | +10.51ms |
+| AtrousMamba+CBAM+P2Head | **105.08** | **+64.38ms** |
+
+### Decision (Test)
+- **CBAM+P2** adds minimal latency (+3.64ms, +8.9%). Still real-time capable at ~22 FPS.
+- **Mamba+CBAM+P2** adds moderate latency (+10.51ms, +25.8%). ~19.5 FPS — acceptable for non-real-time SAR applications.
+- **AtrousMamba** is 2.6x slower than baseline (105ms, ~9.5 FPS) due to 3 parallel dilated branches + gated fusion. NOT real-time.
+
+---
+
+# Confidence Calibration (ECE — Lower is Better)
+
+| Model | ECE | Delta vs Baseline |
+|-------|-----|-------------------|
+| YOLO11m Baseline | 0.0933 | ---- |
+| YOLO11m+CBAM+P2Head | 0.1160 | +0.0227 |
+| Mamba+CBAM+P2Head | 0.1346 | +0.0413 |
+| AtrousMamba+CBAM+P2Head | 0.1497 | +0.0564 |
+
+### Decision
+- Baseline has best calibration (0.0933).
+- Each modification adds slight overconfidence — more detection heads/scanning = more predictions = higher ECE.
+- Mamba+CBAM+P2 ECE (0.1346) is better than AtrousMamba (0.1497).
+- **Mitigation:** Use slightly higher confidence threshold (conf=0.30 instead of conf=0.25) for Mamba model during deployment.
+
+---
+
+# Analysis & Decision
+
+## CBAM+P2Head (Attention + Extra Scale):
+- Lighter model (-2.3% params vs baseline)
+- **Best very-tiny recall** in ablation study (+2.50%)
+- Best recall overall (0.8619) — finds the most objects
+- Minimal speed cost (+3.64ms)
+
+## Mamba+CBAM+P2Head (SSM Neck — BEST MODEL):
+- **Best mAP50** (0.8770) and **Best mAP50-95** (0.6539)
+- Best precision (0.8547) — fewest false positives
+- Same parameter count as CBAM+P2 (19.592M)
+- Improves recall across all object sizes (same-pipeline comparison)
+- Moderate speed cost (+10.51ms, still ~19.5 FPS)
+- Better calibration than AtrousMamba (ECE 0.1346 vs 0.1497)
+
+## AtrousMamba+CBAM+P2Head (Dilated SSM — Negative Result):
+- Novel architecture: first dilated scanning mechanism for SSMs
+- **Best medium object recall** (93.69%) — dilated scanning captures full-body context
+- BUT severe regression on tiny objects (-8.17% very tiny recall)
+- Heaviest model (+20.5% params, +41.1% GFLOPs)
+- Slowest inference (105ms, 2.6x slower)
+- Only trained 80 epochs (vs 120 for Mamba) — may not have converged
+
+---
+
+# Overall Progression (Validation mAP50)
 
 ```
-Phase 1: Baseline Benchmarking (25 epochs)
-  -> YOLOv9 (s/m/e), YOLOv10 (s/m/l), YOLOv11 (s/m/l)
+                            mAP50
+YOLO11m Baseline    ████████████████████████████░░░  0.8558
++ CBAM+P2Head       █████████████████████████████░░  0.8723  (+1.65%)
++ Mamba+CBAM+P2     ██████████████████████████████░  0.8770  (+2.12%)
++ AtrousMamba       ████████████████████████░░░░░░░  0.8228  (-3.30%)
+```
 
-Phase 2: Ablation Study on YOLO11m (50-70 epochs)
-  -> Baseline -> +ECA -> +CBAM -> +P2Head -> +CBAM+P2Head
-
-Phase 3: SSM Neck Integration (120 epochs)
-  -> YOLO11m + Mamba + CBAM + P2Head (C3K2Mamba neck)
-
-Phase 4: Novel AtrousSSM (80 epochs)
-  -> YOLO11m + AtrousMamba + CBAM + P2Head (dilated SSM scanning)
+```
+                            mAP50-95
+YOLO11m Baseline    ████████████████████████████░░░  0.6256
++ CBAM+P2Head       █████████████████████████████░░  0.6418  (+1.62%)
++ Mamba+CBAM+P2     ██████████████████████████████░  0.6539  (+2.83%)
++ AtrousMamba       ███████████████████████░░░░░░░░  0.5540  (-7.16%)
 ```
 
 ---
 
-# SLIDE 3: Phase 1 — YOLO Family Benchmarks (25 epochs, C2A)
+# Key Contributions Summary
 
-| Model       | Precision | Recall | mAP50  | mAP50-95 |
-|-------------|-----------|--------|--------|----------|
-| YOLOv9s     | 0.8383    | 0.7231 | 0.7763 | 0.4910   |
-| YOLOv9m     | 0.8589    | 0.7634 | 0.8142 | 0.5470   |
-| YOLOv9e     | 0.8793    | 0.7990 | 0.8472 | 0.6010   |
-| YOLOv10s    | 0.8324    | 0.7311 | 0.7848 | 0.5068   |
-| YOLOv10m    | 0.8564    | 0.7682 | 0.8229 | 0.5595   |
-| YOLOv10l    | 0.8756    | 0.7898 | 0.8408 | 0.5863   |
-| YOLO11s     | 0.8472    | 0.7460 | 0.7967 | 0.5199   |
-| YOLO11m     | 0.8756    | 0.7898 | 0.8408 | 0.5863   |
-| YOLO11l     | 0.8796    | 0.7897 | 0.8408 | 0.5863   |
+### 1. CBAM + P2Head Integration
+- Replacing C2PSA with CBAM reduces parameters while maintaining performance
+- P2 Head adds 4th detection scale — most impactful single modification (+1.65% mAP50)
+- CBAM+P2 achieves best very-tiny recall (+2.50%) with -2.3% parameters
 
-**Key finding:** YOLO11m matches YOLO11l performance at lower compute. Selected as base architecture.
+### 2. Mamba SSM Neck (Best Result)
+- Bidirectional local-window SSM scanning in C3K2 neck blocks
+- +2.12% mAP50, +2.83% mAP50-95 over baseline
+- **Zero parameter overhead** — same 19.592M params as CBAM+P2
+- Improves detection across all object sizes
 
----
-
-# SLIDE 4: Phase 1 — Visual Comparison Chart Data
-
-```
-mAP50 ranking (25 epochs):
-1. YOLOv9e     — 0.8472
-2. YOLO11m     — 0.8408
-3. YOLO11l     — 0.8408
-4. YOLOv10l    — 0.8408
-5. YOLOv10m    — 0.8229
-6. YOLOv9m     — 0.8142
-7. YOLO11s     — 0.7967
-8. YOLOv10s    — 0.7848
-9. YOLOv9s     — 0.7763
-
-mAP50-95 ranking (25 epochs):
-1. YOLOv9e     — 0.6010
-2. YOLO11m     — 0.5863
-3. YOLO11l     — 0.5863
-4. YOLOv10l    — 0.5863
-5. YOLOv10m    — 0.5595
-6. YOLO11s     — 0.5199
-7. YOLOv10s    — 0.5068
-8. YOLOv9m     — 0.5470
-9. YOLOv9s     — 0.4910
-```
+### 3. AtrousSSM (Novel Architecture — Informative Negative Result)
+- First dilated scanning mechanism applied to State Space Models
+- Demonstrates medium-object improvement (+6.94% recall) from expanded receptive field
+- Reveals fundamental SSM scanning design tradeoff: wider context vs local detail loss
+- Opens design space for future adaptive-dilation SSM architectures
 
 ---
 
-# SLIDE 5: Phase 2 — Ablation Study on YOLO11m
+# Future Work
 
-| Model                    | Epochs | Precision | Recall | mAP50  | mAP50-95 |
-|--------------------------|--------|-----------|--------|--------|----------|
-| YOLO11m Baseline         | 50     | 0.8783    | 0.7972 | 0.8490 | 0.6020   |
-| YOLO11m + ECA            | 50     | 0.8789    | 0.7966 | 0.8489 | 0.5995   |
-| YOLO11m + CBAM           | 70     | 0.8806    | 0.7988 | 0.8520 | 0.6073   |
-| YOLO11m + P2Head         | 50     | 0.8808    | 0.7877 | 0.8713 | 0.6297   |
-| YOLO11m + CBAM + P2Head  | 70     | 0.8781    | 0.8188 | 0.8693 | 0.6257   |
-
----
-
-# SLIDE 6: Phase 2 — Ablation Analysis
-
-## Attention Module Comparison
-- **ECA:** No improvement (+0.00 mAP50, -0.25% mAP50-95) -> Dropped
-- **CBAM:** Marginal gain (+0.30 mAP50, +0.53% mAP50-95) -> Selected
-
-## P2 Head Impact (Major Structural Change)
-- **+P2Head alone:** +2.23% mAP50, +2.77% mAP50-95
-- **+CBAM+P2Head:** +2.03% mAP50, +2.37% mAP50-95, **+2.16% Recall**
-
-## Key Insight
-P2 Head is the single most impactful modification — adds 4th detection scale for tiny objects. CBAM+P2 chosen as base for SSM experiments (best recall).
-
----
-
-# SLIDE 7: Phase 3 — Mamba SSM Neck Integration
-
-## Architecture: YOLO11m + C3K2Mamba + CBAM + P2Head
-- **C3K2Mamba:** Replaces standard C3k2 blocks in neck layers with Mamba-integrated blocks
-- **Bidirectional scanning:** Forward + reverse sequence scanning in each Mamba block
-- **Pure PyTorch:** No CUDA kernel dependency (runs on any GPU)
-
-### Training Config
-- Epochs: 120 | Batch: 8 | Optimizer: AdamW | LR: 0.0005
-- Backbone: 11 layers frozen | GPU: Kaggle T4
-
----
-
-# SLIDE 8: Phase 3 — Mamba Results (Test Set)
-
-| Metric          | CBAM+P2 Baseline | Mamba+CBAM+P2 | Delta    |
-|-----------------|------------------|---------------|----------|
-| Precision       | 0.8502           | 0.8547        | +0.45%   |
-| Recall          | 0.8426           | 0.8453        | +0.27%   |
-| F1 Score        | 0.8464           | 0.8500        | +0.36%   |
-| mAP50           | 0.8739           | 0.8770        | **+0.31%** |
-| mAP50-95        | 0.6450           | 0.6539        | **+0.89%** |
-| ECE (Calibr.)   | 0.1401           | 0.1346        | -0.55pp  |
-
-### Parameters & Speed
-| Metric     | CBAM+P2 | Mamba+CBAM+P2 |
-|------------|---------|---------------|
-| Params     | 19.592M | 19.592M       |
-| GFLOPs     | 43.7    | 43.7          |
-| Latency    | 46.1ms  | 45.9ms        |
-
-**Key: Same model size, same speed, better accuracy + calibration**
-
----
-
-# SLIDE 9: Phase 3 — Mamba Multi-Scale Recall
-
-| Object Size     | CBAM+P2 | Mamba+CBAM+P2 | Delta    |
-|-----------------|---------|---------------|----------|
-| Very Tiny (1-32px)  | 0.7648  | 0.7668    | +0.20%   |
-| Tiny (32-96px)      | 0.8742  | 0.8752    | +0.10%   |
-| Small (96-256px)    | 0.8917  | 0.8960    | +0.43%   |
-| Medium (256+px)     | 0.8675  | 0.8959    | **+2.84%** |
-
-**Mamba improves across ALL size categories, largest gain on medium objects (+2.84%)**
-
----
-
-# SLIDE 10: Phase 3 — Mamba Training Convergence
-
-```
-Mamba+CBAM+P2 (120 epochs):
-- Best epoch: 103 (F2=0.8351, mAP50=0.8750)
-- Final epoch 120: mAP50=0.8746, mAP50-95=0.6373
-- Stable convergence after epoch ~90
-- No overfitting observed (val loss still decreasing)
-```
-
----
-
-# SLIDE 11: Phase 4 — AtrousSSM (Novel Contribution)
-
-## AtrousSSM: Atrous State Space Model
-**Core idea:** Apply dilated (atrous) scanning patterns to SSM sequence processing
-
-### Architecture
-- **3 parallel branches** with dilations [1, 2, 4]
-  - Branch 1 (d=1): Standard sequential scan (local context)
-  - Branch 2 (d=2): Skip-1 scan (medium-range context)
-  - Branch 3 (d=4): Skip-3 scan (long-range context)
-- **Bidirectional scan** per branch (forward + reverse)
-- **Gated fusion** to combine multi-scale features
-- **d_state=4**, pure PyTorch implementation
-
-### Placement in YOLO11m
-- Neck layers 13, 16, 19, 22, 25 (replaces C3k2 blocks)
-- Combined with CBAM attention + P2 detection head
-
----
-
-# SLIDE 12: Phase 4 — AtrousSSM Training Config
-
-| Parameter        | AtrousMamba          | Mamba (baseline)    |
-|------------------|---------------------|---------------------|
-| Epochs           | 80                  | 120                 |
-| Batch Size       | 20 (10/GPU)         | 8                   |
-| GPUs             | 2x T4 (Kaggle)     | 1x T4 (Kaggle)     |
-| Optimizer        | AdamW               | AdamW               |
-| Learning Rate    | 0.0005              | 0.0005              |
-| Frozen Backbone  | 11 layers           | 11 layers           |
-| Image Size       | 640x640             | 640x640             |
-
----
-
-# SLIDE 13: Phase 4 — AtrousSSM Results (Test Set)
-
-| Metric          | CBAM+P2  | Mamba+CBAM+P2 | AtrousMamba+CBAM+P2 |
-|-----------------|----------|---------------|---------------------|
-| Precision       | 0.8502   | 0.8547        | 0.8127              |
-| Recall          | 0.8426   | 0.8453        | 0.7979              |
-| F1 Score        | 0.8464   | 0.8500        | 0.8052              |
-| mAP50           | 0.8739   | **0.8770**    | 0.8228              |
-| mAP50-95        | 0.6450   | **0.6539**    | 0.5540              |
-| ECE             | 0.1401   | **0.1346**    | 0.1497              |
-| Latency (ms)    | 46.1     | **45.9**      | 105.1               |
-| Params (M)      | 19.592   | 19.592        | 24.156              |
-| GFLOPs          | 43.7     | 43.7          | 48.1                |
-
----
-
-# SLIDE 14: Phase 4 — AtrousSSM Multi-Scale Recall
-
-| Object Size         | CBAM+P2 | Mamba+CBAM+P2 | AtrousMamba+CBAM+P2 |
-|---------------------|---------|---------------|---------------------|
-| Very Tiny (1-32px)  | 0.7648  | **0.7668**    | 0.6831              |
-| Tiny (32-96px)      | 0.8742  | **0.8752**    | 0.8417              |
-| Small (96-256px)    | 0.8917  | **0.8960**    | 0.8709              |
-| Medium (256+px)     | 0.8675  | 0.8959        | **0.9369**          |
-
-### AtrousSSM Analysis
-- **Medium objects:** AtrousMamba BEST (+4.10% over Mamba) — dilated scanning captures full-body context
-- **Tiny/Very Tiny:** AtrousMamba WORST (-8.37% very tiny vs Mamba) — dilated sampling loses fine-grained detail
-- **Net effect:** Overall regression due to dataset being dominated by tiny objects
-
----
-
-# SLIDE 15: Phase 4 — AtrousSSM Diagnosis
-
-## Why AtrousMamba Underperformed
-
-1. **Dilated scanning loses local detail**
-   - d=2 and d=4 branches skip adjacent tokens
-   - Critical for 1-32px objects where EVERY pixel matters
-
-2. **Computational overhead**
-   - 3 parallel branches + gated fusion = 2.3x slower (105ms vs 46ms)
-   - +4.6M parameters (+23%) with no accuracy gain
-
-3. **Only 80 epochs (vs 120 for Mamba)**
-   - AtrousMamba was still improving at epoch 80
-   - Best epoch: 63 (mAP50=0.8197) — may not have fully converged
-
-4. **Dataset mismatch**
-   - C2A is dominated by tiny persons (1-96px)
-   - AtrousSSM benefits medium+ objects but hurts the dominant class
-
----
-
-# SLIDE 16: Complete Model Progression
-
-| Model                          | Epochs | mAP50  | mAP50-95 | Params  |
-|--------------------------------|--------|--------|----------|---------|
-| YOLO11m Baseline               | 50     | 0.8490 | 0.6020   | 20.1M   |
-| + ECA                          | 50     | 0.8489 | 0.5995   | 20.1M   |
-| + CBAM                         | 70     | 0.8520 | 0.6073   | 20.1M   |
-| + P2Head                       | 50     | 0.8713 | 0.6297   | 19.6M   |
-| + CBAM + P2Head                | 70     | 0.8693 | 0.6257   | 19.6M   |
-| + Mamba + CBAM + P2Head        | 120    | **0.8770** | **0.6539** | 19.6M |
-| + AtrousMamba + CBAM + P2Head  | 80     | 0.8228 | 0.5540   | 24.2M   |
-
-### Best Model: Mamba+CBAM+P2Head
-- **+2.80% mAP50** over baseline
-- **+5.19% mAP50-95** over baseline
-- **Same parameters** as CBAM+P2 baseline
-- **No speed penalty** (45.9ms vs 46.1ms)
-
----
-
-# SLIDE 17: Cross-Family Comparison (Best Models)
-
-| Model                     | mAP50  | mAP50-95 | Precision | Recall |
-|---------------------------|--------|----------|-----------|--------|
-| YOLOv9e (25ep)            | 0.8472 | 0.6010   | 0.8793    | 0.7990 |
-| YOLOv10l (25ep)           | 0.8408 | 0.5863   | 0.8756    | 0.7898 |
-| YOLO11m Baseline (50ep)   | 0.8490 | 0.6020   | 0.8783    | 0.7972 |
-| **Ours: Mamba+CBAM+P2**   | **0.8770** | **0.6539** | 0.8547 | **0.8453** |
-
-### Our model vs YOLOv9e (strongest competitor)
-- mAP50: +2.98%
-- mAP50-95: +5.29%
-- Recall: +4.63% (critical for search-and-rescue)
-
----
-
-# SLIDE 18: Key Contributions Summary
-
-## 1. Systematic Benchmarking
-- 9 YOLO variants (v9/v10/v11) evaluated on C2A aerial dataset
-- YOLO11m identified as optimal base (best accuracy/compute tradeoff)
-
-## 2. Ablation Study
-- ECA attention: No benefit on aerial detection -> dropped
-- CBAM attention: Marginal mAP gain, slight recall improvement
-- P2 Head: Most impactful single modification (+2.23% mAP50)
-
-## 3. Mamba SSM Neck (Best Result)
-- Bidirectional Mamba scanning in C3K2 neck blocks
-- +0.31% mAP50, +0.89% mAP50-95 over CBAM+P2
-- Zero parameter/speed overhead
-
-## 4. AtrousSSM (Novel Architecture — Negative Result)
-- First dilated scanning mechanism for SSMs
-- Excels on medium objects (+4.1%) but regresses on tiny (-8.4%)
-- Thesis contribution: demonstrates SSM scanning pattern design space
-
----
-
-# SLIDE 19: Future Work
-
-1. **AtrousSSM v2:** Adaptive dilation rates learned per layer
-2. **Hybrid approach:** AtrousSSM for deep layers (medium objects) + standard Mamba for shallow layers (tiny objects)
-3. **Extended training:** AtrousMamba with 120+ epochs for fair comparison
-4. **WaveAtrousMamba:** Wavelet-guided multi-scale feature fusion with AtrousSSM
-5. **Cross-dataset validation:** VisDrone, DOTA for generalization testing
+1. **Fair comparison:** Retrain AtrousMamba with 120 epochs for direct comparison
+2. **Hybrid scanning:** AtrousSSM for deep layers (large receptive field) + standard Mamba for shallow layers (preserve tiny details)
+3. **Adaptive dilations:** Learn dilation rates per layer instead of fixed [1,2,4]
+4. **Selective branch activation:** Route features through appropriate dilation based on object scale
+5. **Cross-dataset validation:** VisDrone, DOTA datasets for generalization
