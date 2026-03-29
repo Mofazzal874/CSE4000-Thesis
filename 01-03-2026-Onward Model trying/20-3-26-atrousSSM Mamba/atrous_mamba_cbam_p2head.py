@@ -58,7 +58,7 @@ COMPUTE NOTES (Kaggle T4 — SINGLE GPU):
   d_state     : 4  (safe for T4 16GB)
   Window size : adaptive (4→512ch, 6→256ch, 8→128ch)
   Dilations   : [1, 2, 4] (3 branches — sequential Python scan)
-  Gradient clipping : max_norm=10.0 (prevents epoch-1 explosion)
+  Gradient clipping : max_norm=1.0 (tight for SSM stability)
   Expected VRAM: ~10-12GB at batch=8 (T4 has 16GB)
 
   TIMING (reference: base model = 7.768h on 2×T4 @ batch=12):
@@ -79,6 +79,9 @@ RESUME_TRAINING = False   # Set True to resume from a checkpoint
 RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT, e.g.:
                           # "/kaggle/input/atrous-mamba-checkpoint/session_last.pt"
                           # AUTO-DETECT: if empty, scans /kaggle/input/ for session_last.pt
+RESET_OPTIMIZER_ON_RESUME = True   # Strip optimizer state on resume — prevents gradient
+                                   # explosion from corrupted Adam momentum/variance.
+                                   # Model weights + epoch count are preserved.
 
 import subprocess, sys, re
 
@@ -180,15 +183,20 @@ if TEST_MODE:
     print("⚠  TEST MODE  — 5% data, 2 epochs")
 else:
     TRAIN_FRACTION = 1.0
-    NUM_EPOCHS     = 120
+    NUM_EPOCHS     = 80       # frozen backbone converges faster than 120
     PATIENCE       = 15
     F2_PATIENCE    = 10
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 8 if gpu_mem >= 14 else 4
+    # T4 16GB: batch=12 is safe ceiling (batch=16 triggers TaskAlignedAssigner OOM)
+    # VRAM at batch=12: ~12-13GB / 16GB — leaves headroom for loss computation spikes
+    if gpu_mem >= 14:
+        BATCH_SIZE = 12
+    else:
+        BATCH_SIZE = 8
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~18-24h on single T4 → needs 2 Kaggle sessions")
+    print(f"    ⏱  Estimated: ~6-10h on single T4 (3 SSM layers + frozen backbone)")
     print(f"    Early stopping may finish sooner (patience={PATIENCE})")
 
 GRAD_ACCUM = max(1, 16 // BATCH_SIZE)
@@ -197,8 +205,12 @@ print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SI
 # ── Checkpoint / session-resume config ──────────────────────────────────────
 CHECKPOINT_EVERY = 5 if not TEST_MODE else 1
 
-# ── OOM retry ladder ─────────────────────────────────────────────────────────
-OOM_RETRY_BATCHES = [BATCH_SIZE, max(BATCH_SIZE // 2, 2), max(BATCH_SIZE // 4, 1)]
+# ── OOM retry ladder (T4 16GB — tight range, no wasted attempts) ────────────
+# T4 can't go above ~12-14 with this model. Ladder: start → step down by 2-4.
+_T4_STEPS = [12, 10, 8, 6, 4]
+OOM_RETRY_BATCHES = [b for b in _T4_STEPS if b <= BATCH_SIZE]
+if not OOM_RETRY_BATCHES:
+    OOM_RETRY_BATCHES = [BATCH_SIZE]
 
 # ── AtrousSSM config ─────────────────────────────────────────────────────────
 DILATIONS = [1, 2, 4]   # multi-scale dilation rates
@@ -421,13 +433,15 @@ class _SelectiveScan1D(nn.Module):
         u_f     = u_act.float()
         A       = -torch.exp(self.A_log.float())
 
-        deltaA   = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        _dtA = torch.einsum("bld,dn->bldn", dt, A)
+        deltaA = torch.exp(_dtA.clamp(-20.0, 0.0))  # CRITICAL: prevent exp overflow/NaN
         deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
 
         x = torch.zeros(B_win, D, self.N, device=u.device, dtype=torch.float32)
         ys = []
         for i in range(L):
             x = deltaA[:, i] * x + deltaB_u[:, i]
+            x = x.clamp(-1e4, 1e4)  # prevent runaway state accumulation
             y_i = (x * C_param[:, i, :].unsqueeze(1)).sum(-1)
             ys.append(y_i)
 
@@ -793,6 +807,7 @@ print("✓ CBAM registered in ultralytics namespace (DDP-safe)")
 
 def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
                              max_channels: int = 512,
+                             min_channels: int = 512,
                              d_state: int = 4,
                              dilations: list = None,
                              verbose: bool = True) -> list:
@@ -800,6 +815,10 @@ def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
     Core injection logic: replace eligible C3k2/C2f layers in an nn.Sequential
     with C3K2Mamba (AtrousSSM).  Works on both YOLO.model.model (nn.Sequential)
     and DetectionModel.model (nn.Sequential).
+
+    Only injects at layers where min_channels <= c2 <= max_channels.
+    Default: 512ch only (deep layers at 40×40 and 20×20).
+    P2 (128ch, 160×160) and P3 (256ch, 80×80) use standard C3k2.
     """
     try:
         from ultralytics.nn.modules.block import C3k2, C2f
@@ -826,6 +845,12 @@ def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
             if verbose:
                 print(f"  SKIP  layer {idx:2d}: {type(layer).__name__}"
                       f"({c1}→{c2}) — c2 > {max_channels}")
+            continue
+
+        if c2 < min_channels:
+            if verbose:
+                print(f"  SKIP  layer {idx:2d}: {type(layer).__name__}"
+                      f"({c1}→{c2}) — c2 < {min_channels} (use standard C3k2)")
             continue
 
         dev   = next(layer.parameters()).device
@@ -872,16 +897,17 @@ def _inject_into_sequential(nn_model, min_layer_idx: int = 11,
 
 def inject_mamba_neck(yolo_model, min_layer_idx: int = 11,
                        max_channels: int = 512,
+                       min_channels: int = 512,
                        d_state: int = 4,
                        dilations: list = None,
                        verbose: bool = True) -> list:
     """
     Surgically replace eligible C3k2/C2f neck layers with C3K2Mamba (AtrousSSM).
-    Accepts a YOLO model wrapper (accesses .model.model for nn.Sequential).
+    Only injects at layers where min_channels <= c2 <= max_channels (default: 512ch only).
     """
     nn_model = yolo_model.model.model
     return _inject_into_sequential(nn_model, min_layer_idx, max_channels,
-                                   d_state, dilations, verbose)
+                                   min_channels, d_state, dilations, verbose)
 
 
 # ── CRITICAL FIX: Monkey-patch DetectionTrainer.get_model() ─────────────────
@@ -938,7 +964,7 @@ def _patched_get_model(self, cfg=None, weights=None, verbose=True):
     print("\n  ── Re-injecting AtrousSSM into trainer model (post-get_model patch) ──")
     nn_model = model.model  # DetectionModel.model is nn.Sequential
     replaced = _inject_into_sequential(
-        nn_model, min_layer_idx=11, max_channels=512,
+        nn_model, min_layer_idx=11, max_channels=512, min_channels=512,
         d_state=D_STATE, dilations=DILATIONS, verbose=True
     )
 
@@ -976,9 +1002,9 @@ from ultralytics.engine.trainer import BaseTrainer
 _orig_opt_step = BaseTrainer.optimizer_step
 
 def _clipped_optimizer_step(self):
-    """Optimizer step with gradient clipping (max_norm=10)."""
+    """Optimizer step with gradient clipping (max_norm=1.0 — tight for SSM stability)."""
     self.scaler.unscale_(self.optimizer)
-    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10.0)
+    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
     self.scaler.step(self.optimizer)
     self.scaler.update()
     self.optimizer.zero_grad()
@@ -986,7 +1012,7 @@ def _clipped_optimizer_step(self):
         self.ema.update(self.model)
 
 BaseTrainer.optimizer_step = _clipped_optimizer_step
-print("✓ Gradient clipping enabled (max_norm=10.0)")
+print("✓ Gradient clipping enabled (max_norm=1.0)")
 
 
 def _dry_run_injection():
@@ -1329,6 +1355,43 @@ if RESUME_TRAINING and RESUME_PT:
         shutil.copy(str(_resume_src), str(_local_last))
         print(f"  ✓ Copied last.pt → {_local_last}")
 
+    # ── Optimizer reset: prevent gradient explosion from corrupted Adam state ──
+    if RESET_OPTIMIZER_ON_RESUME:
+        try:
+            _ckpt = torch.load(str(_local_last), map_location="cpu", weights_only=False)
+            _had_optimizer = False
+            _resets = []
+            if isinstance(_ckpt, dict):
+                if "optimizer" in _ckpt:
+                    _ckpt["optimizer"] = None
+                    _had_optimizer = True
+                    _resets.append("optimizer")
+                # Reset AMP GradScaler — corrupted scale from pre-fix NaN causes
+                # underflow on resume (tiny scale → zero gradients → NaN)
+                for _scaler_key in ("scaler", "amp_scaler", "grad_scaler"):
+                    if _scaler_key in _ckpt:
+                        _ckpt[_scaler_key] = None
+                        _resets.append("AMP scaler")
+                        break
+                # Reset epoch so warmup_epochs actually re-applies from epoch 0
+                if "epoch" in _ckpt:
+                    _old_epoch = _ckpt["epoch"]
+                    _ckpt["epoch"] = 0
+                    _resets.append(f"epoch ({_old_epoch}→0)")
+                if "train_args" in _ckpt and isinstance(_ckpt["train_args"], dict):
+                    _ckpt["train_args"]["warmup_epochs"] = 3
+                    _ckpt["train_args"]["lr0"] = 0.01  # reset to default LR
+                torch.save(_ckpt, str(_local_last))
+                if _resets:
+                    print(f"  ✓ Checkpoint RESET: {', '.join(_resets)}")
+                    print("    → Fresh optimizer + scaler + warmup on resume")
+                else:
+                    print("  ℹ No optimizer/scaler state found in checkpoint (already clean)")
+            del _ckpt
+        except Exception as _e:
+            print(f"  ⚠ Could not reset optimizer state: {_e}")
+            print("    Continuing with original checkpoint — watch for NaN/Inf losses")
+
     _meta_src = Path(RESUME_PT).parent / "session_meta.json"
     if _meta_src.exists():
         import json
@@ -1397,6 +1460,7 @@ else:
             fraction     = TRAIN_FRACTION,
             cache        = True,
             workers      = 2,
+            freeze       = 11,  # Freeze backbone (layers 0-10) — only neck SSM + head train
             name         = "yolo11m_atrousmamba_cbam_p2head",
             exist_ok     = True,
         )

@@ -1,0 +1,44 @@
+================================================================================
+DISASTER HUMAN DETECTION — ATROUSMAMBA + CBAM + P2 HEAD REPORT
+================================================================================
+Generated : 2026-03-25 18:05:38
+TEST MODE : False  |  Epochs: 80  |  Fraction: 100%
+AtrousSSM : dilations=[1, 2, 4]  d_state=4
+
+MODEL COMPLEXITY
+  AtrousMamba+CBAM+P2      : 24.156M params  48.1 GFLOPs  47813 KB
+  Mamba+CBAM+P2 (old)      : 19.592M params  43.7 GFLOPs  38874 KB
+  CBAM+P2                  : 19.592M params  43.7 GFLOPs  38864 KB
+
+OFFICIAL mAP (test split — Ultralytics val):
+  AtrousMamba_CBAM_P2      : mAP50=0.8228  mAP50-95=0.5540
+  Mamba_CBAM_P2_old        : mAP50=0.8770  mAP50-95=0.6539
+  CBAM_P2                  : mAP50=0.8739  mAP50-95=0.6450
+
+TEST SET (custom evaluation):
+  AtrousMamba_CBAM_P2      : P=0.8127  R=0.7979  F1=0.8052  F2=0.8008  Lat=105.0788ms
+  Mamba_CBAM_P2_old        : P=0.8547  R=0.8453  F1=0.8500  F2=0.8472  Lat=45.9272ms
+  CBAM_P2                  : P=0.8502  R=0.8426  F1=0.8464  F2=0.8441  Lat=46.0788ms
+
+SMALL OBJECT RECALL — TEST:
+  very_tiny   :  AtrousMamba_CBAM_P2=0.6831  Mamba_CBAM_P2_old=0.7668  CBAM_P2=0.7648
+  tiny        :  AtrousMamba_CBAM_P2=0.8417  Mamba_CBAM_P2_old=0.8752  CBAM_P2=0.8742
+  small       :  AtrousMamba_CBAM_P2=0.8709  Mamba_CBAM_P2_old=0.8960  CBAM_P2=0.8917
+  medium      :  AtrousMamba_CBAM_P2=0.9369  Mamba_CBAM_P2_old=0.8959  CBAM_P2=0.8675
+
+CALIBRATION (ECE):
+  AtrousMamba_CBAM_P2      : ECE=0.1497
+  Mamba_CBAM_P2_old        : ECE=0.1346
+  CBAM_P2                  : ECE=0.1401
+
+TRAINING CONVERGENCE:
+  AtrousMamba+CBAM+P2       best epoch 63: F2=0.7870  mAP50=0.8197
+  Mamba+CBAM+P2 (old)       best epoch 103: F2=0.8351  mAP50=0.8750
+  CBAM+P2                   best epoch 36: F2=0.8331  mAP50=0.8709
+
+F2 EARLY STOPPING LOG:
+
+NaN STOP TRIGGERED:
+  False
+
+================================================================================

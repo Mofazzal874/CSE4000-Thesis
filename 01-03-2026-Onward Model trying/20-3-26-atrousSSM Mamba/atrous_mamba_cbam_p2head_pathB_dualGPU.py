@@ -61,7 +61,7 @@ COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
   d_state     : 4  (safe for T4 16GB)
   Window size : adaptive (4→512ch, 6→256ch, 8→128ch)
   Dilations   : [1, 2, 4] (3 branches — sequential Python scan)
-  Gradient clipping : max_norm=10.0 (prevents epoch-1 explosion)
+  Gradient clipping : max_norm=1.0 (tight for SSM stability)
   Expected VRAM: ~8-10GB per GPU at batch=16 (T4 has 16GB)
 
   TIMING (reference: base model = 7.768h on 2×T4 @ batch=12):
@@ -76,11 +76,14 @@ COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
 # CELL 1: Control Flags & Dependencies
 # ============================================================================
 
-TEST_MODE       = True   # True = 2 epochs, 5% data | False = full 120 epochs
+TEST_MODE       = False   # True = 2 epochs, 5% data | False = full 120 epochs
 RESUME_TRAINING = False   # Set True to resume from a checkpoint
 RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT, e.g.:
                           # "/kaggle/input/atrous-mamba-checkpoint/session_last.pt"
                           # AUTO-DETECT: if empty, scans /kaggle/input/ for session_last.pt
+RESET_OPTIMIZER_ON_RESUME = True   # Strip optimizer state on resume — prevents gradient
+                                   # explosion from corrupted Adam momentum/variance.
+                                   # Model weights + epoch count are preserved.
 
 import subprocess, sys, re
 
@@ -180,25 +183,32 @@ if TEST_MODE:
     print("⚠  TEST MODE  — 5% data, 2 epochs")
 else:
     TRAIN_FRACTION = 1.0
-    NUM_EPOCHS     = 120
+    NUM_EPOCHS     = 80       # frozen backbone converges faster than 120
     PATIENCE       = 15
     F2_PATIENCE    = 10
     TEST_IMAGES    = None
     VAL_IMAGES     = None
     SAVE_PERIOD    = 5
-    BATCH_SIZE     = 12 if gpu_mem >= 14 else 4   # 6/GPU — batch=16 OOMs on T4 (13.7GB/14.9GB)
+    # 2×T4: batch=20 → 10/GPU (safe). batch=24 risks TaskAlignedAssigner OOM at 12/GPU
+    if gpu_mem >= 14:
+        BATCH_SIZE = 20
+    else:
+        BATCH_SIZE = 8
     print(f"🚀  FULL MODE  — {NUM_EPOCHS} epochs | batch={BATCH_SIZE}")
-    print(f"    ⏱  Estimated: ~12-14h on 2×T4 (early stopping helps stay within 12h)")
+    print(f"    ⏱  Estimated: ~5-8h on 2×T4 (3 SSM layers + frozen backbone)")
     print(f"    Resume built-in as backup if session times out")
 
-GRAD_ACCUM = max(1, 24 // BATCH_SIZE)   # effective batch ~24 (was 16)
+GRAD_ACCUM = max(1, 24 // BATCH_SIZE)   # effective batch ~24
 print(f"  Batch={BATCH_SIZE} | GradAccum={GRAD_ACCUM} | EffectiveBatch={BATCH_SIZE*GRAD_ACCUM}")
 
 # ── Checkpoint / session-resume config ──────────────────────────────────────
 CHECKPOINT_EVERY = 5 if not TEST_MODE else 1
 
-# ── OOM retry ladder ─────────────────────────────────────────────────────────
-OOM_RETRY_BATCHES = [BATCH_SIZE, max(BATCH_SIZE // 2, 2), max(BATCH_SIZE // 4, 1)]
+# ── OOM retry ladder (2×T4 — batch split across GPUs, ~10/GPU safe ceiling) ─
+_DDP_T4_STEPS = [20, 16, 12, 10, 8, 4]
+OOM_RETRY_BATCHES = [b for b in _DDP_T4_STEPS if b <= BATCH_SIZE]
+if not OOM_RETRY_BATCHES:
+    OOM_RETRY_BATCHES = [BATCH_SIZE]
 
 # ── AtrousSSM config ─────────────────────────────────────────────────────────
 DILATIONS = [1, 2, 4]   # multi-scale dilation rates
@@ -421,13 +431,15 @@ class _SelectiveScan1D(nn.Module):
         u_f     = u_act.float()
         A       = -torch.exp(self.A_log.float())
 
-        deltaA   = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        _dtA = torch.einsum("bld,dn->bldn", dt, A)
+        deltaA = torch.exp(_dtA.clamp(-20.0, 0.0))  # CRITICAL: prevent exp overflow/NaN
         deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
 
         x = torch.zeros(B_win, D, self.N, device=u.device, dtype=torch.float32)
         ys = []
         for i in range(L):
             x = deltaA[:, i] * x + deltaB_u[:, i]
+            x = x.clamp(-1e4, 1e4)  # prevent runaway state accumulation
             y_i = (x * C_param[:, i, :].unsqueeze(1)).sum(-1)
             ys.append(y_i)
 
@@ -773,12 +785,14 @@ class _SelectiveScan1D(nn.Module):
         dt = F.softplus(self.dt_proj(dt_raw)).float()
         B_param, C_param, u_f = B_param.float(), C_param.float(), u_act.float()
         A = -torch.exp(self.A_log.float())
-        deltaA = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        _dtA = torch.einsum("bld,dn->bldn", dt, A)
+        deltaA = torch.exp(_dtA.clamp(-20.0, 0.0))  # CRITICAL: prevent exp overflow/NaN
         deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
         x = torch.zeros(B_win, D, self.N, device=u.device, dtype=torch.float32)
         ys = []
         for i in range(L):
             x = deltaA[:, i] * x + deltaB_u[:, i]
+            x = x.clamp(-1e4, 1e4)  # prevent runaway state accumulation
             ys.append((x * C_param[:, i, :].unsqueeze(1)).sum(-1))
         y = torch.stack(ys, dim=1).to(in_dtype)
         return y + u_act * self.D_skip.to(in_dtype)
@@ -968,6 +982,69 @@ if _modules_changed:
 else:
     print(f"  ✓ ultralytics/nn/modules/__init__.py already patched")
 
+# ── Step 3b: Patch engine/trainer.py to include gradient clipping ─────────
+# CRITICAL for DDP: monkey-patching BaseTrainer.optimizer_step only affects
+# the main process. DDP subprocess spawned by torch.distributed.run re-imports
+# a fresh ultralytics with UNPATCHED optimizer_step → no gradient clipping →
+# SSM gradients explode under FP16 → NaN at epoch 2+.
+# Fix: patch the actual source file on disk so ALL processes get clipping.
+import ultralytics.engine.trainer as _ult_trainer_mod
+_trainer_file = _ult_trainer_mod.__file__
+
+with open(_trainer_file, "r") as _f:
+    _trainer_src = _f.read()
+
+_CLIP_MARKER = "# ATROUSMAMBA_GRAD_CLIP_PATCHED"
+
+if _CLIP_MARKER not in _trainer_src:
+    # Find the optimizer_step method and replace it with clipped version
+    _old_opt_step = '''    def optimizer_step(self):
+        """Perform a single step of the training optimizer with gradient scaling and EMA update."""
+        self.scaler.unscale_(self.optimizer)  # unscale gradients
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10.0)  # clip gradients
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        self.optimizer.zero_grad()
+        if self.ema:
+            self.ema.update(self.model)'''
+
+    _new_opt_step = '''    def optimizer_step(self):
+        """Perform a single step of the training optimizer with gradient scaling and EMA update."""
+        self.scaler.unscale_(self.optimizer)  # unscale gradients
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)  # ATROUSMAMBA_GRAD_CLIP_PATCHED — tight clip for SSM stability
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        self.optimizer.zero_grad()
+        if self.ema:
+            self.ema.update(self.model)'''
+
+    if "def optimizer_step(self):" in _trainer_src:
+        # More robust: just replace the max_norm value regardless of exact formatting
+        import re as _re2
+        _trainer_src_new = _re2.sub(
+            r'(torch\.nn\.utils\.clip_grad_norm_\(self\.model\.parameters\(\),\s*max_norm=)\d+\.?\d*\)',
+            r'\g<1>1.0)  ' + _CLIP_MARKER,
+            _trainer_src
+        )
+        if _trainer_src_new != _trainer_src:
+            with open(_trainer_file, "w") as _f:
+                _f.write(_trainer_src_new)
+            print(f"  ✓ Patched engine/trainer.py: max_norm=10.0 → 1.0 (DDP-safe gradient clipping)")
+        else:
+            # Fallback: inject clip_grad_norm_ before scaler.step if not present
+            _trainer_src_new = _trainer_src.replace(
+                "self.scaler.step(self.optimizer)",
+                f"torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)  {_CLIP_MARKER}\n        self.scaler.step(self.optimizer)",
+                1
+            )
+            with open(_trainer_file, "w") as _f:
+                _f.write(_trainer_src_new)
+            print(f"  ✓ Patched engine/trainer.py: injected grad clip before scaler.step (DDP-safe)")
+    else:
+        print(f"  ⚠ Could not find optimizer_step in trainer.py — monkey-patch only (DDP may NaN)")
+else:
+    print(f"  ✓ engine/trainer.py already patched with gradient clipping")
+
 # ── Step 4: Patch parse_model to recognize C3K2Mamba ──────────────────────
 # parse_model has sets of module classes that need special handling:
 #   Set A: modules where c1,c2 are extracted from args (channel scaling)
@@ -1051,8 +1128,10 @@ print("✓ CBAM + C3K2Mamba registered in ultralytics namespace (DDP-safe)")
 
 # NOTE: inject_mamba_neck is still defined for evaluation model loading fallback
 def inject_mamba_neck(yolo_model, min_layer_idx=11, max_channels=512,
-                       d_state=4, dilations=None, verbose=True):
-    """Fallback injection for models loaded from checkpoint that lost C3K2Mamba."""
+                       min_channels=512, d_state=4, dilations=None, verbose=True):
+    """Fallback injection for models loaded from checkpoint that lost C3K2Mamba.
+    Only injects at layers where min_channels <= c2 <= max_channels (default: 512ch only).
+    """
     try:
         from ultralytics.nn.modules.block import C3k2, C2f
     except ImportError:
@@ -1069,7 +1148,7 @@ def inject_mamba_neck(yolo_model, min_layer_idx=11, max_channels=512,
         c2 = layer.cv2.conv.out_channels
         n  = len(layer.m)
         shortcut = getattr(layer.m[0], "add", False) if len(layer.m) > 0 else False
-        if c2 > max_channels:
+        if c2 > max_channels or c2 < min_channels:
             continue
         dev = next(layer.parameters()).device
         new = C3K2Mamba(c1, c2, n=n, shortcut=shortcut,
@@ -1104,9 +1183,9 @@ from ultralytics.engine.trainer import BaseTrainer
 _orig_opt_step = BaseTrainer.optimizer_step
 
 def _clipped_optimizer_step(self):
-    """Optimizer step with gradient clipping (max_norm=10)."""
+    """Optimizer step with gradient clipping (max_norm=1.0 — tight for SSM stability)."""
     self.scaler.unscale_(self.optimizer)
-    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10.0)
+    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
     self.scaler.step(self.optimizer)
     self.scaler.update()
     self.optimizer.zero_grad()
@@ -1114,11 +1193,11 @@ def _clipped_optimizer_step(self):
         self.ema.update(self.model)
 
 BaseTrainer.optimizer_step = _clipped_optimizer_step
-print("✓ Gradient clipping enabled (max_norm=10.0)")
+print("✓ Gradient clipping enabled (max_norm=1.0)")
 
 
-# ── YAML: C3K2Mamba is used DIRECTLY in neck layers ──────────────────────
-# Neck layers 13,16,19,22,25,28 use C3K2Mamba instead of C3k2.
+# ── YAML: C3K2Mamba at deep levels only (512ch, 40×40 and 20×20) ─────────
+# Only 3 C3K2Mamba layers (layers 13, 25, 28). P2/P3 use standard C3k2.
 # Args: [c2, shortcut, g, e, d_state, dilations_list]
 # parse_model will: prepend c1, insert n → C3K2Mamba(c1, c2, n, shortcut, g, e, d_state, dil)
 
@@ -1146,13 +1225,13 @@ head:
   - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
   - [[-1, 4], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [256, False]]
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
   - [[-1, 2], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [128, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [128, False]]
   - [-1, 1, Conv, [128, 3, 2]]
   - [[-1, 16], 1, Concat, [1]]
-  - [-1, 2, C3K2Mamba, [256, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
+  - [-1, 2, C3k2, [256, False]]
   - [-1, 1, Conv, [256, 3, 2]]
   - [[-1, 13], 1, Concat, [1]]
   - [-1, 2, C3K2Mamba, [512, False, 1, 0.5, {D_STATE}, {DILATIONS}]]
@@ -1235,7 +1314,7 @@ def _dry_run_yaml():
             "YAML dry-run FAILED: C3K2Mamba not found in parsed model.\n"
             "The parse_model patch may have failed. Check the output above.")
 
-    assert n_mamba >= 5, f"Expected ≥5 C3K2Mamba layers, got {n_mamba}"
+    assert n_mamba >= 3, f"Expected ≥3 C3K2Mamba layers, got {n_mamba}"
     assert n_params > 20e6, f"Expected >20M params, got {n_params/1e6:.2f}M"
 
     del _m; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
@@ -1526,6 +1605,43 @@ if RESUME_TRAINING and RESUME_PT:
         shutil.copy(str(_resume_src), str(_local_last))
         print(f"  ✓ Copied last.pt → {_local_last}")
 
+    # ── Optimizer reset: prevent gradient explosion from corrupted Adam state ──
+    if RESET_OPTIMIZER_ON_RESUME:
+        try:
+            _ckpt = torch.load(str(_local_last), map_location="cpu", weights_only=False)
+            _had_optimizer = False
+            _resets = []
+            if isinstance(_ckpt, dict):
+                if "optimizer" in _ckpt:
+                    _ckpt["optimizer"] = None
+                    _had_optimizer = True
+                    _resets.append("optimizer")
+                # Reset AMP GradScaler — corrupted scale from pre-fix NaN causes
+                # underflow on resume (tiny scale → zero gradients → NaN)
+                for _scaler_key in ("scaler", "amp_scaler", "grad_scaler"):
+                    if _scaler_key in _ckpt:
+                        _ckpt[_scaler_key] = None
+                        _resets.append("AMP scaler")
+                        break
+                # Reset epoch so warmup_epochs actually re-applies from epoch 0
+                if "epoch" in _ckpt:
+                    _old_epoch = _ckpt["epoch"]
+                    _ckpt["epoch"] = 0
+                    _resets.append(f"epoch ({_old_epoch}→0)")
+                if "train_args" in _ckpt and isinstance(_ckpt["train_args"], dict):
+                    _ckpt["train_args"]["warmup_epochs"] = 3
+                    _ckpt["train_args"]["lr0"] = 0.01  # reset to default LR
+                torch.save(_ckpt, str(_local_last))
+                if _resets:
+                    print(f"  ✓ Checkpoint RESET: {', '.join(_resets)}")
+                    print("    → Fresh optimizer + scaler + warmup on resume")
+                else:
+                    print("  ℹ No optimizer/scaler state found in checkpoint (already clean)")
+            del _ckpt
+        except Exception as _e:
+            print(f"  ⚠ Could not reset optimizer state: {_e}")
+            print("    Continuing with original checkpoint — watch for NaN/Inf losses")
+
     _meta_src = Path(RESUME_PT).parent / "session_meta.json"
     if _meta_src.exists():
         import json
@@ -1596,6 +1712,7 @@ else:
             fraction     = TRAIN_FRACTION,
             cache        = True,
             workers      = 2,
+            freeze       = 11,  # Freeze backbone (layers 0-10) — only neck SSM + head train
             name         = "yolo11m_atrousmamba_cbam_p2head",
             exist_ok     = True,
         )

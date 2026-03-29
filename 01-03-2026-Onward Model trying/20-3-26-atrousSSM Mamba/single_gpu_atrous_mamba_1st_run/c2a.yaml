@@ -1,0 +1,5 @@
+train: /kaggle/input/datasets/rgbnihal/c2a-dataset/C2A_Dataset/new_dataset3/train/images
+val:   /kaggle/input/datasets/rgbnihal/c2a-dataset/C2A_Dataset/new_dataset3/val/images
+test:  /kaggle/input/datasets/rgbnihal/c2a-dataset/C2A_Dataset/new_dataset3/test/images
+nc: 1
+names: ['person']

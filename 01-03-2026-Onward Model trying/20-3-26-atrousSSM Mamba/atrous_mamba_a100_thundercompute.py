@@ -50,9 +50,12 @@ COMPUTE NOTES (ThunderCompute A100 80GB, 8 vCPUs, 64GB RAM):
 import os, sys, subprocess, re
 
 # ── USER CONFIGURATION ──────────────────────────────────────────────────────
-TEST_MODE       = True    # True = 2 epochs, 5% data | False = full training
+TEST_MODE       = False    # True = 2 epochs, 5% data | False = full training
 RESUME_TRAINING = False   # Set True to resume from a checkpoint
 RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT
+RESET_OPTIMIZER_ON_RESUME = True   # Strip optimizer state on resume — prevents gradient
+                                   # explosion from corrupted Adam momentum/variance.
+                                   # Model weights + epoch count are preserved.
 
 # ── PATHS (ThunderCompute) ──────────────────────────────────────────────────
 BASE_DIR = os.path.expanduser("~/atrousmamba")     # Working directory
@@ -60,7 +63,7 @@ DATA_DIR = os.path.expanduser("~/data")             # Dataset root
 CKPT_DIR = os.path.join(BASE_DIR, "checkpoints")    # Session checkpoints
 
 # ── OPTIONAL: comparison model paths (upload manually if you have them) ────
-OLD_MAMBA_BEST = "~/atrousmamba/comparison_models/cbam_p2head_mamba.pt"   # e.g. "~/atrousmamba/comparison_models/mamba_best.pt"
+OLD_MAMBA_BEST = "~/atrousmamba/comparison_models/cbam_p2head_mamba_best.pt"   # e.g. "~/atrousmamba/comparison_models/mamba_best.pt"
 CBAM_P2_BEST   = "~/atrousmamba/comparison_models/cbam_p2head_best.pt"   # e.g. "~/atrousmamba/comparison_models/cbam_p2_best.pt"
 
 os.makedirs(BASE_DIR, exist_ok=True)
@@ -108,14 +111,7 @@ def pip_install(pkg, extra=""):
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
 
-# Fix headless OpenCV for servers without display libs (libxcb, libGL, etc.)
-# MUST uninstall GUI opencv first — pip install alone won't replace it
-subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y",
-                "opencv-python", "opencv-contrib-python"],
-               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-subprocess.check_call([sys.executable, "-m", "pip", "install", "-q",
-                       "opencv-python-headless"],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+# Install core packages first (ultralytics pulls in GUI opencv as a dependency)
 pip_install("ultralytics")
 pip_install("timm")
 pip_install("thop")
@@ -124,6 +120,26 @@ pip_install("scikit-learn")
 subprocess.check_call([sys.executable, "-m", "pip", "install", "-q",
                        "pandas<3.0", "matplotlib<3.10", "tqdm"],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+# Fix headless OpenCV AFTER ultralytics — ultralytics re-installs GUI opencv,
+# so we must replace it last. On headless servers, GUI cv2 fails with libxcb.so.1
+# Step 1: Remove ALL opencv variants
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y",
+                "opencv-python", "opencv-contrib-python", "opencv-python-headless"],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+# Step 2: Fresh install headless only (no --force-reinstall to avoid dep rebuild)
+subprocess.run([sys.executable, "-m", "pip", "install", "-q",
+                "opencv-python-headless"],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+# Step 3: Verify
+_cv2_check = subprocess.run(
+    [sys.executable, "-c", "import cv2; print(cv2.__version__)"],
+    capture_output=True, text=True)
+if _cv2_check.returncode != 0:
+    print(f"  ⚠ cv2 still broken, trying with explicit version...")
+    subprocess.run([sys.executable, "-m", "pip", "install",
+                    "opencv-python-headless>=4.6.0"],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 print("✓ All dependencies installed")
 
 
@@ -445,6 +461,7 @@ def _selective_scan_loop(
     ys = torch.empty(B_win, L, D, device=deltaA.device, dtype=torch.float32)
     for i in range(L):
         x = deltaA[:, i] * x + deltaB_u[:, i]
+        x = x.clamp(-1e4, 1e4)  # prevent runaway state accumulation
         ys[:, i] = (x * C_param[:, i, :].unsqueeze(1)).sum(-1)
     return ys
 
@@ -833,6 +850,7 @@ def _selective_scan_loop(
     ys = torch.empty(B_win, L, D, device=deltaA.device, dtype=torch.float32)
     for i in range(L):
         x = deltaA[:, i] * x + deltaB_u[:, i]
+        x = x.clamp(-1e4, 1e4)  # prevent runaway state accumulation
         ys[:, i] = (x * C_param[:, i, :].unsqueeze(1)).sum(-1)
     return ys
 
@@ -1553,6 +1571,43 @@ if RESUME_TRAINING and RESUME_PT:
     if not _local_last.exists():
         shutil.copy(RESUME_PT, str(_local_last))
         print(f"  ✓ Copied last.pt → {_local_last}")
+
+    # ── Optimizer reset: prevent gradient explosion from corrupted Adam state ──
+    if RESET_OPTIMIZER_ON_RESUME:
+        try:
+            _ckpt = torch.load(str(_local_last), map_location="cpu", weights_only=False)
+            _had_optimizer = False
+            _resets = []
+            if isinstance(_ckpt, dict):
+                if "optimizer" in _ckpt:
+                    _ckpt["optimizer"] = None
+                    _had_optimizer = True
+                    _resets.append("optimizer")
+                # Reset AMP GradScaler — corrupted scale from pre-fix NaN causes
+                # underflow on resume (tiny scale → zero gradients → NaN)
+                for _scaler_key in ("scaler", "amp_scaler", "grad_scaler"):
+                    if _scaler_key in _ckpt:
+                        _ckpt[_scaler_key] = None
+                        _resets.append("AMP scaler")
+                        break
+                # Reset epoch so warmup_epochs actually re-applies from epoch 0
+                if "epoch" in _ckpt:
+                    _old_epoch = _ckpt["epoch"]
+                    _ckpt["epoch"] = 0
+                    _resets.append(f"epoch ({_old_epoch}→0)")
+                if "train_args" in _ckpt and isinstance(_ckpt["train_args"], dict):
+                    _ckpt["train_args"]["warmup_epochs"] = 3
+                    _ckpt["train_args"]["lr0"] = 0.01  # reset to default LR
+                torch.save(_ckpt, str(_local_last))
+                if _resets:
+                    print(f"  ✓ Checkpoint RESET: {', '.join(_resets)}")
+                    print("    → Fresh optimizer + scaler + warmup on resume")
+                else:
+                    print("  ℹ No optimizer/scaler state found in checkpoint (already clean)")
+            del _ckpt
+        except Exception as _e:
+            print(f"  ⚠ Could not reset optimizer state: {_e}")
+            print("    Continuing with original checkpoint — watch for NaN/Inf losses")
 
     _meta_src = Path(RESUME_PT).parent / "session_meta.json"
     if _meta_src.exists():

@@ -1,0 +1,41 @@
+{
+  "completed_epochs": 45,
+  "best_f2": 0.7835,
+  "best_map50": 0.8173,
+  "batch_size": 12,
+  "save_dir": "/kaggle/working/runs/detect/yolo11m_atrousmamba_cbam_p2head",
+  "model_type": "AtrousMamba+CBAM+P2",
+  "dilations": [
+    1,
+    2,
+    4
+  ],
+  "d_state": 4,
+  "train_args": {
+    "data": "c2a.yaml",
+    "epochs": "80",
+    "imgsz": "640",
+    "batch": "12",
+    "device": "0",
+    "optimizer": "AdamW",
+    "lr0": "0.0005",
+    "lrf": "0.01",
+    "weight_decay": "0.0005",
+    "momentum": "0.937",
+    "warmup_epochs": "5",
+    "close_mosaic": "10",
+    "amp": "True",
+    "patience": "15",
+    "save": "True",
+    "save_period": "5",
+    "plots": "True",
+    "verbose": "True",
+    "fraction": "1.0",
+    "cache": "True",
+    "workers": "2",
+    "freeze": "11",
+    "name": "yolo11m_atrousmamba_cbam_p2head",
+    "exist_ok": "True"
+  },
+  "timestamp": "2026-03-25 13:31:54"
+}
