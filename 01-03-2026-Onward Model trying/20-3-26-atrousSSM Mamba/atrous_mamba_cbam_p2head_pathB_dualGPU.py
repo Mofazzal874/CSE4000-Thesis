@@ -77,7 +77,7 @@ COMPUTE NOTES (Kaggle T4 x2 — DUAL GPU):
 # ============================================================================
 
 TEST_MODE       = False   # True = 2 epochs, 5% data | False = full 120 epochs
-RESUME_TRAINING = False   # Set True to resume from a checkpoint
+RESUME_TRAINING = True   # Set True to resume from a checkpoint
 RESUME_PT       = ""      # Path to last.pt — leave empty for AUTO-DETECT, e.g.:
                           # "/kaggle/input/atrous-mamba-checkpoint/session_last.pt"
                           # AUTO-DETECT: if empty, scans /kaggle/input/ for session_last.pt
@@ -183,7 +183,7 @@ if TEST_MODE:
     print("⚠  TEST MODE  — 5% data, 2 epochs")
 else:
     TRAIN_FRACTION = 1.0
-    NUM_EPOCHS     = 80       # frozen backbone converges faster than 120
+    NUM_EPOCHS     = 120       # frozen backbone converges faster than 120
     PATIENCE       = 15
     F2_PATIENCE    = 10
     TEST_IMAGES    = None
