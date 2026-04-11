@@ -17,9 +17,7 @@ Storage: 20 GB persistent storage (/kaggle/working), up to 100GB+ non-persistent
 Session Time: Up to 12 hours (session terminates after 20 mins inactivity). But after 12 hours, the session will automatically terminate, and you will need to restart it.
 
 Weekly Limit: 30 hours for GPU, 20 hours for TPU. 
-LinkedIn
-LinkedIn
- +7
+
 Additional Features:
 Environment: Pre-installed libraries (TensorFlow, PyTorch, Scikit-learn, etc.). 
 
@@ -104,4 +102,5 @@ Designed to improve human detection in complex disaster environments
 - I have previously trained a model on this dataset using the YOLO format labels.
 
 This is the discussion : https://claude.ai/share/ebf752e4-fc1c-48bf-9a24-fd71bca1b26a
+
 
