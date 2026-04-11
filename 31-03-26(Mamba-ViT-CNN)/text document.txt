@@ -1,0 +1,7 @@
+nvidia research paper: https://research.nvidia.com/publication/2025-06_mambavision-hybrid-mamba-transformer-vision-backbone?utm_source=chatgpt.com
+Mamba Vision paper: https://github.com/NVlabs/MambaVision
+
+
+chat public: https://chatgpt.com/share/69ca22fe-e3f0-8321-bc7b-1092ee3ced2c
+chat private : https://chatgpt.com/c/69ca1806-9894-83aa-851e-c278c0ea11a3
+
