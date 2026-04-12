@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Anaconda3/Lib/site-packages/**)",
+      "Bash(python -c \"import sahi; print\\(sahi.__file__\\)\")",
+      "Read(//e/ifen-dms/**)"
+    ]
+  }
+}

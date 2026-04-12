@@ -1,0 +1,21 @@
+{
+  "Precision": 0.7899,
+  "Recall": 0.872,
+  "F1": 0.8289,
+  "F2": 0.8542,
+  "Avg_Inf_ms": 534.0,
+  "very_tiny_recall": 0.8292,
+  "very_tiny_count": 25072,
+  "tiny_recall": 0.8579,
+  "tiny_count": 20520,
+  "small_recall": 0.9231,
+  "small_count": 26614,
+  "medium_recall": 0.8959,
+  "medium_count": 317,
+  "large_recall": 0.0,
+  "large_count": 0,
+  "Config": "slice256_ov30",
+  "Slice": "256x256",
+  "Overlap": 0.3,
+  "Conf_Threshold": 0.15
+}
