@@ -1,0 +1,15 @@
+{
+  "Config": "slice512_ov25",
+  "Slice": "512x512",
+  "Overlap": 0.25,
+  "Precision": 0.8812,
+  "Recall": 0.8567,
+  "F1": 0.8688,
+  "F2": 0.8615,
+  "Avg_Inf_ms": 190.8,
+  "very_tiny_recall": 0.8198,
+  "tiny_recall": 0.8723,
+  "small_recall": 0.881,
+  "medium_recall": 0.7476,
+  "large_recall": 0.0
+}

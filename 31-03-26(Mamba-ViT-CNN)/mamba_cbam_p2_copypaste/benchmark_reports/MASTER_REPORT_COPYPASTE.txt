@@ -1,0 +1,37 @@
+================================================================================
+DISASTER HUMAN DETECTION — MAMBA+CBAM+P2 + COPY-PASTE AUGMENTATION REPORT
+================================================================================
+Generated : 2026-04-11 19:16:14
+TEST MODE : False  |  Epochs: 120  |  Fraction: 100%
+
+MODEL COMPLEXITY
+  Mamba+CBAM+P2+CopyPaste: 19.592M params  43.7 GFLOPs  38874 KB
+  Mamba+CBAM+P2 (no aug): 19.592M params  43.7 GFLOPs  38874 KB
+
+OFFICIAL mAP (test split — Ultralytics val):
+  Mamba_CBAM_P2_copypaste: mAP50=0.8690  mAP50-95=0.6276
+  Mamba_CBAM_P2_noaug : mAP50=0.8736  mAP50-95=0.6443
+
+TEST SET (custom evaluation):
+  Mamba_CBAM_P2_copypaste: P=0.8496  R=0.8390  F1=0.8443  F2=0.8411  Lat=48.4002ms
+  Mamba_CBAM_P2_noaug : P=0.8547  R=0.8453  F1=0.8500  F2=0.8472  Lat=45.5962ms
+
+SMALL OBJECT RECALL — TEST:
+  very_tiny   :  Mamba_CBAM_P2_copypaste=0.7698  Mamba_CBAM_P2_noaug=0.7668
+  tiny        :  Mamba_CBAM_P2_copypaste=0.8677  Mamba_CBAM_P2_noaug=0.8752
+  small       :  Mamba_CBAM_P2_copypaste=0.8833  Mamba_CBAM_P2_noaug=0.8960
+  medium      :  Mamba_CBAM_P2_copypaste=0.7634  Mamba_CBAM_P2_noaug=0.8959
+
+CALIBRATION (ECE):
+  Mamba_CBAM_P2_copypaste: ECE=0.1460
+  Mamba_CBAM_P2_noaug : ECE=0.1346
+
+TRAINING CONVERGENCE:
+  Mamba+CBAM+P2 best epoch 110: F2=0.8278  mAP50=0.8649
+
+F2 EARLY STOPPING LOG:
+
+NaN STOP TRIGGERED:
+  False
+
+================================================================================

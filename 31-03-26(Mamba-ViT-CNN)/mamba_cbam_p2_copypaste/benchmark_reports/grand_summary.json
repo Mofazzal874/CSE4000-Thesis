@@ -1,0 +1,52 @@
+[
+  {
+    "Configuration": "Mamba_CBAM_P2_copypaste",
+    "mAP50": 0.869,
+    "mAP50-95": 0.6276,
+    "Precision": 0.8823,
+    "Recall": 0.8198,
+    "Note": "standard eval"
+  },
+  {
+    "Configuration": "Mamba_CBAM_P2_noaug",
+    "mAP50": 0.8736,
+    "mAP50-95": 0.6443,
+    "Precision": 0.8895,
+    "Recall": 0.8281,
+    "Note": "standard eval"
+  },
+  {
+    "Configuration": "CopyPaste + SAHI (slice512_ov25)",
+    "mAP50": "-",
+    "mAP50-95": "-",
+    "Precision": 0.8812,
+    "Recall": 0.8567,
+    "VeryTiny_Recall": 0.8198,
+    "Avg_Latency_ms": 190.8,
+    "Note": "SAHI custom eval"
+  },
+  {
+    "Configuration": "CopyPaste + No TTA (640)",
+    "mAP50": 0.869,
+    "mAP50-95": 0.6276,
+    "Precision": 0.8823,
+    "Recall": 0.8198,
+    "Note": "ultralytics val"
+  },
+  {
+    "Configuration": "CopyPaste + TTA (832)",
+    "mAP50": 0.8741,
+    "mAP50-95": 0.6586,
+    "Precision": 0.8594,
+    "Recall": 0.8214,
+    "Note": "ultralytics val"
+  },
+  {
+    "Configuration": "CopyPaste + TTA (1024)",
+    "mAP50": 0.8854,
+    "mAP50-95": 0.6749,
+    "Precision": 0.8707,
+    "Recall": 0.8311,
+    "Note": "ultralytics val"
+  }
+]
