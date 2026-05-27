@@ -1,0 +1,1357 @@
+CSE 4000: THESIS
+    PROPOSAL
+
+MD MOFAZZAL HOSEN
+         2007074
+
+                   Supervised By
+
+                        Dr. Sk. Md. Masudul
+  REAL-TIME TRAFFIC CONGESTION ANALYTICS
+USING AERIAL IMAGERY AND DEEP LEARNING FOR
+
+           URBAN TRAFFIC OPTIMIZATION
+
+                                                                                                 1
+             1 Economic Loss Due to Traffic congestions
+
+             2 Safety concerns with higher accident rates
+
+The Problem     Infrastructure limitations where road
+                capacity cannot match vehicle growth
+             3
+
+             4 Monitoring gaps in current traffic
+                      management
+                                                               2
+Need to         The urgency:
+Solve the
+Problem    1 Economic Impact
+                    Productivity loss and healthcare access delays
+
+           2  Technological Opportunity                             -95% accuracy
+
+              Mature aerial technology and AI targeting 85
+
+           3  Urban Planning Requirements
+
+              Foundation for smart city initiatives
+
+                                                                                   3
+Objectives  Objective 1:
+
+                Develop intelligent traffic detection system targeting 90%
+                vehicle detection accuracy
+
+            Objective 2:
+
+                Create real-time congestion analysis framework with multi-
+                level classification
+
+            Objective 3:
+
+                  Build automated solution recommendation system for traffic
+                   diversion
+
+            Objective 4:
+
+                  Validate performance of different models and different traffic
+                   conditions
+
+                                                                         4
+              Proposed Methodology
+
+                        Vehicle
+              Detection(YOLOv8/11
+
+                      or R-CNN)
+
+Obtain input                              Traffic congestion Estimation
+    images                         (vehicle count, occupancy, traffic flow etc.)
+
+              Multi-Object Tracking
+                     (DeepSORT)
+
+                                                                                     5
+                Related Works
+
+1. IoT Based Traffic Congestion Management and Accident Detection System | Journal
+     of Electrical Engineering and Automation.
+
+2. Analysis of vehicle and pedestrian detection effects of improved YOLOv8 model in
+     drone-assisted urban traffic monitoring system
+
+3 Urban Traffic Density Estimation Based on Ultrahigh-Resolution UAV Video and
+    Deep Neural Network
+
+4 Comparative Assessment of Advanced Deep Learning & Computer Vision Models
+    for Real-Time Aerial Object Detection in Drone Surveillance
+
+5 Flying foxes optimization with reinforcement learning for vehicle detection in UAV
+    imagery
+
+                                                                                                6
+                  Datasets
+
+VisDrone Dataset            AU-AIR Dataset
+
+                                            7
+Datasets
+
+Bangladeshi Traffic Flow Dataset  Traffic congestion Dataset
+
+                                                              8
+Thank you
+REAL-TIME HUMAN DETECTION AND TRACKING IN
+               DRONE VIDEO SEQUENCES
+
+                                                                                                  1
+Need to          The urgency:
+Solve the
+Problem    1 Emergency Response Enhancement
+
+           2 Disaster Management
+
+           3 Humanitarian Applications
+
+                                                              3
+                Related Works
+
+1. Aerial Person Detection for Search and Rescue: Survey and Benchmarking
+2 Real-Time Human Detection for Aerial Captured Video Sequences via Deep Models
+3 UAV-Enhanced Combination to Application: Comprehensive Analysis and
+
+    Benchmarking of a Human Detection Dataset for Disaster Scenarios
+4 Deep Learning for Human Detection from Aerial Images in Search and Rescue
+
+    Missions
+
+                                                                                                6
+             Datasets
+
+C2A Dataset  SARD Dataset
+
+                           7
+   Datasets
+
+UCF-ARG Dataset
+
+                                                                     7
+Thank you
+Paper
+Findings
+
+Paper:
+
+  UAV-Enhanced Combination to Application: Comprehensive Analysis and
+      Benchmarking of a HumanDetection Dataset for Disaster Scenarios
+
+             By
+
+                          Ragib Amin Nihal, Benjamin Yen, Katsutoshi Itoyama & Kazuhiro Nakadai
+
+          Conference paper | 02 December 2024                                                    1
+The Core Problem They're Solving
+
+            · peoples partially occuluded, buried, hidden or in debris fields.
+            · Very tiny People in disaster scenes with different angle and heights
+            · achieving higher than existing models(more than 16.8% accuracy)
+
+Dataset & Image Details
+
+             · 10,215 total images
+             · 360,000 labeled human instances
+             · Image size range: From tiny 150×150 pixels to huge 3400×3400 pixels
+             · objects per image(avg.) : 20 to 40 instances
+
+· Object sizes:
+
+1.47% of people appear smaller than 10 pixels
+
+2.52% are between 10-50 pixels                                                      2
+
+3.Only 1% are larger than 50 pixels
+Models Used:
+
+           · YOLOv9-e(highest performing)
+           · Cascade R-CNN
+           · RetinaNet
+           · Faster R-CNN
+           · DINO
+
+Testing Setup:
+
+           · Hardware: NVIDIA A100 GPUs
+           · Training: 50 epochs )
+           · Image size: 640×640 pixels
+           · Optimizer: ADAM optimizer
+
+                                                                                                 3
+                                C2A Dataset Creation Pipeline
+
+AIDER                                               Random Scaling        Annotation(pos, scale)
+                                                    & Random Positioning  with Horizontal bbox
+                  U2-Net
+                  segmentation  Image Cropping                                                 C2A Dataset
+                   model        (Threshold 2%)
+                                                                                                    4
+ LSP/MPII-
+   MPHB
+                         C2A Dataset Pipeline- Example
+
+disaster building image
+
+                           U2-net Image
+                         segmented image
+
+LSP human pose                                          Annoated C2A
+       image                                                  image
+
+                                                                                     5
+Thank you
+Results & Findings: YOLOv8 Models
+   Benchmarking on C2A Dataset
+
+                                                                                           1
+Performance Evaluation: Yolov8 Nano
+
+mAP50  mAP50-95  precision           recall
+
+0.756  0.485     0.827               0.691
+
+                                             2
+Yolov8
+    n
+
+        Collapsed Buildings
+
+        Fire incident        3
+Yolov8
+    n
+
+        Flood incident
+
+        Traffic accident  4
+Performance Evaluation: Yolov8 small
+
+mAP50  mAP50-95  precision            recall
+
+0.788  0.538     0.849                0.718
+
+                                              5
+Yolov8
+    s
+
+        Collapsed Buildings
+
+        Fire incident        6
+Yolov8
+    s
+
+        Flood incident
+
+        Traffic accident  7
+Performance Evaluation: Yolov8 medium
+
+mAP50  mAP50-95  precision             recall
+
+0.814  0.581     0.864                 0.740
+
+                                               8
+Yolov8
+   m
+
+        Collapsed Buildings
+
+        Fire incident        9
+Yolov8
+   m
+
+        Flood incident
+
+                                                               10
+
+        Traffic accident
+                YoloV8 models Benchmark Comparison
+
+       Model    mAP50   mAP50-95  Precision  Recall  Overall Ranking
+  YOLOv8 Nano    0.756     0.485     0.827   0.691            3rd
+  YOLOv8 Small   0.788      .538     0.849   0.718            2nd
+YOLOv8 Medium    0.814     0.581     0.864   0.740
+                                                     1st (Best overall)
+
+                                                                         11
+Thank you
+Paper
+Review
+
+Paper:
+
+        DETRs Beat YOLOs on Real-time Object Detection
+
+        By Yian Zhao, Wenyu Lv, Shangliang Xu, Jinman Wei, Guanzhong Wang &
+
+               Qingqing Dang
+
+        IEEE/CVF Conference| 2024                                            1
+ The Core Problem They're Solving
+
+              · Improving the Speed and accuracy of Real-time Object detection with
+                YOLO and Transformers .
+
+              · Real-time Detector without NMS post-processing.
+              · Selective attention
+
+Methodology Overview
+
+                 1.Efficient Hybrid Encoder
+                 AIFI(Attention-based Intra-scale Feature Interaction) and
+                 CCFF( CNN-based Cross-scale Feature Fusion)
+
+                 2.Uncertainty-Minimal Query Selection
+                 Selects features where detection & localization agree
+
+                                                                                                   2
+Architectural Overview of RT-DETR
+
+                       Fig: Overview of RT-DETR
+
+                                                                                  3
+CNN-based Cross-scale Feature Fusion (CCFF)
+
+                          Fig: Fusion Block of
+                                     CCFF
+
+                                                                                 4
+Results & Findings
+
+Fig: Complex
+
+Scenarios           5
+Results & Findings
+
+Fig: Difficult Conditions  6
+          Results & Findings
+
+  Model   FPS  mAP   mA50
+YOLOv5-L
+YOLOv8-L  54   49.0           67.3
+DETR-DC5
+RT_DETR   71   52.9           69.8
+
+          -    43.3           63.1
+
+          108  53.1           71.3
+
+          Fig: Performance Findings  7
+Thank you
+Benchmarking: YOLOv9 , YOLOv10 and
+    YOLOv11 Models on C2A Dataset
+
+                                                                                               1
+Run Configuration
+
+Model: yolov9(s, m, l) , Yolov10(s, m, l)  Model: Yolov11(s, m, l)
+           GPU: T4x2 (Devices: 0)          GPU: T4x2 (Devices: 0)
+           Dataset Sample: 50.0%           Dataset Sample: 50.0%
+                    Epochs: 25
+             Image Size: 640x640                    Epochs: 25
+                  Batch Size: 12             Image Size: 640x640
+
+                                                 Batch Size: 10
+
+    Model:
+   yolov9e
+Batch Size: 6
+
+                                                                                                     2
+Performance Evaluation: Yolov9 Small
+
+Validation Results:
+
+F1 Score       mAP50      mAP50-95         precision  recall
+                                             0.8401   0.7253
+0.7849         0.7785     0.4957
+                                                      recall
+Test Results:                                         0.7361
+
+F1 Score       mAP50      mAP50-95         precision
+ 0.7849        0.7867       0.5041           0.8406
+
+Inference Speed:
+
+Average        Std. Dev.            Min.              Max.
+
+31.32ms        22.68ms            21.29ms             240.17ms  2
+Performance Evaluation: Yolov9 Small
+
+Final Losses:
+
+Train - Box: 1.1328, Cls: 0.6541, DFL: 0.9581  2
+
+Val - Box: 1.0976, Cls: 0.6304, DFL: 0.9337
+Performance Evaluation: Yolov9 Small
+
+                                                                             2
+Performance Evaluation: Yolov9 Small
+
+                                                                             2
+Performance Evaluation: Yolov9 Medium
+
+Validation Results:
+
+F1 Score       mAP50      mAP50-95        precision  recall
+                                            0.8624   0.7655
+0.8110         0.8168     0.5539
+                                                     recall
+Test Results:                                        0.7723
+
+F1 Score       mAP50      mAP50-95        precision
+ 0.8151        0.8226       0.5647          0.8630
+
+Inference Speed:
+
+Average        Std. Dev.            Min.             Max.
+
+42.09 ms       25.27 ms   27.38 ms                   27.38 ms  2
+Performance Evaluation: Yolov9 Medium
+
+Final Losses:
+
+Train - Box: 0.9791, Cls: 0.5574, DFL: 0.9199  2
+
+Val - Box: 0.9570, Cls: 0.5567, DFL: 0.9104
+Performance Evaluation: Yolov9 Medium
+
+                                                                               2
+Performance Evaluation: Yolov9 Medium
+
+                                                                               2
+Performance Evaluation: Yolov9 Extended
+
+Validation Results:
+
+F1 Score       mAP50      mAP50-95        precision  recall
+                                            0.8816   0.8022
+0.8400         0.8497     0.6105
+
+Test Results:
+
+F1 Score       mAP50      mAP50-95        precision  recall
+ 0.8427        0.8552       0.6186          0.8836   0.8054
+
+Inference Speed:
+
+Average        Std. Dev.            Min.             Max.
+
+80.71 ms       26.82 ms   53.23 ms                   279.05 ms  2
+Performance Evaluation: Yolov9 Extended
+
+Final Losses:
+
+Train - Box: 0.8705, Cls: 0.4746, DFL: 0.8928  2
+
+Val - Box: 0.8464, Cls: 0.4873, DFL: 0.8877
+Performance Evaluation: Yolov9 Extended
+
+                                                                              2
+Performance Evaluation: Yolov9 Extended
+
+                                                                              2
+          Performance Evaluation: Yolov10 Small
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+                                       0.8329    0.7313
+0.7788    0.7851     0.5083
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+ 0.7841   0.7915       0.5167          0.8360    0.7382
+
+Inference Speed:
+
+Average   Std. Dev.            Min.              Max.
+
+27.48 ms  24.60 ms       14.65 ms                233.41 ms  2
+Performance Evaluation: Yolov10 Small
+
+Final Losses:
+
+Train - Box: 1.4698, Cls: 0.8224, DFL: 0.8912  2
+
+Val - Box: 1.3980, Cls: 0.7864, DFL: 0.8768
+Performance Evaluation: Yolov10 Small
+
+                                                                            2
+Performance Evaluation: Yolov10 Small
+
+                                                                            2
+Performance Evaluation: Yolov10 Medium
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision  recall
+                                       0.8565   0.7683
+0.8100    0.8231     0.5614
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision  recall
+ 0.8150   0.8274       0.5707          0.8573   0.7767
+
+Inference Speed:
+
+Average   Std. Dev.            Min.             Max.
+
+34.17 ms  24.44 ms       20.91 ms               236.40 ms  2
+Performance Evaluation: Yolov10 Medium
+
+Final Losses:
+
+Train - Box: 1.3274, Cls: 0.7024, DFL: 0.8811  2
+
+Val - Box: 1.2637, Cls: 0.6940, DFL: 0.8745
+Performance Evaluation: Yolov10 Medium
+
+                                                                              2
+Performance Evaluation: Yolov10 Medium
+
+                                                                              2
+          Performance Evaluation: Yolov10 Large
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+                                       0.8715    0.7848
+0.8259    0.8384     0.5904
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+ 0.8287   0.8429       0.5983          0.8696    0.7915
+
+Inference Speed:
+
+Average   Std. Dev.            Min.              Max.
+
+46.61 ms  24.51 ms       31.61 ms                251.75 ms  2
+Performance Evaluation: Yolov10 Large
+
+Final Losses:
+
+Train - Box: 1.2552, Cls: 0.6467, DFL: 0.8713  2
+
+Val - Box: 1.1902, Cls: 0.6520, DFL: 0.8657
+Performance Evaluation: Yolov10 Large
+
+                                                                            2
+Performance Evaluation: Yolov10 Large
+
+                                                                            2
+          Performance Evaluation: Yolov11 Small
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+                                       0.8491    0.7471
+0.7948    0.7978     0.5260
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+ 0.7981   0.8033       0.5354          0.8446    0.7565
+
+Inference Speed:
+
+Average   Std. Dev.            Min.              Max.
+
+30.19 ms  25.06 ms       17.15 ms                233.20 ms  2
+Performance Evaluation: Yolov11 Small
+
+Final Losses:
+
+Train - Box: 1.4698, Cls: 0.8224, DFL: 0.8912  2
+
+Val - Box: 1.3980, Cls: 0.7864, DFL: 0.8768
+Performance Evaluation: Yolov11 Small
+
+                                                                            2
+Performance Evaluation: Yolov11 Small
+
+                                                                            2
+Performance Evaluation: Yolov11 Medium
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision  recall
+                                       0.8649   0.7881
+0.8247    0.8352     0.5837
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision  recall
+ 0.8288   0.8412       0.5921          0.8666   0.7941
+
+Inference Speed:
+
+Average   Std. Dev.            Min.             Max.
+
+39.89 ms  25.05 ms       25.72 ms               253.42 ms  2
+Performance Evaluation: Yolov11 Medium
+
+Final Losses:
+
+Train - Box: 0.9417, Cls: 0.5550, DFL: 0.8905  2
+
+Val - Box: 0.9014, Cls: 0.5487, DFL: 0.8808
+Performance Evaluation: Yolov11 Medium
+
+                                                                              2
+Performance Evaluation: Yolov11 Medium
+
+                                                                              2
+          Performance Evaluation: Yolov11 Large
+
+Validation Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+                                       0.8786    0.7916
+0.8328    0.8434     0.5956
+
+Test Set Results:
+
+F1 Score  mAP50      mAP50-95        precision   recall
+ 0.8288   0.8474       0.6029          0.8759    0.7941
+
+Inference Speed:
+
+Average   Std. Dev.            Min.              Max.
+
+39.89 ms  25.05 ms       25.72 ms                253.42 ms  2
+Performance Evaluation: Yolov11 Large
+
+Final Losses:
+
+Train - Box: 0.9167, Cls: 0.5337, DFL: 0.8950  2
+
+Val - Box: 0.8765, Cls: 0.5224, DFL: 0.8846
+Performance Evaluation: Yolov11 Large
+
+                                                                            2
+Performance Evaluation: Yolov11 Large
+
+                                                                            2
+            Combined Benchmark Table(Detection Performance)
+
+   Model    mAP50   mAP50-95  Precision  Recall  F1 Score
+ YOLOv9-s
+YOLOv9-m    0.7867  0.5041    0.8406     0.7361  0.7849
+ YOLOv9-e
+YOLOv10-s   0.8226  0.5647    0.8630     0.7723  0.8151
+YOLOv10-m
+ YOLOv10-l  0.8552  0.6186    0.8836     0.8054  0.8427
+YOLOv11-s
+YOLOv11-m   0.7915  0.5167    0.8360     0.7382  0.7841
+ YOLOv11-l
+            0.8274  0.5707    0.8573     0.7767  0.8150
+
+            0.8429  0.5983    0.8696     0.7915  0.8287
+
+            0.8033  0.5354    0.8446     0.7565  0.7981
+
+            0.8412  0.5921    0.8666     0.7941  0.8288
+
+            0.8474  0.6029    0.8759     0.7963  0.8342
+
+                                                             11
+            Model Size vs Performance benchmark
+
+   Model    Model Size  mAP50-95  Avg Inference Time(ms)
+ YOLOv9-s
+YOLOv9-m    14.52       0.5041                   31.32
+ YOLOv9-e
+YOLOv10-s   38.93       0.5647                   0.8630
+YOLOv10-m
+ YOLOv10-l  111.81      0.6186                   80.71
+YOLOv11-s
+YOLOv11-m   15.75       0.5167                   27.48
+ YOLOv11-l
+            31.92       0.5707                   34.17
+
+            49.76       0.5983                   46.61
+
+            18.28       0.5354                   30.19
+
+            38.63       0.5921                   39.89
+
+            48.81       0.6029                   46.76
+
+                                                          11
+                                 Stability and Generalization Analysis
+
+  Most Stable Models:
+     · YOLOv11-m
+     · YOLOv11-l
+
+· YOLOv9-e provides accuracy but the model size is huge
+· YOLOv11models deliver the best accuracy per MB. YOLOv9-e is accurate but not deployment friendly.
+
+                                                                                                   11
+Thank you
+     Ablation Study: Attention Mechanisms
+replacement with(ECA, CBAM) in YOLO11m for
+
+              Disaster Human Detection
+
+                                                                                                     1
+                         Yolo11m with ECA and CBAM
+                                         Module
+
+Original C2PSA attention Block was replaced with ECA Module
+After SPPF layer, The original Two block of 1024 channels C2PSA module was
+replaced with 1 Block 1024 channels ECA module
+
+Later , the original Module was replaced with 1024 channel single layer CBAM module
+YOLOv11 Attention Module Changes (Baseline vs ECA vs CBAM)
+
+          Model      YOLOv11m (Baseline)   YOLOv11m + ECA       YOLOv11m + CBAM
+Replacement Module              C2PSA                ECA                   CBAM
+                                   x2                 x1                     x1
+    Attention Block
+    Attention Type        channel+spatial     channel-only  channel+spatial(sequential)
+ Channel Dimension               1024               1024     Auto Detected at runtime
+Fig: Yolo11 Architecture
+Fig: C2PSA Block
+Fig: ECA(Efficient Channel Attention) module
+Fig: CBAM(Convolutional Block Attention) Module
+Fig: Yolo11m+ECA loss Curves
+Fig: Yolo11m+ECA Validation Metrics
+Fig: Yolo11m+ECA Test set Predictions
+Fig: Yolo11m+CBAM loss Curves
+Fig: Yolo11m+CBAM Validation Metrics
+Fig: Yolo11m+CBAM Test set Predictions
+                       Validation-set Detection performance
+
+Model       Precision  mAP50-95  Recall  F1     Params(Mil.)  GFLOPs  mAP50
+
+ YOLO11m    0.884      0.620     0.803   0.842  20.03         67.6    0.854
+  Baseline  0.881      0.608     0.800   0.838  19.04         66.9    0.852
+            0.881      0.618     0.803   0.841  19.08         66.9    0.855
+YOLO11m +
+     ECA
+
+YOLO11m +
+    CBAM
+
+Decision (Validation)
+
+  · Baseline achieves the highest mAP@0.5:0.95, indicating slightly better localization
+     consistency
+
+  · CBAM matches baseline recall and mAP@0.5 while using fewer parameters.
+
+                                                                             11
+                  Validation Stability and Calibration
+
+        Model     ECE     High FN                       High FP
+YOLO11m Baseline                                           23
+                  0.0933  18                               20
+ YOLO11m + ECA                                             19
+YOLO11m + CBAM    0.1002  18
+
+                  0.1022  16
+
+Decision (Validation)
+  · Baseline is best calibrated
+  · CBAM slightly increases ECE but reduces false negatives, which is preferable in
+     disaster detection.
+
+                                                                                                11
+       Test-Set Performance (Operational Behavior on 30 images)
+
+Model             F2      Small Object Recall  Precision  Recall  F1
+
+YOLO11m Baseline  0.8441  0.8807               0.8257     0.8488  0.8371
+ YOLO11m + ECA    0.8435  0.8835               0.8342     0.8458  0.8400
+YOLO11m + CBAM    0.8491  0.8920               0.8306     0.8539  0.8421
+
+ Decision (Test)
+· CBAM provides the highest recall, F1, and F2.
+· CBAM improves small-object recall by +1.29%
+· CBAM is operationally superior.
+
+                                                                                              11
+       Model Inference Speed(FPS) vs. Input Image Resolutions
+
+Model             800 × 800  320 × 320  480 × 480              640 × 640
+
+YOLO11m Baseline  22.85      39.90      37.56                  34.03
+ YOLO11m + ECA    21.55      57.01      49.72                  32.24
+YOLO11m + CBAM    23.91      62.53      51.92                  34.46
+
+Decision (Test)
+
+· CBAM is fastest at all resolutions.
+· Speed improvement is strongest at lower resolutions
+
+                                                                          11
+                  Average End-to-End Inference Latency Time
+
+Model             Recall  Avg Inference Latency (ms)          vs Baseline
+
+YOLO11m Baseline  0.8488  54.15                                 --
+ YOLO11m + ECA    0.8458  42.79                              -24.7%
+YOLO11m + CBAM    0.8539  40.85                              -24.6%
+
+Image preprocessing-> forward pass-> postprocessing(NMS,box decoding)-> output
+
+ Decision
+    · CBAM achieves the lowest latency with higher recall.
+    · Speed Ranking: CBAM>ECA>Baseline.
+
+                                                                                11
+                  Model Size and Complexity
+
+        Model     GFLOPs  best.pt Size (KB)                  Params (M)
+YOLO11m Baseline                                                 20.03
+                  67.6    39,563                                 19.04
+ YOLO11m + ECA    66.9    37,601                                 19.08
+YOLO11m + CBAM    66.9    37,668
+
+Decision
+ · CBAM improves performance without increasing model cost.
+
+                                                                         11
+                  Model Size and Complexity
+
+        Model     GFLOPs  best.pt Size (KB)                  Params (M)
+YOLO11m Baseline                                                 20.03
+                  67.6    39,563                                 19.04
+ YOLO11m + ECA    66.9    37,601                                 19.08
+YOLO11m + CBAM    66.9    37,668
+
+Decision
+ · CBAM improves performance without increasing model cost.
+
+                                                                         11
+                                               Conclusion
+
+  · CBAMimprovesrecall (0.8539vs0.8488)andF1(0.8421vs0.8371)overthebaseline.
+  · Small-objectrecall increasesby+1.29%(0.8920vs0.8807),whichiscriticalfor detectingdistant
+
+     or partially occluded humans.
+  · End-to-endinferencelatency isreducedby ~25%(40.85msvs54.15ms), enablingreal-time
+
+     performance.
+
+Comparative Decision
+
+  · CBAM:Best accuracy­speed
+  · ECA:ImprovesspeedbutdoesnotconsistentlyimproverecallormAP.
+  · Baseline:Moststableon validationbutslowerandlesseffectiveinoperationalsettings.
+
+                                                                                                11
+Thank you
+Ablation Study: P2 Detection Head introduction
+   in YOLO11m for Disaster Human Detection
+
+                                                                                                       1
+Fig: Yolo11 Architecture
+                            Changes in the Architecture
+
+       Model         Backbone Change      Head change               Hypothesis
+
+YOLO11m Baseline     Standard (C2PSA)     3-scale (P3, P4, P5)      Reference model
+
+YOLO11m + CBAM       CBAM replaces C2PSA  3-scale (P3, P4, P5)      Better feature selection via
+                                                                                attention
+
+YOLO11m + P2Head     Standard (C2PSA)     4-scale (P2, P3, P4, P5)  Higher resolution for tiny
+                                                                                 objects
+
+Yolo11m+CBAM+P2Head  CBAM replaces C2PSA  4-scale (P2, P3, P4, P5)  Best of both: attention +
+                                                                             resolution
+
+Notes
+
+· CBAM: Replaces built-in C2PSA Attention Layer with CBAM(channel +spatial
+
+attention , but seqential)
+
+· P2 Head:Added 3 extra layers to the detection head to create a 4th detection scale
+
+at 160×160 resolution (stride 4). This means each detection grid cell covers only 4×4             11
+
+pixels, allowing the model to "see" objects as small as 4px.
+Fig: Yolo11m+CBAM+P2Head loss Curves
+Fig: Yolo11m+CBAM+P2Head Test set Predictions
+Fig: Yolo11m+P2Head loss Curves
+Fig: Yolo11m+P2Head Test set Predictions
+                     Model Complexity Table
+
+ GFLOPs (%)  GFLOPs  Model              Parameters(Mil.)   Params (%)  Layers
+       ----    34.1                                              ----    410
+               33.7   YOLO11m Baseline  20.0537                          391
+     -1.2%     44.1                     19.0956               -4.78%     506
+    +29.3%     43.7   YOLO11m + CBAM    20.5503               +2.48%     487
+    +28.2%                              19.5922               -2.30%
+                          YOLO11m +
+                             P2Head
+
+                     Yolo11m+CBAM+P2
+                               Head
+
+Decision :
+
+· CBAM is best for efficiency (lightest, minimal compute cost).
+
+· P2 variants are computationally heavier (+29% GFLOPs) but offer higher resolution
+
+processing.                                                                     11
+
+· But CBAM+P2 is lighter than baseline+P2 Variant and require less computation
+                                  Test set Detection performance
+
+F2                   Model        Precision  mAP50-95  Recall     F1      mAP50
+
+0.8441                 YOLO11m    0.8257     0.6256    0.8488     0.8371  0.8558
+0.8564                  Baseline  0.8351     0.6418    0.8619     0.8483  0.8723
+
+                     Yolo11m+CBA
+                       M+P2head
+
+0.8472               Mamba+CBA    0.8547     0.6539    0.8453     0.8500  0.8770
+                      M+P2Head
+
+             0.8008  AtrousMamb   0.8127     0.5540    0.7979     0.8052  0.8228
+                     a+CBAM+P2H
+Decision
+                            ead
+
+· Mamba+CBAM+P2 is the best overall model(+2.12% mAP50, +2.83% mAP50-95
+  over baseline)
+                            Small Object Recall(Test set)
+
+Model                Small                 Tiny             Medium          Very Tiny
+
+YOLO11m Baseline     88.07%                89.01%           100%            78.39%
+
+Yolo11m+CBAM+P2head  88.64%                89.72%           100%            80.89%
+
+YOLO11m + CBAM       89.20%                89.72%           100%            78.12%
+
+YOLO11m + P2Head                89.20%           91.13%           100%              80.06%
+Best  vs Baseline    +1.13% (CBAM/P2Head)  +2.12% (P2Head)  0% (saturated)  +2.50% (CBAM+P2)
+
+Area(px2)            256­1024              64-256           1024+           < 64 (8×8)
+
+Decision
+
+· CBAM+P2 has achieved highest recall for objects that are less than 8px wide.
+· +2.50% recall improvement with baseline model.
+Fig: per size recall comparison for yolo11m_p2head variant
+Fig: per size recall comparison for yolo11m_cbam_p2head variant
+                      Inference Speed (Test Set)
+
+            Model     Avg. inference(ms)          Avg Inference 
+    YOLO11m Baseline            40.70                     ----
+    YOLO11m + CBAM              36.88
+   YOLO11m + P2Head             45.20                 -3.82ms
+yolo11m+CBAM+P2Head             44.34                 +4.52ms
+                                                      +3.64ms
+
+Decision (Test)
+
+· CBAM is actually faster.
+· CBAM+P2 (44.34ms) is slightly faster than P2Head (45.20ms) -- again because CBAM
+
+  is lighter than C2PSA.
+                           Inference Speed (Test Set)
+
+           Priority        Best Model for the job                        Reason
+      Very Tiny Recall              CBAM+P2             Highest very-tiny recall (80.89%)
+Overall Detection Quality            P2Head              Best mAP, Precision, Recall, F1
+     Efficiency / Speed                CBAM
+    Balanced Trade-off              CBAM+P2                  Lightest, fastest, good F1
+                                                       Good recall + lighter than P2Head
+
+Decision (Test)
+
+· CBAM is actually faster.
+· CBAM+P2 (44.34ms) is slightly faster than P2Head (45.20ms) -- again because CBAM
+
+  is lighter than C2PSA.
+
+                                                                                           11
+                                      Analysis & Decision
+
+CBAM (Attention Only):
+
+  · Lighter model(-4.8% params, -1.2% GFLOPs)
+  · DoesNOT improvevery-tiny recall(-0.3%)
+  · Goodfor efficiency, not for tiny objectdetection
+
+P2Head (Extra Detection Scale):
+
+  · BestmAP@0.5(+1.75%),mAP@0.5:0.95(+2.04%)
+  · Best Precision(+2.4%), Recall(+1.6%), F1 (+2.0%)
+
+        CBAM+P2
+  · Be(sCtoVmerybTinineydre):call(+2.50%)
+
+  · Lighter than P2Headalone (-2.3% paramsvs +2.5%)
+  · mAP , Precision, Recallis extremelyclose to Baseline+P2 Variant.
+
+                                                                                                11
+Onward Model Trying: Integrating State Space
+  Models into YOLO11_CBAM_P2Head Variant
+
+                                                                                                     1
+Fig: MambaSSM_cbam_p2head Architecture
+Fig: Mamba_cbam_p2head loss Curves
+Fig: Mamba_cbam_p2head Validation Metrics
+Fig: Mamba_cbam_p2head Test Set Predictions
+Fig: AtrousMambaSSM_cbam_p2head architecture
+Fig: Atrous_MambaSSM_cbam_p2head loss Curves
+Fig: AtrousMambaSSM_cbam_p2head Validation Metrics
+Fig: AtrousMambaSSM_cbam_p2head Test Set Predictions
+                                          Changes in the Architecture
+
+Model                Backbone Change      Head change               Hypothesis               Neck Change
+
+YOLO11m Baseline     Standard (C2PSA)        3-scale (P3, P4, P5)      Reference model                   Standard C3k2
+                                          4-scale (P2, P3, P4, P5)
+Yolo11m+CBAM+P2Head CBAM replaces C2PSA   4-scale (P2, P3, P4, P5)  Best of both: attention              Standard C3k2
+                                                                           + resolution
+Mamba+CBAM+P2Head    CBAM replaces C2PSA                                                     C3k2 at layers 13,16,19,22,25,28
+                                                                         SSM sequential         replaced with C3K2Mamba
+                                                                      scanning improves
+                                                                     feature aggregation
+
+AtrousMamba+CBAM+P2  CBAM replaces C2PSA  4-scale (P2, P3, P4, P5)  Dilated SSM scanning     C3k2 at layers 13,25,28 replaced
+              Head                                                  captures multi-scale      with C3K2Mamba (AtrousSSM,
+
+                                                                             context                   dilations=[1,2,4])
+
+Notes
+   · C3K2Mamba (Mamba): Replaces C3k2 bottleneck with bidirectional local-window
+      SSM scanning (forward + reverse).. Injected via post-init surgical replacement at 6
+      neck layers.
+   · C3K2Mamba (AtrousSSM): Same as Mamba but with 3 parallel dilated scanning
+      branches (d=1, d=2, d=4) + gated fusion. YAML-native definition at 3 neck layers (13,
+      25, 28). d_state=4.
+                     Model Complexity Table
+
+ GFLOPs (%)  GFLOPs  Model             Parameters(Mil.)   Params (%)  Layers
+
+----         34.1    YOLO11m Baseline  20.0537           ----         410
+
++28.2%       43.7    Yolo11m+CBAM+P2   19.5922           -2.30%       487
+                               Head
+
++28.2%       43.7    Mamba+CBAM+P2H    19.592            -2.30%       487*
+                                ead
+
++41.1%       48.1    AtrousMamba+CBA   24.156            +20.45%      487*
+                           M+P2Head
+
+    *Mamba layers are injected post-init, so the layer count is the same as CBAM+P2 base architecture.
+
+Decision :
+  · CBAM+P2 and Mamba+CBAM+P2 have identical parameter count (19.59M) --
+     Mamba adds no extra parameters.
+  · AtrousMamba adds +4.56M params (+20.5%) and +4.4 GFLOPs due to 3 parallel
+     dilated branches + gated fusion.
+  · CBAM replacing C2PSA actually reduces parameters by 2.3% compared to baseline.
+                                  Test set Detection performance
+
+F2                   Model        Precision  mAP50-95  Recall     F1      mAP50
+
+0.8441                 YOLO11m    0.8257     0.6256    0.8488     0.8371  0.8558
+0.8564                  Baseline  0.8351     0.6418    0.8619     0.8483  0.8723
+
+                     Yolo11m+CBA
+                       M+P2head
+
+0.8472               Mamba+CBA    0.8547     0.6539    0.8453     0.8500  0.8770
+                      M+P2Head
+
+             0.8008  AtrousMamb   0.8127     0.5540    0.7979     0.8052  0.8228
+                     a+CBAM+P2H
+Decision
+                            ead
+
+· Mamba+CBAM+P2 is the best overall model(+2.12% mAP50, +2.83% mAP50-95
+  over baseline)
+                          Inference Speed (Test Set)
+
+                Model     Avg. Inference(ms)          Avg Inference Delta
+        YOLO11m Baseline            40.70                       ____
+  YOLO11m+CBAM+P2Head               44.34
+    Mamba+CBAM+P2Head               51.21                    +3.64ms
+AtrousMamba+CBAM+P2Head            105.08                   +10.51ms
+                                                            +64.38ms
+
+Decision (Test)
+
+  · Mamba+CBAM+P2 adds moderate latency (+10.51ms, +25.8%). ~19.5 FPS.
+  · AtrousMamba is 2.6x slower than baseline (105ms, ~9.5 FPS) due to 3 parallel dilated
+
+     branches + gated fusion. NOT real-time.
+                                      Analysis & Decision
+
+Mamba+CBAM+P2Head (SSM Neck):
+
+  · Best mAP50 (0.8770) and Best mAP50-95 (0.6539)
+  · Bestprecision(0.8547)-- fewestfalsepositives
+  · Same parametercount as CBAM+P2 (19.592M
+
+AtrousMamba+CBAM+P2Head (Dilated SSM
+
+  · Novel architecture:firstdilatedscanning mechanism for SSMs
+  · Bestmedium objectrecall(93.69%)-- dilatedscanning capturesfull-bodycontext.
+  · Heaviestmodel(+20.5% params, +41.1% GFLOPs)
+Inference-Time Enhancement: SAHI + TTA on
+               Mamba+CBAM+P2Head
+
+                   · Copy-Paste Augmentation (negative result)
+                   · SAHI (Slicing Aided Hyper Inference)
+                   · TTA (Test-Time Augmentation)
+
+                                                                                                   1
+                                              Overview
+
+· Experiment1:Copy-PasteAugmentation-- retrainMamba+CBAM+P2with aggressive
+   small-object augmentation (copy_paste=0.5, mixup=0.15)
+
+· Experiment2:SAHI -- slice-basedinferenceto boostvery-tinyobject recall(4 configs
+   tested on no-aug model)
+
+· Experiment3:TTA -- multi-scale test-time augmentationat 3 resolutions(onno-aug
+   model)
+
+· Experiment4:SAHI + TTAcombined(onno-augmodel)
+
+Goal: Push very-tiny recall (currently 0.767) above 0.82 and improve mAP50-95 beyond
+                                                   0.654
+              Copy-Paste Augmentation
+
+ Parameter                 Value    · Copy-paste should boost very-tiny recall by duplicating
+Architecture  Mamba+CBAM+P2 (same)     small objects into training images.
+
+    Epochs                   120    · Target:push VT recall from 0.767 to ~0.80+
+ copy_paste                   0.5
+                             0.15
+    mixup                     0.5
+     flipud                  10.0
+   degrees                    1.0
+    mosaic                    10
+close_mosaic
+           Copy-Paste Augmentation -- Detection Performance
+
+  Metric   No-Aug(baseline-mamba-  Delta                           Copy-paste
+  mAP50            cbam-p2head)
+mAP50-95
+Precision  0.8736                  -0.46%                          0.8690
+   Recall
+           0.6443                  -1.67%                          0.6276
+     F1
+     F2    0.8547                  -0.51%                          0.8496
+ Latency   0.8453                  -0.63%                          0.8390
+           0.8500                  -0.57%                          0.8443
+           0.8472                  -0.61%                          0.8411
+           45.6ms                  +2.8ms                          48.4ms
+
+Decision:
+  · ALL metrics degraded. Copy-paste augmentation HURT the model.
+                              Copy-Paste -- Per-Size Recall
+
+Size Category     Count           No-Aug          Copy-Paste          Delta
+
+Very Tiny (<8px)  25,072 (34.6%)          0.7668              0.7698 +0.30% (negligible)
+
+Tiny (8-16px)     20,520 (28.3%)          0.8752              0.8677          -0.75%
+
+Small (16-32px)   26,614 (36.7%)          0.896               0.8833          -1.27%
+
+Medium (32-96px)  317 (0.4%)              0.8959              0.7634 -13.25%
+
+Decision:
+  · Very-tiny gain:only+0.3%
+  · MediumrecallCOLLAPSED:-13.25%
+  · Themodelover-focusedonpasted smallobjects, forgettingmedium-sized ones
+                                     Copy-Paste -- Analysis
+
+Why it failed:
+  · copy_paste=0.5was too aggressive-- flooded50% of training images withpastedsmall
+     objects
+  · Combinedwithmixup=0.15+ flipud=0.5+degrees=10.0 -- toomany augmentations
+     stacked simultaneously
+  · Modelgot "distracted"-- learned to over-detecttiny objectsat the expenseof medium
+     ones
+  · C2A alreadyhas ~35 objects/imageat extremedensity-- artificiallyaddingmore created
+     unrealistic crowding
+  · Val mediumrecall droppedeven worse:0.821-> 0.659(-16.2%)
+Copy-Paste -- Training Curves
+
+        Fig: Copy-paste Loss Curves
+        Fig: Copy-paste metrics
+                 SAHI(Slicing Aided Hyper Inference)
+
+Setting          Naive/Default          Our Optimized Config
+Postprocess      NMS                    GREEDYNMM (merges instead of discarding)
+Match metric     IoU                    IOS (handles size-varying duplicates)
+Full-image pred  Off                    ON (preserves medium/large recall)
+Slice sizes      Single size            4-config sweep: 256, 320, 512, 640
+Confidence                      0.25 0.15-0.20 (low-conf tiny objects pass)
+                        SAHI Configuration Sweep Results
+
+Config    Slice      Overlap        Confidence Precision Recall         F1         F2         VT Recall  Latency
+
+mamba_cbam_p2head -  -              0.25  0.855                  0.845      0.85       0.847  0.767 45ms
+
+SAHI-256  256x256             0.3   0.15  0.79                   0.872      0.829      0.854  0.829 534ms
+
+SAHI-320  320x320             0.25  0.15  0.817                  0.869      0.842      0.858  0.822 365ms
+
+SAHI-512  512x512             0.25  0.2   0.867                  0.865      0.866      0.865  0.808 187ms
+
+SAHI-640  640x640             0.3   0.2   0.867                  0.86       0.864      0.862  0.801 147ms
+
+· BestVT recall: SAHI-256-- 0.829 (+6.24%over baseline), butprecisiondroppedto 0.790
+· Bestbalanced(F1): SAHI-512-- F1=0.866(+1.6%), precisionpreservedat 0.867, only187ms
+                                 SAHI -- Per-Size Recall
+
+Size Category     Count                  Mamba_cbam_p2head   SAHI-256                Delta
+Very Tiny (<8px)
+Tiny (8-16px)                    25,072  0.7668                        0.8292                +6.24%
+Small (16-32px)
+Medium (32-96px)                 20,520  0.8752                        0.8579                -1.73%
+
+                                 26,614  0.896                         0.9231                2.71%
+
+                                 317     0.8959                        0.8959               0.00% (preserved)
+
+                  Size Category          CopyPaste+SAHI-512          NoAug+SAHI-256
+
+                  Very Tiny                                  0.8198                  0.8292
+
+                  Medium                                     0.7476                  0.8959
+
+Findings:
+  · Theno-augmodel+ optimizedSAHIbeats copy-pastemodel+ SAHIat every size category
+  · Confirms:theno-augmodelis the better base forinference-timeenhancement
+          TTA - Test-Time Augmentation Results
+
+Config    image size       mAP50            mAP50-95          P            R
+Baseline                                                         0.855
+TTA                   640         0.8736              0.6443     0.862        0.845
+TTA                                                              0.862        0.829
+TTA                   832 0.8800 (+0.64%)   0.6768 (+3.25%)      0.841        0.841
+                                                                              0.821
+                      1280 0.8900 (+1.64%)  0.6982 (+5.39%)
+
+                      1920 0.8658 (-0.78%)  0.6824 (+3.81%)
+
+Decision:
+  · TTA@1280: +1.64%mAP50,+5.39%mAP50-95 with Zero retraining
+  · TTA@1920DEGRADED vs 1280-- model trainedat 640px can'textrapolateto 3x resolution
+                                  SAHI + TTA Combined
+
+Config          P              R           F1              F2          VT Recall  Latency
+                   0.7899         0.872        0.8289
+SAHI-256           0.7899         0.872        0.8289          0.8542  0.8292 534ms
+
+SAHI-256 + TTA                                                 0.8542  0.8292 530ms
+
+Finding:
+  · Identical metrics across ALL measures. TTA adds no gain when combined with SAHI.
+                 Confusion Matrix Comparison
+
+(no-aug, 640px)                               TTA@1280
+TTA@832                                        TTA@1920
+                            Confusion Matrix Comparison
+
+Config                      Person Recall       Miss Rate       BG FP
+
+Mamba+CBAM+P2 no-aug (640)                 86%             14%         0
+
+TTA (832)                                  90%             10%         0
+
+TTA (1280)                                 90%             10%         0
+
+TTA (1920)                                 89%             11%         0
+
+· TTA@1280reducesmiss ratefrom 14% to 10% -- critical forSAR
+                                    Complete Ablation Results
+
+Method            mAP50         mAP50-95 P         R         F1         F2                VT Recall  Latency
+
+Mamba+CBAM+P2            0.874      0.644   0.855     0.845      0.85       0.847             0.767 45ms
+(ours)
+
++ Copy-Paste Aug         0.869      0.628   0.85      0.839      0.844      0.841                    0.77 48ms
+
++ SAHI (512,      --            --          0.867     0.865      0.866      0.865             0.808 187ms
+ov0.25)                                      0.79     0.872      0.829      0.854             0.829 534ms
+
++ SAHI (256,      --            --
+ov0.30)
+
++ TTA (1280)             0.890      0.698   0.862     0.841 --          --                --         --
+
+Notes:
+  · Allrows except"Copy-PasteAug"usethesameno-augmodelweights
+  · SAHI metrics:customper-imagebox matchingat IoU=0.5 (standardSAHI evaluationprotocol)
+  · Copy-Pasteis anegativeresult
+  · mAP50/mAP50-95notcomputableforSAHI (differentevaluationmethodologyfromultralytics)
+Comparison with Published -- Nihal et al. (ICPR 2024)
+
+                    Model  mAP50   mAP50-95  Params                  Source
+Faster R-CNN                0.634     0.366   ~41M     Nihal et al., ICPR 2024
+RetinaNet                   0.693     0.383   ~37M     Nihal et al., ICPR 2024
+RTMDet                      0.708     0.442      --    Nihal et al., ICPR 2024
+Cascade R-CNN               0.735     0.486   ~69M     Nihal et al., ICPR 2024
+DINO                        0.789     0.471   ~47M     Nihal et al., ICPR 2024
+YOLOv5                      0.808     0.492      --    Nihal et al., ICPR 2024
+YOLOv9-c                              0.556   25.3M    Nihal et al., ICPR 2024
+YOLOv9-e                      0.8     0.688   57.3M    Nihal et al., ICPR 2024
+                            0.893                      
+YOLO11m (our baseline)                0.626   20.1M    Ours
+YOLO11m+CBAM+P2             0.856     0.642  19.6M     Ours
+Mamba+CBAM+P2               0.872     0.654  19.6M     Ours
+Mamba+CBAM+P2 + TTA@1280    0.877     0.698  19.6M     Ours
+                           0.890
+                       Comparison with Mamba-YOLO on COCO (AAAI 2025)
+
+Source: Wang et al., "Mamba YOLO: SSMs-based Object Detection" -- AAAI 2025
+
+Model         AP        AP50        APs          APm          APl                                                   Params  FLOPs
+Mamba-YOLO-T                             24.7         48.8                                                    62 5.8M       13.2G
+Mamba-YOLO-M      44.5        61.2       30.6                                                               66.4 19.1M      45.4G
+Mamba-YOLO-L                             34.1           54                                                  68.1 57.6M      156.2G
+                  49.1        66.5                    57.3
+
+                  52.1        69.8
+
+Caveat: These are COCO results, not C2A. Direct comparison isn't fair. Include this slide for context only
+
+· Mamba-YOLOreplacestheentirebackbonewith Mamba-- our approachis different
+  (Mamba in neck only, keeping CNN backbone)
+                       Comparison with Published -- Nihal et al. (ICPR 2024)
+
+Comparisons :
+
+  · mAP50-95:0.698 vs 0.688(+1.0 point) -- WebeatYOLOv9-e
+  · mAP50:0.890vs 0.893(-0.3 point)-- within margin
+  · Parameters: 19.6Mvs 57.3M-- Ourmodelis 2.9x SMALLER
+  · Ourmodel beats ALLotherbaselines (Faster R-CNN, RetinaNet,CascadeR-CNN, DINO,
+
+     YOLOv5, YOLOv9-c) by large margins
+
+ Note: The Nihal et al. numbers use the same C2A test split. They used standard training without
+                   SAHI/TTA. Our TTA is an inference-time technique (no retraining).
+

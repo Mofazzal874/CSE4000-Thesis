@@ -1,0 +1,658 @@
+% =============================================================
+%  Thesis Progress Report  -  May 02, 2026
+%  Author : Md. Mofazzal Hosen (Roll 2007074)
+%  Topic  : Mamba+CBAM+P2 YOLO11 with SAHI+TTA for C2A
+%
+%  HOW TO USE
+%  ----------
+%  1. Compile with pdfLaTeX (Overleaf or local).
+%  2. Place every image NEXT TO this .tex (same folder), keeping the
+%     original filenames. The TTA@1280 confusion matrix is renamed to
+%     confusion_matrix_normalized_val3.png to avoid colliding with the
+%     baseline confusion_matrix_normalized.png (both files have the
+%     same source name in their respective run folders).
+%
+%  All figures below have been verified to exist in your local
+%  thesis directory.
+%
+%  Files to place next to the .tex (with their source paths):
+%  No-aug Mamba+CBAM+P2 (the MAIN model — March 2026 run):
+%   labels.jpg                                   <-- 01-03-2026-Onward Model trying/11-3-26-Mamba/mamba_run/runs/detect/yolo11m_mamba_cbam_p2head/labels.jpg
+%   Mamba_CBAM_P2_loss_curves.png                <-- 01-03-2026-Onward Model trying/11-3-26-Mamba/mamba_run/plots/
+%   Mamba_CBAM_P2_metrics_6panel.png             <-- 01-03-2026-Onward Model trying/11-3-26-Mamba/mamba_run/plots/
+%
+%  Copy-Paste run (the negative-result comparison — April 2026 run):
+%   Mamba_CBAM_P2_CopyPaste_loss_curves.png      <-- 31-03-26(Mamba-ViT-CNN)/mamba_cbam_p2_copypaste/plots/
+%   Mamba_CBAM_P2_CopyPaste_metrics_6panel.png   <-- 31-03-26(Mamba-ViT-CNN)/mamba_cbam_p2_copypaste/plots/
+%   per_size_recall_test.png                     <-- 31-03-26(Mamba-ViT-CNN)/mamba_cbam_p2_copypaste/plots/   (CP vs no-aug comparison)
+%   Mamba_CBAM_P2_noaug_test_predictions.png     <-- 31-03-26(Mamba-ViT-CNN)/mamba_cbam_p2_copypaste/plots/
+%   Mamba_CBAM_P2_copypaste_test_predictions.png <-- 31-03-26(Mamba-ViT-CNN)/mamba_cbam_p2_copypaste/plots/
+%
+%  SAHI + TTA evaluation on the no-aug model (April 2026):
+%   per_size_recall_sahi_tta_noaug.png           <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/plots/
+%   metric_improvement_waterfall_noaug.png       <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/plots/
+%   BoxPR_curve.png                              <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/runs/detect/val3/
+%   BoxF1_curve.png                              <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/runs/detect/val3/
+%   confusion_matrix_normalized.png              <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/runs/detect/val/  (baseline 640 px)
+%   confusion_matrix_normalized_val3.png         <-- 31-03-26(Mamba-ViT-CNN)/SAHI+TTA/runs/detect/val3/ (TTA @1280, RENAME on copy)
+%
+%  Cover:
+%   kuet_logo.png                                <-- KUET crest (provide yourself)
+% =============================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[top=1.0in, bottom=1.0in, left=1.1in, right=1.0in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{times}
+\usepackage{titlesec}
+
+\setlist{nosep,leftmargin=*}
+\captionsetup{font=small,labelfont=bf,skip=3pt}
+\captionsetup[sub]{font=footnotesize,labelfont=bf}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1em}
+\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\floatsep}{6pt plus 1pt minus 1pt}
+\setlength{\intextsep}{6pt plus 1pt minus 1pt}
+
+% IEEE-style section numbering and headings (Roman sections, lettered subsections)
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\titleformat{\section}[block]
+  {\centering\normalfont\bfseries\large}{\thesection.}{0.6em}{\MakeUppercase}
+\titleformat{\subsection}[block]
+  {\normalfont\itshape}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}[runin]
+  {\normalfont\itshape}{}{0pt}{}[:]
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+
+% (no \graphicspath -- images sit next to the .tex)
+
+\begin{document}
+
+% =============================================================
+%  COVER PAGE
+% =============================================================
+\pagenumbering{roman}
+\begin{titlepage}
+    \centering
+    \vspace*{0.6in}
+
+    {\Large\bfseries CSE 4000: Thesis/Project}
+
+    \vspace{0.45in}
+
+    {\Large\bfseries\MakeUppercase{Thesis Progress Report}}
+
+    \vspace{0.25in}
+
+    {\large\itshape Mamba--CBAM--P2 YOLO11 with SAHI and TTA for\\
+    Human Detection in Aerial Disaster Imagery}
+
+    \vspace{0.85in}
+
+    {\large\bfseries By}
+
+    \vspace{0.25in}
+
+    {\large Md. Mofazzal Hosen\\
+    Roll: 2007074}
+
+    \vspace{0.85in}
+
+    {\large\bfseries Supervisor}
+
+    \vspace{0.20in}
+
+    {\large Dr.~Sk.~Md.~Masudul Ahsan\\
+    Professor\\
+    Department of Computer Science and Engineering\\
+    Khulna University of Engineering \& Technology}
+
+    \vfill
+
+    \includegraphics[height=1.3in]{kuet_logo.png}\\[0.20in]
+
+    {\large Department of Computer Science and Engineering\\
+    Khulna University of Engineering \& Technology\\
+    Khulna 9203, Bangladesh}
+
+    \vspace{0.25in}
+
+    {\large\bfseries May, 2026}
+\end{titlepage}
+
+% =============================================================
+%  CONTENT  (page-numbered 1-8, IEEE-style plain footer)
+% =============================================================
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+% =============================================================
+\section{Introduction}
+% =============================================================
+Search-and-Rescue (SAR) operations after natural disasters rely on
+UAVs to scan large affected regions for human survivors. Detecting
+humans in such imagery is hard: targets are extremely small, often
+occluded, in unusual poses, and embedded in post-disaster clutter.
+The \textbf{C2A dataset}~\cite{nihal2024c2a} is the largest public
+benchmark for this task: 10{,}215 images, $>$360{,}000 person
+instances, of which \textbf{47\% are smaller than 10\,pixels} and 99\%
+are below 50\,pixels -- substantially harder than VisDrone or SARD.
+
+Earlier stages of this thesis benchmarked YOLOv9/YOLOv11 on C2A and
+explored two SSM integrations: a \textit{Mamba+CBAM+P2} variant that
+became our best model, and an \textit{AtrousMamba} variant that lost
+$10$ points of mAP$_{50\text{-}95}$ and was abandoned. Mamba+CBAM+P2
+gave competitive overall mAP but its very-tiny recall was the weakest
+cell of every ablation. This report covers the April 2026 work
+targeting that weakness. Fig.~\ref{fig:dataset} shows representative
+C2A samples.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{labels.jpg}
+\caption{Representative C2A annotations: survivors appear as sub-10\,px
+instances against post-disaster clutter.}
+\label{fig:dataset}
+\end{figure}
+
+\textbf{Contributions.}
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+\item Full evaluation of \textbf{Mamba+CBAM+P2 YOLO11m} (bidirectional
+local-window SSM in the neck plus a P2 head) trained on C2A.
+\item A controlled \textbf{Copy-Paste} ablation reported as a negative
+result, motivating the shift to inference-time enhancement.
+\item A systematic sweep of \textbf{SAHI} (4 slice configs, GREEDYNMM)
+and \textbf{TTA} (3 resolutions), with an analysis of why their
+combination gives no additional gain.
+\item A final comparison against Nihal~et~al.~\cite{nihal2024c2a}: our
+$19.6$\,M-parameter model with TTA@1280 matches or exceeds YOLOv9-e
+($57.3$\,M) on C2A.
+\end{enumerate}
+
+% =============================================================
+\section{Methodology}
+% =============================================================
+\subsection{Dataset and Pre-processing}
+We use the public C2A split~\cite{nihal2024c2a} (8{,}172 train,
+1{,}021 val, 2{,}043 test images; $\approx$360k person instances over
+five poses merged into one \texttt{person} class). Images are
+letterboxed to $640\!\times\!640$ for training; for evaluation we use
+$832$/$1280$/$1920$ for TTA and tile sizes $\{256,320,512,640\}$ for
+SAHI.
+
+Boxes are bucketed by longer side into \textit{very-tiny} ($<$8\,px),
+\textit{tiny} (8--16), \textit{small} (16--32) and \textit{medium}
+(32--96), yielding 25{,}072 / 20{,}520 / 26{,}614 / 317 test instances
+(34.6\% very-tiny, 0.4\% medium, no objects $>$96\,px).
+
+\subsection{Architecture: Mamba+CBAM+P2 YOLO11m}
+Our detector extends \texttt{ultralytics} YOLO11m with three changes:
+(i)~a CBAM block at the end of the backbone, (ii)~an additional P2
+detection head, and (iii)~a bidirectional local-window Mamba SSM
+bottleneck in every neck \texttt{C3k2} block. The full topology is
+defined in \texttt{yolov11m\_cbam\_p2head.yaml}.
+
+\paragraph{CBAM block.}
+CBAM~\cite{woo2018cbam} re-weights features along the channel then
+spatial axes. For
+$\mathbf{F}\!\in\!\mathbb{R}^{C\times H\times W}$,
+\begin{equation}\small
+\mathbf{F}'=\mathbf{M}_c(\mathbf{F})\!\otimes\!\mathbf{F},\quad
+\mathbf{F}''=\mathbf{M}_s(\mathbf{F}')\!\otimes\!\mathbf{F}',
+\end{equation}
+where
+$\mathbf{M}_c=\sigma(\mathrm{MLP}(\mathrm{AvgPool}\,\mathbf{F})+\mathrm{MLP}(\mathrm{MaxPool}\,\mathbf{F}))$
+uses a shared $1\!\times\!1$ MLP ($r{=}16$) and
+$\mathbf{M}_s=\sigma(\mathrm{conv}_{7\times7}([\mathrm{AvgPool}_c\mathbf{F}';\mathrm{MaxPool}_c\mathbf{F}']))$.
+We insert it after \texttt{SPPF} in place of the default
+\texttt{C2PSA}.
+
+\paragraph{P2 detection head.}
+Default YOLO11m detects on \{P3,P4,P5\} (strides 8/16/32). We add a
+stride-4 P2 head by upsampling the neck once more and concatenating
+with the stride-4 backbone activation, giving four scales
+$160^2/80^2/40^2/20^2$ at $640$\,px input. The motivation is
+geometric: a 6\,px person is only $0.75$ feature pixels at P3 but
+$1.5$ at P2, crossing the threshold below which YOLO loses the object
+outright. Cost is $+28.2\%$ GFLOPs.
+
+\paragraph{Mamba bottleneck (C3K2Mamba).}
+A linear State-Space Model~\cite{gu2024mamba}
+$h'\!=\!Ah+Bu,\,y\!=\!Ch+Du$ is discretised by Zero-Order-Hold into
+\begin{equation}\label{eq:ssm}\small
+\bar{A}_t\!=\!\exp(\Delta_t A),\;
+x_t\!=\!\bar{A}_t x_{t-1}\!+\!\Delta_t B_t u_t,\;
+y_t\!=\!C_t^{\!\top}x_t\!+\!D\!\odot\!u_t,
+\end{equation}
+with $(\Delta_t,B_t,C_t)$ made input-dependent
+($=\mathrm{Linear}(u_t)$). This \textbf{selective scan} costs $O(DN)$
+per step with $N\!=\!4$, giving $O(L)$ complexity in sequence length
+$L$ -- vs.\ attention's $O(L^2)$.
+
+We adapt it to 2-D as a \textbf{LocalWindowSSM}: partition the feature
+map into $w\!\times\!w$ windows, run forward and backward scans (with
+separate weights) along each flattened window, and merge via
+$(y_{\text{fwd}}\!+\!y_{\text{bwd}})\!\cdot\!\mathrm{SiLU}(z)$ before
+the output projection and reverse-windowing. Window size is adaptive
+($w\!\in\!\{4,6,8\}$ for channels
+$\{{\geq}512,256,128\}$) so per-window length stays $\le 64$ and the
+scan is tractable in pure PyTorch. $A\!=\!-\exp(A_{\log})$ keeps the
+continuous SSM stable; SSM ops run in FP32 under AMP. Local windows
+preserve spatial locality (the failure mode of AtrousMamba was
+exactly the loss of locality from dilated raster scans); the
+bidirectional pair compensates for the unidirectional recurrence.
+
+The C3K2Mamba block follows the C2f split--bottleneck--concat layout
+with each bottleneck applying
+$\texttt{Conv}_{3\!\times\!3}\!\to\!\texttt{LocalWindowSSM}\!\to\!\texttt{Conv}_{3\!\times\!3}$
+plus a residual when channel counts match.
+
+\subsection{Training Configuration}
+Training runs on Kaggle dual T4 GPUs (DDP, BF16), 120 epochs, SGD
+(momentum 0.937, lr 0.01 cosine, wd $5\!\times\!10^{-4}$), batch~8 per
+GPU with grad-accum~2 (effective batch~16), default YOLO mosaic+HSV
+augmentations, mosaic closed for the last 10 epochs. Wall-clock
+$\approx\!8$\,h. The model has \textbf{19.59\,M parameters / 43.7
+GFLOPs} at $640\!\times\!640$, $\approx\!3\times$ smaller than
+YOLOv9-e.
+
+\subsection{Copy-Paste Augmentation Variant}
+To push very-tiny recall higher we retrained the same architecture
+with aggressive small-object augmentation:
+\texttt{copy\_paste}=0.5, \texttt{mixup}=0.15, \texttt{flipud}=0.5,
+\texttt{degrees}=10$^{\circ}$, all else unchanged. The previous no-aug
+\texttt{best.pt} serves as the controlled comparison.
+
+\subsection{Inference-Time Enhancement}
+Two complementary techniques are evaluated on the no-aug
+\texttt{best.pt}; neither requires retraining.
+
+\textbf{(a) SAHI~\cite{akyon2022sahi}} tiles each image into
+overlapping slices, each resized to the model's $640^2$ input
+(effectively up-sampling sub-10\,px humans by the slice/640 ratio),
+detects per slice, and merges back. Our configuration differs from
+the defaults in three ways: \textbf{GREEDYNMM} (merges overlapping
+neighbour-tile detections instead of suppressing them — correct for
+dense scenes), \textbf{IOS} match metric (normalises by the smaller
+box, robust to size-varying duplicates from adjacent tiles), and
+\textbf{\texttt{perform\_standard\_pred=True}} (also runs a full-image
+pass; without it medium objects spanning tile borders are lost — an
+earlier prototype lost $-13.3$ pp medium recall). We sweep slice sizes
+$\{256,320,512,640\}$ with overlap $\{0.30,0.25,0.25,0.30\}$ and
+slice-level confidence $\{0.15,0.15,0.20,0.20\}$.
+
+\textbf{(b) TTA} -- Ultralytics \texttt{val(augment=True)} runs three
+forward passes per image at scales $\{1.0,0.83,0.67\}$ with a
+horizontal flip on the second pass and merges via NMS. We sweep input
+resolution $\{832,1280,1920\}$.
+
+\subsection{Evaluation Protocol}
+Baseline and TTA rows use Ultralytics \texttt{val()} for official
+mAP$_{50}$ and mAP$_{50\text{-}95}$. SAHI rows use custom per-image
+TP/FP/FN matching at IoU=0.5 (the standard SAHI protocol; mAP is not
+defined here because SAHI bypasses the Ultralytics validator). We
+additionally report $P$, $R$, $F_1$, the recall-weighted
+$F_2\!=\!5PR/(4P+R)$, per-size recall, and 15-bin ECE. $F_2$ is
+emphasised because in SAR a missed victim costs more than a false
+alarm.
+
+% =============================================================
+\section{Results}
+% =============================================================
+\subsection{Architectural Ablation}
+Table~\ref{tab:ablation} reports the architectural ablation on the full
+C2A test set. The P2 head alone is the single largest contributor; the
+Mamba neck adds further mAP$_{50}$ headroom. The AtrousMamba variant
+explored in March~2026 is included as an explicit negative result --
+dilated SSM scanning broke spatial locality and collapsed performance.
+The Mamba+CBAM+P2 training itself was clean
+(Fig.~\ref{fig:noaug_train}): all 120 epochs converged smoothly, $F_2$
+plateaued near epoch~110 just as \texttt{close\_mosaic} kicked in, and
+no NaN events were triggered.
+
+\begin{table}[H]
+\centering
+\caption{Architectural ablation on the C2A test set. \emph{VT}~=~very-tiny
+($<$8\,px) recall.}\label{tab:ablation}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Params (M)} & \textbf{GFLOPs} &
+\textbf{mAP$_{50}$} & \textbf{mAP$_{50\text{-}95}$} &
+\textbf{VT recall} & \textbf{Lat.\,(ms)}\\
+\midrule
+YOLO11m baseline               & 20.05 & 34.1 & 0.856 & 0.626 & 0.784 & 41 \\
+\,\,+ CBAM only                & 19.10 & 33.7 & 0.856 & 0.623 & 0.781 & 42 \\
+\,\,+ P2 head only             & 20.55 & --   & 0.873 & 0.646 & 0.801 & 47 \\
+\,\,+ CBAM + P2                & 19.59 & 43.7 & 0.872 & 0.642 & 0.809 & 48 \\
+\textbf{Mamba+CBAM+P2 (ours)}  & \textbf{19.59} & \textbf{43.7} & \textbf{0.874} & \textbf{0.644} & 0.767 & 46 \\
+\,\,AtrousMamba+CBAM+P2 (failed)& 24.16 & 48.1 & 0.823 & 0.554 & 0.683 & 105\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_loss_curves.png}
+  \caption{Training loss curves (box, cls, dfl, total).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_metrics_6panel.png}
+  \caption{6-panel validation metrics
+  (P, R, mAP$_{50}$, mAP$_{50\text{-}95}$, F$_1$, F$_2$).}
+\end{subfigure}
+\caption{Mamba+CBAM+P2 (no-aug) training -- the \textbf{main model} of
+this thesis. Smooth convergence over 120 epochs, no instabilities, F$_2$
+plateau aligning with the close-mosaic transition near epoch~110.}
+\label{fig:noaug_train}
+\end{figure}
+
+\subsection{Copy-Paste Augmentation: A Negative Result}
+Retraining with \texttt{copy\_paste=0.5} and the aggressive
+augmentation stack \emph{degrades} every metric
+(Table~\ref{tab:copypaste}). Medium recall collapses from $0.896$ to
+$0.763$ ($-13$\,pp) while the targeted very-tiny bucket gains only
+$+0.3$\,pp. Calibration also worsens (ECE 0.135$\!\to\!$0.146).
+Training itself was healthy: all 120 epochs completed cleanly
+(Fig.~\ref{fig:cp_train}). The drop is a data-augmentation mismatch,
+not a training bug.
+
+\begin{table}[H]
+\centering
+\caption{Copy-Paste augmentation ablation. Same architecture and
+schedule; only the augmentation stack differs.}\label{tab:copypaste}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Configuration} & \textbf{mAP$_{50}$} & \textbf{mAP$_{50\text{-}95}$} & \textbf{P} & \textbf{R} & \textbf{F$_2$} & \textbf{Medium R}\\
+\midrule
+Mamba+CBAM+P2 (no-aug) & 0.874 & 0.644 & 0.855 & 0.845 & 0.847 & \textbf{0.896}\\
+\,\,+ Copy-Paste       & 0.869 & 0.628 & 0.850 & 0.839 & 0.841 & 0.763\\
+$\Delta$               & --0.5\% & --1.7\% & --0.5\% & --0.6\% & --0.6\% & \textbf{--13.3\%}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_CopyPaste_loss_curves.png}
+  \caption{Training loss curves (box, cls, dfl, total).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_CopyPaste_metrics_6panel.png}
+  \caption{6-panel validation metrics
+  (P, R, mAP$_{50}$, mAP$_{50\text{-}95}$, F$_1$, F$_2$).}
+\end{subfigure}
+\caption{Copy-Paste \emph{retraining} (negative-result run only).
+Convergence was stable across all 120 epochs; the metric drop in
+Table~\ref{tab:copypaste} is augmentation-induced, not a training
+failure. The main-model curves are in Fig.~\ref{fig:noaug_train}.}
+\label{fig:cp_train}
+\end{figure}
+
+\paragraph{Interpretation.}
+C2A already carries $\sim$35 annotations per image; pasting more small
+humans into 50\% of training images creates an unrealistic crowding
+regime that biases the model toward tiny objects at the expense of the
+rare medium category. Copy-paste is widely recommended for small
+objects (COCO has $\sim$7 instances per image), but the
+recommendation \emph{flips} when the dataset is already dense. We
+therefore retain the no-aug weights as base and turn to inference-time
+techniques.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\linewidth]{per_size_recall_test.png}
+\caption{Per-size recall: Copy-Paste vs no-aug Mamba+CBAM+P2. The
+medium-bucket collapse ($-13.3$\,pp) is the dominant failure mode.}
+\label{fig:per_size_cp}
+\end{figure}
+
+\subsection{SAHI Sweep}
+Table~\ref{tab:sahi} sweeps four slice sizes on the no-aug
+\texttt{best.pt}. The smallest tiles (256\,px) give the largest
+very-tiny gain ($0.767\!\to\!0.829$) at a precision cost; 512\,px
+tiles preserve precision and yield the best balanced $F_1$.
+\texttt{perform\_standard\_pred=True} keeps medium recall pinned at
+0.896 across all SAHI configs.
+
+\begin{table}[H]
+\centering
+\caption{SAHI configuration sweep on the C2A test set (custom per-image
+matcher at IoU=0.5). Latency is end-to-end per image including tiling
+and GREEDYNMM merging.}\label{tab:sahi}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Config} & \textbf{Slice} & \textbf{Overlap} & \textbf{P} & \textbf{R}
+& \textbf{F$_1$} & \textbf{VT recall} & \textbf{Lat.\,(ms)}\\
+\midrule
+Baseline (640)             & --   & --   & 0.855 & 0.845 & 0.850 & 0.767 & 45 \\
+SAHI-256                   & 256  & 0.30 & 0.790 & \textbf{0.872} & 0.829 & \textbf{0.829} & 534\\
+SAHI-320                   & 320  & 0.25 & 0.817 & 0.869 & 0.842 & 0.822 & 365\\
+\textbf{SAHI-512}          & 512  & 0.25 & 0.867 & 0.865 & \textbf{0.866} & 0.808 & 187\\
+SAHI-640                   & 640  & 0.30 & 0.867 & 0.860 & 0.864 & 0.801 & 147\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Why SAHI-256 has lower $F_1$ despite higher recall.}
+At slice-level conf $0.15$, 256\,px tiles produce many low-score
+detections (precision $0.855\!\to\!0.790$). The recall-weighted $F_2$,
+however, \emph{improves} ($0.847\!\to\!0.854$) -- the right metric
+when missing victims is unacceptable.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.55\linewidth}
+  \includegraphics[width=\linewidth]{per_size_recall_sahi_tta_noaug.png}
+  \caption{Per-size recall across all five rows of Table~\ref{tab:sahi}.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.42\linewidth}
+  \includegraphics[width=\linewidth]{metric_improvement_waterfall_noaug.png}
+  \caption{Waterfall of metric improvements over the baseline.}
+\end{subfigure}
+\caption{Inference-time enhancement: SAHI-256 is the very-tiny
+optimum, SAHI-512 the balanced operating point.}
+\label{fig:sahi_combined}
+\end{figure}
+
+\subsection{Test-Time Augmentation Sweep}
+Table~\ref{tab:tta} sweeps the inference resolution. TTA@1280 yields
+the best mAP$_{50}$ ($0.890$) and the largest mAP$_{50\text{-}95}$
+gain in this work ($+5.4$\,pp). At $1920$ the model is asked to
+extrapolate to $3\times$ its training resolution and mAP$_{50}$
+regresses below the 832\,px result.
+
+\begin{table}[H]
+\centering
+\caption{TTA sweep on the C2A test set (Ultralytics \texttt{val()},
+\texttt{augment=True}). Scales $\{1.0,0.83,0.67\}$ with one horizontal
+flip.}\label{tab:tta}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Config} & \textbf{imgsz} & \textbf{mAP$_{50}$} & \textbf{mAP$_{50\text{-}95}$} & \textbf{P} & \textbf{R}\\
+\midrule
+Baseline (no TTA)   & 640  & 0.874 & 0.644 & 0.855 & 0.845\\
+TTA                 & 832  & 0.880 & 0.677 & 0.862 & 0.829\\
+\textbf{TTA}        & \textbf{1280} & \textbf{0.890} & \textbf{0.698} & 0.862 & 0.841\\
+TTA                 & 1920 & 0.866 & 0.682 & 0.841 & 0.821\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Why TTA helps mAP$_{50\text{-}95}$ more than mAP$_{50}$.}
+mAP$_{50\text{-}95}$ averages across IoU $\{0.50,\ldots,0.95\}$ and so
+rewards precise localisation; TTA's multi-scale fusion produces
+tighter boxes through cross-scale agreement, which is why the strict-
+IoU gain ($+5.4$\,pp) far exceeds the IoU=0.5 gain ($+1.6$\,pp).
+
+\paragraph{SAHI+TTA combined: a non-result.}
+Injecting \texttt{augment=True} per slice produces metrics
+indistinguishable from SAHI-256 alone. At 256\,px slice size, TTA's
+$\{0.67,1.0,1.5\}\!\times$ scales operate at $\{172,256,384\}$\,px --
+all below the $640$\,px training resolution -- so TTA contributes no
+information. The two techniques are reported as alternatives, not a
+stack.
+
+\subsection{Confusion Matrices and Operating-Point Analysis}
+TTA@1280 reduces the person miss-rate from 14\% to 10\% with the
+background false-positive rate held at $0.00$ across every
+configuration (Fig.~\ref{fig:cm}). The TTA@1280 $F_1$-confidence curve
+(Fig.~\ref{fig:curves}) peaks at $F_1\!=\!0.85$ at conf $0.579$ --
+well-calibrated. ECE: no-aug $0.135$, copy-paste $0.146$.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.46\linewidth}
+  \includegraphics[width=\linewidth]{confusion_matrix_normalized.png}
+  \caption{Mamba+CBAM+P2 baseline at 640\,px (val).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.46\linewidth}
+  \includegraphics[width=\linewidth]{confusion_matrix_normalized_val3.png}
+  \caption{Mamba+CBAM+P2 + TTA@1280 (val).}
+\end{subfigure}
+\caption{Normalised confusion matrices: TTA cuts the
+person$\to$background miss-rate from 14\% to 10\%.}
+\label{fig:cm}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.46\linewidth}
+  \includegraphics[width=\linewidth]{BoxPR_curve.png}
+  \caption{Precision--Recall curve (TTA@1280).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.46\linewidth}
+  \includegraphics[width=\linewidth]{BoxF1_curve.png}
+  \caption{$F_1$--confidence curve (TTA@1280, peak $F_1\!=\!0.85$ at conf~$0.579$).}
+\end{subfigure}
+\caption{Operating-point analysis for the best TTA configuration.}
+\label{fig:curves}
+\end{figure}
+
+\subsection{Qualitative Comparison}
+Fig.~\ref{fig:pred} compares the no-aug and copy-paste models on the
+same hard test images. The no-aug detector finds more victims in
+dense clusters and produces tighter boxes; the copy-paste model
+misses several medium-sized survivors -- the same failure mode as
+Fig.~\ref{fig:per_size_cp}.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_noaug_test_predictions.png}
+  \caption{Mamba+CBAM+P2 (no-aug, baseline 640\,px).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.48\linewidth}
+  \includegraphics[width=\linewidth]{Mamba_CBAM_P2_copypaste_test_predictions.png}
+  \caption{Mamba+CBAM+P2 + Copy-Paste augmentation.}
+\end{subfigure}
+\caption{Qualitative comparison on hard C2A test images: copy-paste
+misses medium-sized survivors, matching its $-13.3$ pp medium-recall
+collapse.}
+\label{fig:pred}
+\end{figure}
+
+\subsection{Comparison with Published SOTA on C2A}
+Table~\ref{tab:sota} compares \emph{Mamba+CBAM+P2 + TTA@1280} to all
+detectors reported by Nihal~et~al.~\cite{nihal2024c2a} on the same
+test split. Our $19.6$\,M-parameter model beats every prior baseline
+up to YOLOv9-c and \textbf{exceeds YOLOv9-e by $+1.0$\,pp on
+mAP$_{50\text{-}95}$ at $\approx\!2.9\times$ fewer parameters}; on
+mAP$_{50}$ we are within $0.3$\,pp of the top number.
+
+\begin{table}[H]
+\centering
+\caption{Comparison with published SOTA on the C2A test split. All
+Nihal et~al.\ rows are reproduced from their Table~4
+\cite{nihal2024c2a}.}\label{tab:sota}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{mAP$_{50}$} & \textbf{mAP$_{50\text{-}95}$} & \textbf{Params (M)}\\
+\midrule
+Faster R-CNN              & 0.634 & 0.366 & $\sim$41\\
+RetinaNet                 & 0.693 & 0.383 & $\sim$37\\
+RTMDet                    & 0.708 & 0.442 & --\\
+Cascade R-CNN             & 0.735 & 0.486 & $\sim$69\\
+DINO                      & 0.789 & 0.471 & $\sim$47\\
+YOLOv5                    & 0.808 & 0.492 & --\\
+YOLOv9-c                  & 0.800 & 0.556 & 25.3\\
+YOLOv9-e                  & 0.893 & 0.688 & 57.3\\
+\midrule
+YOLO11m (our re-impl.)              & 0.856 & 0.626 & 20.1\\
+YOLO11m + CBAM + P2                 & 0.872 & 0.642 & 19.6\\
+Mamba + CBAM + P2 (ours)            & 0.874 & 0.644 & 19.6\\
+\textbf{Mamba+CBAM+P2 + TTA@1280}   & \textbf{0.890} & \textbf{0.698} & \textbf{19.6}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For reference, the recently published Mamba-YOLO-M~\cite{wang2025mambayolo}
+has near-identical complexity to ours but replaces the entire backbone
+with SSM blocks; our approach instead inserts a lightweight
+bidirectional local-window SSM in the neck only, which is our
+differentiation point for the journal version.
+
+\subsection{Summary and What Did Not Work}
+\textbf{Best numbers.} \emph{Overall accuracy} -- Mamba+CBAM+P2 +
+TTA@1280: mAP$_{50}\!=\!0.890$, mAP$_{50\text{-}95}\!=\!0.698$,
+beating YOLOv9-e by $+1.0$\,pp at $\approx\!3\times$ fewer parameters.
+\emph{Very-tiny recall} -- Mamba+CBAM+P2 + SAHI-256: VT~$=0.829$
+($+6.24$\,pp), medium bucket preserved at $0.896$.
+
+\textbf{What did not work.} \emph{Copy-Paste}
+($-1.7$\,mAP$_{50\text{-}95}$, $-13.3$\,medium-recall);
+\emph{TTA@1920} (degrades vs.\ 1280 because $3\times$ training
+resolution is too far); \emph{SAHI+TTA combined} (no gain — slices
+already smaller than training resolution); \emph{AtrousMamba}
+($-10$\,mAP$_{50\text{-}95}$ — dilated SSM scanning broke spatial
+locality). Eliminating these delineates what works on extreme-density
+small-object datasets.
+
+\textbf{Next steps.} (i) HERIDAL cross-dataset evaluation, (ii) SAHI
+confidence tuning to recover SAHI-256 precision, (iii) journal
+manuscript for \emph{Drones} (MDPI, Q1).
+
+% =============================================================
+\begin{thebibliography}{9}\small
+\bibitem{nihal2024c2a}
+R.~A.~Nihal, B.~Yen, K.~Itoyama, K.~Nakadai, ``From Combinatorial
+Configurations to Real-World Application: A C2A Dataset for
+Search-and-Rescue in Aerial Imagery,'' \emph{ICPR}, 2024.
+\url{https://arxiv.org/abs/2408.04922}
+\bibitem{akyon2022sahi}
+F.~C.~Akyon, S.~O.~Altinuc, A.~Temizel, ``Slicing Aided Hyper Inference
+and Fine-tuning for Small Object Detection,'' \emph{IEEE ICIP}, 2022.
+\bibitem{woo2018cbam}
+S.~Woo, J.~Park, J.-Y.~Lee, I.~S.~Kweon, ``CBAM: Convolutional Block
+Attention Module,'' \emph{ECCV}, 2018.
+\bibitem{gu2024mamba}
+A.~Gu, T.~Dao, ``Mamba: Linear-Time Sequence Modeling with Selective
+State Spaces,'' \emph{COLM}, 2024.
+\bibitem{wang2025mambayolo}
+H.~Wang \emph{et al.}, ``Mamba YOLO: SSMs-based Object Detection,''
+\emph{AAAI}, 2025.
+\end{thebibliography}
+
+\end{document}
