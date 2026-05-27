@@ -1,5 +1,12 @@
 # System Specification — Thesis Final Month
 
+> ## 🔴 PRIME DIRECTIVE (read before everything else)
+>
+> 1. **Follow this file carefully and fully.** Every section is part of the contract — sections, sub-sections, tables, code snippets, file names, all of it. The agent does not get to pick which parts to honor.
+> 2. **If something cannot be done — STOP and ASK.** If a requirement here conflicts with another, is technically infeasible on this machine, requires a tool that isn't installed, depends on data that isn't present, or would violate another section: do **not** silently work around it. Either tell the user clearly *what* cannot be done and *why*, or ask the user to decide between the available options. Never invent a substitute, never quietly skip a step, never produce partial output and label it complete.
+> 3. **Auto-detect, don't hardcode.** The agent must auto-detect (a) where the code is running from, (b) where the dataset lives, and (c) which GPU is available. The **output directory must be derived from the location of the running script** (see Section 5.2 and Section 15.1) — never write outputs to a hardcoded absolute path. The dataset's absolute path is **not** guaranteed (the work happens on a remote AnyDesk PC and the drive layout there can change); only the dataset's internal folder structure (Section 5.1) is fixed.
+> 4. **When in doubt, ask.** Asking the user one clarifying question is always preferable to producing wrong work that has to be re-run on a 16 GB GPU.
+
 > **Purpose:** This file is the authoritative hardware/software profile of the local machine that will run all training, inference, ablations, and final experiments for the thesis. Any agent writing code for this project MUST read this first and tailor batch sizes, precision, parallelism, memory budgets, and data-loading choices to these constraints. Do not assume cloud/Kaggle limits — local runs have a different profile (more RAM, single GPU, no notebook timeout, but limited VRAM vs. dual-T4 etc.).
 
 **Last updated:** 2026-05-28
@@ -114,9 +121,151 @@
 
 ---
 
-## 5. Storage (placeholder — to be filled later)
+## 5. Storage, Datasets, and Path Auto-Detection
 
-> TODO: capture C: vs. D: layout, free space, whether the dataset lives on NVMe or HDD. Disk I/O matters for `cache='disk'` decisions and checkpoint write cost.
+### 5.0 Where this code actually runs
+
+All training/inference runs happen on a **remote high-config Windows PC accessed via AnyDesk**. The hardware in Sections 1–4 describes that remote PC, not the laptop the user composes commands from. Two consequences the agent MUST internalize:
+
+- **Absolute dataset paths are not stable.** The user has shown one current location (`E:\Thesis_mofazzal_2007074\…`), but the drive letter, folder name, and parent path on the remote PC may change between sessions or when moved to a different machine. The agent must NEVER bake a single absolute dataset path into code. Use the discovery mechanism in Section 5.3 instead.
+- **The output directory is not on a fixed drive either.** It is whichever directory the running script lives in (Section 5.2). Do not assume `D:\` or `E:\` or any specific letter.
+
+The only things that ARE stable and can be relied on:
+- The dataset's **internal folder structure** (Section 5.1) — `train/`, `val/`, `test/`, the pose label set, the `.png` image format.
+- The dataset's **logical name** — C2A.
+
+### 5.1 Primary dataset — C2A (Aerial human detection, SAR)
+
+| Field | Value |
+|---|---|
+| Dataset | **C2A** (Nihal et al., ICPR 2024) |
+| Location | Unfixed — discovered at runtime per Section 5.3. Currently on the remote AnyDesk PC; previously seen at `E:\Thesis_mofazzal_2007074\common\c2a\new_dataset3` but treat that as one possibility, not the canonical path. |
+| Role | **Primary dataset** for every Phase A / B / C run in Section 9.6 and every row in the Section 25 ablation matrix |
+| Other datasets | None yet — additional datasets may be added later; treat C2A as the canonical one until a new spec section is written for the new dataset |
+
+**On-disk structure (FIXED — this is what the agent can rely on):**
+
+```
+<DATASET_ROOT>/                          # parent path varies; only the tree below is guaranteed
+└── new_dataset3/
+    ├── train/
+    │   ├── images/                      # .png images  (YOLO inputs)
+    │   ├── labels/                      # YOLO .txt files (cls cx cy w h)
+    │   └── train_annotations.json       # COCO-style JSON (full annotations)
+    ├── val/                             # presumed same structure as train/
+    │   ├── images/
+    │   ├── labels/
+    │   └── val_annotations.json         # (verify at runtime, do not assume)
+    ├── test/                            # presumed same structure as train/
+    │   ├── images/
+    │   ├── labels/
+    │   └── test_annotations.json        # (verify at runtime, do not assume)
+    └── All labels with Pose information/
+        ├── labels/                      # YOLO .txt files WITH pose keypoints
+        └── readme                       # describes the pose-extended format
+```
+
+Notes:
+- The "All labels with Pose information" tree is an **alternate label set** with keypoints — useful for future pose-aware experiments. The mainline detection runs use `train/labels`, `val/labels`, `test/labels` (no keypoints).
+- The agent MUST `os.path.isdir(...)` / `glob` each of these paths at script start and **fail loudly** if any required split is missing. Do NOT assume `val/` and `test/` look exactly like `train/` — confirm.
+- Image format is `.png`. Do not write code that hard-codes `.jpg`.
+- The classes are single-class (`person`); the `data.yaml` for Ultralytics must reflect `nc: 1, names: ['person']`. Always read the actual annotation file headers to confirm this rather than hardcoding it.
+
+### 5.2 Output-directory auto-detection (HARD RULE)
+
+The output / working directory MUST be derived at runtime from **the location of the running script**. Never hardcode any absolute path (no `D:\…`, no `E:\…`, no `/kaggle/working/…`) as the output root. The pattern below is mandatory for every script:
+
+```python
+from pathlib import Path
+import os
+
+# 1. Find the directory the running code lives in.
+#    Works for .py scripts; for notebooks fall back to cwd.
+try:
+    SCRIPT_DIR = Path(__file__).resolve().parent
+except NameError:
+    SCRIPT_DIR = Path(os.getcwd()).resolve()      # notebook / REPL
+
+# 2. Output root = code directory. Every output (runs/, smoke/, logs/, plots/, docs/)
+#    is created RELATIVE to SCRIPT_DIR — so if the user runs the script from any
+#    folder on any machine, outputs land beside the code that produced them.
+OUTPUT_ROOT = SCRIPT_DIR
+
+# 3. The per-run directory still follows Section 16's run_id convention.
+RUN_DIR = OUTPUT_ROOT / "runs" / RUN_ID
+RUN_DIR.mkdir(parents=True, exist_ok=True)
+```
+
+Why this rule exists:
+- The actual run host is a remote AnyDesk PC whose drive letters and paths the agent cannot predict. Hardcoding any absolute path breaks the moment the code is moved to a different machine, drive, or working copy.
+- Outputs co-located with the code make it trivial to zip-up and share a single self-contained experiment folder.
+- It removes the "where did my results go?" failure mode.
+
+### 5.3 Dataset-path auto-detection
+
+The dataset does not live next to the code, and its absolute path may change between machines / AnyDesk sessions. The agent must discover the dataset by probing an ordered list of candidates, AND must accept an explicit override via environment variable for the case where none of the candidates match.
+
+```python
+def find_dataset_root(env_var: str, structure_marker: str, candidates: list[Path]) -> Path:
+    """Return the first existing directory among (env var) → candidates that
+    contains `structure_marker` (e.g., 'train/images'). Raise with a clear
+    message if nothing matches — the user can then set the env var."""
+    # 1. Explicit override always wins.
+    override = os.environ.get(env_var)
+    if override:
+        p = Path(override)
+        if (p / structure_marker).is_dir():
+            return p
+        raise FileNotFoundError(f"{env_var}={override} does not contain {structure_marker}")
+    # 2. Otherwise probe candidates in order.
+    for p in candidates:
+        if p and (p / structure_marker).is_dir():
+            return p
+    raise FileNotFoundError(
+        f"Could not locate dataset (looking for {structure_marker}). "
+        f"Set {env_var} to the directory that contains it."
+    )
+
+# Candidate list for C2A. The drive letter / parent may differ between runs;
+# we list a few common shapes and rely on the env var for anything else.
+C2A_CANDIDATES = [
+    SCRIPT_DIR / "common" / "c2a" / "new_dataset3",                       # co-located with code
+    SCRIPT_DIR.parent / "common" / "c2a" / "new_dataset3",                # one level up
+    *[Path(f"{d}:/Thesis_mofazzal_2007074/common/c2a/new_dataset3")       # common drive letters
+      for d in ("E", "D", "F", "G")],
+]
+
+DATASET_ROOT = find_dataset_root(
+    env_var="C2A_ROOT",
+    structure_marker="train/images",
+    candidates=C2A_CANDIDATES,
+)
+```
+
+Same pattern applies to any future dataset added later — give it its own env var and `*_CANDIDATES` list; never hardcode a single absolute path.
+
+### 5.4 Auto-detect everything else, too
+
+By default the agent should auto-detect, not ask the user, for:
+- Which CUDA device is the NVIDIA one (skip the Intel UHD 770 — see Section 4).
+- Whether the script is being run as a `.py` file or inside a notebook.
+- Python version, torch version, CUDA build (log them to `env.json`, see Section 11.7).
+- Whether `last.pt` exists in the run directory (→ enable resume).
+- Whether git is available and the working tree is clean.
+
+If a probe fails or returns an ambiguous result (e.g., two NVIDIA GPUs, or the dataset has unexpected subfolders), the agent MUST **stop and ask** — see the Prime Directive at the top of this file. Never pick one silently.
+
+### 5.5 Drive layout note (remote AnyDesk PC — current snapshot, not contract)
+
+The run host is the remote AnyDesk PC described in Sections 1–4. At the time of writing, its drives are roughly:
+
+- `C:` — OS / Windows on the remote PC.
+- `E:` — research drive on the remote PC where the dataset currently lives (e.g., `E:\Thesis_mofazzal_2007074\…`). Treat as **read-mostly** for datasets; do not write training outputs here unless the code's own location happens to be on `E:` (Section 5.2 still wins).
+- Other drives may exist; do not assume.
+
+This layout is a **current snapshot, not a contract** — the user may switch to a different AnyDesk machine, move the data to a different drive, or run the same code on their local laptop. All code paths must rely on Sections 5.2 / 5.3 discovery, not on this snapshot.
+
+- Free-space check: every script must verify ≥ 20 GB free on the drive where `OUTPUT_ROOT` resolves (Section 24 pre-flight).
 
 ---
 
@@ -630,18 +779,19 @@ Also produce a sibling **`plots/PLOTS_INDEX.csv`** (machine-readable) with colum
 
 ---
 
-## 15. Output Folder Structure (Kaggle-style + local extensions)
+## 15. Output Folder Structure
 
-Mirror the Kaggle convention you're used to, with extensions for local resilience.
+All run outputs live UNDER `OUTPUT_ROOT` (Section 5.2 — the directory of the running script). No absolute paths anywhere in this layout: the tree below describes the structure *relative to* `OUTPUT_ROOT`, regardless of which machine, drive, or folder the code happens to be in.
+
+The dataset lives **elsewhere** (discovered via `DATASET_ROOT`, Section 5.3) and is NOT inside this tree. If shared assets like pretrained weights, dataset YAMLs, and frozen splits need to live with the code, they go in a `common/` directory next to the script (still under `OUTPUT_ROOT`); the dataset images/labels themselves stay where Section 5.3 finds them.
 
 ```
-d:/Academics/thesis folder/Last Month/
-├── system_spec.md                       # this file
-├── common/                              # shared assets (datasets symlinks, weights, yamls)
-│   ├── c2a/                             # dataset (or symlink to D:/data/c2a)
-│   ├── yolo11m.pt                       # pretrained imagenet weights
-│   ├── c2a.yaml
-│   └── splits/                          # frozen train/val/test image lists + md5
+<OUTPUT_ROOT>/                           # = SCRIPT_DIR (Section 5.2); drive/parent unknown by design
+├── system_spec.md                       # this file (kept next to the code it governs)
+├── common/                               # shared assets that travel with the code (NOT the dataset images)
+│   ├── yolo11m.pt                        # pretrained imagenet weights
+│   ├── c2a.yaml                          # Ultralytics data YAML — points at DATASET_ROOT via env / Section 5.3
+│   └── splits/                           # frozen train/val/test image lists + md5
 │       ├── train_images.txt
 │       ├── val_images.txt
 │       ├── test_images.txt
@@ -705,19 +855,21 @@ d:/Academics/thesis folder/Last Month/
 └── docs/                                # responses, decisions, notes (per feedback_save_responses memory)
 ```
 
-### 15.1 Local extensions vs Kaggle
+### 15.1 Resolving paths at runtime
 
-- On Kaggle we had `/kaggle/working/` (writeable but ephemeral) and `/kaggle/input/` (read-only).
-- Locally, `runs/<run_id>/` plays the role of `/kaggle/working/`, and `common/` plays the role of `/kaggle/input/`.
-- Scripts MUST detect the environment:
+- `OUTPUT_ROOT` comes from Section 5.2 (derived from `SCRIPT_DIR`). Every output (`runs/`, `smoke/`, `logs/`, `plots/`, `docs/`, `ablation_master/`) is created **relative to `OUTPUT_ROOT`**.
+- `DATASET_ROOT` comes from Section 5.3 (env-var override → ordered candidate probe). The dataset is **not** inside `OUTPUT_ROOT`.
+- Per-run working directory:
   ```python
-  IS_KAGGLE = os.path.exists("/kaggle/input")
-  if IS_KAGGLE:
-      DATA_ROOT, WORK_ROOT = "/kaggle/input", "/kaggle/working"
-  else:
-      DATA_ROOT = r"d:/Academics/thesis folder/Last Month/common"
-      WORK_ROOT = rf"d:/Academics/thesis folder/Last Month/runs/{RUN_ID}"
+  from pathlib import Path
+
+  # OUTPUT_ROOT → Section 5.2
+  # DATASET_ROOT → Section 5.3
+  # RUN_ID → Section 16
+  WORK_ROOT = OUTPUT_ROOT / "runs" / RUN_ID
+  WORK_ROOT.mkdir(parents=True, exist_ok=True)
   ```
+- Do NOT hardcode any absolute path anywhere (no `D:\…`, no `E:\…`, no `/kaggle/working/…`). If the user moves the code to a new AnyDesk PC, a different drive, or a worktree, outputs follow the code and the dataset is rediscovered via Section 5.3.
 
 ---
 
@@ -1040,10 +1192,12 @@ These were added based on the brainstorm in the request:
 
 ## 27. Sections still to be filled (TODO — append later)
 
-- [ ] Storage layout (NVMe paths, dataset locations, free space) — Section 5.
+- [x] ~~Storage layout (NVMe paths, dataset locations, free space) — Section 5.~~ → Filled 2026-05-28 (C2A on `E:\`, output auto-detected from script dir).
+- [x] ~~Exact dataset paths (C2A, and any others) + sizes.~~ → C2A path captured in Section 5.1; sizes still TODO.
+- [ ] C2A on-disk size (GB) — run `Get-ChildItem -Recurse | Measure-Object -Property Length -Sum` and paste.
 - [ ] Python / CUDA / cuDNN / PyTorch versions actually installed (run Section 8 snippet, paste output).
 - [ ] Conda/venv environment name + `pip freeze` snapshot.
-- [ ] Exact dataset paths (C2A, and any others) + sizes.
+- [ ] Additional datasets (when added) — append a new Section 5.x per dataset with on-disk layout + candidate paths.
 - [ ] Kaggle CLI / W&B credentials handling (no secrets in this file).
 - [ ] Known-good training commands for each row of the ablation matrix (Section 25).
 
