@@ -60,7 +60,7 @@ SAVE_PERIOD        = 5                            # epochs; checkpoint cadence (
 OOM_RETRY_BATCHES  = [BATCH_SIZE, BATCH_SIZE // 2, BATCH_SIZE // 4, 4]
 
 # Hardware-pinned defaults (Section 7)
-NUM_WORKERS        = 8
+NUM_WORKERS        = 4
 CACHE              = "ram"
 COS_LR             = True
 LRF                = 0.01
@@ -176,7 +176,9 @@ except Exception:
     HAS_NVML = False
 
 try:
-    from codecarbon import EmissionsTracker
+    # OfflineEmissionsTracker accepts country_iso_code (the online
+    # EmissionsTracker dropped it in newer codecarbon releases).
+    from codecarbon import OfflineEmissionsTracker
     HAS_CODECARBON = True
 except ImportError:
     HAS_CODECARBON = False
@@ -735,10 +737,15 @@ def train_with_oom_retry(model, base_kwargs: Dict[str, Any]) -> Any:
     for bs in OOM_RETRY_BATCHES:
         kwargs = dict(base_kwargs)
         kwargs["batch"] = bs
-        kwargs["accumulate"] = max(1, BATCH_SIZE // bs)
+        # Ultralytics 8.4.x removed the top-level `accumulate` arg. Use `nbs`
+        # (nominal batch size) instead — the trainer computes accumulate as
+        # round(nbs / batch), so setting nbs=BATCH_SIZE keeps the effective
+        # batch constant across retries.
+        kwargs["nbs"] = BATCH_SIZE
+        _effective_accum = max(1, BATCH_SIZE // bs)
         torch.cuda.empty_cache(); gc.collect()
         try:
-            print(f"[oom-retry] attempting batch={bs}, accumulate={kwargs['accumulate']}")
+            print(f"[oom-retry] attempting batch={bs}, nbs={BATCH_SIZE} (effective accumulate={_effective_accum})")
             return model.train(**kwargs)
         except torch.cuda.OutOfMemoryError as e:
             last_err = e
@@ -1717,7 +1724,7 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
     tracker = None
     if HAS_CODECARBON:
         try:
-            tracker = EmissionsTracker(
+            tracker = OfflineEmissionsTracker(
                 project_name=run_id, output_dir=str(dirs["energy"]),
                 country_iso_code=COUNTRY_ISO_CODE, log_level="error",
                 allow_multiple_runs=True,
