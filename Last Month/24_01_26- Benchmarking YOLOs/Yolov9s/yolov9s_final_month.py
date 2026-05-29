@@ -1780,11 +1780,34 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
         if rcsv.is_file():
             shutil.copy2(rcsv, dirs["base"] / "results.csv")
     else:
-        # Evaluate-only: expect best.pt in weights/
+        # Evaluate-only: expect best.pt in weights/. If the env var
+        # YOLOV9S_PRETRAINED_BEST points at an existing .pt file, copy it
+        # in so we can re-eval a checkpoint produced by a previous (possibly
+        # interrupted) training run without re-training.
         weights_path = dirs["weights"] / "best.pt"
+        preexisting = os.environ.get("YOLOV9S_PRETRAINED_BEST")
+        if not weights_path.is_file() and preexisting:
+            src = Path(preexisting)
+            if src.is_file():
+                shutil.copy2(src, weights_path)
+                print(f"[eval-only] copied pre-trained best.pt from {src}")
+                # Also copy last.pt and results.csv if siblings exist, so
+                # downstream plots (training-dynamics) have their data.
+                sib_last = src.parent / "last.pt"
+                if sib_last.is_file():
+                    shutil.copy2(sib_last, dirs["weights"] / "last.pt")
+                sib_results = src.parent.parent / "results.csv"
+                if sib_results.is_file():
+                    shutil.copy2(sib_results, dirs["base"] / "results.csv")
+                    print(f"[eval-only] copied results.csv from {sib_results}")
+            else:
+                raise FileNotFoundError(
+                    f"YOLOV9S_PRETRAINED_BEST={preexisting} is not a file.")
         if not weights_path.is_file():
             raise FileNotFoundError(
-                f"DO_TRAIN=False but no checkpoint at {weights_path}.")
+                f"DO_TRAIN=False but no checkpoint at {weights_path}. "
+                f"Either place best.pt there, or set "
+                f"$env:YOLOV9S_PRETRAINED_BEST to the path of an existing best.pt.")
 
     train_wallclock_s = time.time() - train_started_at
 

@@ -286,6 +286,13 @@ This layout is a **current snapshot, not a contract** — the user may switch to
 - **Long path support:** Windows defaults to 260-char path limit. Keep dataset paths short (e.g., `D:/data/visdrone/...` not nested 8 levels deep).
 - **GPU monitoring:** `nvidia-smi` works natively in PowerShell. For continuous: `nvidia-smi --loop=2` or `nvidia-smi dmon`.
 
+**Windows-specific traps confirmed on this AnyDesk PC (2026-05-28):**
+- **PowerShell execution policy** defaults to `Restricted` and blocks `venv\Scripts\Activate.ps1`. One-time fix per user: `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
+- **Console codepage** is OEM CP-437 by default — Unicode box-drawing chars from Ultralytics progress bars render as mojibake (`ΓöÇΓöÇΓöÇ`, `Γò╕`). Cosmetic only; fix per session with `chcp 65001`, or permanently by adding `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8` to `$PROFILE`.
+- **`Tee-Object` + carriage-return progress bars** make the training window appear frozen for long stretches between epoch boundaries. **Do not infer "hung" from a silent training window.** Always verify via `nvidia-smi` + `runs/<run_id>/ultra/results.csv` from a second PowerShell window. The actual hang signature is in §20.3.
+- **Env vars are per-PowerShell-session.** Persist `C2A_ROOT` once with `[System.Environment]::SetEnvironmentVariable("C2A_ROOT", "<path>", "User")` if you don't want to set it every time.
+- See full env-setup runbook with verified versions and per-trap fixes: `docs/2026-05-28_anydesk_pc_env_setup.md`.
+
 ---
 
 ## 7. Practical Runbook Defaults (derived from the above)
@@ -293,14 +300,16 @@ This layout is a **current snapshot, not a contract** — the user may switch to
 When writing/generating training code for this machine, default to these unless explicitly overridden:
 
 ```python
-# Hardware-pinned defaults for the 4070 Ti SUPER box
+# Hardware-pinned defaults for the 4070 Ti SUPER box (Windows AnyDesk PC)
 DEVICE          = "cuda:0"
 AMP             = True
 PRECISION       = "bf16"          # prefer BF16 on Ada; fall back to fp16 if a layer complains
-NUM_WORKERS     = 8               # raise to 12 only if GPU util < 90 %
+NUM_WORKERS     = 6               # CONFIRMED on this Windows PC. >=8 with cache='ram' hangs
+                                  # via WinError 1455 shared-mem deadlock (§20.3). Do NOT
+                                  # raise above 4 unless pagefile is increased to >=32 GB.
 PIN_MEMORY      = True
 PERSISTENT_WORKERS = True
-CACHE           = "ram"           # we have 100+ GB free; cache the dataset
+CACHE           = "ram"           # works at NUM_WORKERS=6; fall back to "disk" if it hangs
 CUDNN_BENCHMARK = True            # for fixed-size training; False for SAHI inference
 COMPILE         = False           # enable only for final reproducible runs
 GRAD_ACCUM      = 1               # bump to 2/4 if a desired batch OOMs
@@ -309,7 +318,7 @@ GRAD_ACCUM      = 1               # bump to 2/4 if a desired batch OOMs
 train_kwargs = dict(
     device=0,
     amp=True,
-    workers=8,
+    workers=6,       # see NUM_WORKERS comment above
     cache="ram",
     batch=-1,        # auto-batch on first run, then pin
     half=False,      # train in fp32+amp; only set half=True for inference export
@@ -1000,7 +1009,11 @@ def train_with_oom_retry(model, kwargs):
     last_err = None
     for bs in OOM_RETRY_BATCHES:
         kwargs["batch"] = bs
-        kwargs["accumulate"] = max(1, 16 // bs)
+        # Ultralytics 8.4.x removed the `accumulate` train arg -- passing it
+        # raises SyntaxError. Use `nbs` (nominal batch size) instead; the
+        # trainer computes accumulate = round(nbs / batch) internally, so
+        # the effective gradient batch stays at BATCH_SIZE across retries.
+        kwargs["nbs"] = BATCH_SIZE
         torch.cuda.empty_cache(); gc.collect()
         try:
             return model.train(**kwargs)
@@ -1029,7 +1042,7 @@ def train_with_oom_retry(model, kwargs):
 | `ValueError: NaN in loss` | LR too high / AMP overflow / corrupt label | NaNStop callback aborts; re-run with `amp=False` once to diagnose |
 | `DataLoader worker (pid …) exited unexpectedly` | num_workers too high / shared memory | Drop `num_workers` from 8 to 4 |
 | `FileNotFoundError: dataset path` | Forgot to copy data / wrong env | Auto-detect Kaggle vs local (Section 15.1) |
-| `OSError: [WinError 1455] paging file too small` | Windows-specific | Increase pagefile or drop `num_workers`/cache |
+| `OSError: [WinError 1455] paging file too small` (and the silent-hang variant: PyTorch raising `RuntimeError: Couldn't open shared file mapping ... error code: <1455>`, then the run looking alive but stuck at 0 % GPU util / 9 W / P8 power state with no `results.csv` ever appearing) | Windows-only. PyTorch on Windows can't `fork()`; it uses Win32 named file mappings for DataLoader worker→main shared-memory tensor passing, and those mappings consume pagefile *commit* space. With `cache='ram'` holding ~6 GB and `num_workers >= 8`, total commit exceeds the default Windows pagefile budget and Windows refuses the next mapping. The originating worker crashes silently; the main process deadlocks waiting on dead workers. **Does not happen on Linux/Kaggle** (POSIX shm doesn't touch pagefile). | Cheapest fix (no reboot): set `NUM_WORKERS = 4` AND keep `cache='ram'` — confirmed working on this PC 2026-05-28. Fallback: also set `cache='disk'` (Ultralytics' own warning recommends it for determinism anyway). Permanent fix: raise pagefile to 32 GB initial / 64 GB max on E: via `sysdm.cpl → Advanced → Performance Settings → Advanced → Virtual memory` (requires reboot — and on this AnyDesk PC, reboot loses remote access). |
 | `RuntimeError: Mamba shape mismatch` | Window size doesn't divide H | Smoke test 1 catches it before training |
 
 Each handler MUST log the full traceback to `logs/train.err` AND print a short hint to stdout.
@@ -1055,8 +1068,14 @@ REQUIRED = [
     ("scikit-learn",None),
     ("scipy",       None),         # significance tests
     ("statsmodels", None),         # McNemar, multipletests
-    ("codecarbon",  None),         # energy
-    ("pynvml",      None),         # GPU sampler
+    ("codecarbon",  None),         # energy -- use OfflineEmissionsTracker, NOT
+                                   # EmissionsTracker: newer versions dropped
+                                   # country_iso_code from the online tracker.
+                                   # OfflineEmissionsTracker(country_iso_code="BGD", ...)
+                                   # is what works.
+    ("nvidia-ml-py", None),        # GPU sampler. Renamed from `pynvml` (which is now
+                                   # deprecated and emits FutureWarnings via torch on
+                                   # every worker process). Import name stays `pynvml`.
     ("psutil",      None),         # CPU/RAM sampler
     ("torchinfo",   None),         # model summary
     ("tqdm",        None),
@@ -1193,10 +1212,16 @@ These were added based on the brainstorm in the request:
 ## 27. Sections still to be filled (TODO — append later)
 
 - [x] ~~Storage layout (NVMe paths, dataset locations, free space) — Section 5.~~ → Filled 2026-05-28 (C2A on `E:\`, output auto-detected from script dir).
-- [x] ~~Exact dataset paths (C2A, and any others) + sizes.~~ → C2A path captured in Section 5.1; sizes still TODO.
+- [x] ~~Exact dataset paths (C2A, and any others) + sizes.~~ → C2A confirmed at `E:\Thesis_mofazzal_2007074\common\c2a\C2A_Dataset\new_dataset3` (one level deeper than the Section 5.1 example — `C2A_Dataset/` parent above `new_dataset3/`). Image counts: **train 6,129 / val 2,043 / test 2,043 = 10,215 total** (60/20/20 split). On-disk size still TODO.
 - [ ] C2A on-disk size (GB) — run `Get-ChildItem -Recurse | Measure-Object -Property Length -Sum` and paste.
-- [ ] Python / CUDA / cuDNN / PyTorch versions actually installed (run Section 8 snippet, paste output).
-- [ ] Conda/venv environment name + `pip freeze` snapshot.
+- [x] ~~Python / CUDA / cuDNN / PyTorch versions actually installed.~~ → Verified 2026-05-28 on the AnyDesk PC:
+    - OS: Windows 11 Home, build 10.0.26200
+    - Python: **3.11.9** (system path `C:\Program Files\Python311`). 3.13 is also present; we use 3.11 explicitly via `py -3.11`.
+    - NVIDIA driver: **591.86** (driver reports CUDA 13.1 capability)
+    - CUDA toolkit (`nvcc`): 12.6.85 (installed but not strictly required; PyTorch wheel ships its own runtime)
+    - Inside venv: torch **2.12.0+cu126**, ultralytics 8.4.56, cuDNN 91002
+    - PyTorch wheel index used: `https://download.pytorch.org/whl/cu126`
+- [x] ~~Conda/venv environment name + `pip freeze` snapshot.~~ → venv `mofazzal1` at `E:\Thesis_mofazzal_2007074\mofazzal1\`. Frozen snapshot: `E:\Thesis_mofazzal_2007074\pip_freeze_mofazzal1_2026-05-28.txt`. Full setup runbook: `docs/2026-05-28_anydesk_pc_env_setup.md`.
 - [ ] Additional datasets (when added) — append a new Section 5.x per dataset with on-disk layout + candidate paths.
 - [ ] Kaggle CLI / W&B credentials handling (no secrets in this file).
 - [ ] Known-good training commands for each row of the ablation matrix (Section 25).
