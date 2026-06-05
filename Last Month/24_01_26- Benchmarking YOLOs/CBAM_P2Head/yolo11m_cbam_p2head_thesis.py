@@ -175,7 +175,9 @@ NOMINAL_BATCH      = 16                           # effective batch via grad-acc
                                                   # at 16 to MATCH the baseline / CBAM runs
                                                   # (Ultralytics nbs=16 => accumulate=2 at
                                                   # batch 8). Keeps the ablation fair.
-SAVE_PERIOD        = 5                            # epochs; checkpoint cadence (Section 20.2)
+SAVE_PERIOD        = 25                           # epochs; checkpoint cadence (Section 20.2)
+                                                  # (raised 5->25: last.pt saves every epoch
+                                                  # so resume is unaffected; fewer big epochN.pt)
 OOM_RETRY_BATCHES  = [BATCH_SIZE, BATCH_SIZE // 2, max(BATCH_SIZE // 4, 2), 2]
 
 # Hardware-pinned defaults (Section 7)
@@ -183,6 +185,10 @@ NUM_WORKERS        = 4
 CACHE              = "ram"
 COS_LR             = True
 LRF                = 0.01
+OPTIMIZER          = "AdamW"                      # PINNED. Was auto->MuSGD(lr=0.01) which
+LR0                = 0.001                        # DIVERGED this P2 head (val cls loss -> inf
+                                                  # ~epoch 50). AdamW lr0=0.001 is the proven
+                                                  # config (matches Mamba-era scripts).
 
 # Smoke (Section 17)
 SMOKE_TEST         = False                        # set True to ONLY run smoke
@@ -1731,7 +1737,10 @@ def architecture_report(model: YOLO, arch_dir: Path) -> Dict[str, Any]:
     info: Dict[str, Any] = {}
     try:
         n_params = sum(p.numel() for p in model.model.parameters())
-        n_train  = sum(p.numel() for p in model.model.parameters() if p.requires_grad)
+        # eval-loaded checkpoints have requires_grad=False on all params (would
+        # report 0 trainable); count all except the frozen DFL conv instead.
+        n_train  = sum(p.numel() for n, p in model.model.named_parameters()
+                       if not n.endswith("dfl.conv.weight"))
         info["params_total_M"]     = round(n_params / 1e6, 4)
         info["params_trainable_M"] = round(n_train / 1e6, 4)
     except Exception:
@@ -2297,6 +2306,7 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
         epochs=NUM_EPOCHS, patience=PATIENCE, f2_patience=F2_PATIENCE,
         imgsz=IMG_SIZE, batch=BATCH_SIZE, save_period=SAVE_PERIOD,
         num_workers=NUM_WORKERS, cache=CACHE, cos_lr=COS_LR, lrf=LRF,
+        optimizer=OPTIMIZER, lr0=LR0, nominal_batch=NOMINAL_BATCH,
         amp=True, seed=seed, model_tag=MODEL_TAG,
         pretrained=PRETRAINED_WEIGHTS,
     )
@@ -2355,24 +2365,46 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
     train_started_at = time.time()
 
     if DO_TRAIN:
-        model = build_cbam_model(PRETRAINED_WEIGHTS, dirs["base"])
-        attach_ultralytics_callbacks(
-            model, run_dirs=dirs, sampler=sampler,
-            f2_stopper=f2_stop, epoch_metrics=epoch_metrics)
-        base_kwargs = dict(
-            data=str(data_yaml), epochs=NUM_EPOCHS, imgsz=IMG_SIZE,
-            patience=PATIENCE, device=0, workers=NUM_WORKERS, cache=CACHE,
-            project=str(dirs["base"]), name="ultra", exist_ok=True,
-            plots=True, save=True, save_period=SAVE_PERIOD, val=True,
-            cos_lr=COS_LR, lrf=LRF, amp=True, verbose=True, seed=seed,
-            resume=resume,
-        )
-        try:
-            train_with_oom_retry(model, base_kwargs)
-        except Exception as e:
-            err_path = dirs["logs"] / "train.err"
-            err_path.write_text(traceback.format_exc())
-            raise
+        if resume and ultra_last.is_file():
+            # TRUE resume: load the model FROM the checkpoint so Ultralytics can
+            # restore the epoch counter + optimizer state. Building from
+            # YAML+pretrained and passing resume=True does NOT resume -- Ultralytics
+            # rejects it ("model 'None' is not a resumable training checkpoint")
+            # and silently restarts from epoch 1. CBAM is registered at import,
+            # so YOLO(last.pt) deserializes the custom layers fine. On resume,
+            # Ultralytics reads batch/data/epochs/etc. from the checkpoint's saved
+            # args, so we call train(resume=True) with no other kwargs.
+            print(f"[resume] loading model FROM {ultra_last} for a true resume")
+            model = YOLO(str(ultra_last))
+            attach_ultralytics_callbacks(
+                model, run_dirs=dirs, sampler=sampler,
+                f2_stopper=f2_stop, epoch_metrics=epoch_metrics)
+            try:
+                model.train(resume=True)
+            except Exception as e:
+                err_path = dirs["logs"] / "train.err"
+                err_path.write_text(traceback.format_exc())
+                raise
+        else:
+            model = build_cbam_model(PRETRAINED_WEIGHTS, dirs["base"])
+            attach_ultralytics_callbacks(
+                model, run_dirs=dirs, sampler=sampler,
+                f2_stopper=f2_stop, epoch_metrics=epoch_metrics)
+            base_kwargs = dict(
+                data=str(data_yaml), epochs=NUM_EPOCHS, imgsz=IMG_SIZE,
+                patience=PATIENCE, device=0, workers=NUM_WORKERS, cache=CACHE,
+                project=str(dirs["base"]), name="ultra", exist_ok=True,
+                plots=True, save=True, save_period=SAVE_PERIOD, val=True,
+                optimizer=OPTIMIZER, lr0=LR0,
+                cos_lr=COS_LR, lrf=LRF, amp=True, verbose=True, seed=seed,
+                resume=False,
+            )
+            try:
+                train_with_oom_retry(model, base_kwargs)
+            except Exception as e:
+                err_path = dirs["logs"] / "train.err"
+                err_path.write_text(traceback.format_exc())
+                raise
 
         # Copy best.pt out into run_dir/weights
         ultra_dir = dirs["base"] / "ultra"
@@ -2559,6 +2591,11 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
     eff = {
         "params_total_M":     None,
         "weights_size_MB":    round(weights_path.stat().st_size / 1024**2, 3),
+        # End-to-end latency (preprocess+forward+NMS) from per-image predict()
+        # -- report THIS in the paper, not the forward-only number below.
+        "latency_e2e_mean_ms": float(per_img_test["inference_ms"].mean()),
+        "latency_e2e_p50_ms":  float(per_img_test["inference_ms"].median()),
+        "latency_e2e_p95_ms":  float(per_img_test["inference_ms"].quantile(0.95)),
         "latency_mean_ms":    lat["latency_mean_ms"],
         "latency_std_ms":     lat["latency_std_ms"],
         "latency_p50_ms":     lat["latency_p50_ms"],

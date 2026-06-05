@@ -28,9 +28,9 @@
 $VenvActivate = "E:\Thesis_mofazzal_2007074\mofazzal1\Scripts\Activate.ps1"
 
 # Ordered list of scripts to run, in sequence. Edit paths/order freely.
-# (These are the AnyDesk-PC paths: parent "Benchmarking YOLOs", folders
-#  "CBAM" and "CBAM_P2Head", filenames without the "v".)
+# (AnyDesk-PC paths. Option-A clean retrain: all three with AdamW lr0=0.001.)
 $Steps = @(
+    "E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py",
     "E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\CBAM\yolo11m_cbam_thesis.py",
     "E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\CBAM_P2Head\yolo11m_cbam_p2head_thesis.py"
 )
