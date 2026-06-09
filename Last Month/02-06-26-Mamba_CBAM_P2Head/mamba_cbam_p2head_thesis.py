@@ -1,48 +1,56 @@
 """
-yolo11m_cbam_p2head_thesis.py
-=============================
+mamba_cbam_p2head_thesis.py
+===========================
 
-THESIS-SCOPE variant. YOLO11m + CBAM + P2 detection head on C2A. This is the
-COMBINED attention + detection-scale ablation (`system_spec_thesis.md` Section 3,
-row 4). Two architecture changes vs the baseline, both via a YAML-native model:
-  (a) backbone `C2PSA` -> `CBAM` (sequential channel + spatial attention), and
-  (b) a 4th detection scale P2/4 (stride 4, 160x160 grid) added to the head ->
-      Detect(P2, P3, P4, P5). The P2 head lets the model "see" ~4 px objects.
+THESIS HEADLINE MODEL. YOLO11m + CBAM + P2 head + Mamba (SSM) neck on C2A.
+This is the final ablation step (`system_spec_thesis.md` Section 3, row 5):
+the SSM contribution on top of the CBAM+P2 architecture. THREE changes vs the
+baseline:
+  (a) backbone `C2PSA` -> `CBAM` (sequential channel + spatial attention),
+  (b) a 4th detection scale P2/4 (stride 4, 160x160) -> Detect(P2,P3,P4,P5), and
+  (c) the neck `C3k2` bottlenecks are replaced (POST-INIT injection) with
+      `C3K2Mamba` -- a bidirectional local-window Selective State-Space Model
+      (forward + reverse scan, gated, d_state=4). Injected at neck layers with
+      idx>=11 and c_out<=512 (5 layers; the 1024-ch P5 layer is left as C3k2).
 
-The exact architecture is the user's verbatim YAML from
-`01-02-2026- ablation study/14-02-2026 (W-06)/YOLO11m_CBAM_P2Head.py`
-(CBAM at backbone layer 10; Detect over head layers [19,22,25,28]).
+Build flow (verbatim from the proven Kaggle reference
+`01-03-2026-Onward Model trying/11-3-26-Mamba/mamba_cbam_p2head.py`):
+    YOLO(CBAM+P2 YAML).load("yolo11m.pt")  ->  inject_mamba_neck(d_state=4)
+The Mamba SSM modules (_SelectiveScan1D, LocalWindowSSM, _MambaBottleneck,
+C3K2Mamba) are ported verbatim from that reference so saved weights stay
+loadable. The reference's proven training config was AdamW lr0=0.001 -- which is
+exactly what this thesis chain pins, so the headline matches its known setup.
 
-WHAT MAKES THIS FILE DIFFERENT FROM `yolo11m_cbam_thesis.py`:
-  1. Architecture: builds from the embedded CBAM+P2 YAML (`build_cbam_p2head_*`)
-     instead of just the C2PSA->CBAM swap. CBAM module defs + registration are
-     unchanged (Section 2.5) so weights stay loadable.
-  2. Memory: the P2 stride-4 feature maps are 4x larger spatially, so this model
-     uses more VRAM. BATCH_SIZE is dropped to 8 with NOMINAL_BATCH=16 (gradient
-     accumulation keeps the *effective* batch at 16 -- identical to the baseline
-     / CBAM runs, so the ablation stays fair). OOM ladder [8,4,2,2].
-  3. Architecture-specific metrics now ACTIVE for BOTH modules (Section 11.6):
-       - CBAM: attention_map_examples.png, channel_attention_weights.csv,
-               spatial_attention_entropy
-       - P2:   p2_detection_scales.json (head strides/resolutions/size coverage)
-               + per_size.csv is the operative small-object evidence (very-tiny
-               recall is where the P2 head pays off vs CBAM-only / baseline).
-  4. MODEL_TAG = "yolo11m_cbam_p2head".
+WHAT MAKES THIS FILE DIFFERENT FROM `yolo11m_cbam_p2head_thesis.py`:
+  1. Architecture: after building CBAM+P2 + loading pretrained weights,
+     `inject_mamba_neck()` surgically swaps eligible neck C3k2 -> C3K2Mamba
+     (Section 2.6 below). Mamba is parameter-near-neutral (no extra detect head),
+     so params stay ~19.6M -- "SSM gain at ~zero parameter cost".
+  2. Architecture-specific metrics now ACTIVE for CBAM + P2 + SSM (Section 11.6):
+       - SSM: forward-vs-reverse scan disagreement, injection-layer indices,
+              per-layer window sizes, SSM state-norm sanity (architecture/mamba_ssm.json)
+  3. MODEL_TAG = "mamba_cbam_p2head"  (HEADLINE).
+  4. SEEDS = [0,1,2] -- 3 seeds for the headline (mean +/- std in the paper row).
 
 Metric coverage is otherwise IDENTICAL to the rest of the chain (full
-`system_spec.md` Section 11 catalog). Only SSM / SAHI / TTA metrics remain
-[SKIPPED] (this model has none of those).
+`system_spec.md` Section 11 catalog). Only SAHI / TTA (inference-time, Phase C)
+remain [SKIPPED] here.
 
 OPERATIONAL SCOPE (thesis):
-  * SEEDS = [0]  -- 1 seed for ablation-chain models (system_spec_thesis.md
-    Sec 3.1). The headline `mamba_cbam_p2head` uses 3 seeds.
+  * SEEDS = [0,1,2]  -- 3 seeds for the HEADLINE model (system_spec_thesis.md
+    Sec 3.1). Each seed ~10-14 h (Mamba's sequential scan is slower), so the
+    full 3-seed run is ~1.5-2 days. If time-critical you may run [0] first; the
+    multi-seed rollup still works when seeds 1,2 are added later (resume-safe).
+  * Memory: BATCH_SIZE=8, NOMINAL_BATCH=16 (grad-accum keeps effective batch 16,
+    matching the chain). Mamba adds activation memory on top of P2 -- OOM ladder
+    [8,4,2,2] handles it.
 
 Run order for the chain (one after another, never concurrent on one GPU):
-  1. yolo11m_thesis.py             (baseline; SEEDS=[0])  -- DONE
-  2. yolo11m_cbam_thesis.py        (SEEDS=[0])
-  3. yolo11m_p2head  thesis script (SEEDS=[0])            -- optional standalone
-  4. yolo11m_cbam_p2head_thesis.py (this file; SEEDS=[0])
-  5. mamba_cbam_p2head    "        (SEEDS=[0,1,2]  <- headline, 3 seeds)
+  1. yolo11m_thesis.py             (baseline; SEEDS=[0])
+  2. yolo11m_cbam_thesis.py        (SEEDS=[0])              -- DONE (AdamW)
+  3. yolo11m_p2head  thesis script (SEEDS=[0])              -- optional standalone
+  4. yolo11m_cbam_p2head_thesis.py (SEEDS=[0])              -- DONE (AdamW)
+  5. mamba_cbam_p2head_thesis.py   (this file; SEEDS=[0,1,2]  <- headline)
 Then cross-dataset eval on real SARD (system_spec_thesis.md Section 4).
 
 Conflicts with the original Kaggle notebook `Yolov11m/yolov11m.ipynb` were
@@ -94,23 +102,25 @@ Spec compliance summary (sections deliberately implemented):
   - Section 21      : ensure_packages() preamble
   - Section 22      : torchinfo model_summary + module_table + flops_breakdown
   - Section 24      : pre-flight checklist gate (refuse to start on failure)
-  - Section 25      : marked in_ablation_matrix=True (yolo11m_cbam_p2head)
+  - Section 25      : marked in_ablation_matrix=True (mamba_cbam_p2head, HEADLINE)
   - Section 26      : MODEL_CARD.md, ONNX export sanity
 
-ACTIVE architecture-specific metrics (Section 11.6 -- CBAM + P2):
+ACTIVE architecture-specific metrics (Section 11.6 -- CBAM + P2 + SSM):
   - attention_map_examples.png        (CBAM spatial-attention heatmap overlays)
   - channel_attention_weights.csv     (CBAM mean channel-attention vector)
   - spatial_attention_entropy         (CBAM mean entropy of spatial-attention map)
   - p2_detection_scales.json          (P2/P3/P4/P5 strides, resolutions, size bands)
-  - per_size.csv                      (per-size recall -- the operative P2 metric)
+  - per_size.csv                      (per-size recall -- the operative small-object metric)
+  - mamba_ssm.json                    (injection-layer indices, per-layer window sizes,
+                                       forward-vs-reverse scan disagreement, SSM state-norm sanity)
 
 Explicitly SKIPPED (with reasons logged to skipped_metrics.txt):
   - per-stride_AP (true per-head AP attribution)        (anchor-free dynamic assignment;
                                                          per_size.csv is the operative
                                                          P2 metric -- deferred to paper)
-  - ssm_state_norm / forward_vs_backward_scan_disagreement / window_size_per_layer
-    / dilation_branch_contribution / injection_layer_indices  (no Mamba/SSM)
-  - SAHI/TTA-specific metrics                           (not part of this run)
+  - dilation_branch_contribution                        (plain Mamba; no dilated branches --
+                                                         that is the AtrousMamba variant)
+  - SAHI/TTA-specific metrics                           (inference-time, Phase C; not this run)
   - paired-bootstrap p-values vs another model          (set BASELINE_PER_IMAGE_CSV
                                                          to the baseline run's
                                                          per_image_test.csv to enable;
@@ -121,19 +131,25 @@ Explicitly SKIPPED (with reasons logged to skipped_metrics.txt):
 # 0. Top-level CONFIG  --  edit this block; everything below auto-derives
 # =============================================================================
 
-MODEL_TAG          = "yolo11m_cbam_p2head"       # CBAM + P2 head ablation (Sec 3 row 4)
+MODEL_TAG          = "mamba_cbam_p2head"         # HEADLINE: CBAM + P2 + Mamba SSM (Sec 3 row 5)
 PRETRAINED_WEIGHTS = "yolo11m.pt"                # Ultralytics auto-downloads
 # CBAM config -- replaces the backbone C2PSA block. Matches the user's original
 # implementation in 6-2-26/results/cbam_module.py (reduction=16, kernel_size=7,
 # lazy channel init). Do NOT change these without re-checking weight loadability.
 CBAM_REDUCTION     = 16
 CBAM_KERNEL_SIZE   = 7
-SEEDS              = [0]                          # THESIS scope: 1 seed for ablation-chain
-                                                  # models (system_spec_thesis.md Sec 3.1).
-                                                  # The headline `mamba_cbam_p2head` uses
-                                                  # [0,1,2] (3 seeds). 5 seeds + paired
-                                                  # significance is a PAPER task -- run
-                                                  # yolov11m_paper.py for that.
+# Mamba SSM config -- post-init injection into neck C3k2 layers. Verbatim from the
+# proven 11-3-26 reference. Do NOT change without re-checking weight loadability.
+MAMBA_D_STATE      = 4                            # SSM state dim (safe at 16 GB)
+MAMBA_MIN_LAYER_IDX = 11                          # skip backbone (<11); inject neck only
+MAMBA_MAX_CHANNELS = 512                          # skip the 1024-ch P5 C3k2 layer
+SEEDS              = [0]                     # HEADLINE: 3 seeds (system_spec_thesis.md
+                                                  # Sec 3.1) -> mean+/-std for the paper row.
+                                                  # ~10-14 h/seed (Mamba scan is slow) => ~1.5-2
+                                                  # days total. Run-resume-safe: you may run [0]
+                                                  # first and add [1,2] later (rollup aggregates).
+                                                  # 5 seeds + paired significance is the PAPER
+                                                  # task -- run mamba_cbam_p2head_paper.py for that.
 
 # Skip seeds that already have a complete `manifest.json` in runs/. Setting
 # this to False forces a fresh run with a new timestamp even if a previous
@@ -147,7 +163,13 @@ SKIP_COMPLETED_SEEDS = True
 RESUME_INCOMPLETE_SEEDS = True
 
 # Training
-NUM_EPOCHS         = 300                          # upper bound only (Section 18.1)
+NUM_EPOCHS         = 150                          # MAMBA: 120 (NOT 300). The proven canonical
+                                                  # Mamba (11-3-26) used 120 epochs. At a 300-cap,
+                                                  # the cosine LR stays ~0.0009 through epoch ~50-100,
+                                                  # and the fragile SSM DIVERGED there (val loss
+                                                  # exploded, metrics->0, run 20260606_054300). A
+                                                  # 120-cap decays LR faster (~0.0006 by epoch 50),
+                                                  # which is the proven-stable Mamba schedule.
 PATIENCE           = 50                           # Ultralytics fitness patience.
                                                   # Raised from spec's 30 after a
                                                   # 2026-05-29 literature check: the
@@ -515,19 +537,239 @@ def build_cbam_p2head_yaml(out_path: Path) -> Path:
 
 
 def build_cbam_model(pretrained_weights: str, yaml_dir: Path):
-    """Build the CBAM+P2Head YOLO11m and transfer pretrained yolo11m.pt weights.
-    Mirrors the user's CELL 9: YOLO(cbam_p2head_yaml).load(yolo11m.pt). Named
-    `build_cbam_model` so the smoke/train call sites are unchanged from the
-    template."""
+    """Build the HEADLINE Mamba+CBAM+P2Head model: build CBAM+P2 from YAML, transfer
+    pretrained yolo11m.pt weights, THEN post-init inject C3K2Mamba into the neck.
+    Mirrors the proven 11-3-26 reference CELL 10:
+        YOLO(cbam_p2head_yaml).load(yolo11m.pt) -> inject_mamba_neck(d_state=4)
+    Named `build_cbam_model` so the smoke/train call sites are unchanged from the
+    template. Order matters: load pretrained FIRST (so the non-Mamba layers get
+    pretrained weights), THEN inject (the new C3K2Mamba layers start fresh)."""
     register_cbam()
+    register_mamba()
     yaml_path = build_cbam_p2head_yaml(yaml_dir / "yolov11m_cbam_p2head.yaml")
     if _IS_MAIN:
-        print(f"[cbam+p2] built CBAM+P2 YAML (CBAM@10, Detect P2/P3/P4/P5) at {yaml_path}")
+        print(f"[mamba] built CBAM+P2 base YAML (CBAM@10, Detect P2/P3/P4/P5) at {yaml_path}")
     model = YOLO(str(yaml_path))
-    model.load(pretrained_weights)   # transfer matching pretrained weights
+    model.load(pretrained_weights)   # transfer matching pretrained weights FIRST
     if _IS_MAIN:
-        print("[cbam+p2] pretrained weights transferred onto CBAM+P2 architecture")
+        print("[mamba] pretrained weights transferred onto CBAM+P2 base")
+    replaced = inject_mamba_neck(model, min_layer_idx=MAMBA_MIN_LAYER_IDX,
+                                 max_channels=MAMBA_MAX_CHANNELS,
+                                 d_state=MAMBA_D_STATE, verbose=_IS_MAIN)
+    if not replaced:
+        raise RuntimeError("inject_mamba_neck replaced 0 layers -- check "
+                           "MAMBA_MIN_LAYER_IDX / MAMBA_MAX_CHANNELS.")
+    if _IS_MAIN:
+        print(f"[mamba] injected C3K2Mamba into {len(replaced)} neck layer(s): "
+              f"{[idx for idx, *_ in replaced]}")
     return model
+
+
+# =============================================================================
+# 2.6 MAMBA SSM MODULES + REGISTRATION + POST-INIT INJECTION
+#     (verbatim port of 11-3-26-Mamba/mamba_cbam_p2head.py CELL 5 + CELL 8)
+# =============================================================================
+# Like CBAM, these classes are registered into the ultralytics namespaces + this
+# module's globals at IMPORT TIME so that YOLO(best.pt) can deserialize the
+# C3K2Mamba layers on the eval reload (and Windows 'spawn' DataLoader workers
+# that re-import this file have them too). The architecture is injected post-init
+# (NOT via parse_model) -- see inject_mamba_neck().
+import torch.nn.functional as F
+
+
+def _get_window_size(channels: int) -> int:
+    """Adaptive window size: larger windows for lower channel counts."""
+    if channels >= 512: return 4   # 4x4=16 tokens -- memory safe at 512ch
+    if channels >= 256: return 6   # 6x6=36 tokens
+    return 8                        # 8x8=64 tokens
+
+
+class _SelectiveScan1D(nn.Module):
+    """One-direction selective scan (pure PyTorch, sequential, L<=64). All SSM
+    math is forced to FP32 for AMP/FP16 numerical stability, then cast back."""
+    def __init__(self, d_model: int, d_state: int = 4, dt_rank_ratio: int = 16):
+        super().__init__()
+        D, N = d_model, d_state
+        dt_rank = max(D // dt_rank_ratio, 1)
+        self.D, self.N, self.dt_rank = D, N, dt_rank
+        self.conv1d = nn.Conv1d(D, D, kernel_size=4, padding=3, groups=D, bias=True)
+        self.x_proj  = nn.Linear(D, dt_rank + 2 * N, bias=False)
+        self.dt_proj = nn.Linear(dt_rank, D, bias=True)
+        A = torch.arange(1, N + 1, dtype=torch.float32).unsqueeze(0).repeat(D, 1)
+        self.A_log = nn.Parameter(torch.log(A))         # (D, N)
+        self.D_skip = nn.Parameter(torch.ones(D))
+        dt_init = torch.exp(
+            torch.rand(D) * (math.log(0.1) - math.log(0.001)) + math.log(0.001))
+        inv_dt = dt_init + torch.log(-torch.expm1(-dt_init))
+        with torch.no_grad():
+            self.dt_proj.bias.copy_(inv_dt)
+
+    def forward(self, u: torch.Tensor) -> torch.Tensor:
+        B_win, L, D = u.shape
+        in_dtype = u.dtype
+        u_conv = self.conv1d(u.transpose(1, 2))[:, :, :L].transpose(1, 2)
+        u_act  = F.silu(u_conv)
+        xBC_dt = self.x_proj(u_act)
+        dt_raw, B_param, C_param = xBC_dt.split([self.dt_rank, self.N, self.N], dim=-1)
+        dt      = F.softplus(self.dt_proj(dt_raw)).float()
+        B_param = B_param.float()
+        C_param = C_param.float()
+        u_f     = u_act.float()
+        A       = -torch.exp(self.A_log.float())
+        deltaA   = torch.exp(torch.einsum("bld,dn->bldn", dt, A))
+        deltaB_u = torch.einsum("bld,bln,bld->bldn", dt, B_param, u_f)
+        x = torch.zeros(B_win, D, self.N, device=u.device, dtype=torch.float32)
+        ys = []
+        for i in range(L):
+            x = deltaA[:, i] * x + deltaB_u[:, i]
+            y_i = (x * C_param[:, i, :].unsqueeze(1)).sum(-1)
+            ys.append(y_i)
+        y = torch.stack(ys, dim=1).to(in_dtype)
+        y = y + u_act * self.D_skip.to(in_dtype)
+        return y
+
+
+class LocalWindowSSM(nn.Module):
+    """Bidirectional local-window 2-D Selective State Space Model.
+    Partition into ws*ws windows -> fwd scan + bwd scan (separate weights) ->
+    merge + SiLU(z) gate -> out_proj + residual -> window reverse."""
+    def __init__(self, d_model: int, d_state: int = 4, window_size: int = 8):
+        super().__init__()
+        self.ws = window_size
+        D = d_model
+        self.norm    = nn.LayerNorm(D)
+        self.in_proj = nn.Linear(D, D * 2, bias=False)
+        self.scan_fwd = _SelectiveScan1D(D, d_state)
+        self.scan_bwd = _SelectiveScan1D(D, d_state)
+        self.out_proj = nn.Linear(D, D, bias=False)
+        self.out_norm = nn.LayerNorm(D)
+        nn.init.normal_(self.out_proj.weight, std=0.02)
+
+    def _partition(self, x: torch.Tensor):
+        B, C, H, W = x.shape
+        ws = self.ws
+        ph = (ws - H % ws) % ws
+        pw = (ws - W % ws) % ws
+        if ph or pw:
+            x = F.pad(x, (0, pw, 0, ph))
+        _, _, Hp, Wp = x.shape
+        nH, nW = Hp // ws, Wp // ws
+        x = x.reshape(B, C, nH, ws, nW, ws)
+        x = x.permute(0, 2, 4, 3, 5, 1).reshape(B * nH * nW, ws * ws, C)
+        return x, (B, C, H, W, Hp, Wp, nH, nW)
+
+    def _reverse(self, y: torch.Tensor, meta) -> torch.Tensor:
+        B, C, H, W, Hp, Wp, nH, nW = meta
+        ws = self.ws
+        y = y.reshape(B, nH, nW, ws, ws, C)
+        y = y.permute(0, 5, 1, 3, 2, 4).reshape(B, C, Hp, Wp)
+        return y[:, :, :H, :W].contiguous()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        windows, meta = self._partition(x)
+        residual = windows
+        windows_n = self.norm(windows)
+        xz = self.in_proj(windows_n)
+        x_in, z = xz.chunk(2, dim=-1)
+        y_fwd = self.scan_fwd(x_in)
+        y_bwd = self.scan_bwd(x_in.flip(1)).flip(1)
+        y     = (y_fwd + y_bwd) * F.silu(z)
+        y = self.out_norm(self.out_proj(y) + residual)
+        return self._reverse(y, meta)
+
+
+class _MambaBottleneck(nn.Module):
+    """Conv3x3 -> LocalWindowSSM -> Conv3x3, with optional residual."""
+    def __init__(self, c: int, shortcut: bool, d_state: int, window_size: int):
+        super().__init__()
+        from ultralytics.nn.modules.conv import Conv
+        self.cv1 = Conv(c, c, 3, 1)
+        self.ssm = LocalWindowSSM(c, d_state=d_state, window_size=window_size)
+        self.cv2 = Conv(c, c, 3, 1)
+        self.add = shortcut
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        y = self.cv2(self.ssm(self.cv1(x)))
+        return x + y if self.add else y
+
+
+class C3K2Mamba(nn.Module):
+    """C2f-style block with Mamba SSM bottleneck. Drop-in replacement for C3k2
+    in the YOLO11m neck. Signature matches C3k2/C2f so the YOLO forward pass
+    (which reads .f/.i from layer attributes) works after post-init injection."""
+    def __init__(self, c1: int, c2: int, n: int = 1,
+                 shortcut: bool = False, g: int = 1, e: float = 0.5,
+                 d_state: int = 4):
+        super().__init__()
+        from ultralytics.nn.modules.conv import Conv
+        self.c = int(c2 * e)
+        ws     = _get_window_size(self.c)
+        self.cv1 = Conv(c1, 2 * self.c, 1, 1)
+        self.cv2 = Conv((2 + n) * self.c, c2, 1)
+        self.m   = nn.ModuleList(
+            _MambaBottleneck(self.c, shortcut and c1 == c2, d_state, ws)
+            for _ in range(n))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        y = list(self.cv1(x).chunk(2, 1))
+        y.extend(m(y[-1]) for m in self.m)
+        return self.cv2(torch.cat(y, 1))
+
+
+def register_mamba():
+    """Register Mamba SSM classes into ultralytics namespaces + globals so
+    YOLO(best.pt) can deserialize C3K2Mamba layers on the eval reload. Idempotent."""
+    import ultralytics.nn.modules as _modules
+    import ultralytics.nn.tasks as _tasks
+    for ns in (_modules, _tasks):
+        ns.C3K2Mamba = C3K2Mamba
+        ns.LocalWindowSSM = LocalWindowSSM
+        ns._SelectiveScan1D = _SelectiveScan1D
+        ns._MambaBottleneck = _MambaBottleneck
+    for cls in (C3K2Mamba, LocalWindowSSM, _SelectiveScan1D, _MambaBottleneck):
+        globals()[cls.__name__] = cls
+
+register_mamba()
+
+
+def inject_mamba_neck(yolo_model, min_layer_idx: int = 11, max_channels: int = 512,
+                      d_state: int = 4, verbose: bool = True):
+    """Surgically replace eligible C3k2/C2f neck layers with C3K2Mamba (verbatim
+    from the 11-3-26 reference CELL 8). Returns list of (idx, c1, c2, n)."""
+    try:
+        from ultralytics.nn.modules.block import C3k2, C2f
+    except ImportError:
+        from ultralytics.nn.modules import C3k2, C2f
+    nn_model  = yolo_model.model.model
+    replaced  = []
+    for idx, layer in enumerate(nn_model):
+        if idx < min_layer_idx:
+            continue
+        if not isinstance(layer, (C3k2, C2f)):
+            continue
+        if not (hasattr(layer, "cv1") and hasattr(layer, "cv2")):
+            continue
+        c1 = layer.cv1.conv.in_channels
+        c_ = getattr(layer, "c", layer.cv1.conv.out_channels // 2)
+        c2 = layer.cv2.conv.out_channels
+        n  = len(layer.m)
+        shortcut = getattr(layer.m[0], "add", False) if len(layer.m) > 0 else False
+        if c2 > max_channels:
+            if verbose:
+                print(f"  SKIP  layer {idx:2d}: {type(layer).__name__}({c1}->{c2}) -- c2 > {max_channels}")
+            continue
+        dev = next(layer.parameters()).device
+        new = C3K2Mamba(c1, c2, n=n, shortcut=shortcut, d_state=d_state).to(device=dev)
+        for attr in ("f", "i", "np"):
+            if hasattr(layer, attr):
+                setattr(new, attr, getattr(layer, attr))
+        new.type = type(new).__name__
+        nn_model[idx] = new
+        replaced.append((idx, c1, c2, n))
+        if verbose:
+            print(f"  + layer {idx:2d}: {type(layer).__name__:8s}({c1}->{c2}, n={n}) "
+                  f"-> C3K2Mamba  [ws={_get_window_size(c_)}, d_state={d_state}]")
+    return replaced
 
 
 def cbam_attention_metrics(model, dirs: Dict[str, Path], run_id: str,
@@ -695,6 +937,70 @@ def p2_head_metrics(model, dirs: Dict[str, Path], per_size_df: "pd.DataFrame"):
         return {}, [f"[SKIPPED] p2_head_metrics -- {e}"]
 
 
+def mamba_metrics(model, dirs: Dict[str, Path]):
+    """Section 11.6 (Mamba/SSM) architecture-specific metrics. Scans the model
+    for injected C3K2Mamba blocks and records:
+       - injection_layer_indices : which model.model.model layers are C3K2Mamba
+       - window_size_per_layer   : adaptive window size of each block's SSM
+       - forward_vs_reverse_scan_cosine_distance : how much the bidirectional
+         scans differ on a calibration batch (should be > 0 -- confirms the two
+         directions learned independent dynamics, not a degenerate symmetric scan)
+       - ssm_state_norm_sanity   : mean |A| (state-transition) and |D_skip| across
+         SSMs -- a bounded check that the SSM state isn't exploding/vanishing
+    Writes architecture/mamba_ssm.json. Returns (stats, skips). Never raises."""
+    stats: Dict[str, Any] = {}
+    skips: List[str] = []
+    try:
+        seq = model.model.model           # nn.Sequential
+        mamba_blocks = [(idx, m) for idx, m in enumerate(seq)
+                        if m.__class__.__name__ == "C3K2Mamba"]
+        if not mamba_blocks:
+            return {}, ["[SKIPPED] mamba metrics -- no C3K2Mamba block found"]
+        ssms = [m for m in model.model.modules()
+                if m.__class__.__name__ == "LocalWindowSSM"]
+        stats["injection_layer_indices"] = [idx for idx, _ in mamba_blocks]
+        stats["n_mamba_blocks"] = len(mamba_blocks)
+        stats["n_ssm_modules"]  = len(ssms)
+        stats["window_size_per_layer"] = {
+            int(idx): int(getattr(blk, "c", 0)) and _get_window_size(int(getattr(blk, "c", 0)))
+            for idx, blk in mamba_blocks}
+        stats["mamba_d_state"] = MAMBA_D_STATE
+
+        # forward-vs-reverse scan disagreement on a calibration batch
+        if ssms:
+            ssm0 = ssms[0]
+            dev = next(ssm0.parameters()).device
+            ws = ssm0.ws
+            D = ssm0.norm.normalized_shape[0]
+            with torch.no_grad():
+                xb = torch.randn(4, ws * ws, D, device=dev)
+                xb_n = ssm0.norm(xb)
+                x_in, _z = ssm0.in_proj(xb_n).chunk(2, dim=-1)
+                yf = ssm0.scan_fwd(x_in).float()
+                yb = ssm0.scan_bwd(x_in.flip(1)).flip(1).float()
+                cos = F.cosine_similarity(yf.flatten(1), yb.flatten(1), dim=1).mean().item()
+            stats["forward_vs_reverse_scan_cosine_similarity"] = float(cos)
+            stats["forward_vs_reverse_scan_cosine_distance"]   = float(1.0 - cos)
+
+        # SSM state-norm sanity (bounded check)
+        a_norms, d_norms = [], []
+        for m in model.model.modules():
+            if m.__class__.__name__ == "_SelectiveScan1D":
+                with torch.no_grad():
+                    a_norms.append(float(torch.exp(m.A_log.float()).mean().item()))
+                    d_norms.append(float(m.D_skip.float().abs().mean().item()))
+        if a_norms:
+            stats["ssm_state_A_mean"]   = float(np.mean(a_norms))
+            stats["ssm_state_A_max"]    = float(np.max(a_norms))
+            stats["ssm_D_skip_mean"]    = float(np.mean(d_norms))
+            stats["ssm_state_norm_ok"]  = bool(np.max(a_norms) < 1e3 and np.isfinite(np.max(a_norms)))
+
+        (dirs["arch"] / "mamba_ssm.json").write_text(json.dumps(stats, indent=2))
+        return stats, skips
+    except Exception as e:
+        return {}, [f"[SKIPPED] mamba metrics -- {e}"]
+
+
 try:
     matplotlib.style.use("seaborn-v0_8-whitegrid")
 except Exception:
@@ -749,6 +1055,10 @@ C2A_CANDIDATES = [
     #    and the script lives at E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m,
     #    so SCRIPT_DIR.parent.parent == E:\Thesis_mofazzal_2007074\.
     SCRIPT_DIR.parent.parent / "common" / "c2a" / "C2A_Dataset" / "new_dataset3",
+    # 1b) THIS file lives in a date-topic folder directly under the project root
+    #     (e.g. E:\Thesis_mofazzal_2007074\02-06-26-Mamba_CBAM_P2Head\), so the
+    #     project root is ONE level up -> SCRIPT_DIR.parent.
+    SCRIPT_DIR.parent / "common" / "c2a" / "C2A_Dataset" / "new_dataset3",
     SCRIPT_DIR.parent.parent.parent / "common" / "c2a" / "C2A_Dataset" / "new_dataset3",
     # 2) Same layout without the inner C2A_Dataset/ wrapper (older snapshot,
     #    kept for forward-compat in case the dataset is re-flattened).
@@ -2130,8 +2440,9 @@ def write_env_json(path: Path, *, run_id: str, seed: int,
         "run_id":             run_id,
         "model_tag":          MODEL_TAG,
         "in_ablation_matrix": True,
-        "matrix_status":      ("CBAM+P2 ablation (yolo11m_cbam_p2head) -- C2PSA->CBAM "
-                               "+ 4-scale Detect(P2,P3,P4,P5), per system_spec_thesis.md Sec 3 row 4"),
+        "matrix_status":      ("HEADLINE: Mamba+CBAM+P2 (mamba_cbam_p2head) -- C2PSA->CBAM "
+                               "+ Detect(P2,P3,P4,P5) + C3K2Mamba SSM neck (d_state=4), "
+                               "per system_spec_thesis.md Sec 3 row 5"),
         "timestamp_utc":      datetime.now(timezone.utc).isoformat(),
         "git_commit":         GIT_HASH,
         "git_dirty":          GIT_DIRTY,
@@ -2617,6 +2928,9 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
     # P2 detection-scale metrics (Section 11.6) -- ACTIVE for this model
     p2_stats, p2_skips = p2_head_metrics(model, dirs, per_size_df)
 
+    # Mamba/SSM architecture-specific metrics (Section 11.6) -- ACTIVE for this model
+    mamba_stats, mamba_skips = mamba_metrics(model, dirs)
+
     # ONNX export sanity (Section 26)
     onnx_ok = False; onnx_size_mb = None
     if DO_ONNX_EXPORT:
@@ -2664,18 +2978,16 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
                        "BASELINE_PER_IMAGE_CSV not configured; per-image scores "
                        "saved in metrics/per_image_test.csv for later Phase-D.")
 
-    # Architecture-specific skips. CBAM + P2 metrics are ACTIVE (partial misses
-    # reported via cbam_skips / p2_skips). Only SSM / SAHI / TTA remain N/A here.
+    # Architecture-specific skips. CBAM + P2 + SSM metrics are ALL ACTIVE here
+    # (partial misses reported via cbam_skips / p2_skips / mamba_skips). Only the
+    # inference-time SAHI / TTA (Phase C) remain N/A for this training run.
     skipped.extend(cbam_skips)
     skipped.extend(p2_skips)
+    skipped.extend(mamba_skips)
     skipped.extend([
-        "[SKIPPED] ssm_state_norm                 -- no SSM in yolo11m_cbam_p2head",
-        "[SKIPPED] forward_vs_backward_scan_disag -- no SSM in yolo11m_cbam_p2head",
-        "[SKIPPED] window_size_per_layer          -- no SSM in yolo11m_cbam_p2head",
-        "[SKIPPED] dilation_branch_contribution   -- no SSM in yolo11m_cbam_p2head",
-        "[SKIPPED] injection_layer_indices        -- no SSM in yolo11m_cbam_p2head",
-        "[SKIPPED] SAHI-specific metrics          -- not part of this run",
-        "[SKIPPED] TTA-specific metrics           -- not part of this run",
+        "[SKIPPED] dilation_branch_contribution   -- plain (non-Atrous) Mamba; no dilated branches",
+        "[SKIPPED] SAHI-specific metrics          -- inference-time (Phase C), not this run",
+        "[SKIPPED] TTA-specific metrics           -- inference-time (Phase C), not this run",
     ])
     log_skipped(dirs["logs"], skipped)
 
@@ -2716,6 +3028,7 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
                                 "stopped":   f2_stop.stop},
         "cbam_attention":      cbam_stats,
         "p2_detection_scales": p2_stats,
+        "mamba_ssm":           mamba_stats,
         "skipped_metrics_count": len(skipped),
     }
     (dirs["metrics"] / "summary.json").write_text(
@@ -2739,12 +3052,14 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
     (dirs["base"] / "MODEL_CARD.md").write_text(
         f"""# Model Card -- {MODEL_TAG} (run {run_id})
 
-**Status:** CBAM+P2 ablation (`yolo11m_cbam_p2head`) per system_spec_thesis.md
-Section 3 (row 4) -- backbone C2PSA replaced with CBAM (reduction={CBAM_REDUCTION},
-kernel={CBAM_KERNEL_SIZE}) AND a 4th detection scale P2/4 (stride 4) added ->
-Detect(P2,P3,P4,P5). Effective batch held at {NOMINAL_BATCH} (physical {BATCH_SIZE}
-+ grad-accum) to match the baseline/CBAM runs. Compared against `yolo11m_baseline`,
-`yolo11m_cbam`, and `yolo11m_p2head` (same data/seed/protocol).
+**Status:** HEADLINE model `mamba_cbam_p2head` per system_spec_thesis.md
+Section 3 (row 5) -- backbone C2PSA replaced with CBAM (reduction={CBAM_REDUCTION},
+kernel={CBAM_KERNEL_SIZE}), a 4th detection scale P2/4 (stride 4) -> Detect(P2,P3,P4,P5),
+AND the neck C3k2 bottlenecks replaced (post-init) with C3K2Mamba bidirectional
+SSM (d_state={MAMBA_D_STATE}). Effective batch held at {NOMINAL_BATCH} (physical
+{BATCH_SIZE} + grad-accum) to match the chain. Trained {len(SEEDS)} seed(s)
+{SEEDS}. Compared against `yolo11m_baseline`, `yolo11m_cbam`, `yolo11m_cbam_p2head`
+(same data/protocol; AdamW lr0=0.001 across all).
 
 ## Intended Use
 Aerial / SAR human detection on C2A imagery. Single class: `person`.
@@ -2788,7 +3103,7 @@ SAR / humanitarian use case. Not validated for surveillance.
     manifest = {
         "run_id":            run_id,
         "model_tag":         MODEL_TAG,
-        "matrix_status":     "CBAM+P2 ablation (yolo11m_cbam_p2head) per system_spec_thesis.md Sec 3 row 4",
+        "matrix_status":     "HEADLINE Mamba+CBAM+P2 (mamba_cbam_p2head) per system_spec_thesis.md Sec 3 row 5",
         "parent_run_id":     None,
         "git_commit":        GIT_HASH,
         "git_dirty":         GIT_DIRTY,
@@ -2859,8 +3174,8 @@ def preflight_checklist(dirs: Dict[str, Path], env: Dict[str, Any]) -> bool:
 
 def main():
     print("\n" + "=" * 78)
-    print(f"yolo11m_cbam_p2head_thesis.py  --  MODEL_TAG={MODEL_TAG}  SEEDS={SEEDS}  "
-          f"[THESIS 1-seed, CBAM + P2 head, batch={BATCH_SIZE}/nbs={NOMINAL_BATCH}]")
+    print(f"mamba_cbam_p2head_thesis.py  --  MODEL_TAG={MODEL_TAG}  SEEDS={SEEDS}  "
+          f"[HEADLINE: CBAM + P2 + Mamba SSM, batch={BATCH_SIZE}/nbs={NOMINAL_BATCH}, AdamW lr0={LR0}]")
     print(f"  OUTPUT_ROOT  = {OUTPUT_ROOT}")
     print(f"  DATASET_ROOT = {DATASET_ROOT}")
     print(f"  GPU          = {SANITY['gpu_name']} ({SANITY['gpu_vram_gb']} GB)")

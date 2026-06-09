@@ -2110,7 +2110,7 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
                 "recall":     _scalar(box.r),
                 "mAP50":      _scalar(box.map50),
                 "mAP50-95":   _scalar(box.map),
-                "mAP75":      _scalar(box.maps[..., 5]) if hasattr(box, "maps") and box.maps is not None and len(getattr(box.maps, "shape", ())) >= 1 else float("nan"),
+                "mAP75":      _scalar(getattr(box, "map75", float("nan"))),  # box.map75 (NOT box.maps[...,5] -- that is the per-CLASS array and crashes on 1-class)
             }
         except Exception as e:
             print(f"[eval] ultralytics .val on {split} failed: {e}")
