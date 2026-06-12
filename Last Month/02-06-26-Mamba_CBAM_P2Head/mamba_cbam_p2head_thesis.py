@@ -143,6 +143,11 @@ CBAM_KERNEL_SIZE   = 7
 MAMBA_D_STATE      = 4                            # SSM state dim (safe at 16 GB)
 MAMBA_MIN_LAYER_IDX = 11                          # skip backbone (<11); inject neck only
 MAMBA_MAX_CHANNELS = 512                          # skip the 1024-ch P5 C3k2 layer
+MAMBA_GRAD_CLIP    = 1.0                          # clip grad-norm during SSM training --
+                                                  # fresh SSM params can explode in the first
+                                                  # epochs; proven stabilizer from the 20-3-26
+                                                  # AtrousSSM script. Applies only to THIS
+                                                  # (Mamba) process via optimizer_step override.
 SEEDS              = [0]                     # HEADLINE: 3 seeds (system_spec_thesis.md
                                                   # Sec 3.1) -> mean+/-std for the paper row.
                                                   # ~10-14 h/seed (Mamba scan is slow) => ~1.5-2
@@ -732,15 +737,17 @@ def register_mamba():
 register_mamba()
 
 
-def inject_mamba_neck(yolo_model, min_layer_idx: int = 11, max_channels: int = 512,
-                      d_state: int = 4, verbose: bool = True):
-    """Surgically replace eligible C3k2/C2f neck layers with C3K2Mamba (verbatim
-    from the 11-3-26 reference CELL 8). Returns list of (idx, c1, c2, n)."""
+def _inject_into_sequential(nn_model, min_layer_idx: int = 11, max_channels: int = 512,
+                            d_state: int = 4, verbose: bool = True):
+    """Core injection: replace eligible C3k2/C2f layers in an nn.Sequential with
+    C3K2Mamba. Returns list of (idx, c1, c2, n). Operates on the Sequential DIRECTLY
+    so it is reusable by BOTH the pre-train build path AND the
+    DetectionTrainer.get_model() monkey-patch below (the 'injection-lost' fix --
+    see docs/2026-03-20_Critical_Bug_Injection_Lost.md)."""
     try:
         from ultralytics.nn.modules.block import C3k2, C2f
     except ImportError:
         from ultralytics.nn.modules import C3k2, C2f
-    nn_model  = yolo_model.model.model
     replaced  = []
     for idx, layer in enumerate(nn_model):
         if idx < min_layer_idx:
@@ -770,6 +777,84 @@ def inject_mamba_neck(yolo_model, min_layer_idx: int = 11, max_channels: int = 5
             print(f"  + layer {idx:2d}: {type(layer).__name__:8s}({c1}->{c2}, n={n}) "
                   f"-> C3K2Mamba  [ws={_get_window_size(c_)}, d_state={d_state}]")
     return replaced
+
+
+def inject_mamba_neck(yolo_model, min_layer_idx: int = 11, max_channels: int = 512,
+                      d_state: int = 4, verbose: bool = True):
+    """Thin wrapper (pre-train build path): inject into a YOLO model's neck
+    (yolo_model.model.model). Returns list of (idx, c1, c2, n)."""
+    return _inject_into_sequential(yolo_model.model.model, min_layer_idx,
+                                   max_channels, d_state, verbose)
+
+
+# =============================================================================
+# 2.6b  CRITICAL FIX -- make post-init Mamba survive Ultralytics' train() rebuild
+# -----------------------------------------------------------------------------
+# Ultralytics' Model.train() internally calls
+#     trainer.get_model(cfg=self.model.yaml, weights=self.model)
+# which REBUILDS a fresh model FROM THE YAML (which only declares C3k2, never
+# C3K2Mamba) and transfers matching weights via intersect_dicts(). The post-init
+# Mamba injection is SILENTLY DROPPED -> the model trains as vanilla CBAM+P2
+# (~19.59M params, no SSM, no Linear/Conv1d). This exact bug was diagnosed on
+# 2026-03-20 (docs/2026-03-20_Critical_Bug_Injection_Lost.md). The 2026-06-08
+# headline run reproduced it (module_table.csv had 0 SSM modules; params/GFLOPs
+# == CBAM+P2; mamba_ssm == {} "no C3K2Mamba block found").
+#
+# FIX (proven in the 20-3-26 AtrousSSM script): monkey-patch get_model() to
+# RE-INJECT C3K2Mamba AFTER the YAML rebuild, then re-transfer weights so the SSM
+# params are (a) in the optimizer for fresh runs and (b) restored on resume.
+from ultralytics.models.yolo.detect.train import DetectionTrainer as _DetTrainer
+from ultralytics.engine.trainer import BaseTrainer as _BaseTrainer
+
+_orig_get_model = _DetTrainer.get_model
+
+
+def _patched_get_model(self, cfg=None, weights=None, verbose=True):
+    model = _orig_get_model(self, cfg, weights, verbose)
+    # Already Mamba (YAML-native or already-injected build)? leave it untouched.
+    if any(m.__class__.__name__ == "C3K2Mamba" for m in model.model):
+        return model
+    replaced = _inject_into_sequential(
+        model.model, min_layer_idx=MAMBA_MIN_LAYER_IDX,
+        max_channels=MAMBA_MAX_CHANNELS, d_state=MAMBA_D_STATE, verbose=_IS_MAIN)
+    if not replaced:
+        raise RuntimeError(
+            "CRITICAL: Mamba re-injection failed inside trainer.get_model() -- the "
+            "model would train as vanilla CBAM+P2. Check MAMBA_MIN_LAYER_IDX / "
+            "MAMBA_MAX_CHANNELS.")
+    # Re-transfer weights now that C3K2Mamba keys exist in BOTH src and dst.
+    # Fresh run: re-applies base/random SSM weights (effective no-op). Resume:
+    # RESTORES trained SSM weights that the C3k2 rebuild had dropped.
+    if weights is not None:
+        try:
+            model.load(weights)
+        except Exception as e:
+            if _IS_MAIN:
+                print(f"[mamba-patch] weight re-transfer warning: {e}")
+    if _IS_MAIN:
+        n_p = sum(p.numel() for p in model.parameters()) / 1e6
+        print(f"[mamba-patch] re-injected {len(replaced)} C3K2Mamba layer(s) "
+              f"{[i for i, *_ in replaced]} into trainer model; params={n_p:.2f}M")
+    return model
+
+
+_DetTrainer.get_model = _patched_get_model
+
+# SSM stability: clip grad-norm (fresh SSM params can explode in the first epochs).
+_orig_optimizer_step = _BaseTrainer.optimizer_step
+
+
+def _clipped_optimizer_step(self):
+    self.scaler.unscale_(self.optimizer)
+    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=MAMBA_GRAD_CLIP)
+    self.scaler.step(self.optimizer)
+    self.scaler.update()
+    self.optimizer.zero_grad()
+    if self.ema:
+        self.ema.update(self.model)
+
+
+_BaseTrainer.optimizer_step = _clipped_optimizer_step
 
 
 def cbam_attention_metrics(model, dirs: Dict[str, Path], run_id: str,
@@ -1611,7 +1696,26 @@ def attach_ultralytics_callbacks(model, *, run_dirs: Dict[str, Path],
         except Exception:
             pass
 
+    def _verify_mamba_active(trainer):
+        """HARD GUARD: abort training if the trainer's model has no C3K2Mamba.
+        Hooked to `on_train_start` -- which fires AFTER _setup_train builds the
+        model + optimizer and AFTER the get_model() re-injection patch runs.
+        (NOTE: `on_pretrain_routine_start` fires inside DetectionTrainer.__init__
+        BEFORE trainer.model exists in Ultralytics 8.4.x, so it cannot be used.)
+        Without this guard a silent strip would train CBAM+P2 under a 'mamba'
+        label (the 2026-06-08 bug)."""
+        n = sum(1 for m in trainer.model.model
+                if m.__class__.__name__ == "C3K2Mamba")
+        if n == 0:
+            raise RuntimeError(
+                "INJECTION VERIFICATION FAILED: trainer.model has 0 C3K2Mamba layers "
+                "at train start -- this would train as vanilla CBAM+P2. Aborting.")
+        if _IS_MAIN:
+            n_p = sum(p.numel() for p in trainer.model.parameters()) / 1e6
+            print(f"[mamba-verify] C3K2Mamba ACTIVE: {n} layer(s), {n_p:.2f}M params")
+
     try:
+        model.add_callback("on_train_start", _verify_mamba_active)
         model.add_callback("on_train_epoch_start", on_train_epoch_start)
         model.add_callback("on_fit_epoch_end",     on_fit_epoch_end)
     except Exception as e:
@@ -2561,6 +2665,42 @@ def coco_ap_eval(model: YOLO, split: str, run_dirs: Dict[str, Path]
 # 20. PER-RUN ORCHESTRATION
 # =============================================================================
 
+def _ckpt_loadable(p: Path) -> bool:
+    """Cheap integrity check for a torch .pt (zip-format) checkpoint WITHOUT
+    unpickling (so it needs no custom classes). A write interrupted by power
+    loss leaves a truncated archive that fails here -- torch.load would raise
+    "filename 'storages' not found"."""
+    try:
+        import zipfile
+        if not zipfile.is_zipfile(p):
+            return False
+        with zipfile.ZipFile(p) as z:
+            return z.testzip() is None
+    except Exception:
+        return False
+
+
+def _newest_healthy_ckpt(dirs: Dict[str, Path]) -> Optional[Path]:
+    """Newest LOADABLE fallback checkpoint for resume after a corrupt last.pt:
+    prefer last_safety.pt (copied at each epoch end -> least progress lost),
+    then the newest periodic epochN.pt, then best.pt."""
+    cands: List[Path] = []
+    safety = dirs["weights"] / "last_safety.pt"
+    if safety.is_file():
+        cands.append(safety)
+    wdir = dirs["base"] / "ultra" / "weights"
+    if wdir.is_dir():
+        cands += sorted(wdir.glob("epoch*.pt"),
+                        key=lambda x: x.stat().st_mtime, reverse=True)
+        best = wdir / "best.pt"
+        if best.is_file():
+            cands.append(best)
+    for c in cands:
+        if _ckpt_loadable(c):
+            return c
+    return None
+
+
 def run_one_seed(seed: int) -> Dict[str, Any]:
     # Power-loss-aware run-ID selection: if a previous run for this seed
     # is incomplete, reuse its run_id and resume; if completed, skip; else
@@ -2669,6 +2809,31 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
               f"-- enabling resume=True")
     else:
         resume = False
+
+    # Power-cut robustness: if power died WHILE Ultralytics was writing last.pt,
+    # the file is truncated/corrupt (torch.load -> "filename 'storages' not
+    # found"). Validate the resume checkpoint; if corrupt, swap in the newest
+    # HEALTHY checkpoint (last_safety.pt / epochN.pt / best.pt). If none load,
+    # fall back to a FRESH start rather than crashing on the broken file.
+    if resume and ultra_last.is_file() and not _ckpt_loadable(ultra_last):
+        good = _newest_healthy_ckpt(dirs)
+        corrupt_dst = ultra_last.parent / "last.corrupt.pt"
+        if good is not None:
+            print(f"[resume] last.pt is CORRUPT (interrupted write) -- restoring "
+                  f"from healthy checkpoint {good}")
+            try:
+                shutil.copy2(ultra_last, corrupt_dst)
+            except Exception:
+                pass
+            shutil.copy2(good, ultra_last)
+        else:
+            print("[resume] last.pt CORRUPT and NO healthy fallback found -- "
+                  "starting FRESH for this seed.")
+            try:
+                ultra_last.replace(corrupt_dst)
+            except Exception:
+                pass
+            resume = False
 
     epoch_metrics: List[Dict[str, Any]] = []
     f2_stop = F2EarlyStop(F2_PATIENCE)

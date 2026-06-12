@@ -1861,6 +1861,41 @@ def coco_ap_eval(model: YOLO, split: str, run_dirs: Dict[str, Path]
 # 20. PER-RUN ORCHESTRATION
 # =============================================================================
 
+def _ckpt_loadable(p: Path) -> bool:
+    """Cheap integrity check for a torch .pt (zip-format) checkpoint WITHOUT
+    unpickling. A write interrupted by power loss leaves a truncated archive
+    that fails here -- torch.load would raise "filename 'storages' not found"."""
+    try:
+        import zipfile
+        if not zipfile.is_zipfile(p):
+            return False
+        with zipfile.ZipFile(p) as z:
+            return z.testzip() is None
+    except Exception:
+        return False
+
+
+def _newest_healthy_ckpt(dirs: Dict[str, Path]) -> Optional[Path]:
+    """Newest LOADABLE fallback checkpoint for resume after a corrupt last.pt:
+    prefer last_safety.pt (copied at each epoch end -> least progress lost),
+    then the newest periodic epochN.pt, then best.pt."""
+    cands: List[Path] = []
+    safety = dirs["weights"] / "last_safety.pt"
+    if safety.is_file():
+        cands.append(safety)
+    wdir = dirs["base"] / "ultra" / "weights"
+    if wdir.is_dir():
+        cands += sorted(wdir.glob("epoch*.pt"),
+                        key=lambda x: x.stat().st_mtime, reverse=True)
+        best = wdir / "best.pt"
+        if best.is_file():
+            cands.append(best)
+    for c in cands:
+        if _ckpt_loadable(c):
+            return c
+    return None
+
+
 def run_one_seed(seed: int) -> Dict[str, Any]:
     # Power-loss-aware run-ID selection: if a previous run for this seed
     # is incomplete, reuse its run_id and resume; if completed, skip; else
@@ -1969,6 +2004,31 @@ def run_one_seed(seed: int) -> Dict[str, Any]:
               f"-- enabling resume=True")
     else:
         resume = False
+
+    # Power-cut robustness: if power died WHILE Ultralytics was writing last.pt,
+    # the file is truncated/corrupt (torch.load -> "filename 'storages' not
+    # found"). Validate the resume checkpoint; if corrupt, swap in the newest
+    # HEALTHY checkpoint (last_safety.pt / epochN.pt / best.pt). If none load,
+    # fall back to a FRESH start rather than crashing on the broken file.
+    if resume and ultra_last.is_file() and not _ckpt_loadable(ultra_last):
+        good = _newest_healthy_ckpt(dirs)
+        corrupt_dst = ultra_last.parent / "last.corrupt.pt"
+        if good is not None:
+            print(f"[resume] last.pt is CORRUPT (interrupted write) -- restoring "
+                  f"from healthy checkpoint {good}")
+            try:
+                shutil.copy2(ultra_last, corrupt_dst)
+            except Exception:
+                pass
+            shutil.copy2(good, ultra_last)
+        else:
+            print("[resume] last.pt CORRUPT and NO healthy fallback found -- "
+                  "starting FRESH for this seed.")
+            try:
+                ultra_last.replace(corrupt_dst)
+            except Exception:
+                pass
+            resume = False
 
     epoch_metrics: List[Dict[str, Any]] = []
     f2_stop = F2EarlyStop(F2_PATIENCE)
