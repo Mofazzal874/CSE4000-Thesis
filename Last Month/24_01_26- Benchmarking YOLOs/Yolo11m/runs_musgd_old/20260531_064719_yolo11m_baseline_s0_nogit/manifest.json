@@ -1,0 +1,20 @@
+{
+  "run_id": "20260531_064719_yolo11m_baseline_s0_nogit",
+  "model_tag": "yolo11m_baseline",
+  "ablation_matrix_row": 1,
+  "matrix_status": "Phase A row 1 (yolo11m_baseline, P0)",
+  "parent_run_id": null,
+  "git_commit": "nogit",
+  "git_dirty": false,
+  "smoke_passed_at": "2026-05-31T00:32:41.055263+00:00",
+  "weights_md5": "eb8a451226dc501b2e7cdf6affbc9e6a95af896a26c5178471dfe2f1c290fe67",
+  "data_yaml_md5": "6df3158450d0445fdd1e1daef5d8caf0",
+  "dataset_split_md5": {
+    "train": "e03db54f95acd15a4a83a5bb28765024",
+    "val": "84793a339a7eadb47727c3e3bcd150d7",
+    "test": "c750aaf4476ff926294cce7034281eab"
+  },
+  "seed": 0,
+  "completed_utc": "2026-05-31T10:22:27.228909+00:00",
+  "summary_pointer": "metrics/summary.json"
+}

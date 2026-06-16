@@ -1,0 +1,13 @@
+# Plots Index
+
+- 20260531_064719_yolo11m_baseline_s0_nogit_metrics_6panel.png  <-  20260531_064719_yolo11m_baseline_s0_nogit\results.csv  (cols: train/box_loss,train/cls_loss,...) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_resource_usage.png  <-  metrics/epoch_metrics.csv  (cols: epoch,vram_peak_MB,epoch_time_s,samples_per_sec) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_lr_schedule.png  <-  results.csv  (cols: lr/pg0,lr/pg1,lr/pg2,lr/pg3,lr/pg4,lr/pg5,lr/pg6,lr/pg7) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_pr_curve.png  <-  metrics/pr_curve.csv  (cols: conf,precision,recall,F1,F2,TP,FP,FN) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_f1_conf.png  <-  metrics/f1_vs_conf.csv  (cols: conf,F1,F2,precision,recall) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_conf_hist.png  <-  metrics/confidence_hist.csv  (cols: bin_left,bin_right,count) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_per_size_recall.png  <-  metrics/per_size.csv  (cols: bin,lo_px,hi_px,gt_total,matched,recall) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_calibration.png  <-  metrics/calibration.csv  (cols: bin_lo,bin_hi,count,mean_conf,mean_acc,gap) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_latency_resolution.png  <-  metrics/latency_by_res.csv  (cols: resolution,latency_ms) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_latency_hist.png  <-  metrics/per_image_latency.csv  (cols: latency_ms) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py
+- 20260531_064719_yolo11m_baseline_s0_nogit_confusion.png  <-  metrics/confusion.csv  (cols: row=actual,col=predicted) -- produced by: E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m\yolo11m_thesis.py

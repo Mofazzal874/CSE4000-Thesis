@@ -1,0 +1,13 @@
+[SKIPPED] paired bootstrap vs another model -- BASELINE_PER_IMAGE_CSV not configured; per-image scores saved in metrics/per_image_test.csv for later Phase-D.
+[SKIPPED] attention_map_examples         -- vanilla YOLO11m (no CBAM)
+[SKIPPED] channel_attention_weights      -- vanilla YOLO11m (no CBAM)
+[SKIPPED] spatial_attention_entropy      -- vanilla YOLO11m (no CBAM)
+[SKIPPED] per-stride_AP                  -- vanilla YOLO11m (no P2 head)
+[SKIPPED] tiny_obj_recall_by_head        -- vanilla YOLO11m (no P2 head)
+[SKIPPED] ssm_state_norm                 -- vanilla YOLO11m (no SSM)
+[SKIPPED] forward_vs_backward_scan_disag -- vanilla YOLO11m (no SSM)
+[SKIPPED] window_size_per_layer          -- vanilla YOLO11m (no SSM)
+[SKIPPED] dilation_branch_contribution   -- vanilla YOLO11m (no SSM)
+[SKIPPED] injection_layer_indices        -- vanilla YOLO11m (no SSM)
+[SKIPPED] SAHI-specific metrics          -- not part of this run
+[SKIPPED] TTA-specific metrics           -- not part of this run

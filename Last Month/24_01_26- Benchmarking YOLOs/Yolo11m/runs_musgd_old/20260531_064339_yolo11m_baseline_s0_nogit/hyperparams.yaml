@@ -1,0 +1,14 @@
+epochs: 300
+patience: 50
+f2_patience: 40
+imgsz: 640
+batch: 16
+save_period: 5
+num_workers: 4
+cache: ram
+cos_lr: true
+lrf: 0.01
+amp: true
+seed: 0
+model_tag: yolo11m_baseline
+pretrained: yolo11m.pt

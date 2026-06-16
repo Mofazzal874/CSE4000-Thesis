@@ -1,0 +1,8 @@
+metric,n_seeds,mean,std
+params_total_M,1,20.0308,0.0
+gflops,1,67.65,0.0
+weights_size_MB,1,38.676,0.0
+latency_mean_ms,1,5.119986600417178,0.0
+latency_p50_ms,1,5.079999988083728,0.0
+latency_p95_ms,1,5.359490000410005,0.0
+latency_p99_ms,1,6.096268996770959,0.0
