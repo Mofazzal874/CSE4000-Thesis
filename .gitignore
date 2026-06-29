@@ -84,3 +84,13 @@ YOLO11m_vs_YOLO11m_ECA_working_dir_of_kaggle/
 # OS
 .DS_Store
 Thumbs.db
+
+# Drone footage (real DJI Air 3S 4K videos + inference outputs -- large / regenerable)
+Drone Shoot/
+drone_inference_out/
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
