@@ -1,0 +1,109 @@
+% ============================================================================
+%  thesisstyle.sty  --  CSE-4000 KUET thesis formatting
+%  Encodes Defense/TEMPLATE_FORMATTING_SPEC.md. Compile with XeLaTeX + biber.
+% ============================================================================
+\ProvidesPackage{thesisstyle}[2026/07/01 CSE-4000 KUET thesis style]
+
+% ---- Page geometry (spec section 0) ---------------------------------------
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  left=1.2in, right=1.0in, top=1.2in, bottom=1.0in,
+  headsep=0.25in, footskip=0.4in
+}
+
+% ---- Fonts: real Times New Roman via bundled .ttf (XeLaTeX) ----------------
+% Font files live in fonts/ so this works on Overleaf without a system install.
+\RequirePackage{fontspec}
+\setmainfont{Times New Roman}[
+  Path         = fonts/,
+  Extension    = .ttf,
+  UprightFont  = times,
+  BoldFont     = timesbd,
+  ItalicFont   = timesi,
+  BoldItalicFont = timesbi
+]
+% If the bundled fonts are ever unavailable, comment the block above and use:
+%   \setmainfont{TeX Gyre Termes}   % metric-compatible Times clone, ships with TeX Live
+
+\RequirePackage{unicode-math}
+\setmathfont{TeX Gyre Termes Math}  % Times-matching math; falls back cleanly
+
+% ---- Line spacing (spec: 1.5 body, 1.2 references) -------------------------
+\RequirePackage{setspace}
+\onehalfspacing
+
+% ---- Paragraph style: block paragraphs, justified --------------------------
+% Word "space before 12pt / after 6pt" approximated as block spacing.
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\RequirePackage{ragged2e}   % better justification with fontspec
+
+% ---- Heading fonts/sizes (spec section 6) ----------------------------------
+\RequirePackage{titlesec}
+\newcommand{\sizeChapNum}{\fontsize{14}{21}\selectfont}   % CHAPTER I  -> 14pt
+\newcommand{\sizeChapTtl}{\fontsize{16}{24}\selectfont}   % chapter title -> 16pt
+\newcommand{\sizeFrontHd}{\fontsize{16}{24}\selectfont}   % Abstract/LoT/LoF -> 16pt
+\newcommand{\sizeTitle}{\fontsize{18}{27}\selectfont}     % thesis title -> 18pt
+
+% Chapter: "CHAPTER <roman>" (14pt, centered) then title (16pt, centered).
+\renewcommand{\thechapter}{\Roman{chapter}}
+\titleformat{\chapter}[display]
+  {\centering\bfseries}
+  {\sizeChapNum CHAPTER \thechapter}
+  {12pt}
+  {\sizeChapTtl}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}
+
+% Sections / subsections: 12pt bold, left, space before 12pt after 6pt.
+\titleformat{\section}{\bfseries\normalsize}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% ---- Figures, tables, equations numbered by chapter (spec 7 & 8) -----------
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\numberwithin{equation}{chapter}   % (3.1) style, right-aligned by default
+\numberwithin{figure}{chapter}     % Figure 3.2  (never 3.2.2)
+\numberwithin{table}{chapter}
+
+% ---- Captions: 11pt, centered, "Figure 1.1: ..." (spec 7) ------------------
+\RequirePackage{caption}
+\captionsetup{
+  font={stretch=1.5},
+  labelsep=colon,
+  justification=centering,
+  singlelinecheck=true,
+  skip=6pt
+}
+\captionsetup{font+={small}}  % ~11pt at a 12pt base
+
+% ---- Tables ---------------------------------------------------------------
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+
+% ---- IEEE references via biblatex (spec 9) ---------------------------------
+\RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}
+% Reference list: 1.2 line spacing, hanging indent 0.31in.
+\setlength{\biblabelsep}{0.31in}
+\renewcommand*{\bibfont}{\normalfont\setstretch{1.2}}
+
+% ---- Front-matter heading helper (Acknowledgment/Abstract centered 16pt) ---
+\newcommand{\frontheading}[1]{%
+  \begin{center}\sizeFrontHd\bfseries #1\end{center}%
+  \vspace{\baselineskip}%
+}
+
+% ---- Page numbering: footer centered (report/plain does this) --------------
+\pagestyle{plain}
+
+% ---- Hyperlinks (kept subtle; black for print) -----------------------------
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{microtype}
+
+% ---- Draft placeholder (remove as sections get written) --------------------
+\newcommand{\tbd}{\textit{[Content to be written.]}\par}

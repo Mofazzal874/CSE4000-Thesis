@@ -525,6 +525,7 @@ SEARCH_ROOTS = [p for p in [
     Path(os.environ["PROJECT_ROOT"]) if os.environ.get("PROJECT_ROOT") else None,
     SCRIPT_DIR.parent, SCRIPT_DIR.parent.parent, SCRIPT_DIR.parent.parent.parent,
     Path(r"D:\student_2k20\2007074"),                 # PC-2 (A6000 box) project root
+    Path(r"D:\2007074"),                              # PC-3 project root
     Path(r"E:\Thesis_mofazzal_2007074"), Path(r"D:\Academics\thesis folder\Last Month"),
 ] if p is not None]
 

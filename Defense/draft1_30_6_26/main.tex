@@ -1,0 +1,48 @@
+% ============================================================================
+%  CSE-4000 Thesis  --  Md Mofazzal Hosen (2007074), KUET CSE, Batch 2k20
+%  COMPILE: XeLaTeX -> biber -> XeLaTeX -> XeLaTeX   (Overleaf: set to XeLaTeX)
+% ============================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage{thesisstyle}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+% ---------- COVER (unnumbered) ----------
+\include{frontmatter/cover}
+
+% ---------- FRONT MATTER (roman: i, ii, iii, ...) ----------
+\pagenumbering{roman}
+\include{frontmatter/titlepage}     % i
+\include{frontmatter/acknowledgment} % ii
+\include{frontmatter/abstract}       % iii
+
+\tableofcontents                     % iv
+\listoftables                        % vii
+\listoffigures                       % viii
+
+% ---------- MAIN MATTER (arabic: 1, 2, 3, ...) ----------
+\clearpage
+\pagenumbering{arabic}
+
+\include{chapters/01_introduction}
+\include{chapters/02_literature_review}
+\include{chapters/03_methodology}
+\include{chapters/04_implementation_results}
+\include{chapters/05_societal_issues}
+\include{chapters/06_complex_engineering}
+\include{chapters/07_conclusions}
+
+% ---------- APPENDICES (unnumbered, like the template Contents) ----------
+\include{chapters/08_appendices}
+
+% ---------- REFERENCES (IEEE) ----------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\begin{center}{\fontsize{14}{21}\selectfont\bfseries REFERENCES}\end{center}
+\vspace{\baselineskip}
+\printbibliography[heading=none]
+
+\end{document}

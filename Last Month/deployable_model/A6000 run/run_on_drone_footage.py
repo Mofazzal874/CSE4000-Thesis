@@ -37,8 +37,12 @@ INPUTS = []
 SAMPLE_EVERY_SEC = 2.0      # sample ~1 frame every 2 s (so ~15 frames per 30 s clip)
 TILE          = 640         # slice size (matches the model input -> native-res people)
 OVERLAP       = 0.20        # 20% tile overlap so people on tile borders aren't cut
-CONF          = 0.25        # detection confidence threshold
+CONF          = 0.35        # raised from 0.25 -> cuts low-confidence background false positives
+                            # (grass/foliage/shadow texture fired as "people"). For angle-A PSEUDO-LABELS
+                            # use 0.45-0.50 (high precision). Drop toward 0.25 only to chase max recall.
 NMS_IOU       = 0.55        # merge duplicate boxes from overlapping tiles
+MIN_BOX_SIDE_PX = 14        # drop boxes whose SHORTER side < this (in 4K px) -> kills the tiny noise
+                            # boxes on empty grass/debris. Real people are >=~30 px even at 50 m, so safe.
 WHOLE_IMGSZ   = 1280        # whole-frame baseline resolution (still downsamples 4K ~3x -> misses tiny)
 DO_WHOLE_BASELINE = True    # also run whole-frame inference for the SAHI-vs-naive comparison figure
 MAX_FRAMES_PER_VIDEO = 25   # cap, so it stays quick
@@ -62,6 +66,14 @@ except Exception:
             order = order[1:][iou_<=iou]
         return np.array(keep, dtype=int)
 
+
+def _drop_tiny(boxes, scores):
+    """Remove boxes whose shorter side < MIN_BOX_SIDE_PX (the tiny grass/foliage false positives)."""
+    if len(boxes) == 0:
+        return boxes, scores
+    sides = np.minimum(boxes[:, 2] - boxes[:, 0], boxes[:, 3] - boxes[:, 1])
+    keep = sides >= MIN_BOX_SIDE_PX
+    return boxes[keep], scores[keep]
 
 def _tile_starts(total, tile, step):
     if total <= tile:
@@ -88,13 +100,13 @@ def sliced_predict(model, img):
         return np.zeros((0, 4), np.float32), np.zeros((0,), np.float32)
     boxes = np.concatenate(boxes); scores = np.concatenate(scores)
     keep = _nms(boxes, scores, NMS_IOU)
-    return boxes[keep], scores[keep]
+    return _drop_tiny(boxes[keep], scores[keep])
 
 def whole_predict(model, img):
     r = model.predict(img, conf=CONF, imgsz=WHOLE_IMGSZ, verbose=False)[0].boxes
     if r is None or len(r) == 0:
         return np.zeros((0, 4), np.float32), np.zeros((0,), np.float32)
-    return r.xyxy.cpu().numpy().astype(np.float32), r.conf.cpu().numpy().astype(np.float32)
+    return _drop_tiny(r.xyxy.cpu().numpy().astype(np.float32), r.conf.cpu().numpy().astype(np.float32))
 
 def draw(img, boxes, label, color):
     out = img.copy()
