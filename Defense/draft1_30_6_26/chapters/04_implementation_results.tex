@@ -56,9 +56,9 @@ $F_\beta$ family are
   F_\beta = (1+\beta^{2})\,\frac{P \cdot R}{\beta^{2} P + R},
 \end{align}
 with $\beta = 1$ for $F_1$ and $\beta = 2$ for $F_2$. Localisation quality is
-measured by COCO average precision: $\mathrm{AP}$ averaged over IoU thresholds
-$0.5$ to $0.95$, along with $\mathrm{AP}_{50}$, $\mathrm{AP}_{75}$, and the
-small-object $\mathrm{AP}_S$. Because the targets are extremely small, recall is
+measured by COCO~\cite{lin2014coco} average precision: $\mathrm{AP}$ averaged over
+IoU thresholds $0.5$ to $0.95$, along with $\mathrm{AP}_{50}$, $\mathrm{AP}_{75}$,
+and the small-object $\mathrm{AP}_S$. Because the targets are extremely small, recall is
 also reported per object-size band --- very-tiny ($<8$~px), tiny ($8$--$16$~px),
 small ($16$--$32$~px), and medium ($32$--$96$~px) --- which is where the effect of
 the P2 head is visible. Efficiency is reported as parameter count, GFLOPs, and
@@ -108,6 +108,67 @@ scales are shown in Figure~\ref{fig:dataset_samples}.
 \end{figure}
 
 \section{Implementation and Results}
+
+\subsection{Detector Family Benchmark}
+Before the ablation, the YOLOv9~\cite{wang2024yolov9}, YOLOv10~\cite{wang2024yolov10},
+and YOLO11~\cite{jocher2024yolo11} families were benchmarked on C2A to select a
+baseline; the comparison is given in Table~\ref{tab:detbench}. This benchmark was run
+under an earlier protocol, so its absolute values are not directly comparable to the
+final ablation of Table~\ref{tab:main}; it is used only to choose the backbone. The
+largest model, YOLOv9-e, gives the highest accuracy (mAP50 $0.855$, mAP50-95 $0.619$)
+but at $111.8$~MB --- about three times the size of the mid-size models. YOLO11m
+reaches mAP50 $0.841$ and mAP50-95 $0.592$ at $38.6$~MB, close to the best while
+staying small enough to deploy, and gives the best accuracy per megabyte of the
+family. It was therefore chosen as the baseline.
+
+\begin{table}[t]
+  \centering
+  \caption{Preliminary detector-family benchmark on C2A (test set) used to select
+  the baseline. YOLO11m was chosen for its accuracy-to-size balance.}
+  \label{tab:detbench}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l r r r r r r@{}}
+    \toprule
+    Model & mAP50 & mAP50-95 & $P$ & $R$ & $F_1$ & Size (MB) \\
+    \midrule
+    YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\
+    YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\
+    YOLOv9-e   & \textbf{0.855} & \textbf{0.619} & \textbf{0.884} & \textbf{0.805} & \textbf{0.843} & 111.8 \\
+    YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\
+    YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\
+    YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\
+    YOLOv11-s  & 0.803 & 0.535 & 0.845 & 0.757 & 0.798 & 18.3 \\
+    \textbf{YOLO11m (selected)} & 0.841 & 0.592 & 0.867 & 0.794 & 0.829 & 38.6 \\
+    YOLOv11-l  & 0.847 & 0.603 & 0.876 & 0.796 & 0.834 & 48.8 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Attention Module Selection}
+The choice of CBAM over the lighter ECA module~\cite{wang2020eca} was settled by a
+preliminary comparison on the baseline, summarised in Table~\ref{tab:eca} (again an
+earlier protocol; values are relative, not comparable to Table~\ref{tab:main}).
+Replacing the baseline attention with CBAM gave the highest $F_2$ ($0.849$) and the
+highest small-object recall ($0.892$, $+1.3$ points over the baseline), whereas ECA
+barely moved either metric. CBAM also reduced parameters relative to the baseline
+block. CBAM was therefore adopted as the attention module and carried into the main
+ablation.
+
+\begin{table}[t]
+  \centering
+  \caption{Preliminary attention-module comparison on C2A (earlier protocol).
+  CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}
+  \label{tab:eca}
+  \begin{tabular}{@{}l r r r@{}}
+    \toprule
+    Model & $F_2$ & Small-object recall & $F_1$ \\
+    \midrule
+    YOLO11m baseline & 0.844 & 0.881 & 0.837 \\
+    + ECA            & 0.844 & 0.884 & 0.840 \\
+    + CBAM           & \textbf{0.849} & \textbf{0.892} & \textbf{0.842} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Quantitative Results}
 Table~\ref{tab:main} reports the four configurations on the C2A test set under the
@@ -279,29 +340,36 @@ pushes this size advantage further.
   \end{tabular}
 \end{table}
 
-\subsection{Inference-Time Enhancement: SAHI}
+\subsection{Inference-Time Enhancement: SAHI and TTA}
 Slicing-aided hyper inference (SAHI)~\cite{akyon2022sahi} runs the trained detector
 over overlapping crops so that very small targets occupy a larger fraction of each
-input tile. It is applied here as a separate, clearly-labelled inference-time
-setting on the recommended CBAM~+~P2 model, not folded into the primary table,
-because the sliced protocol uses per-image box matching for which the standard mAP
-is not directly comparable. Results for CBAM~+~P2 under SAHI are reported in
-Table~\ref{tab:sahi}.
-% Pending: re-run SAHI on CBAM+P2 (user). Fill Table 4.6 when the run lands.
-\tbd
+input tile; test-time augmentation (TTA) instead runs the detector at several
+resolutions and merges the results. Both are applied as separate, clearly-labelled
+inference-time settings, not folded into the primary table, because the sliced
+protocol uses per-image box matching for which the standard mAP is not directly
+comparable. Table~\ref{tab:sahi} reports the SAHI sweep. A $256$-px slice gives the
+highest very-tiny recall, $0.829$ (up from $0.767$, $+6.2$ points), but at a heavy
+cost of $534$~ms per image; a $512$-px slice is the best balance, reaching $F_1$
+$0.866$ and very-tiny recall $0.808$ at $187$~ms. TTA at $1280$~px raised mAP50 by
+$1.6$ points and mAP50-95 by $5.4$ points with no retraining and cut the person
+miss-rate from $14\%$ to $10\%$; beyond $1280$~px it degraded, as a model trained at
+$640$~px cannot extrapolate to three times the resolution. These inference-time
+results were measured on the state-space variant; the same procedures are being
+re-run on the recommended CBAM~+~P2 model and the table will be updated accordingly.
 
 \begin{table}[t]
   \centering
-  \caption{CBAM~+~P2 with SAHI on the C2A test set at several slice sizes, reported
-  as a separate inference-time setting.}
+  \caption{SAHI slice-size sweep on the C2A test set (per-image box matching at
+  IoU~0.5), reported as a separate inference-time setting. Baseline row is the
+  same model without slicing.}
   \label{tab:sahi}
-  \begin{tabular}{@{}l r r r r r@{}}
+  \begin{tabular}{@{}l r r r r r r@{}}
     \toprule
-    Setting & Slice & $P$ & $R$ & $F_2$ & very-tiny recall \\
+    Setting & Slice & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny recall \\
     \midrule
-    CBAM + P2 (no SAHI) & --- & --- & --- & --- & --- \\
-    + SAHI & 512 & --- & --- & --- & --- \\
-    + SAHI & 256 & --- & --- & --- & --- \\
+    no SAHI  & ---  & 0.855 & 0.845 & 0.850 & 0.847 & 0.767 \\
+    + SAHI   & 512  & 0.867 & 0.865 & \textbf{0.866} & 0.865 & 0.808 \\
+    + SAHI   & 256  & 0.790 & 0.872 & 0.829 & 0.854 & \textbf{0.829} \\
     \bottomrule
   \end{tabular}
 \end{table}

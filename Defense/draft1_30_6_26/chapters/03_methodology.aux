@@ -6,20 +6,20 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{10}{section.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.2}Overall Framework}{10}{section.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.3}Detailed Methodology}{10}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Data Preprocessing}{10}{subsection.3.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{11}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:framework}{{3.1}{11}{Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections}{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Attention Enhancement: CBAM}{11}{subsection.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Multi-Scale Detection: the P2 Head}{12}{subsection.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}State-Space Neck Variant: C3k2Mamba}{12}{subsection.3.3.4}\protected@file@percent }
-\newlabel{sec:mamba}{{3.3.4}{12}{State-Space Neck Variant: C3k2Mamba}{subsection.3.3.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.5}The Additive Ablation Design}{12}{subsection.3.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.6}Running Example}{12}{subsection.3.3.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{13}{table.caption.17}\protected@file@percent }
-\newlabel{tab:variants}{{3.1}{13}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.17}{}}
+\@writefile{toc}{\contentsline {subsection}{Data Preprocessing}{10}{subsection*.25}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{11}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:framework}{{3.1}{11}{Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {subsection}{Attention Enhancement: CBAM}{11}{subsection*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{12}{subsection*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{12}{subsection*.28}\protected@file@percent }
+\newlabel{sec:mamba}{{3.3}{12}{State-Space Neck Variant: C3k2Mamba}{subsection*.28}{}}
+\@writefile{toc}{\contentsline {subsection}{The Additive Ablation Design}{12}{subsection*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Running Example}{12}{subsection*.31}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{13}{table.caption.30}\protected@file@percent }
+\newlabel{tab:variants}{{3.1}{13}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.30}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3.4}Conclusion}{13}{section.3.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces A single C2A test image traced through the pipeline: (a)~the letterboxed input, (b)~the CBAM attention response over the backbone features, (c)~the per-scale proposals including the P2 scale, and (d)~the final detections after NMS.}}{14}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:running}{{3.2}{14}{A single C2A test image traced through the pipeline: (a)~the letterboxed input, (b)~the CBAM attention response over the backbone features, (c)~the per-scale proposals including the P2 scale, and (d)~the final detections after NMS}{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces A single C2A test image traced through the pipeline: (a)~the letterboxed input, (b)~the CBAM attention response over the backbone features, (c)~the per-scale proposals including the P2 scale, and (d)~the final detections after NMS.}}{14}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:running}{{3.2}{14}{A single C2A test image traced through the pipeline: (a)~the letterboxed input, (b)~the CBAM attention response over the backbone features, (c)~the per-scale proposals including the P2 scale, and (d)~the final detections after NMS}{figure.caption.32}{}}
 \@setckpt{chapters/03_methodology}{
 \setcounter{page}{15}
 \setcounter{equation}{2}
@@ -50,7 +50,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{19}
+\setcounter{instcount}{21}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{3}
 \setcounter{maxitems}{3}

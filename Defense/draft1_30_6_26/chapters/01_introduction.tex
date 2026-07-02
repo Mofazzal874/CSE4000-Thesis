@@ -14,8 +14,9 @@ airborne hardware.
 \section{Background / Problem Statement}
 General object detection is close to solved for objects that fill a reasonable part
 of the frame, but aerial search-and-rescue imagery breaks that assumption. Targets
-are tiny, often smaller than eight pixels; they are partially buried or occluded;
-scenes are dense; and the background is visually noisy. Standard detectors detect
+are tiny, often smaller than eight pixels --- in benchmark disaster imagery about
+47\% of annotated people occupy fewer than ten pixels~\cite{nihal2024c2a}; they are
+partially buried or occluded; scenes are dense; and the background is visually noisy. Standard detectors detect
 at strides of eight pixels and coarser, so the smallest people fall through the
 grid. Several remedies exist --- higher-resolution detection scales, feature
 attention, and inference-time slicing --- but they are usually reported one at a
@@ -59,20 +60,12 @@ reduced to a deployable model.
 
 \section{Project Planning and Work Distribution}
 This thesis is the work of a single author, so there is no division of tasks across
-team members; a responsibility-assignment matrix does not apply. The work was
-planned as a sequence of phases --- benchmarking, the attention and detection-head
-ablations, the state-space experiments, inference-time enhancement, and the
-lightweight variant, in parallel with report writing --- as shown in the schedule
-in Figure~\ref{fig:gantt}.
-
-\begin{figure}[b]
-  \centering
-  \figorplaceholder{figures/gantt_chart.png}{7.0cm}
-  \caption{Project schedule for the thesis, from initial detector benchmarking
-  through the ablation study, inference-time and lightweight extensions, and report
-  writing.}
-  \label{fig:gantt}
-\end{figure}
+team members and a responsibility-assignment matrix does not apply. The work
+proceeded as a sequence of phases: benchmarking the YOLO detector family on C2A,
+the attention and detection-head ablations, the state-space experiments,
+inference-time enhancement, and the lightweight variant, carried out in parallel
+with report writing so that writing did not wait on the completion of every
+experiment.
 
 \section{Applications of the Work}
 The immediate application is aerial search and rescue: a small detector that finds

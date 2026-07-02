@@ -1,31 +1,32 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {II}Literature Review}{5}{chapter.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {II}Literature Review}{4}{chapter.2}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {2.1}Introduction}{5}{section.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2.2}Literature Review}{5}{section.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.1}From Two-Stage Detectors to Real-Time and Transformer Models}{5}{subsection.2.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.2}Small-Object and Aerial Detection}{5}{subsection.2.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.3}Human Detection in Disaster and Search-and-Rescue Imagery}{6}{subsection.2.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.4}State-Space Models for Vision}{6}{subsection.2.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}Introduction}{4}{section.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Literature Review}{4}{section.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{From Two-Stage Detectors to Real-Time and Transformer Models}{4}{subsection*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Small-Object and Aerial Detection}{4}{subsection*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Human Detection in Disaster and Search-and-Rescue Imagery}{5}{subsection*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{State-Space Models for Vision}{5}{subsection*.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again.}}{6}{figure.caption.16}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:cbam}{{2.1}{6}{The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again}{figure.caption.16}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {2.3}Core Concepts}{6}{section.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.1}The YOLO11 Baseline}{6}{subsection.2.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again.}}{7}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:cbam}{{2.1}{7}{The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again}{figure.caption.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.2}Attention: CBAM and ECA}{7}{subsection.2.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.3}Multi-Scale Detection and the P2 Scale}{7}{subsection.2.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.4}State-Space Models and the C3k2Mamba Block}{7}{subsection.2.3.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression.}}{8}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:p2}{{2.2}{8}{The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression}{figure.caption.12}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.4}Discussion}{8}{section.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.1}Research Gap and Proposed Solution}{8}{subsection.2.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged.}}{9}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:mamba}{{2.3}{9}{The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged}{figure.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{9}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:chain}{{2.4}{9}{The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck}{figure.caption.14}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{9}{table.caption.15}\protected@file@percent }
-\newlabel{tab:gap}{{2.1}{9}{Position of this thesis relative to prior work on small-object aerial human detection}{table.caption.15}{}}
+\@writefile{toc}{\contentsline {subsection}{The YOLO11 Baseline}{6}{subsection*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Attention: CBAM and ECA}{6}{subsection*.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression.}}{7}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:p2}{{2.2}{7}{The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection and the P2 Scale}{7}{subsection*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{State-Space Models and the C3k2Mamba Block}{7}{subsection*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.4}Discussion}{7}{section.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Research Gap and Proposed Solution}{7}{subsection*.21}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged.}}{8}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:mamba}{{2.3}{8}{The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged}{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{8}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:chain}{{2.4}{8}{The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck}{figure.caption.22}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{9}{table.caption.23}\protected@file@percent }
+\newlabel{tab:gap}{{2.1}{9}{Position of this thesis relative to prior work on small-object aerial human detection}{table.caption.23}{}}
 \@setckpt{chapters/02_literature_review}{
 \setcounter{page}{10}
 \setcounter{equation}{0}
@@ -38,7 +39,7 @@
 \setcounter{part}{0}
 \setcounter{chapter}{2}
 \setcounter{section}{4}
-\setcounter{subsection}{1}
+\setcounter{subsection}{0}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
@@ -56,7 +57,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{19}
+\setcounter{instcount}{21}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{3}
 \setcounter{maxitems}{3}

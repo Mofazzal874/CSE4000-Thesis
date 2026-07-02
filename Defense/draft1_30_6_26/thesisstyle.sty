@@ -70,6 +70,7 @@
 % \thechapter Roman for the heading/TOC, but force the cross-reference numbers
 % to use the arabic chapter value so nothing becomes "III.1".
 \renewcommand{\thechapter}{\Roman{chapter}}
+\setcounter{secnumdepth}{1}% number only chapter + section (X.Y max; no X.Y.Z)
 \RequirePackage{graphicx}
 \numberwithin{equation}{chapter}   % resets per chapter
 \numberwithin{figure}{chapter}
