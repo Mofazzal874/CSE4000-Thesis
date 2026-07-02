@@ -9,18 +9,30 @@
 
 \begin{document}
 
+% "PAGE" header as the first line inside the Contents list.
+\addtocontents{toc}{\protect\tocpagehead}
+
 % ---------- COVER (unnumbered) ----------
 \include{frontmatter/cover}
 
 % ---------- FRONT MATTER (roman: i, ii, iii, ...) ----------
 \pagenumbering{roman}
-\include{frontmatter/titlepage}     % i
-\include{frontmatter/acknowledgment} % ii
-\include{frontmatter/abstract}       % iii
+\include{frontmatter/titlepage}      % i  (adds its own TOC line)
+\include{frontmatter/acknowledgment} % ii (adds its own TOC line)
+\include{frontmatter/abstract}       % iii(adds its own TOC line)
 
-\tableofcontents                     % iv
-\listoftables                        % vii
-\listoffigures                       % viii
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Contents}
+\tableofcontents
+
+\clearpage
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Tables}
+\addtocontents{lot}{\protect\lotlofhead{Table}}
+\listoftables
+
+\clearpage
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Figures}
+\addtocontents{lof}{\protect\lotlofhead{Figure}}
+\listoffigures
 
 % ---------- MAIN MATTER (arabic: 1, 2, 3, ...) ----------
 \clearpage
@@ -42,7 +54,7 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{References}
 \begin{center}{\fontsize{14}{21}\selectfont\bfseries REFERENCES}\end{center}
-\vspace{\baselineskip}
+\vblank{2}
 \printbibliography[heading=none]
 
 \end{document}

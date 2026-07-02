@@ -1,26 +1,170 @@
 \chapter{Literature Review}
 
 \section{Introduction}
-\tbd
+This chapter reviews the work that the thesis builds on and defines the components
+it modifies. The literature is grouped by theme rather than listed paper by paper:
+first the progression of object detectors, then the techniques developed
+specifically for small and aerial targets, and then human detection in disaster
+imagery. A separate section explains the base architectures --- YOLO11, the CBAM
+and ECA attention modules, multi-scale detection, and state-space models --- so
+that Chapter~III can concentrate on the proposed modifications. The chapter ends
+with the research gap that the thesis addresses.
 
 \section{Literature Review}
-% Thematic grouping, NOT paper-by-paper. Use subsections as themes.
-\tbd
 
-\subsection{Classical Detection Techniques}
-\tbd
+\subsection{From Two-Stage Detectors to Real-Time and Transformer Models}
+Modern object detection divides into two-stage and one-stage families. Two-stage
+detectors such as Faster R-CNN~\cite{ren2015fasterrcnn} and its Cascade
+variant~\cite{cai2018cascade} first propose regions and then classify them, which
+gives strong accuracy at a high computational cost. One-stage detectors predict
+boxes directly and trade a little accuracy for speed; RetinaNet~\cite{lin2017focal}
+addressed the resulting class-imbalance with the focal loss, and the YOLO family
+made single-pass detection the practical standard for real-time use. A third,
+transformer-based family removes hand-designed components such as anchor boxes and
+non-maximum suppression: DETR~\cite{carion2020detr} posed detection as set
+prediction, and RT-DETR~\cite{zhao2024rtdetr} later made this competitive with YOLO
+at real-time speeds. This thesis works within the one-stage YOLO family because its
+speed and small model size suit airborne deployment.
 
-\subsection{Modern Deep-Learning Techniques}
-\tbd
+\subsection{Small-Object and Aerial Detection}
+Detecting very small objects is a distinct problem because targets occupy few
+pixels and are lost in the coarse strides of a standard detection head. Three lines
+of work address this. The first adds higher-resolution detection scales: feature
+pyramids~\cite{lin2017fpn} and path-aggregation necks fuse fine and coarse features,
+and adding a stride-4 (P2) head extends detection to targets a few pixels wide. The
+second re-weights features with attention so that faint targets are not suppressed
+by background clutter; channel attention (ECA~\cite{wang2020eca}) and combined
+channel-and-spatial attention (CBAM~\cite{woo2018cbam}) are the common choices. The
+third operates at inference time: slicing-aided hyper inference
+(SAHI~\cite{akyon2022sahi}) runs the detector over overlapping crops so that small
+targets are effectively enlarged. All three are relevant here; the thesis studies
+the first two as architectural changes and the third as an inference-time setting.
 
-\subsection{Core Concepts: The YOLO Baseline Architecture}
-% Explain the baseline model here (Related Work / Core Concepts), so the
-% methodology chapter can focus only on the proposed modifications.
-\tbd
+\subsection{Human Detection in Disaster and Search-and-Rescue Imagery}
+Aerial human detection for search and rescue has been surveyed as a benchmark
+problem in its own right~\cite{sar_survey}, and prior work has applied deep models
+to aerial video for this purpose~\cite{aerial_human_video}. A recurring obstacle is
+data: real annotated disaster imagery with very small human targets is scarce.
+Nihal et al.~\cite{nihal2024c2a} addressed this with C2A, a semi-synthetic dataset
+that composites segmented human poses onto disaster backgrounds, and benchmarked a
+range of detectors on it. Their study is the direct point of comparison for this
+thesis, which uses the same dataset and test split.
+
+\subsection{State-Space Models for Vision}
+State-space models have recently been proposed as a linear-time alternative to
+attention for long-sequence modelling. Mamba~\cite{gu2023mamba} introduced a
+selective scan that makes the state dynamics input-dependent, and Mamba-YOLO~%
+\cite{wang2025mambayolo} applied this idea to detection by replacing the backbone
+with state-space blocks. The variant explored in this thesis is narrower: it keeps
+the convolutional backbone and inserts bidirectional local-window state-space
+blocks only in the neck, which lets its effect be measured against an otherwise
+identical model.
+
+\section{Core Concepts}
+This section describes the base architectures that the thesis modifies. The
+proposed changes to them are the subject of Chapter~III.
+
+\subsection{The YOLO11 Baseline}
+YOLO11~\cite{jocher2024yolo11} is a single-stage detector with three parts: a
+convolutional backbone that extracts features at decreasing spatial resolution
+through C3k2 stages, a path-aggregation neck (PAN--FPN) that fuses features across
+scales, and a decoupled detection head that predicts boxes at three strides (P3,
+P4, P5). The YOLO11 backbone ends with a spatial-pyramid-pooling (SPPF) stage
+followed by a C2PSA self-attention block. The medium variant, YOLO11m, is used as
+the baseline throughout this thesis.
+
+\subsection{Attention: CBAM and ECA}
+Attention modules re-weight feature maps so that informative channels and spatial
+locations are emphasised. ECA~\cite{wang2020eca} applies a lightweight channel-only
+attention using a one-dimensional convolution. CBAM~\cite{woo2018cbam} is stronger:
+it applies channel attention followed by spatial attention in sequence, as shown in
+Figure~\ref{fig:cbam}. An earlier study on this dataset compared both against the
+baseline and found CBAM to give better operational recall than ECA at a similar
+cost, which is why CBAM is used in this thesis; that comparison is summarised in
+Chapter~IV.
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/fig_cbam_module.pdf}{6.5cm}
+  \caption{The CBAM module. Channel attention (from global average and max pooling
+  through a shared multi-layer perceptron) refines the feature map, after which
+  spatial attention (from channel-wise pooling and a $7\times7$ convolution)
+  refines it again.}
+  \label{fig:cbam}
+\end{figure}
+
+\subsection{Multi-Scale Detection and the P2 Scale}
+The finest standard detection scale, P3 at stride~8, summarises an $8\times8$ pixel
+region per grid cell at $640$ input, which is coarse for targets only a few pixels
+across. Adding a P2 scale at stride~4 introduces a $160\times160$ feature map whose
+cells cover $4\times4$ pixels, extending detection to targets as small as about
+four pixels. Figure~\ref{fig:p2} shows how the P2 branch attaches alongside the
+standard P3--P5 scales.
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/fig_p2_head.pdf}{6.5cm}
+  \caption{The four-scale detection head. The P2 scale (stride~4, $160\times160$)
+  is added to the standard P3--P5 scales to resolve very small targets; each scale
+  feeds per-scale detections into non-maximum suppression.}
+  \label{fig:p2}
+\end{figure}
+
+\subsection{State-Space Models and the C3k2Mamba Block}
+A state-space model maps an input sequence to an output through a hidden state
+whose dynamics, in the selective (Mamba) formulation, depend on the input. Applied
+to vision, a feature map is scanned as a sequence. The block explored in this
+thesis, C3k2Mamba (Figure~\ref{fig:mamba}), scans a local window in both the forward
+and reverse directions and fuses the two, and is inserted in place of selected C3k2
+neck blocks. Its effect on this task is measured in Chapter~IV.
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/fig_c3k2mamba.pdf}{6.5cm}
+  \caption{The explored C3k2Mamba block: forward and reverse selective scans over a
+  local window are fused and projected, replacing the C3k2 bottleneck at selected
+  neck layers while leaving the backbone and head unchanged.}
+  \label{fig:mamba}
+\end{figure}
 
 \section{Discussion}
-\tbd
 
 \subsection{Research Gap and Proposed Solution}
-% Summarize the gap with a comparison table; show the idea is novel.
-\tbd
+The reviewed work leaves a specific gap. Small-object techniques --- extra
+detection scales, attention, and inference-time slicing --- are usually reported in
+isolation and on generic aerial data, and the recent enthusiasm for state-space
+necks has not been tested against a controlled baseline for very small human
+targets. On disaster imagery specifically, the C2A benchmark reports whole-model
+scores but not a component-wise account of where a small-object gain actually comes
+from. This thesis fills that gap with a single-variable additive ablation on C2A
+that measures attention, the P2 detection scale, and a state-space neck against one
+another under an identical training and evaluation protocol, and then reports which
+components are worth their cost. The four configurations are summarised in
+Figure~\ref{fig:chain}, and the specific differences from prior work are listed in
+Table~\ref{tab:gap}.
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/fig_ablation_chain.pdf}{4.5cm}
+  \caption{The additive ablation studied in this thesis: each step changes one
+  component of the YOLO11m baseline, isolating the effect of attention, the P2
+  detection scale, and the state-space neck.}
+  \label{fig:chain}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption{Position of this thesis relative to prior work on small-object aerial
+  human detection.}
+  \label{tab:gap}
+  \begin{tabular}{@{}p{4.2cm} p{5cm} p{5cm}@{}}
+    \toprule
+    Aspect & Prior work & This thesis \\
+    \midrule
+    Small-object techniques & reported individually & compared in one controlled ablation \\
+    Attention choice & asserted or single option & CBAM vs ECA measured on the task \\
+    State-space neck & proposed as a backbone, on generic data & tested in the neck against an identical baseline; reported honestly \\
+    Target domain & mostly generic aerial imagery & disaster/SAR imagery (C2A), very small human targets \\
+    \bottomrule
+  \end{tabular}
+\end{table}

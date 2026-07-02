@@ -1,10 +1,28 @@
 % ---------- ABSTRACT (spec section 4) : page iii, <= 500 words ----------
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Abstract}
 \frontheading{Abstract}
 
-% ==== TODO: write abstract (<= 500 words) ====
-Write an abstract of your thesis within 500 words. Summarize the problem
-(real-time human detection in aerial/drone imagery for search-and-rescue),
-the proposed approach (YOLO backbone augmented with a Mamba/state-space
-component), the datasets used, the key quantitative results, and the main
-contribution relative to the state of the art.
-\clearpage
+Locating people in aerial imagery is central to disaster search and rescue, but
+the targets are often only a few pixels wide, partially occluded, and set against
+cluttered backgrounds, which defeats standard object detectors. This thesis asks
+which architectural additions actually help for this task, and builds a compact
+detector around the answer. Starting from a YOLO11m baseline, an additive ablation
+introduces one change at a time --- channel-and-spatial attention (CBAM) in place of
+the baseline self-attention block, a high-resolution P2 detection scale at stride
+four, and a bidirectional state-space (Mamba) neck --- and evaluates all four
+configurations on the C2A disaster-imagery dataset under one training and
+evaluation protocol. The results separate the components clearly. The P2 scale is
+the effective change: it raises recall of the smallest ($<8$~px) targets from
+$0.743$ to $0.757$ and $\mathrm{AP}_{50}$ from $0.843$ to $0.853$ at a cost of about
+half a million parameters and one millisecond of latency. CBAM is nearly free and
+lowers the parameter count below the baseline while holding accuracy. The
+state-space neck adds $2.4$~million parameters and roughly triples inference latency
+without improving any accuracy metric, and is therefore excluded from the
+recommended model. The recommended CBAM~+~P2 detector, at $19.6$~million parameters,
+is competitive with much larger published detectors on the same dataset, matching or
+exceeding all but one at about a third of its size. The design is then transferred
+to a smaller backbone to characterise the accuracy--efficiency trade-off for
+on-board deployment. The main contribution is a controlled, honest account of where
+a small-object detection gain comes from for aerial human detection, including a
+negative result for the state-space neck, together with a deployable model that
+follows from it.

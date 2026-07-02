@@ -210,3 +210,38 @@
 - **Final report submission:** July 8, 2026 (3 days before defense).
 - **Presentation slides:** finalized 3 days before defense.
 - **Live demo:** run-ready reproducible codebase + polished GUI (Gradio/Streamlit) + out-of-distribution real-world phone-photo test.
+
+---
+
+## 13. Additional supervisor instructions (draft-1 review, 2026-07-02)
+
+Rules added from direct supervisor feedback. Where wording was vague, my interpretation is marked **[interpreted]** — confirm with supervisor if unsure.
+
+**Figures & layout**
+- **No figure boundary.** Never draw a border/frame/box around a figure or its caption. (Reinforces spec §7.)
+- **No unnecessary gaps — and watch page splits.** Eliminate accidental vertical whitespace. Page breaks + float placement are a common source of large gaps: place floats `[t]`/`[b]`, avoid `[h]`, and don't pad with manual `\vspace`. If a float pushes a big gap, move it, don't stretch text. **[interpreted]** Never use stacked `\vspace` to position content (the anti-pattern seen in the reference file).
+- **A figure must never split across two pages.** Keep each figure whole on one page; if it's too tall, scale it down or move it to the top/bottom of the next page (never let it break). Large diagrams → scale horizontally / A3 fold / split into labeled sub-diagrams (spec §7).
+- **Figures/tables at top or bottom of the page** (not mid-paragraph). Marked *optional* by supervisor but treat as the strong default.
+- **Figure numbering = `<chapter>.<figure-in-chapter>`** e.g. `Figure 3.2` (2nd figure in Ch. 3). Never `3.2.2`. Same for tables.
+- **Captions handled properly:** figure caption BELOW, table caption ABOVE; 11 pt, centered; descriptive/context-rich (not one/two words). Sub-figures labeled (a),(b) and referenced in text.
+
+**Text & bullets**
+- **Objectives (and every section): intro text first, THEN bullets.** Never open with a list.
+- **No unnecessary bullets.** Use bullets only to enumerate or call out discrete points; otherwise write prose. Don't bullet-ify normal paragraphs.
+
+**Math**
+- **Symbol consistency:** any symbol used in an equation must appear identically (same glyph/italics/subscript) everywhere it's mentioned in prose, tables, or other equations.
+
+**Datasets, models & results**
+- **Dataset samples must cover all cases.** Show representative samples spanning every class/scenario/condition in the dataset (not just easy examples) — 2–3 per case, plus splits (train/val/test) and before/after augmentation stats (spec §6).
+- **Document selection rationale** in results **[interpreted — supervisor note "matrix's dataset selection? (model selection, hyperparameter, epoch, curve)"]**: justify *model selection*, *hyperparameter choices*, *number of epochs*, and include the relevant *curves* (training/val loss, PR/F-curves). Don't present final numbers as if chosen arbitrarily — show the basis.
+
+**Modifiable figures — hard requirement (supervisor statement)**
+- **Every figure/diagram I create or need remade must be delivered as editable source, NOT a flattened image.** Deliverable = **draw.io (diagrams.net) XML** so the user can open it, inspect it, and regenerate it in PowerPoint/Word. The user generates final diagrams from PowerPoint/Word or LaTeX/TikZ — never third-party rasterized images. Supervisor requires diagrams to remain modifiable.
+
+**Tables & references**
+- **Tables:** follow IEEE table formatting, or the template's style if the template specifies it. Booktabs-style rules, caption above, no vertical clutter.
+- **References:** IEEE (spec §9). Verify each citation against a real source — do not fabricate. Prefer peer-reviewed journals/conferences; include DOI.
+
+**Working principle (applies to all content I write)**
+- **Verify, don't guess.** Before stating a fact about the thesis (results, config, methods, dates), find it in the thesis-folder resources. Only if it genuinely isn't recorded anywhere may I make a best-effort inference — and I must label it as such. External web sources allowed for general/background facts; record any such reliance.

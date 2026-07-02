@@ -1,19 +1,62 @@
 \chapter{Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}
 
+\section{Introduction}
+A detector intended for disaster response is deployed around vulnerable people and
+operated by public agencies, so its wider implications matter as much as its
+accuracy. This chapter sets out the intellectual-property, ethical, safety, legal,
+societal, and environmental considerations that bear on the work.
+
 \section{Intellectual Property Considerations}
-\tbd
+The work builds on open-source components under permissive terms: the Ultralytics
+YOLO11 framework, PyTorch, and the CBAM and state-space modules from their
+respective publications, each cited in this thesis. The C2A dataset is used under
+the terms set by its authors~\cite{nihal2024c2a} and is not redistributed. The
+contribution of this thesis --- the ablation design, the trained weights, and the
+lightweight variant --- is the author's own, and any release would follow the
+licences of the underlying tools.
 
 \section{Ethical Considerations}
-\tbd
+The system detects people, so it carries the risks common to person-detection
+technology: misuse for surveillance, and harm from false negatives in a
+life-critical setting. Two points shape the ethical position taken here. First, the
+intended use is search and rescue, where the cost of a missed person is high; the
+evaluation is therefore weighted towards recall so that the system errs towards
+flagging rather than ignoring possible victims, with a human operator making the
+final judgement. Second, the training data is semi-synthetic, built from composited
+human poses rather than photographs of identifiable disaster victims, which avoids
+using real images of people in distress during development.
 
 \section{Safety Considerations}
-\tbd
+The detector is an assistive tool, not an autonomous decision-maker. It is intended
+to direct a human operator's attention, and its outputs should never be treated as
+a definitive count of survivors. The measured failure modes --- missed heavily
+occluded targets and merged detections in dense clusters --- are documented in
+Chapter~IV so that operators understand where the system is weak. Any field use
+should keep a person in the loop and should not rely on the detector as the sole
+means of clearing an area.
 
 \section{Legal Considerations}
-\tbd
+Airborne data collection is regulated. Drone operation over populated or disaster
+areas is subject to civil-aviation rules on flight permission, altitude, and
+no-fly zones, and imagery of people engages data-protection expectations even in an
+emergency. This thesis concerns the detection model rather than flight operations,
+but any deployment would need to comply with the relevant aviation authority's
+rules and with the handling requirements for imagery that contains people.
 
 \section{Impact of the Project on Societal, Health, and Cultural Issues}
-\tbd
+Faster location of survivors has a direct health benefit: it shortens the time to
+reach injured people, which is decisive in the first hours after a disaster. The
+societal value is greatest where trained search teams are scarce relative to the
+affected area, which is the case in many disaster-prone regions, including
+Bangladesh. Because the model is small enough to run on modest hardware, it does
+not presume access to expensive infrastructure, which widens the range of agencies
+that could use it.
 
 \section{Impact of Project on the Environment and Sustainability}
-\tbd
+The environmental cost of the work is the energy used for training. As reported in
+Chapter~IV, the full set of training runs consumed on the order of $10$--$15$~kWh on
+a single consumer GPU, which is modest for a deep-learning study; the deliberate
+choice to reuse saved weights for evaluation rather than retrain, and to avoid a
+large multi-seed sweep in this phase, kept that figure low. Favouring a smaller,
+efficient model over a larger one also reduces the energy needed at inference time,
+which matters for battery-powered airborne use.

@@ -1,47 +1,356 @@
 \chapter{Implementation, Results and Discussions}
 
 \section{Introduction}
-\tbd
+This chapter reports how the four detector configurations of Chapter~III were
+trained and evaluated, and what the measurements show. It first fixes the
+experimental setup and the evaluation metrics, then describes the C2A dataset and
+its split. The results are presented in two parts: a quantitative comparison of
+the additive ablation on the C2A test set, and a qualitative analysis of where the
+recommended model succeeds and fails. The chapter closes with a comparison against
+published results on the same dataset, the inference-time and lightweight
+extensions, a check of the stated objectives, and a short cost account.
 
 \section{Experimental Setup}
-% Exact HW/SW/platform specs: OS, CPU, GPU, RAM, framework versions.
-\tbd
+All models were trained and evaluated on a single workstation with an NVIDIA RTX
+4070 Ti SUPER (16~GB, Ada, compute capability 8.9), an Intel Core i7-14700K, and
+128~GB of RAM, running Windows~11. The software stack was Python~3.11.9,
+PyTorch~2.12.0 (CUDA~12.6, cuDNN~9.10), and Ultralytics~8.4.56, with
+pycocotools for COCO-style evaluation. Training used a single GPU with no
+distributed data parallelism. Table~\ref{tab:setup} lists the training
+configuration; it is identical across the four models so that any measured
+difference is due to the architecture, not the optimiser.
+
+\begin{table}[t]
+  \centering
+  \caption{Training configuration, held identical across all four configurations.
+  Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models
+  settled at 8 because the added stride-4 scale raises activation memory.}
+  \label{tab:setup}
+  \begin{tabular}{@{}l l@{}}
+    \toprule
+    Setting & Value \\
+    \midrule
+    Input resolution & $640 \times 640$ (letterbox) \\
+    Optimiser & AdamW, $\text{lr}_0 = 0.001$, $\text{lr}_f = 0.01$, cosine schedule \\
+    Epochs (max) & 300, early stop on fitness (patience 50) and F2 (patience 40) \\
+    Batch size & 16 (baseline, CBAM); 8 (P2-head models, via OOM ladder) \\
+    Mixed precision & enabled (AMP) \\
+    Augmentation & YOLO11 defaults; \texttt{close\_mosaic} = 10; no copy--paste/mixup \\
+    Seed & 0 (deterministic cuDNN) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Evaluation Metrics}
-% Problem-specific: relate Precision/Recall/F1/F2/mAP to aerial human detection.
-\tbd
+Because the task is finding people in disaster imagery, recall is weighted more
+heavily than precision: a missed victim is costlier than a false alarm that an
+operator can dismiss. The primary operating metric is therefore the $F_2$ score,
+which weights recall four times as heavily as precision. With true positives
+$\mathit{TP}$, false positives $\mathit{FP}$, and false negatives $\mathit{FN}$
+(a detection counts as $\mathit{TP}$ when its intersection-over-union with a
+ground-truth box is at least $0.5$), precision $P$, recall $R$, and the
+$F_\beta$ family are
+\begin{align}
+  P = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FP}}, \qquad
+  R = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}}, \qquad
+  F_\beta = (1+\beta^{2})\,\frac{P \cdot R}{\beta^{2} P + R},
+\end{align}
+with $\beta = 1$ for $F_1$ and $\beta = 2$ for $F_2$. Localisation quality is
+measured by COCO average precision: $\mathrm{AP}$ averaged over IoU thresholds
+$0.5$ to $0.95$, along with $\mathrm{AP}_{50}$, $\mathrm{AP}_{75}$, and the
+small-object $\mathrm{AP}_S$. Because the targets are extremely small, recall is
+also reported per object-size band --- very-tiny ($<8$~px), tiny ($8$--$16$~px),
+small ($16$--$32$~px), and medium ($32$--$96$~px) --- which is where the effect of
+the P2 head is visible. Efficiency is reported as parameter count, GFLOPs, and
+end-to-end latency measured on the 4070 Ti SUPER. AP-style metrics use
+$\text{conf} = 0.001$, $\text{IoU} = 0.7$; operational $F_1$/$F_2$ use the
+confidence threshold that maximises each score.
 
 \section{Dataset}
-\tbd
+The models are trained and tested on C2A (Combination to Application), a dataset
+for human detection in disaster scenes~\cite{nihal2024c2a}. C2A is semi-synthetic:
+disaster backgrounds from AIDER are combined with human poses segmented from
+pose-estimation datasets by a U$^2$-Net model, which are then randomly scaled and
+placed and annotated with horizontal bounding boxes. The dataset contains 10{,}215
+images and roughly 360{,}000 labelled human instances across four scene types
+(collapsed buildings, fire, flood, and traffic accident). Targets are dominated by
+very small objects: about 47\% of people occupy fewer than 10~px and about 52\%
+fall between 10 and 50~px. All pose sub-labels are collapsed to a single
+\texttt{person} class; the C2A annotation stores this class under a numeric
+placeholder, which is mapped to \texttt{person} at load time. The frozen split
+used throughout this thesis is given in Table~\ref{tab:split}; the split hashes are
+recorded so that every model sees exactly the same images.
 
-\subsection{Dataset Samples}
-% Show 2-3 representative images; visual samples required.
-\tbd
+\begin{table}[t]
+  \centering
+  \caption{C2A split used for all experiments. The same frozen split (verified by
+  MD5) is used by every configuration.}
+  \label{tab:split}
+  \begin{tabular}{@{}l r r r@{}}
+    \toprule
+    & Train & Validation & Test \\
+    \midrule
+    Images & 6{,}129 & 2{,}043 & 2{,}043 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-\subsection{Data Split and Augmentation}
-% Tables: Train/Val/Test split; Before vs After augmentation statistics.
-\tbd
+Representative samples covering all four scene types and the range of target
+scales are shown in Figure~\ref{fig:dataset_samples}.
+
+\begin{figure}[b]
+  \centering
+  \figorplaceholder{figures/dataset_samples.png}{8.5cm}
+  \caption{Representative C2A samples across the four scene types (collapsed
+  buildings, fire, flood, traffic accident), showing the dominant very-small
+  target scale and high instance density that make detection difficult.}
+  \label{fig:dataset_samples}
+\end{figure}
 
 \section{Implementation and Results}
-\tbd
 
 \subsection{Quantitative Results}
-% Balanced tables + graphs; line graphs for trends, bar charts for comparisons.
-\tbd
+Table~\ref{tab:main} reports the four configurations on the C2A test set under the
+COCO protocol. Aggregate average precision is saturated: all four models sit within
+$0.002$ AP of one another. The differences appear in the metrics that matter for
+this task. Adding the P2 head raises $\mathrm{AP}_{50}$ from $0.843$ to $0.853$,
+$\mathrm{AR}_{100}$ from $0.691$ to $0.703$, and the operational $F_2$ from
+$0.840$ to $0.844$, at a cost of about $0.5$~M parameters and $1$~ms of latency.
+CBAM on its own is close to free: it removes about $1$~M parameters relative to the
+baseline (it replaces the two heavier C2PSA blocks) while matching or slightly
+improving $F_1$/$F_2$ and giving the lowest latency of the four. The state-space
+neck is the outlier in the wrong direction: it adds $2.4$~M parameters and roughly
+triples end-to-end latency ($14.6 \to 41.1$~ms) without improving any accuracy
+metric. On this evidence the recommended configuration is CBAM~+~P2, and the
+state-space neck is not carried forward.
+
+\begin{table}[t]
+  \centering
+  \caption{Additive ablation on the C2A test set (COCO protocol). AP is averaged
+  over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds;
+  latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}
+  \label{tab:main}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}l r r r r r r r r r@{}}
+    \toprule
+    Model & Params & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\
+    & (M) & & & & & & & & \\
+    \midrule
+    YOLO11m baseline    & 20.03 & 67.7 & \textbf{0.615} & 0.843 & 0.655 & 0.691 & \textbf{0.850} & 0.840 & 13.7 \\
+    + CBAM              & 19.08 & 66.9 & \textbf{0.616} & 0.847 & 0.656 & 0.692 & \textbf{0.850} & 0.841 & \textbf{13.5} \\
+    + CBAM + P2         & 19.57 & 86.7 & 0.615 & \textbf{0.853} & 0.660 & 0.703 & 0.848 & \textbf{0.844} & 14.6 \\
+    + Mamba + CBAM + P2 & 22.01 & 98.4 & 0.614 & 0.852 & \textbf{0.662} & \textbf{0.704} & 0.846 & \textbf{0.844} & 41.1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The per-size recall in Table~\ref{tab:persize} explains the aggregate flatness. The
+P2 head raises very-tiny ($<8$~px) recall from $0.743$ to $0.757$ ($+1.5$~points),
+the band that matters most for spotting distant victims, but it slightly lowers
+recall in the tiny, small, and medium bands. The medium band drops most in relative
+terms, but it contains only 317 of the roughly 72{,}500 test instances, so its
+contribution to the aggregate is small and its estimate is noisy. The net effect is
+a model that is better at the smallest targets and roughly even elsewhere, which is
+the intended trade for this application. The state-space neck tracks CBAM~+~P2
+almost exactly here, confirming it adds nothing in the size regime it was meant to
+help.
+
+\begin{table}[t]
+  \centering
+  \caption{Per-size recall on the C2A test set, by target pixel area. Ground-truth
+  counts per band are shown; the medium band is small (317 instances) and its
+  recall estimate is correspondingly noisy.}
+  \label{tab:persize}
+  \begin{tabular}{@{}l r r r r@{}}
+    \toprule
+    Model & very-tiny & tiny & small & medium \\
+    & ($<8$px) & ($8$--$16$) & ($16$--$32$) & ($32$--$96$) \\
+    GT instances & 25{,}072 & 20{,}520 & 26{,}614 & 317 \\
+    \midrule
+    YOLO11m baseline    & 0.743 & 0.869 & 0.894 & 0.909 \\
+    + CBAM              & 0.746 & 0.873 & 0.895 & 0.912 \\
+    + CBAM + P2         & \textbf{0.757} & 0.865 & 0.886 & 0.808 \\
+    + Mamba + CBAM + P2 & \textbf{0.757} & 0.870 & 0.887 & 0.811 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Figure~\ref{fig:curves} shows the precision--recall and $F_1$--confidence curves for
+the recommended CBAM~+~P2 model, and Figure~\ref{fig:calib} its reliability
+diagram; the expected calibration error is $0.021$, so the confidence scores are
+close to their empirical accuracy. The per-epoch training curves are in
+Figure~\ref{fig:training}.
+
+\begin{figure}[t]
+  \centering
+  \begin{minipage}{0.49\linewidth}\centering
+    \figorplaceholder{figures/cbam_p2_pr_curve.png}{6.0cm}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\linewidth}\centering
+    \figorplaceholder{figures/cbam_p2_f1_conf.png}{6.0cm}
+  \end{minipage}
+  \caption{Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall
+  curve and (b)~$F_1$ score against confidence threshold, from which the operating
+  point is chosen.}
+  \label{fig:curves}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \begin{minipage}{0.49\linewidth}\centering
+    \figorplaceholder{figures/cbam_p2_calibration.png}{6.0cm}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\linewidth}\centering
+    \figorplaceholder{figures/cbam_p2_confusion.png}{6.0cm}
+  \end{minipage}
+  \caption{CBAM~+~P2 model: (a)~reliability diagram (expected calibration error
+  $0.021$) and (b)~confusion matrix on the C2A test set.}
+  \label{fig:calib}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/cbam_p2_training_panel.png}{7.5cm}
+  \caption{Per-epoch training and validation dynamics for the CBAM~+~P2 model: box,
+  classification, and distribution-focal losses together with precision, recall,
+  and mAP over the course of training.}
+  \label{fig:training}
+\end{figure}
 
 \subsection{Qualitative Results and Error Analysis}
-% Show failure/misclassified cases and hypothesize WHY they failed.
-\tbd
+Figure~\ref{fig:attention} visualises the CBAM channel attention for the
+recommended model, which concentrates on human-shaped regions against cluttered
+disaster backgrounds. The characteristic failure modes are examined in
+Figure~\ref{fig:failures}: the recurring misses are victims that are almost fully
+occluded by debris, targets at the very edge of the very-tiny band where only a few
+pixels of a person are visible, and dense clusters where neighbouring people merge
+into a single box. These cases align with the per-size numbers, where the largest
+residual error is in the smallest band.
+
+\begin{figure}[t]
+  \centering
+  \figorplaceholder{figures/cbam_p2_attention.png}{6.5cm}
+  \caption{CBAM channel-attention response for the recommended model on C2A test
+  images; higher activation coincides with human-shaped regions rather than
+  background clutter.}
+  \label{fig:attention}
+\end{figure}
+
+\begin{figure}[b]
+  \centering
+  \figorplaceholder{figures/failure_grid.png}{8.5cm}
+  \caption{Representative failure cases for CBAM~+~P2 on the C2A test set: (a)~near-%
+  complete occlusion by debris, (b)~sub-8-pixel targets with only a few visible
+  pixels, and (c)~merged detections in dense clusters. Missed ground-truth boxes
+  are shown in red.}
+  \label{fig:failures}
+\end{figure}
 
 \subsection{Comparison with State-of-the-Art}
-% Formal SOTA comparison. Do NOT use "base paper"/"bible paper".
+Table~\ref{tab:sota} places the recommended model against the published results of
+Nihal et al.~\cite{nihal2024c2a} on the same C2A test split, none of which use
+test-time slicing or augmentation. The CBAM~+~P2 model matches or exceeds every
+convolutional and transformer baseline in that study except YOLOv9-e, and it does
+so with about $19.6$~M parameters against YOLOv9-e's $57.3$~M --- roughly a third of
+the size. The lightweight variant discussed in Section~\ref{sec:lightweight}
+pushes this size advantage further.
+
+\begin{table}[t]
+  \centering
+  \caption{Comparison with published detectors on the C2A test set. Baseline
+  numbers are from Nihal et al.~\cite{nihal2024c2a}, which use standard training
+  without slicing or test-time augmentation.}
+  \label{tab:sota}
+  \begin{tabular}{@{}l r r r@{}}
+    \toprule
+    Model & $\mathrm{AP}_{50}$ & AP & Params \\
+    \midrule
+    Faster R-CNN            & 0.634 & 0.366 & $\sim$41M \\
+    RetinaNet               & 0.693 & 0.383 & $\sim$37M \\
+    RTMDet                  & 0.708 & 0.442 & --- \\
+    Cascade R-CNN           & 0.735 & 0.486 & $\sim$69M \\
+    DINO                    & 0.789 & 0.471 & $\sim$47M \\
+    YOLOv5                  & 0.808 & 0.492 & --- \\
+    YOLOv9-e                & \textbf{0.893} & \textbf{0.688} & 57.3M \\
+    \midrule
+    YOLO11m baseline (ours) & 0.843 & 0.615 & 20.1M \\
+    CBAM + P2 (ours)        & 0.853 & 0.615 & \textbf{19.6M} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Inference-Time Enhancement: SAHI}
+Slicing-aided hyper inference (SAHI)~\cite{akyon2022sahi} runs the trained detector
+over overlapping crops so that very small targets occupy a larger fraction of each
+input tile. It is applied here as a separate, clearly-labelled inference-time
+setting on the recommended CBAM~+~P2 model, not folded into the primary table,
+because the sliced protocol uses per-image box matching for which the standard mAP
+is not directly comparable. Results for CBAM~+~P2 under SAHI are reported in
+Table~\ref{tab:sahi}.
+% Pending: re-run SAHI on CBAM+P2 (user). Fill Table 4.6 when the run lands.
 \tbd
+
+\begin{table}[t]
+  \centering
+  \caption{CBAM~+~P2 with SAHI on the C2A test set at several slice sizes, reported
+  as a separate inference-time setting.}
+  \label{tab:sahi}
+  \begin{tabular}{@{}l r r r r r@{}}
+    \toprule
+    Setting & Slice & $P$ & $R$ & $F_2$ & very-tiny recall \\
+    \midrule
+    CBAM + P2 (no SAHI) & --- & --- & --- & --- & --- \\
+    + SAHI & 512 & --- & --- & --- & --- \\
+    + SAHI & 256 & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Lightweight Variant}
+\label{sec:lightweight}
+To target on-board deployment on a drone, the CBAM~+~P2 design is transferred to a
+smaller YOLO11 backbone (YOLO11s), keeping the attention substitution and the P2
+detection scale unchanged. The accuracy--efficiency trade-off against the full
+YOLO11m model is reported in Table~\ref{tab:lightweight}.
+% Pending: user's YOLO11s + CBAM + P2 run. Fill when it lands.
+\tbd
+
+\begin{table}[t]
+  \centering
+  \caption{Lightweight YOLO11s + CBAM + P2 against the full YOLO11m + CBAM + P2 on
+  the C2A test set: accuracy against parameter count and latency.}
+  \label{tab:lightweight}
+  \begin{tabular}{@{}l r r r r@{}}
+    \toprule
+    Model & Params (M) & GFLOPs & $\mathrm{AP}_{50}$ & Latency (ms) \\
+    \midrule
+    YOLO11m + CBAM + P2 & 19.57 & 86.7 & 0.853 & 14.6 \\
+    YOLO11s + CBAM + P2 & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Objective Achieved}
-\tbd
+The objectives set in Chapter~I are met as follows. The additive ablation isolates
+the contribution of each component and identifies CBAM~+~P2 as the configuration
+that best serves the task: it gives the best very-tiny recall and operational $F_2$
+at a parameter count below the baseline plus P2 alone. The comparison in
+Table~\ref{tab:sota} shows the model is competitive with published detectors on C2A
+at a fraction of their size. The state-space neck was evaluated honestly and shown
+not to help, which answers the design question it was introduced to test.
 
 \section{Financial Analyses and Budget}
-\tbd
+The work used hardware already available and open-source software, so the direct
+monetary cost is limited to electricity. Training the four configurations took
+about 7--30 hours each on the 4070 Ti SUPER (the state-space model being the
+longest at $29.5$~h), at an average board power of roughly $180$~W. The full set of
+training runs therefore consumed on the order of $10$--$15$~kWh. No paid datasets,
+cloud compute, or licences were required.
 
 \section{Conclusion}
-\tbd
+The additive ablation shows that the gain on C2A comes almost entirely from the P2
+detection scale, which lifts very-tiny recall and $\mathrm{AP}_{50}$ at a small
+cost, while CBAM contributes efficiency and the state-space neck contributes
+nothing at a large latency cost. The recommended CBAM~+~P2 model is competitive with
+much larger published detectors on the same data. The next chapters consider the
+wider engineering context of the work and its conclusions.

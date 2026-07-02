@@ -1,13 +1,40 @@
-% IEEE-style references (biblatex + biber). Add entries as \cite{key}.
-% Prefer peer-reviewed journals/conferences; include DOI where available.
+% IEEE-style references (biblatex + biber). Cited from the chapters.
+% VERIFY BEFORE FINAL SUBMISSION: confirm each venue/volume/pages and add DOIs
+% where missing. Entries marked "% VERIFY" need author/venue confirmation.
 
-@article{redmon2016yolo,
-  author  = {Redmon, Joseph and Divvala, Santosh and Girshick, Ross and Farhadi, Ali},
-  title   = {You Only Look Once: Unified, Real-Time Object Detection},
-  journal = {Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)},
-  year    = {2016},
-  pages   = {779--788},
-  doi     = {10.1109/CVPR.2016.91}
+@inproceedings{nihal2024c2a,
+  author    = {Nihal, Ragib Amin and Yen, Benjamin and Itoyama, Katsutoshi and Nakadai, Kazuhiro},
+  title     = {{UAV}-Enhanced Combination to Application: Comprehensive Analysis and Benchmarking of a Human Detection Dataset for Disaster Scenarios},
+  booktitle = {Proc. Int. Conf. Pattern Recognition (ICPR)},
+  year      = {2024},
+  note      = {arXiv:2408.04922},
+  doi       = {10.48550/arXiv.2408.04922}
+}
+
+@misc{jocher2024yolo11,
+  author       = {Jocher, Glenn and Qiu, Jing},
+  title        = {Ultralytics {YOLO11}},
+  year         = {2024},
+  howpublished = {\url{https://github.com/ultralytics/ultralytics}},
+  note         = {Software, version 8.x}
+}
+
+@inproceedings{woo2018cbam,
+  author    = {Woo, Sanghyun and Park, Jongchan and Lee, Joon-Young and Kweon, In So},
+  title     = {{CBAM}: Convolutional Block Attention Module},
+  booktitle = {Proc. European Conf. Computer Vision (ECCV)},
+  pages     = {3--19},
+  year      = {2018},
+  doi       = {10.1007/978-3-030-01234-2_1}
+}
+
+@inproceedings{wang2020eca,
+  author    = {Wang, Qilong and Wu, Banggu and Zhu, Pengfei and Li, Peihua and Zuo, Wangmeng and Hu, Qinghua},
+  title     = {{ECA-Net}: Efficient Channel Attention for Deep Convolutional Neural Networks},
+  booktitle = {Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {11534--11542},
+  year      = {2020},
+  doi       = {10.1109/CVPR42600.2020.01155}
 }
 
 @article{gu2023mamba,
@@ -16,4 +43,95 @@
   journal = {arXiv preprint arXiv:2312.00752},
   year    = {2023},
   doi     = {10.48550/arXiv.2312.00752}
+}
+
+@inproceedings{wang2025mambayolo,
+  author    = {Wang, Zeyu and Li, Chen and Xu, Huiying and Zhu, Xinzhong},
+  title     = {Mamba {YOLO}: {SSMs}-Based Object Detection Model},
+  booktitle = {Proc. AAAI Conf. Artificial Intelligence},
+  year      = {2025},
+  note      = {arXiv:2406.05835},
+  doi       = {10.48550/arXiv.2406.05835}
+}
+
+@inproceedings{zhao2024rtdetr,
+  author    = {Zhao, Yian and Lv, Wenyu and Xu, Shangliang and Wei, Jinman and Wang, Guanzhong and Dang, Qingqing and Liu, Yi and Chen, Jie},
+  title     = {{DETRs} Beat {YOLOs} on Real-time Object Detection},
+  booktitle = {Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2024},
+  doi       = {10.1109/CVPR52733.2024.01605}
+}
+
+@inproceedings{akyon2022sahi,
+  author    = {Akyon, Fatih Cagatay and Altinuc, Sinan Onur and Temizel, Alptekin},
+  title     = {Slicing Aided Hyper Inference and Fine-Tuning for Small Object Detection},
+  booktitle = {Proc. IEEE Int. Conf. Image Processing (ICIP)},
+  pages     = {966--970},
+  year      = {2022},
+  doi       = {10.1109/ICIP46576.2022.9897990}
+}
+
+@article{ren2015fasterrcnn,
+  author  = {Ren, Shaoqing and He, Kaiming and Girshick, Ross and Sun, Jian},
+  title   = {Faster {R-CNN}: Towards Real-Time Object Detection with Region Proposal Networks},
+  journal = {IEEE Trans. Pattern Analysis and Machine Intelligence},
+  volume  = {39},
+  number  = {6},
+  pages   = {1137--1149},
+  year    = {2017},
+  doi     = {10.1109/TPAMI.2016.2577031}
+}
+
+@inproceedings{cai2018cascade,
+  author    = {Cai, Zhaowei and Vasconcelos, Nuno},
+  title     = {Cascade {R-CNN}: Delving into High Quality Object Detection},
+  booktitle = {Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {6154--6162},
+  year      = {2018},
+  doi       = {10.1109/CVPR.2018.00644}
+}
+
+@inproceedings{lin2017focal,
+  author    = {Lin, Tsung-Yi and Goyal, Priya and Girshick, Ross and He, Kaiming and Doll{\'a}r, Piotr},
+  title     = {Focal Loss for Dense Object Detection},
+  booktitle = {Proc. IEEE Int. Conf. Computer Vision (ICCV)},
+  pages     = {2980--2988},
+  year      = {2017},
+  doi       = {10.1109/ICCV.2017.324}
+}
+
+@inproceedings{lin2017fpn,
+  author    = {Lin, Tsung-Yi and Doll{\'a}r, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
+  title     = {Feature Pyramid Networks for Object Detection},
+  booktitle = {Proc. IEEE Conf. Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {2117--2125},
+  year      = {2017},
+  doi       = {10.1109/CVPR.2017.106}
+}
+
+@inproceedings{carion2020detr,
+  author    = {Carion, Nicolas and Massa, Francisco and Synnaeve, Gabriel and Usunier, Nicolas and Kirillov, Alexander and Zagoruyko, Sergey},
+  title     = {End-to-End Object Detection with Transformers},
+  booktitle = {Proc. European Conf. Computer Vision (ECCV)},
+  pages     = {213--229},
+  year      = {2020},
+  doi       = {10.1007/978-3-030-58452-8_13}
+}
+
+% VERIFY: confirm exact authors, venue, volume/pages, and DOI before final submission.
+@article{sar_survey,
+  author  = {{Author, To Be Confirmed}},
+  title   = {Aerial Person Detection for Search and Rescue: Survey and Benchmarking},
+  journal = {Venue to be confirmed},
+  year    = {2023},
+  note    = {VERIFY authors, venue, volume/pages, and DOI before final submission}
+}
+
+% VERIFY: confirm exact authors, venue, volume/pages, and DOI before final submission.
+@article{aerial_human_video,
+  author  = {{Author, To Be Confirmed}},
+  title   = {Real-Time Human Detection for Aerial Captured Video Sequences via Deep Models},
+  journal = {Venue to be confirmed},
+  year    = {2018},
+  note    = {VERIFY authors, venue, volume/pages, and DOI before final submission}
 }

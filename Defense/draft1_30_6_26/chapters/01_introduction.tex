@@ -1,28 +1,93 @@
 \chapter{Introduction}
 
 \section{Introduction}
-% Intro paragraph first (never start with a list).
-\tbd
+When an earthquake, flood, or fire strikes, the first hours decide how many people
+are found alive. Uncrewed aerial vehicles can survey a disaster site far faster
+than ground teams, but the imagery they return is hard to search by eye: a person
+seen from altitude may occupy only a handful of pixels among rubble, water, or
+smoke. Automating the detection of these very small human targets is the problem
+this thesis addresses. The work develops a compact detector for people in aerial
+disaster imagery, built on the YOLO11 object detector and refined so that it
+recovers the smallest targets without growing into a model too large to run on
+airborne hardware.
 
 \section{Background / Problem Statement}
-\tbd
+General object detection is close to solved for objects that fill a reasonable part
+of the frame, but aerial search-and-rescue imagery breaks that assumption. Targets
+are tiny, often smaller than eight pixels; they are partially buried or occluded;
+scenes are dense; and the background is visually noisy. Standard detectors detect
+at strides of eight pixels and coarser, so the smallest people fall through the
+grid. Several remedies exist --- higher-resolution detection scales, feature
+attention, and inference-time slicing --- but they are usually reported one at a
+time and on generic aerial data, and recent state-space (Mamba) modules have been
+promoted without a controlled test on this kind of target. It is therefore unclear
+which of these additions actually earns its computational cost for very small human
+detection. This thesis answers that question directly on a disaster-imagery
+benchmark and uses the answer to build a deployable model.
 
 \section{Objectives}
-% Must open with an introductory paragraph before any list.
-\tbd
+The work is organised around the following objectives.
+\begin{itemize}
+  \item Build an additive ablation on the YOLO11m baseline that isolates the effect
+        of channel-and-spatial attention (CBAM), a high-resolution P2 detection
+        scale, and a state-space neck, each under an identical training and
+        evaluation protocol.
+  \item Identify, from that ablation, the configuration that gives the best recall
+        of very small targets at the lowest parameter and latency cost.
+  \item Evaluate the resulting model against published detectors on the same
+        dataset, and report the state-space neck honestly whether or not it helps.
+  \item Extend the chosen design to a lightweight backbone suitable for on-board
+        deployment, and characterise the accuracy--efficiency trade-off.
+\end{itemize}
 
 \section{Scope}
-\tbd
+The study is built with current open-source tools: the Ultralytics YOLO11
+framework, PyTorch, and standard evaluation libraries, all run on a single
+consumer GPU. It covers attention, multi-scale detection, and a state-space neck as
+architectural changes, and slicing-aided inference as an inference-time setting.
+It is limited to the C2A disaster-imagery dataset and to a single object class,
+\texttt{person}. Cross-dataset generalisation to other real aerial datasets and the
+production of a field-hardened detector are identified as future work.
 
 \section{Unfamiliarity of the Problem}
-\tbd
+The problem was approached without reusing a prior solution. The additive ablation,
+the choice and placement of components, the state-space neck in the neck rather
+than the backbone, and the evaluation protocol were all designed for this work.
+Where an existing dataset or module is used --- C2A, CBAM, the YOLO11 baseline ---
+it is cited, and the contribution lies in how these are combined, measured, and
+reduced to a deployable model.
 
 \section{Project Planning and Work Distribution}
-% Single-author thesis: note the plan (Gantt chart); RACI not applicable.
-\tbd
+This thesis is the work of a single author, so there is no division of tasks across
+team members; a responsibility-assignment matrix does not apply. The work was
+planned as a sequence of phases --- benchmarking, the attention and detection-head
+ablations, the state-space experiments, inference-time enhancement, and the
+lightweight variant, in parallel with report writing --- as shown in the schedule
+in Figure~\ref{fig:gantt}.
+
+\begin{figure}[b]
+  \centering
+  \figorplaceholder{figures/gantt_chart.png}{7.0cm}
+  \caption{Project schedule for the thesis, from initial detector benchmarking
+  through the ablation study, inference-time and lightweight extensions, and report
+  writing.}
+  \label{fig:gantt}
+\end{figure}
 
 \section{Applications of the Work}
-\tbd
+The immediate application is aerial search and rescue: a small detector that finds
+people in disaster imagery can run on a drone or a laptop at an incident site and
+flag likely victims for an operator. The same design applies to other tasks that
+depend on spotting very small people from altitude, such as crowd monitoring and
+wide-area surveillance, where model size and inference speed matter as much as raw
+accuracy.
 
 \section{Organization of the Thesis}
-\tbd
+The remainder of the thesis is organised as follows. Chapter~II reviews related
+work and defines the base architectures. Chapter~III presents the proposed detector
+and the ablation design. Chapter~IV reports the experimental setup, the
+quantitative and qualitative results, and the comparison with published work.
+Chapter~V discusses the societal, ethical, legal, and environmental context.
+Chapter~VI addresses the complex engineering problems and activities involved.
+Chapter~VII concludes with a summary, the limitations, and directions for future
+work.

@@ -1,7 +1,34 @@
 \chapter{Addressing Complex Engineering Problems and Activities}
 
+\section{Introduction}
+This chapter maps the thesis onto the complex-engineering-problem and
+complex-engineering-activity attributes, showing where the work required depth of
+knowledge, judgement under conflicting requirements, and integration of tools and
+methods.
+
 \section{Complex Engineering Problems Associated with the Current Thesis}
-\tbd
+The work meets several of the attributes that characterise a complex engineering
+problem. It required depth of knowledge across object-detection architectures,
+attention mechanisms, and state-space models, none of which yields to routine
+application. It involved conflicting requirements --- higher recall of very small
+targets against a fixed parameter and latency budget for airborne use --- that
+could not be satisfied at the same time and had to be traded deliberately, as the
+per-size results in Chapter~IV show. The problem had no obvious single solution:
+the effect of each component was not predictable in advance and had to be
+established empirically, and one plausible addition, the state-space neck, turned
+out not to help. The problem is also infrequently encountered in general practice,
+since very-small-human detection in disaster imagery differs substantially from
+ordinary object detection.
 
 \section{Complex Engineering Activities Associated with the Current Thesis}
-\tbd
+The corresponding activities were likewise non-routine. The work applied and
+adapted resources --- pretrained detectors, attention and state-space modules, a
+composited benchmark dataset, and a single-GPU training environment --- and
+combined them into a controlled study whose components had to interoperate under
+one protocol. It required engineering judgement to isolate variables, to hold the
+training configuration fixed across models, and to keep evaluation protocols fair
+so that measured differences could be attributed to the architecture. It also
+involved managing an experimental process with real constraints: limited GPU
+memory, which forced the batch-size ladder; long training runs on a single machine;
+and the need for reproducible, provenance-tracked results so that the reported
+numbers could be trusted and regenerated.

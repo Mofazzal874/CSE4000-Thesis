@@ -26,7 +26,8 @@
 % If the bundled fonts are ever unavailable, comment the block above and use:
 %   \setmainfont{TeX Gyre Termes}   % metric-compatible Times clone, ships with TeX Live
 
-\RequirePackage{unicode-math}
+\RequirePackage{amsmath}       % must load BEFORE unicode-math
+\RequirePackage{unicode-math}  % load last among math packages
 \setmathfont{TeX Gyre Termes Math}  % Times-matching math; falls back cleanly
 
 % ---- Line spacing (spec: 1.5 body, 1.2 references) -------------------------
@@ -37,7 +38,6 @@
 % Word "space before 12pt / after 6pt" approximated as block spacing.
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
-\RequirePackage{ragged2e}   % better justification with fontspec
 
 % ---- Heading fonts/sizes (spec section 6) ----------------------------------
 \RequirePackage{titlesec}
@@ -46,14 +46,15 @@
 \newcommand{\sizeFrontHd}{\fontsize{16}{24}\selectfont}   % Abstract/LoT/LoF -> 16pt
 \newcommand{\sizeTitle}{\fontsize{18}{27}\selectfont}     % thesis title -> 18pt
 
-% Chapter: "CHAPTER <roman>" (14pt, centered) then title (16pt, centered).
-\renewcommand{\thechapter}{\Roman{chapter}}
+% Chapter heading prints "CHAPTER <Roman>" (14pt) then title (16pt), both centered.
+% NOTE: \thechapter stays ARABIC so sections/figures/tables number as 3.1, Figure 3.2
+% (template style), while only the heading label shows the Roman numeral.
 \titleformat{\chapter}[display]
   {\centering\bfseries}
-  {\sizeChapNum CHAPTER \thechapter}
-  {12pt}
+  {\sizeChapNum CHAPTER \Roman{chapter}}
+  {18pt}%  1 blank line (size 12) between "CHAPTER n" and the title
   {\sizeChapTtl}
-\titlespacing*{\chapter}{0pt}{0pt}{24pt}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}% + section's 12pt-before = ~2 blank lines
 
 % Sections / subsections: 12pt bold, left, space before 12pt after 6pt.
 \titleformat{\section}{\bfseries\normalsize}{\thesection}{0.6em}{}
@@ -63,12 +64,24 @@
 \titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{0.6em}{}
 \titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
 
-% ---- Figures, tables, equations numbered by chapter (spec 7 & 8) -----------
+% ---- Numbering scheme (template rules) -------------------------------------
+% Chapter heading + TOC show Roman ("CHAPTER III"); body sections show arabic
+% ("3.1"); figures/tables/equations show arabic ("Figure 3.2"). We make
+% \thechapter Roman for the heading/TOC, but force the cross-reference numbers
+% to use the arabic chapter value so nothing becomes "III.1".
+\renewcommand{\thechapter}{\Roman{chapter}}
 \RequirePackage{graphicx}
-\RequirePackage{amsmath}
-\numberwithin{equation}{chapter}   % (3.1) style, right-aligned by default
-\numberwithin{figure}{chapter}     % Figure 3.2  (never 3.2.2)
+\numberwithin{equation}{chapter}   % resets per chapter
+\numberwithin{figure}{chapter}
 \numberwithin{table}{chapter}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+
+% ---- "n blank lines of size 12" vertical spacer (1.5-spaced 12pt = 18pt) ----
+\newcommand{\vblank}[1]{\vspace{\dimexpr 18pt*#1\relax}}
 
 % ---- Captions: 11pt, centered, "Figure 1.1: ..." (spec 7) ------------------
 \RequirePackage{caption}
@@ -92,10 +105,47 @@
 \setlength{\biblabelsep}{0.31in}
 \renewcommand*{\bibfont}{\normalfont\setstretch{1.2}}
 
+% ---- Table of Contents formatting (template page 5-7) ----------------------
+% Chapters: "CHAPTER <Roman>  Title ..... page" (bold). Front-matter items
+% (added numberless) render indented, normal weight. Sections show as bullets,
+% subsections as arrows -- numbers hidden in the TOC (they remain in the body).
+\RequirePackage{titletoc}
+\RequirePackage{pifont}
+\setcounter{tocdepth}{2}
+
+% No dotted leaders (template uses plain right-aligned page numbers).
+\titlecontents{chapter}[0pt]
+  {\addvspace{10pt}}
+  {\bfseries CHAPTER\ \thecontentslabel\hspace{1.2em}}% numbered = real chapters
+  {}%   numberless (front matter indents itself; References/Appendices stay at margin)
+  {\hfill\contentspage}
+
+\titlecontents{section}[0.5in]
+  {}
+  {\textbullet~~}%   number hidden, bullet shown
+  {\textbullet~~}%
+  {\hfill\contentspage}
+
+\titlecontents{subsection}[1.0in]
+  {}
+  {\ding{228}~~}%   arrow marker
+  {\ding{228}~~}%
+  {\hfill\contentspage}
+
+% List of Tables / Figures entries: "2.1  Description ....... page" WITHOUT dots.
+\titlecontents{table}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
+\titlecontents{figure}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
+
+% "PAGE" column header for the Contents, and header rows for LoT/LoF.
+\newcommand{\tocpagehead}{\mbox{}\hfill\textbf{PAGE}\par\vspace{2pt}}
+\newcommand{\lotlofhead}[1]{%
+  \noindent\textbf{#1 No.}\hfill\textbf{Description}\hfill\textbf{Page}\par
+  \vspace{4pt}}
+
 % ---- Front-matter heading helper (Acknowledgment/Abstract centered 16pt) ---
 \newcommand{\frontheading}[1]{%
   \begin{center}\sizeFrontHd\bfseries #1\end{center}%
-  \vspace{\baselineskip}%
+  \vblank{2}% 2 blank lines of size 12 after the heading
 }
 
 % ---- Page numbering: footer centered (report/plain does this) --------------
@@ -103,7 +153,23 @@
 
 % ---- Hyperlinks (kept subtle; black for print) -----------------------------
 \RequirePackage[hidelinks]{hyperref}
-\RequirePackage{microtype}
+% microtype removed: on XeLaTeX its benefit is small and it adds compile time.
 
 % ---- Draft placeholder (remove as sections get written) --------------------
 \newcommand{\tbd}{\textit{[Content to be written.]}\par}
+
+% ---- Figure include-or-placeholder -----------------------------------------
+% Reserves EXACTLY the given height whether or not the file exists, so swapping a
+% placeholder for the real export never shifts page spacing. The real image is
+% scaled to fit width x height with keepaspectratio (no distortion). The border
+% appears ONLY on the pending placeholder (final figures have no border).
+% Usage: \figorplaceholder{path}{height}   (alias: \figbox)
+\newcommand{\figorplaceholder}[2]{%
+  \begin{minipage}[c][#2][c]{\linewidth}\centering
+    \IfFileExists{#1}%
+      {\includegraphics[width=\linewidth,height=#2,keepaspectratio]{#1}}%
+      {\fbox{\begin{minipage}[c][\dimexpr#2-2\fboxsep-2\fboxrule\relax][c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+         \centering\itshape [Figure pending export: \detokenize{#1}]%
+       \end{minipage}}}%
+  \end{minipage}}
+\let\figbox\figorplaceholder

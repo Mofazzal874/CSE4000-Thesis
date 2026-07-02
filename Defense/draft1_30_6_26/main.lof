@@ -1,0 +1,22 @@
+\lotlofhead {Figure}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Project schedule for the thesis, from initial detector benchmarking through the ablation study, inference-time and lightweight extensions, and report writing.}}{4}{figure.caption.10}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again.}}{7}{figure.caption.11}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression.}}{8}{figure.caption.12}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged.}}{9}{figure.caption.13}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{9}{figure.caption.14}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{11}{figure.caption.16}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A single C2A test image traced through the pipeline: (a)~the letterboxed input, (b)~the CBAM attention response over the backbone features, (c)~the per-scale proposals including the P2 scale, and (d)~the final detections after NMS.}}{14}{figure.caption.18}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A samples across the four scene types (collapsed buildings, fire, flood, traffic accident), showing the dominant very-small target scale and high instance density that make detection difficult.}}{21}{figure.caption.21}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen.}}{21}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set.}}{22}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Per-epoch training and validation dynamics for the CBAM~+~P2 model: box, classification, and distribution-focal losses together with precision, recall, and mAP over the course of training.}}{22}{figure.caption.26}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces CBAM channel-attention response for the recommended model on C2A test images; higher activation coincides with human-shaped regions rather than background clutter.}}{23}{figure.caption.27}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Representative failure cases for CBAM~+~P2 on the C2A test set: (a)~near-complete occlusion by debris, (b)~sub-8-pixel targets with only a few visible pixels, and (c)~merged detections in dense clusters. Missed ground-truth boxes are shown in red.}}{23}{figure.caption.28}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsfinish 

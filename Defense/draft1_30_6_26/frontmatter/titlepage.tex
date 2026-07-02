@@ -1,38 +1,38 @@
 % ---------- TITLE PAGE (spec section 2) : page i, Standard case ----------
-% NOTE (instruction guide): "a line is known to be missing on template page 2."
-% This page restores the full set: title, By, author+roll, degree line,
-% supervisor block, signature, and footer.
+% Full set restored: title, By, author+roll, degree line, supervisor block,
+% signature, footer. Spacing uses \vblank (n blank lines of size 12).
 \thispagestyle{plain}
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Title Page}
 \begin{spacing}{1.5}
 \begin{center}
-% ==== TODO: keep title identical to cover ====
+% Title identical to cover (locked 2026-07-02).
 {\sizeTitle\bfseries
-An Efficient Framework for Real-Time Human Detection in Aerial Imagery for Search and Rescue Operations
-}\\[3\baselineskip]
+A Lightweight Multi-Scale YOLO11 for Tiny-Human Detection in Aerial Search-and-Rescue Imagery
+}\\[54pt]% 3 blank lines of size 12
 
-{\normalsize By}\\[2\baselineskip]
+{\normalsize By}\\[36pt]% 2 blank lines of size 12
 
 {\normalsize\bfseries Md Mofazzal Hosen}\\
-{\normalsize Roll: 2007074}\\[1.5\baselineskip]
+{\normalsize Roll: 2007074}\\[24pt]
 
 {\normalsize A thesis submitted in partial fulfillment of the requirements for the degree of}\\
-{\normalsize ``Bachelor of Science in Computer Science \& Engineering''}\\[2\baselineskip]
+{\normalsize ``Bachelor of Science in Computer Science \& Engineering''}\\[36pt]% 2 blank lines
 \end{center}
 
-% Supervisor block (left) + signature (right)
-\noindent\begin{minipage}[t]{0.6\textwidth}
-{\bfseries Supervisor:}\\[0.5\baselineskip]
+% Supervisor label (left) + signature (right) on one row, then full-width details.
+\noindent
+\begin{minipage}[t]{0.5\textwidth}{\bfseries Supervisor:}\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.42\textwidth}\centering
+  \vspace{1.5\baselineskip}\rule{4.5cm}{0.4pt}\\ Signature
+\end{minipage}
+
+\vspace{0.5\baselineskip}
 \hspace*{0.8in}\begin{minipage}[t]{\dimexpr\textwidth-0.8in\relax}
 {\bfseries Sk. Md. Masudul Ahsan}\\
 Professor\\
 Department of Computer Science and Engineering\\
 Khulna University of Engineering \& Technology
-\end{minipage}
-\end{minipage}\hfill
-\begin{minipage}[b]{0.35\textwidth}
-\centering\vspace{3\baselineskip}
-\rule{4cm}{0.4pt}\\
-Signature
 \end{minipage}
 
 \vfill
