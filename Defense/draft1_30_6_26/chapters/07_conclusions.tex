@@ -17,7 +17,7 @@ of their parameter count.
 The study has clear limits. It uses a single dataset, C2A, which is semi-synthetic,
 so the absolute numbers may not transfer directly to unseen real footage. Each
 configuration was trained with a single seed in this phase, so small differences
-between models are within run-to-run noise --- a point reinforced by the saturated
+between models are within run-to-run noise, a point reinforced by the saturated
 aggregate AP. The medium-target results rest on a small number of instances and are
 correspondingly uncertain. Finally, the lightweight and inference-time results
 reported here are for the recommended model on the same dataset and do not yet
@@ -26,9 +26,9 @@ cover on-device measurement on drone hardware.
 \section{Recommendations and Future Works}
 Several extensions follow from these limits. The most important is validation on
 real aerial search-and-rescue imagery and, beyond that, joint training on a
-combined real corpus --- for example SARD~\cite{sambolek2021sard},
+combined real corpus (for example SARD~\cite{sambolek2021sard},
 HERIDAL~\cite{bozic2019heridal}, VisDrone~\cite{zhu2021visdrone}, and
-Okutama-Action~\cite{barekatain2017okutama} --- so that the detector generalises
+Okutama-Action~\cite{barekatain2017okutama}) so that the detector generalises
 past the composited C2A distribution. A multi-seed study with significance testing would firm up the
 component comparisons for publication. On the deployment side, the lightweight
 variant should be exported and measured on embedded hardware, and higher-resolution

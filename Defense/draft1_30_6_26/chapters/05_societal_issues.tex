@@ -11,8 +11,8 @@ The work builds on open-source components under permissive terms: the Ultralytic
 YOLO11 framework, PyTorch, and the CBAM and state-space modules from their
 respective publications, each cited in this thesis. The C2A dataset is used under
 the terms set by its authors~\cite{nihal2024c2a} and is not redistributed. The
-contribution of this thesis --- the ablation design, the trained weights, and the
-lightweight variant --- is the author's own, and any release would follow the
+contribution of this thesis, namely the ablation design, the trained weights, and
+the reported analysis, is the author's own, and any release would follow the
 licences of the underlying tools.
 
 \section{Ethical Considerations}
@@ -29,8 +29,8 @@ using real images of people in distress during development.
 \section{Safety Considerations}
 The detector is an assistive tool, not an autonomous decision-maker. It is intended
 to direct a human operator's attention, and its outputs should never be treated as
-a definitive count of survivors. The measured failure modes --- missed heavily
-occluded targets and merged detections in dense clusters --- are documented in
+a definitive count of survivors. The measured failure modes, missed heavily
+occluded targets and merged detections in dense clusters, are documented in
 Chapter~IV so that operators understand where the system is weak. Any field use
 should keep a person in the loop and should not rely on the detector as the sole
 means of clearing an area.

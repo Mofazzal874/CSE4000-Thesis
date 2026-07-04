@@ -1,0 +1,101 @@
+{
+  "run_id": "20260702_144117_finetune_enriched",
+  "init_weights": "D:\\thesis_2007074\\epoch125.pt",
+  "enriched_dir": "D:\\thesis_2007074\\common\\c2a\\c2a_enriched",
+  "hyperparams": {
+    "epochs": 25,
+    "patience": 25,
+    "lr0": 0.0003,
+    "lrf": 0.01,
+    "batch": 4,
+    "sard_oversample": 1,
+    "enriched_repeat": 1
+  },
+  "finetuned_weights": "D:\\thesis_2007074\\deployable_model\\A6000 run\\runs_joint\\20260702_144117_finetune_enriched\\weights\\best.pt",
+  "c2a_test": {
+    "precision": 0.8865379012511828,
+    "recall": 0.8280777469269458,
+    "mAP50": 0.8740901763515467,
+    "mAP50-95": 0.6477422038454954,
+    "mAP75": 0.6966902399466942,
+    "AP": 0.6298587924595306,
+    "AP50": 0.858490331984651,
+    "AP75": 0.6770385492037393,
+    "AP_small": 0.6300401122383795,
+    "AP_medium": 0.6038398149014523,
+    "AP_large": -1.0,
+    "AR_100": 0.7126180659928575,
+    "per_size_recall": {
+      "very_tiny": 0.7664,
+      "tiny": 0.8723,
+      "small": 0.8967,
+      "medium": 0.8927,
+      "large": null
+    },
+    "F1_mean": 0.8475485834557024,
+    "F2_mean": 0.8453713617229563,
+    "confusion_TP_FP_FN": [
+      61214,
+      10279,
+      11309
+    ],
+    "e2e_latency_mean_ms": 19.676701908957416,
+    "opt_thresholds": {
+      "OptThr_F1": 0.34,
+      "Best_F1": 0.8545261462364672,
+      "OptThr_F2": 0.17,
+      "Best_F2": 0.8500395601997108
+    },
+    "calibration": {
+      "ECE": 0.01604294218383004,
+      "MCE": 0.1910433423683282,
+      "Brier": 0.026249099432854296
+    }
+  },
+  "sard_test": {
+    "precision": 0.86975265836684,
+    "recall": 0.8575192324258654,
+    "mAP50": 0.8976461228886745,
+    "mAP50-95": 0.5573831053863693,
+    "mAP75": 0.6354910984499718,
+    "AP": 0.5543268399061935,
+    "AP50": 0.8904731074638397,
+    "AP75": 0.6408436758861339,
+    "AP_small": 0.2944069863630165,
+    "AP_medium": 0.6010478160496285,
+    "AP_large": 0.6044448379504629,
+    "AR_100": 0.6553278688524591,
+    "per_size_recall": {
+      "very_tiny": 0.0,
+      "tiny": 0.0,
+      "small": 0.6481,
+      "medium": 0.9155,
+      "large": 0.9533
+    },
+    "F1_mean": 0.7335353052631579,
+    "F2_mean": 0.7402110982456142,
+    "confusion_TP_FP_FN": [
+      638,
+      109,
+      94
+    ],
+    "e2e_latency_mean_ms": 16.220970175438595,
+    "opt_thresholds": {
+      "OptThr_F1": 0.34,
+      "Best_F1": 0.8706536856745479,
+      "OptThr_F2": 0.22,
+      "Best_F2": 0.8709764674060049
+    },
+    "calibration": {
+      "ECE": 0.012932069373705227,
+      "MCE": 0.24339738488197327,
+      "Brier": 0.01219611848172621
+    }
+  },
+  "reference_epoch125": {
+    "c2a_test_mAP50": 0.878,
+    "sard_test_mAP50": 0.917,
+    "note": "the model this fine-tune started from; new numbers should match or beat these."
+  },
+  "timestamp": "2026-07-02T20:33:05"
+}

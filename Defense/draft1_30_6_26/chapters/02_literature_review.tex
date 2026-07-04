@@ -5,8 +5,8 @@ This chapter reviews the work that the thesis builds on and defines the componen
 it modifies. The literature is grouped by theme rather than listed paper by paper:
 first the progression of object detectors, then the techniques developed
 specifically for small and aerial targets, and then human detection in disaster
-imagery. A separate section explains the base architectures --- YOLO11, the CBAM
-and ECA attention modules, multi-scale detection, and state-space models --- so
+imagery. A separate section explains the base architectures (YOLO11, the CBAM
+and ECA attention modules, multi-scale detection, and state-space models) so
 that Chapter~III can concentrate on the proposed modifications. The chapter ends
 with the research gap that the thesis addresses.
 
@@ -55,8 +55,8 @@ data: real annotated disaster imagery with very small human targets is scarce. R
 search-and-rescue datasets such as SARD~\cite{sambolek2021sard} and
 HERIDAL~\cite{bozic2019heridal} are valuable but limited in scale and scene variety.
 Nihal et al.~\cite{nihal2024c2a} addressed this with C2A, a semi-synthetic dataset
-that composites human poses --- segmented with a U$^2$-Net model~\cite{qin2020u2net}
---- onto disaster backgrounds drawn from aerial emergency
+that composites human poses, segmented with a U$^2$-Net model~\cite{qin2020u2net},
+onto disaster backgrounds drawn from aerial emergency
 imagery~\cite{kyrkou2020aider}, and benchmarked a range of detectors on it. Their
 study is the direct point of comparison for this thesis, which uses the same dataset
 and test split.
@@ -65,9 +65,9 @@ and test split.
 State-space models have recently been proposed as a linear-time alternative to
 attention for long-sequence modelling. Building on structured state
 spaces~\cite{gu2022s4}, Mamba~\cite{gu2023mamba} introduced a selective scan that
-makes the state dynamics input-dependent. Vision adaptations followed --- Vision
+makes the state dynamics input-dependent. Vision adaptations followed: Vision
 Mamba~\cite{zhu2024visionmamba} and VMamba~\cite{liu2024vmamba} scan image patches in
-multiple directions --- and Mamba-YOLO~\cite{wang2025mambayolo} applied the idea to
+multiple directions, and Mamba-YOLO~\cite{wang2025mambayolo} applied the idea to
 detection by replacing the backbone with state-space blocks. The variant explored in
 this thesis is narrower: it keeps
 the convolutional backbone and inserts bidirectional local-window state-space
@@ -98,7 +98,7 @@ baseline and found CBAM to give better operational recall than ECA at a similar
 cost, which is why CBAM is used in this thesis; that comparison is summarised in
 Chapter~IV.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_cbam_module.png}{6.5cm}
   \caption{The CBAM module. Channel attention (from global average and max pooling
@@ -116,7 +116,7 @@ cells cover $4\times4$ pixels, extending detection to targets as small as about
 four pixels. Figure~\ref{fig:p2} shows how the P2 branch attaches alongside the
 standard P3--P5 scales.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_p2_head.png}{6.5cm}
   \caption{The four-scale detection head. The P2 scale (stride~4, $160\times160$)
@@ -133,7 +133,7 @@ thesis, C3k2Mamba (Figure~\ref{fig:mamba}), scans a local window in both the for
 and reverse directions and fuses the two, and is inserted in place of selected C3k2
 neck blocks. Its effect on this task is measured in Chapter~IV.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_c3k2mamba.png}{6.5cm}
   \caption{The explored C3k2Mamba block: forward and reverse selective scans over a
@@ -145,8 +145,8 @@ neck blocks. Its effect on this task is measured in Chapter~IV.
 \section{Discussion}
 
 \subsection{Research Gap and Proposed Solution}
-The reviewed work leaves a specific gap. Small-object techniques --- extra
-detection scales, attention, and inference-time slicing --- are usually reported in
+The reviewed work leaves a specific gap. Small-object techniques, namely extra
+detection scales, attention, and inference-time slicing, are usually reported in
 isolation and on generic aerial data, and the recent enthusiasm for state-space
 necks has not been tested against a controlled baseline for very small human
 targets. On disaster imagery specifically, the C2A benchmark reports whole-model
@@ -158,7 +158,7 @@ components are worth their cost. The four configurations are summarised in
 Figure~\ref{fig:chain}, and the specific differences from prior work are listed in
 Table~\ref{tab:gap}.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_ablation_chain.png}{4.5cm}
   \caption{The additive ablation studied in this thesis: each step changes one
@@ -167,7 +167,7 @@ Table~\ref{tab:gap}.
   \label{fig:chain}
 \end{figure}
 
-\begin{table}[t]
+\begin{table}[tbp]
   \centering
   \caption{Position of this thesis relative to prior work on small-object aerial
   human detection.}

@@ -1,0 +1,6 @@
+path: ''
+train: D:/thesis_2007074/deployable_model/A6000 run/runs_joint/20260702_144117_finetune_enriched/ft_train.txt
+val: D:/thesis_2007074/deployable_model/A6000 run/runs_joint/20260702_144117_finetune_enriched/ft_val.txt
+names:
+  0: person
+nc: 1

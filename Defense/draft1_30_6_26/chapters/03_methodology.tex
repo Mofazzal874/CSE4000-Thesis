@@ -23,12 +23,12 @@ Convolutional Block Attention Module (CBAM). The resulting multi-scale features
 are aggregated by a PAN--FPN neck and decoded by a four-scale detection head that
 adds a high-resolution P2 level (stride~4) to the standard P3--P5 levels. A final
 non-maximum-suppression (NMS) stage produces the human bounding boxes. The two
-proposed modifications --- the CBAM attention block and the P2 detection scale ---
+proposed modifications, the CBAM attention block and the P2 detection scale,
 are highlighted in the figure; the optional state-space neck variant
 (Section~\ref{sec:mamba}) replaces selected neck blocks and is evaluated
 separately.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_overall_framework.png}{6cm}
   \caption{Overall framework of the proposed detector. An aerial image is
@@ -74,7 +74,7 @@ the parameter count relative to the baseline while adding both channel and spati
 selectivity.
 
 \subsection{Multi-Scale Detection: the P2 Head}
-The standard YOLO11 head detects at three scales --- P3, P4 and P5 (strides 8, 16
+The standard YOLO11 head detects at three scales: P3, P4 and P5 (strides 8, 16
 and 32). For $640 \times 640$ input, the finest of these (P3) operates on an
 $80 \times 80$ grid, so each cell already summarises an $8 \times 8$ pixel region;
 targets smaller than this are difficult to localise. The proposed model adds a
@@ -92,9 +92,9 @@ target recall.
 To test whether a selective state-space model (SSM) can improve feature
 aggregation in the neck, an explored variant replaces the C3k2 bottleneck at six
 neck layers (indices 13, 16, 19, 22, 25 and 28) with a C3k2Mamba block. Each such
-block performs bidirectional local-window scanning --- a forward and a reverse
+block performs bidirectional local-window scanning, a forward and a reverse
 selective scan over a local window (window sizes 6--8, state dimension
-$d_{\text{state}} = 4$) --- and is inserted by post-initialisation surgical
+$d_{\text{state}} = 4$), and is inserted by post-initialisation surgical
 replacement so that the surrounding CNN backbone and the P2 head are unchanged.
 This variant is included for completeness and evaluated under the same protocol;
 Chapter~IV reports that it does not improve accuracy while increasing both the
@@ -113,7 +113,7 @@ protocol and thresholds, so that every reported difference is attributable to th
 architectural change alone. The experimental setup and these settings are detailed
 in Chapter~IV.
 
-\begin{table}[t]
+\begin{table}[tbp]
   \centering
   \caption{The additive ablation. Each configuration differs from the previous one
   by a single architectural change, isolating the contribution of attention,
@@ -132,23 +132,20 @@ in Chapter~IV.
 \end{table}
 
 \subsection{Running Example}
-Figure~\ref{fig:running} follows a single C2A test image through the pipeline to
-make the transformations concrete. The input is letterbox-resized to
-$640 \times 640$; the backbone extracts features and the CBAM block concentrates
-activation on human-shaped regions rather than the surrounding debris; the P2 scale
-proposes boxes for targets a few pixels wide that the coarser scales miss; and NMS
-resolves overlaps to give the final detections. The same image is used in
-Chapter~IV to illustrate the attention response and the recovered detections.
-
-\begin{figure}[b]
-  \centering
-  \figorplaceholder{figures/fig_running_example.png}{7.5cm}
-  \caption{A single C2A test image traced through the pipeline: (a)~the letterboxed
-  input, (b)~the CBAM attention response over the backbone features, (c)~the
-  per-scale proposals including the P2 scale, and (d)~the final detections after
-  NMS.}
-  \label{fig:running}
-\end{figure}
+It helps to trace one image through the pipeline of Figure~\ref{fig:framework}.
+Consider a collapsed-building scene of the kind shown in
+Figure~\ref{fig:dataset_samples}(a), a $2000\times1500$ aerial photograph with more
+than thirty people scattered across rubble, most of them under sixteen pixels tall.
+The image is first letterbox-resized to $640\times640$, which preserves the aspect
+ratio so the already small figures are not stretched. The backbone extracts features
+at five scales, and the CBAM block after the SPPF stage re-weights them so that
+human-shaped regions are emphasised over the surrounding debris. The neck fuses the
+scales, and the head predicts boxes at all four levels; the added P2 level, at
+stride four, is the one that fires on the smallest figures, which the stride-eight
+P3 level would summarise into a single cell. Non-maximum suppression then removes
+overlapping boxes, so that a cluster of nearby people is kept as separate detections
+rather than merged. The output is one bounding box per recovered person, which is
+what an operator reviews.
 
 \section{Conclusion}
 This chapter presented the proposed detector as an additive refinement of YOLO11m:

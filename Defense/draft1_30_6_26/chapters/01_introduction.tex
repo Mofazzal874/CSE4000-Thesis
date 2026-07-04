@@ -14,12 +14,12 @@ airborne hardware.
 \section{Background / Problem Statement}
 General object detection is close to solved for objects that fill a reasonable part
 of the frame, but aerial search-and-rescue imagery breaks that assumption. Targets
-are tiny, often smaller than eight pixels --- in benchmark disaster imagery about
-47\% of annotated people occupy fewer than ten pixels~\cite{nihal2024c2a}; they are
-partially buried or occluded; scenes are dense; and the background is visually noisy. Standard detectors detect
+are tiny, often smaller than eight pixels. In benchmark disaster imagery about
+47\% of annotated people occupy fewer than ten pixels~\cite{nihal2024c2a}. They are
+partially buried or occluded, scenes are dense, and the background is visually noisy. Standard detectors detect
 at strides of eight pixels and coarser, so the smallest people fall through the
-grid. Several remedies exist --- higher-resolution detection scales, feature
-attention, and inference-time slicing --- but they are usually reported one at a
+grid. Several remedies exist, such as higher-resolution detection scales, feature
+attention, and inference-time slicing, but they are usually reported one at a
 time and on generic aerial data, and recent state-space (Mamba) modules have been
 promoted without a controlled test on this kind of target. It is therefore unclear
 which of these additions actually earns its computational cost for very small human
@@ -37,8 +37,8 @@ The work is organised around the following objectives.
         of very small targets at the lowest parameter and latency cost.
   \item Evaluate the resulting model against published detectors on the same
         dataset, and report the state-space neck honestly whether or not it helps.
-  \item Extend the chosen design to a lightweight backbone suitable for on-board
-        deployment, and characterise the accuracy--efficiency trade-off.
+  \item Deliver a detector compact enough for deployment, and set out how the design
+        extends to a smaller backbone for embedded, on-board use.
 \end{itemize}
 
 \section{Scope}
@@ -54,9 +54,9 @@ production of a field-hardened detector are identified as future work.
 The problem was approached without reusing a prior solution. The additive ablation,
 the choice and placement of components, the state-space neck in the neck rather
 than the backbone, and the evaluation protocol were all designed for this work.
-Where an existing dataset or module is used --- C2A, CBAM, the YOLO11 baseline ---
-it is cited, and the contribution lies in how these are combined, measured, and
-reduced to a deployable model.
+Where an existing dataset or module is used, such as C2A, CBAM, or the YOLO11
+baseline, it is cited, and the contribution lies in how these are combined,
+measured, and reduced to a deployable model.
 
 \section{Project Planning and Work Distribution}
 This thesis is the work of a single author, so there is no division of tasks across

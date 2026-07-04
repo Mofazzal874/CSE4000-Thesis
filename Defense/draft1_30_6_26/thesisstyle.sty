@@ -100,6 +100,20 @@
 \RequirePackage{array}
 \RequirePackage{multirow}
 
+% ---- Float placement / whitespace control ----------------------------------
+% Let pages end naturally (slack at the bottom) instead of stretching interior
+% gaps, and allow more/larger floats per page so text pages are not stranded.
+\raggedbottom
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.75}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+
 % ---- IEEE references via biblatex (spec 9) ---------------------------------
 \RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}
 % Reference list: 1.2 line spacing, hanging indent 0.31in.

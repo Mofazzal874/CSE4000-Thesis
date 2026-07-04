@@ -1,0 +1,18 @@
+\lotlofhead {Figure}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again.}}{6}{figure.caption.16}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression.}}{7}{figure.caption.18}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged.}}{8}{figure.caption.20}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{8}{figure.caption.22}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{10}{figure.caption.24}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type: (a)~collapsed building, (b)~fire, (c)~flood, and (d)~traffic incident. Human targets are small and numerous in every scene, which is the central difficulty of the dataset.}}{15}{figure.caption.34}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen.}}{18}{figure.caption.42}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set.}}{18}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Per-epoch training and validation dynamics for the CBAM~+~P2 model: box, classification, and distribution-focal losses together with precision, recall, and mAP over the course of training.}}{19}{figure.caption.44}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsfinish 
