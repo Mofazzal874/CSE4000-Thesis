@@ -1,0 +1,83 @@
+{
+  "seed": 20260705,
+  "hash_thr": 6,
+  "n_images": 10215,
+  "n_clusters": 2039,
+  "images_per_split": {
+    "train": 6135,
+    "val": 2040,
+    "test": 2040
+  },
+  "ratios": {
+    "train": 0.6006,
+    "val": 0.1997,
+    "test": 0.1997
+  },
+  "per_category_images": {
+    "collapsed_building": {
+      "test": 510,
+      "train": 1535,
+      "val": 510
+    },
+    "fire": {
+      "train": 1565,
+      "val": 520,
+      "test": 520
+    },
+    "flood": {
+      "train": 1580,
+      "test": 525,
+      "val": 525
+    },
+    "traffic_incident": {
+      "train": 1455,
+      "val": 485,
+      "test": 485
+    }
+  },
+  "size_distribution_pct": {
+    "train": {
+      "16-32": 36.5,
+      "8-16": 28.5,
+      "<8": 34.5,
+      ">=32": 0.4
+    },
+    "val": {
+      "16-32": 36.1,
+      "8-16": 28.4,
+      "<8": 34.8,
+      ">=32": 0.7
+    },
+    "test": {
+      "16-32": 36.7,
+      "8-16": 28.7,
+      "<8": 34.1,
+      ">=32": 0.6
+    }
+  },
+  "instances_per_split": {
+    "train": 215885,
+    "val": 71735,
+    "test": 72847
+  },
+  "cross_prefix_merges_count": 4,
+  "cross_prefix_merge_examples": [
+    [
+      "collapsed_building_image0319_3.png",
+      "collapsed_building_image0329_0.png"
+    ],
+    [
+      "fire_image0172_0.png",
+      "fire_image0186_3.png"
+    ],
+    [
+      "fire_image0392_0.png",
+      "fire_image0396_2.png"
+    ],
+    [
+      "flood_image0098_0.png",
+      "flood_image0466_0.png"
+    ]
+  ],
+  "missing_label_files": []
+}

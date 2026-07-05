@@ -1,0 +1,95 @@
+{
+  "root": "d:\\Academics\\thesis folder\\c2a\\C2A_Dataset\\new_dataset3",
+  "n_images": {
+    "train": 6129,
+    "val": 2043,
+    "test": 2043
+  },
+  "n_scenes": {
+    "train": 2018,
+    "val": 1353,
+    "test": 1399
+  },
+  "n_scenes_total_dataset": 2043,
+  "paper_claim_backgrounds": 1345,
+  "variants_per_scene_histogram": {
+    "5": 2043
+  },
+  "file_level_overlap": {
+    "train^test": 0,
+    "train^val": 0,
+    "val^test": 0
+  },
+  "scene_level": {
+    "test_scenes_also_in_train": 1375,
+    "test_scenes_also_in_train_pct": 98.28,
+    "test_scenes_in_val_only": 24,
+    "test_scenes_fully_unseen": 0,
+    "test_images_sharing_scene_with_train": 1981,
+    "test_images_sharing_scene_with_train_pct": 96.97,
+    "test_images_fully_unseen_scene": 0
+  },
+  "scenes_per_category": {
+    "collapsed_building": 511,
+    "traffic_incident": 485,
+    "flood": 526,
+    "fire": 521
+  },
+  "sibling_pairs_exported": [
+    {
+      "scene": "flood_image0272",
+      "test": "flood_image0272_0.png",
+      "train": "flood_image0272_1.png",
+      "file": "pair_00_flood_image0272.png"
+    },
+    {
+      "scene": "traffic_incident_image0243",
+      "test": "traffic_incident_image0243_1.png",
+      "train": "traffic_incident_image0243_2.png",
+      "file": "pair_01_traffic_incident_image0243.png"
+    },
+    {
+      "scene": "flood_image0237",
+      "test": "flood_image0237_3.png",
+      "train": "flood_image0237_1.png",
+      "file": "pair_02_flood_image0237.png"
+    },
+    {
+      "scene": "traffic_incident_image0231",
+      "test": "traffic_incident_image0231_4.png",
+      "train": "traffic_incident_image0231_0.png",
+      "file": "pair_03_traffic_incident_image0231.png"
+    },
+    {
+      "scene": "flood_image0396",
+      "test": "flood_image0396_1.png",
+      "train": "flood_image0396_3.png",
+      "file": "pair_04_flood_image0396.png"
+    },
+    {
+      "scene": "collapsed_building_image0386",
+      "test": "collapsed_building_image0386_2.png",
+      "train": "collapsed_building_image0386_0.png",
+      "file": "pair_05_collapsed_building_image0386.png"
+    }
+  ],
+  "sard_test_audit": {
+    "gt_json": "d:/Academics/thesis folder/Last Month/cross_dataset_SARD/sard_test_coco_gt.json",
+    "n_images": 570,
+    "n_unique_bases": 197,
+    "bases_with_multiple_copies": 174,
+    "images_in_duplicated_bases": 547,
+    "worst_offenders": {
+      "gss1310": 6,
+      "gss758": 6,
+      "gss855": 6,
+      "gss918": 6,
+      "gss967": 6,
+      "gss1385": 5,
+      "gss1694": 5,
+      "gss1830": 5,
+      "gss1931": 5,
+      "gss1979": 5
+    }
+  }
+}
