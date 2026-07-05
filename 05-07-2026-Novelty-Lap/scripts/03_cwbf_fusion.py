@@ -55,9 +55,7 @@ def nms(boxes: np.ndarray, scores: np.ndarray, iou_thr: float = 0.5):
             continue
         keep.append(i)
         ious = iou_matrix(boxes[i], boxes[order]).ravel()
-        supp[order[ious > iou_thr]] = True
-        supp[i] = False if i in keep else supp[i]
-        supp[i] = True  # processed
+        supp[order[ious > iou_thr]] = True   # marks i too (IoU=1): processed
     keep = np.array(keep, int)
     return boxes[keep], scores[keep]
 

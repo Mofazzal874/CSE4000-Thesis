@@ -168,7 +168,7 @@ python 04_eval_fusion_ablation.py --load-preds preds_val.json --gt-json <val jso
 python 04_eval_fusion_ablation.py --weights <epoch125.pt> --images-dir <test>\images --gt-json <test json> --slices 256 --overlap 0.30 --tta-imgsz 1280 --save-preds preds_test.json
 python 04_eval_fusion_ablation.py --load-preds preds_test.json --gt-json <test json> --cal cal.json
 ```
-Repeat step 3 for SARD test (`--slices 0`? no — SARD is 640×640: tiles are skipped automatically; the whole+TTA ensemble is what's being fused there). Output: `preds_test_ablation.csv` with one row per mode (AP50, bestF1/F2, meanIoU_TP, per-size recall, COCO AP/AP_small when pycocotools is present).
+Repeat step 3 for SARD test (SARD is 640×640: tiles are skipped automatically; the whole+TTA ensemble is what's being fused there). Output: `preds_test_ablation.csv` with one row per mode carrying the FULL spec §6/§11 contract — AP50_allpoint, COCO 12-stat block (AP/AP50/AP75/AP_small/medium/large + AR_1/10/100 + AR by size), OptThr_F1/Best_F1, OptThr_F2/Best_F2, precision/recall/F1/F2 at conf=0.25, TP/FP/FN at both thresholds, 5-bin per-size recall (+n per bin), ECE/MCE/Brier of the fused output, meanIoU_TP, latency mean/p50/p95 + FPS, optional bootstrap CI95 (`--bootstrap 1000`), plus per-mode curve CSVs/PNGs and per-image TP/FP/FN CSVs in `*_artifacts/`; anything uncomputable lands in `skipped_metrics.txt`. Add `--bootstrap 1000` on final paper tables. See PC_CHECKLIST.md for the exact per-machine command sequence.
 
 **GATE G3** vs the `nms` row (≈ your current merge) and vs the June SAHI report (F1 0.829 / VT-recall 0.8292 at slice256): branch per §2.
 Bonus row for the paper: `--tta-imgsz 1280` alone vs fused — shows what fusion adds beyond TTA.
@@ -223,10 +223,14 @@ Guards you get for free: 06 ABORTS if any test frame sneaks into the pool; sweep
 ---
 
 ## 9. Troubleshooting quick refs
+- **Shell:** all commands are PowerShell. `dir : positional parameter ... 'X'` means you pasted a cmd.exe line — use `Get-ChildItem -Recurse -Filter X` instead.
+- **Env:** prompt shows `(base)` → `conda deactivate` once, then `where.exe python` (first hit must be the venv). `Activate.ps1 ... disabled` → `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first.
+- `Can't get attribute 'CBAM'` on load → that PC's `04`/`02` is an OLD copy (pre-fix); re-copy the `scripts\` folder. The fix registers the checkpoint's custom CBAM classes before `YOLO()` loads — both 02 and 04 now do this.
+- `Can't get attribute 'C3k2'` → that machine's ultralytics is too old for YOLO11 (the LAPTOP is 8.0.196 → cannot load these weights at all; use PC-1/2/3/4 for anything that loads a model).
+- `04` "taking forever" → EXPECTED, not a hang: per image it runs whole@640 + TTA@1280 (augment ≈ 3–4 high-res passes) + 256px tiles, batch=1, ×2040. `[infer] N/2040` climbing = fine. Fast pass: `--limit 200`. Biggest cut: drop `--tta-imgsz 1280` (but then val has no TTA source to calibrate). Kill-safe: resumes from `--save-preds`.
 - `[splits] Split md5 mismatch` → you launched in an OLD model folder; use the `_SceneSplit` copy (§4).
 - `[nwd-verify] FATAL` → ultralytics loss internals changed; STOP, report traceback. Do not trust the run.
 - PC-4 NaN in epoch 0 → you forgot `--no-amp`.
 - GPU parked at P8, no results.csv rows → dataloader deadlock (runbook §1.1): workers 4, cache disk.
-- 04 slow on PC-2 → it's one model call per tile; use `--limit 200` for a first pass, full test overnight.
 - GStreamer warnings from OpenCV on video read → cosmetic (Anaconda), ignore.
 - Scene-split retrain looks *better* than official → possible (leakage can also depress training); report it, it's still the finding.
