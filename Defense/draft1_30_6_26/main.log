@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  7 JUL 2026 14:20
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  7 JUL 2026 14:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1541,29 +1541,28 @@ File: figures/p2_featuremap.png Graphic file (type bmp)
 <figures/p2_featuremap.png>
 File: figures/arch_detections.png Graphic file (type bmp)
 <figures/arch_detections.png>
+ [17]
 File: figures/fig_cbam_effect.png Graphic file (type bmp)
 <figures/fig_cbam_effect.png>
- [17] [18]
 File: figures/fig_stride_problem.png Graphic file (type bmp)
 <figures/fig_stride_problem.png>
- [19] [20]
+ [18] [19] [20]
 File: figures/fig_sahi.png Graphic file (type bmp)
 <figures/fig_sahi.png>
-
-[21]
 File: figures/fig_tta.png Graphic file (type bmp)
 <figures/fig_tta.png>
-) [22]
+)
+[21] [22] [23]
 \openout2 = `chapters/04_implementation_results.aux'.
 
  (./chapters/04_implementation_results.tex
 Chapter IV.
-[23
+[24
 
 
 
 
-] [24]
+] [25]
 File: figures/c2a_collapsed.png Graphic file (type bmp)
 <figures/c2a_collapsed.png>
 File: figures/c2a_fire.png Graphic file (type bmp)
@@ -1572,8 +1571,8 @@ File: figures/c2a_flood.png Graphic file (type bmp)
 <figures/c2a_flood.png>
 File: figures/c2a_traffic.png Graphic file (type bmp)
 <figures/c2a_traffic.png>
- (./tikz/fig_size_distribution.tex) [25] [26] [27]
-(./tikz/fig_ablation_waterfall.tex) [28] [29]
+ (./tikz/fig_size_distribution.tex) [26] [27] [28]
+(./tikz/fig_ablation_waterfall.tex) [29] [30]
 File: figures/fig_training_worst.png Graphic file (type bmp)
 <figures/fig_training_worst.png>
 File: figures/cbam_p2_pr_curve.png Graphic file (type bmp)
@@ -1584,7 +1583,7 @@ File: figures/cbam_p2_calibration.png Graphic file (type bmp)
 <figures/cbam_p2_calibration.png>
 File: figures/cbam_p2_confusion.png Graphic file (type bmp)
 <figures/cbam_p2_confusion.png>
- [30] [31]
+ [31] [32]
 File: figures/qual_gt.png Graphic file (type bmp)
 <figures/qual_gt.png>
 File: figures/qual_baseline.png Graphic file (type bmp)
@@ -1597,41 +1596,41 @@ File: figures/detgrid_c2a_s8.png Graphic file (type bmp)
 <figures/detgrid_c2a_s8.png>
 File: figures/detgrid_c2a_s4.png Graphic file (type bmp)
 <figures/detgrid_c2a_s4.png>
- [32] [33]
+ [33] [34]
 File: figures/per_size_recall_all_configs.png Graphic file (type bmp)
 <figures/per_size_recall_all_configs.png>
- [34] [35])
-[36]
+ [35] [36])
+[37]
 \openout2 = `chapters/05_societal_issues.aux'.
 
  (./chapters/05_societal_issues.tex
 Chapter V.
-[37
+[38
 
 
 
 
-] [38]) [39] [40]
+] [39]) [40] [41]
 \openout2 = `chapters/06_complex_engineering.aux'.
 
  (./chapters/06_complex_engineering.tex
 Chapter VI.
-[41
+[42
 
 
 
 
-] [42]) [43]
+] [43]) [44]
 \openout2 = `chapters/07_conclusions.aux'.
 
  (./chapters/07_conclusions.tex
 Chapter VII.
-[44
+[45
 
 
 
 
-]) [45] [46
+]) [46] [47
 
 
 
@@ -1642,13 +1641,13 @@ it/12 et al.\TU/TimesNewRoman(0)/m/n/12 , “YOLOv10: Real-time end-to-end objec
 
  []
 
-[47] [48]
+[48] [49]
 Underfull \hbox (badness 7133) in paragraph at lines 58--58
 \TU/TimesNewRoman(0)/m/n/12 petencies, version 4.” (2021), [Online]. Available:
  []$[] [] [] [] []  [] [] [] [] [] []  []
  []
 
-[49]
+[50]
 Underfull \hbox (badness 1755) in paragraph at lines 120--120
 []|$[][]$ \TU/TimesNewRoman(0)/m/n/10.95 0.849, small-object re-
  []
@@ -1728,10 +1727,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 124--125
 \TU/TimesNewRoman(0)/m/n/10.95 recommenda-
  []
 
-[50
+[51
 
 
-] [51] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
+] [52] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
 (./frontmatter/acknowledgment.aux) (./frontmatter/abstract.aux)
 (./frontmatter/abbreviations.aux) (./chapters/01_introduction.aux)
 (./chapters/02_literature_review.aux) (./chapters/03_methodology.aux)
@@ -1748,12 +1747,12 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 38729 strings out of 476846
- 793183 string characters out of 5803825
+ 38730 strings out of 476846
+ 793201 string characters out of 5803825
  1947627 words of memory out of 5000000
- 59959 multiletter control sequences out of 15000+600000
+ 59960 multiletter control sequences out of 15000+600000
  563627 words of font info for 120 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  99i,12n,128p,1058b,5062s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (62 pages).
+Output written on main.pdf (63 pages).

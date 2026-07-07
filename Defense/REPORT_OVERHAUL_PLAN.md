@@ -285,3 +285,9 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
+- 2026-07-07 (polish session): (1) fig_size_distribution y-axis label moved to
+  x=-0.85 — no longer overlaps tick numbers (render-verified p.27 printed);
+  (2) acknowledgment expanded: thesis-group students (valuable help) +
+  department (technical facilities); TODO comment removed; (3) tab:layers
+  decongested: tabcolsep 7pt + arraystretch 1.3, still \small, inside margin
+  (render-verified p.16 printed). Compile: 0 errors, 0 overfull.

@@ -11,20 +11,20 @@
 \contentsline {figure}{\numberline {3.1}{\ignorespaces High-level schematic of the proposed detection pipeline.}}{14}{figure.caption.18}%
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed detector on a real C2A scene.}}{15}{figure.caption.19}%
 \contentsline {figure}{\numberline {3.3}{\ignorespaces The trained detector on the running example: input, attention, P2 response, detections.}}{18}{figure.caption.21}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution.}}{18}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution.}}{19}{figure.caption.22}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces The stride problem motivating the P2 head.}}{19}{figure.caption.23}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces The SAHI inference pipeline.}}{21}{figure.caption.25}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces The SAHI inference pipeline.}}{22}{figure.caption.25}%
 \contentsline {figure}{\numberline {3.7}{\ignorespaces The test-time augmentation pipeline.}}{22}{figure.caption.26}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{26}{figure.caption.29}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Distribution of human-target sizes in the C2A test set.}}{26}{figure.caption.30}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ (ablation waterfall).}}{29}{figure.caption.33}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant (weakest configuration).}}{31}{figure.caption.36}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Precision--recall and score-threshold curves of the recommended model.}}{31}{figure.caption.37}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Reliability diagram and confusion matrix of the recommended model.}}{32}{figure.caption.38}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Unified dense-scene comparison: ground truth and three operating modes.}}{33}{figure.caption.39}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Detection-cell granularity on a real C2A cluster crop.}}{33}{figure.caption.40}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Per-size recall under each inference-time setting.}}{35}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{27}{figure.caption.29}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Distribution of human-target sizes in the C2A test set.}}{27}{figure.caption.30}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ (ablation waterfall).}}{30}{figure.caption.33}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant (weakest configuration).}}{32}{figure.caption.36}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Precision--recall and score-threshold curves of the recommended model.}}{32}{figure.caption.37}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Reliability diagram and confusion matrix of the recommended model.}}{33}{figure.caption.38}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Unified dense-scene comparison: ground truth and three operating modes.}}{34}{figure.caption.39}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Detection-cell granularity on a real C2A cluster crop.}}{34}{figure.caption.40}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Per-size recall under each inference-time setting.}}{36}{figure.caption.43}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
