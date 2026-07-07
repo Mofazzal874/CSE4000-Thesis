@@ -4,7 +4,8 @@
 \contentsline {chapter}{\hspace *{0.5in}Abstract}{iii}{section*.3}%
 \contentsline {chapter}{\hspace *{0.5in}Contents}{iv}{section*.4}%
 \contentsline {chapter}{\hspace *{0.5in}List of Tables}{viii}{section*.6}%
-\contentsline {chapter}{\hspace *{0.5in}List of Figures}{x}{section*.8}%
+\contentsline {chapter}{\hspace *{0.5in}List of Figures}{ix}{section*.8}%
+\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{x}{section*.10}%
 \contentsline {chapter}{\numberline {I}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Problem Statement}{1}{section.1.2}%
@@ -62,27 +63,29 @@
 \contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{29}{subsection.4.6.4}%
 \contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{30}{subsection.4.6.5}%
 \contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{30}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{33}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{33}{section.4.9}%
-\contentsline {section}{\numberline {4.10}Objectives Achieved}{35}{section.4.10}%
+\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{32}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{34}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Objectives Achieved}{34}{section.4.10}%
 \contentsline {section}{\numberline {4.11}Financial Analysis and Budget}{36}{section.4.11}%
 \contentsline {section}{\numberline {4.12}Conclusion}{36}{section.4.12}%
 \contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{37}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Introduction}{37}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{37}{section.5.2}%
 \contentsline {section}{\numberline {5.3}Ethical Considerations}{37}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Safety Considerations}{37}{section.5.4}%
+\contentsline {section}{\numberline {5.4}Safety Considerations}{38}{section.5.4}%
 \contentsline {section}{\numberline {5.5}Legal Considerations}{38}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{38}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{38}{section.5.7}%
-\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{39}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Introduction}{39}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{39}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{39}{section.6.3}%
-\contentsline {chapter}{\numberline {VII}Conclusions}{40}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Summary}{40}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Limitations}{40}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Recommendations and Future Works}{40}{section.7.3}%
-\contentsline {chapter}{References}{42}{section*.44}%
-\contentsline {chapter}{Appendix: Model Selection History}{46}{section*.45}%
+\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{39}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{39}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{39}{section.5.8}%
+\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{41}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{41}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{41}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{42}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conclusion}{43}{section.6.4}%
+\contentsline {chapter}{\numberline {VII}Conclusions}{44}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary}{44}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitations}{44}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{45}{section.7.3}%
+\contentsline {chapter}{References}{46}{section*.46}%
+\contentsline {chapter}{Appendix: Model Selection History}{50}{section*.47}%
 \contentsfinish 

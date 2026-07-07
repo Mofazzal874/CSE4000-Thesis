@@ -34,6 +34,8 @@
 \addtocontents{lof}{\protect\lotlofhead{Figure}}
 \listoffigures
 
+\include{frontmatter/abbreviations}
+
 % ---------- MAIN MATTER (arabic: 1, 2, 3, ...) ----------
 \clearpage
 \pagenumbering{arabic}
@@ -61,14 +63,67 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Appendix: Model Selection History}
 \chapter*{Appendix: Model Selection History}
+\renewcommand{\thetable}{A.\arabic{table}}
+\setcounter{table}{0}
 This appendix consolidates every configuration explored during model
-selection, from the YOLOv8 through YOLO11 detector-family benchmark that
-fixed the YOLO11m baseline, to the attention (ECA, CBAM), detection-scale
-(P2), state-space (Mamba, atrous-SSM), and combined variants evaluated on
-C2A. The summary table records, for each attempt, its configuration, its
-headline scores under the protocol it was run with, and the decision it led
-to.
+selection, so that any choice made in the body of the thesis can be traced
+to the attempt that motivated it. Two records are given. Table~\ref{tab:appfamily}
+is the detector-family benchmark that fixed the YOLO11m baseline; it was run
+under an earlier protocol (different hardware and schedule), so its absolute
+values are not comparable to the final ablation of Table~\ref{tab:main} and
+it serves only to justify the backbone choice. Table~\ref{tab:apphistory}
+then lists every architectural variant attempted across the project with its
+outcome and the decision it produced, including the attempts that failed and
+the one whose first results were invalidated by an implementation fault.
 
-% [Summary table of all tried models to be inserted here.]
+\begin{table}[htbp]
+  \centering
+  \caption[Detector-family benchmark used to select the baseline.]{Detector-family benchmark on the C2A test set used to select the
+  baseline (earlier protocol; values are internally comparable only). $P$,
+  $R$, and $F_1$ are precision, recall, and their harmonic mean as defined in
+  Section~\ref{sec:metrics}; Size is the weight-file size. YOLO11m offers the
+  best accuracy-to-size balance and was selected.}
+  \label{tab:appfamily}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l r r r r r r@{}}
+    \toprule
+    Model & mAP50 & mAP50-95 & $P$ & $R$ & $F_1$ & Size (MB) \\
+    \midrule
+    YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\
+    YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\
+    YOLOv9-e   & \textbf{0.855} & \textbf{0.619} & \textbf{0.884} & \textbf{0.805} & \textbf{0.843} & 111.8 \\
+    YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\
+    YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\
+    YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\
+    YOLO11-s   & 0.803 & 0.535 & 0.845 & 0.757 & 0.798 & 18.3 \\
+    \textbf{YOLO11m (selected)} & 0.841 & 0.592 & 0.867 & 0.794 & 0.829 & 38.6 \\
+    YOLO11-l   & 0.847 & 0.603 & 0.876 & 0.796 & 0.834 & 48.8 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption[Every architectural variant attempted, with outcome and decision.]{Every architectural variant attempted during the project, with its
+  outcome and the decision it led to. Final-protocol numbers refer to the
+  tables of Chapter~IV; earlier-protocol numbers are internally comparable
+  only. The invalidated first state-space attempt is listed because the fault
+  it exposed shaped the verification steps of the final protocol.}
+  \label{tab:apphistory}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}p{2.9cm} p{4.3cm} p{4.4cm} p{2.4cm}@{}}
+    \toprule
+    Variant & What it changes & Outcome & Decision \\
+    \midrule
+    ECA attention & C2PSA $\to$ ECA in backbone & $F_2$ 0.844, small-object recall 0.884 (earlier protocol): no gain over baseline & not adopted \\
+    CBAM attention & C2PSA $\to$ CBAM in backbone & $F_2$ 0.849, small-object recall 0.892 (earlier protocol); confirmed in final chain (Table~\ref{tab:main}) & adopted \\
+    P2 detection scale & adds stride-4 head branch & $\mathrm{AP}_{50}$ $0.843 \to 0.853$, very-tiny recall $0.743 \to 0.757$ (final protocol) & adopted; core of recommended model \\
+    C3k2Mamba, first attempt & post-initialisation SSM injection into neck & results invalid: the framework's training rebuild silently removed the injected blocks, so the model trained was CBAM~+~P2 & discarded; protocol gained module-presence verification \\
+    AtrousSSM & multi-scale dilated SSM scanning in neck & prototype stage; smoke evaluations showed no reliable gain and no protocol-compliant full run was completed & set aside \\
+    C3k2Mamba, corrected & verified SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy change (Table~\ref{tab:main}); scan-activity diagnostics confirm the blocks ran & excluded from recommendation \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \end{document}

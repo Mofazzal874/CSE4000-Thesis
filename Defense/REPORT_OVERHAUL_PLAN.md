@@ -1,5 +1,38 @@
 # REPORT OVERHAUL PLAN — master state file (2026-07-07)
 
+## PHASE 2 (2026-07-07, evening): Ch V/VI/VII + polish — INSTRUCTIONS
+1. Ch VI must be OBE-grounded: research Washington Accord complex engineering
+   problem attributes (WP1–WP7) + activity attributes (EA1–EA5), map thesis to them
+   like sample_efty Ch VI. Ch V per sample (IP/ethical/safety/legal/societal/env) but
+   around THIS thesis: humanitarian + surveillance dual-use; Kaggle-sourced C2A
+   (CHECK license); real GPU-power + CO2 numbers from run summaries (codecarbon
+   training_co2_kg in summary.json + resource_summary).
+2. Ch VII: future work must add (a) server-side deployment: drone streams footage
+   to a server running the detector; (b) enhanced dataset integrating user's own
+   captured data. (User is actively doing both.)
+3. Nomenclature: add a List of Abbreviations to front matter (standard in
+   IEEE-style theses). Keep small.
+4. Appendix: I (assistant) fill the model-selection summary tables MYSELF (user has
+   no time). 1–3 tables: (T1) YOLO family benchmark — recover the removed
+   tab:detbench data from git history (git show HEAD:...04_implementation_results.tex);
+   (T2) architecture/attention variants incl. Mamba + atrous attempts with outcome +
+   decision. Metrics that matter: mAP50, mAP50-95, params/size, latency, verdict.
+5. Captions: EVERY figure + table needs a full descriptive caption (reader gets the
+   gist from caption alone). Notation used in equations/figures must reappear in
+   captions/descriptions. Cite reference numbers in text where claims come from
+   sources.
+6. Margins: fix ALL overfull hboxes (user sees lines/tables/images past margin).
+   Find via log grep "Overfull". Also no big mid-chapter whitespace: compact or add
+   prose where figures/tables split pages badly; don't break other pages.
+7. References: authorized to ADD real, verifiable entries (target 45+). Candidates:
+   Washington Accord/IEA attributes doc, GDPR, codecarbon/energy-aware ML, Kaggle
+   C2A dataset page, drone-SAR ethics (ICRC/IFRC), lin2014coco already in.
+8. PC1 heatmap-colorbar rerun: SKIPPED by user (no time) — keep caption note
+   "warm = high"; do NOT block on it. fig_intro_scene.png still pending from user.
+9. Tone: HUMANIZER rules + formal academic register (supervisor runs AI +
+   plagiarism checks). Grid layouts with (a)(b)(c) subcaptions for multi-figure.
+10. Verify everything against thesis folder data; websearch when unsure; never guess.
+
 > **Purpose:** compaction-proof memory for the long-running Ch IV (+ technical chapters)
 > overhaul. If context is lost, RE-READ THIS FILE FIRST, then continue from the first
 > unchecked box. Update checkboxes + notes as work completes.
@@ -181,3 +214,74 @@
     (2 entries still marked VERIFY; expanding toward 40+ needs real sources); user
     to paste fig_intro_scene.png; user to fill appendix summary table; Ch II not yet
     aligned to sample "Relevant Terminology" pattern (user hasn't asked).
+- 2026-07-07 (PHASE 2 session): ALL content work DONE, compile pass BLOCKED by
+  wedged WSL (user said skip). Completed:
+  - Ch V rewritten: sample-style bold bullets; dual-use framing; Kaggle IP honesty
+    (c2akaggle, no explicit licence, citation requested); GDPR + aviation legal;
+    NEW tab:carbon with REAL codecarbon data (1.31/1.28/1.78/4.65 kg CO2, powers
+    216/218/207/182 W, energies 1.6/1.5/2.1/5.4 kWh, totals 54 h / 10.6 kWh /
+    9.02 kg); Mamba = >half of emissions argument; strubell2019energy + codecarbon
+    cited.
+  - Ch VI rewritten: full OBE mapping, WP1–WP7 + EA1–EA5 labeled bullets (IEA GAPC
+    v4 verified by websearch), every claim anchored via \ref to tables/figures;
+    labels added: sec:cbam3, sec:loss3, sec:p2novel (ch03).
+  - Ch VII rewritten: sample-style bullets; summary carries all headline numbers;
+    future work adds (1) server-side deployment (drone→server streaming), (2)
+    enhanced dataset with author's own imagery, plus SARD/multi-seed/SSM-redesign.
+  - Front matter: frontmatter/abbreviations.tex (27 entries) included after LoF
+    with TOC line.
+  - Appendix filled by assistant: Table A.1 = detector-family benchmark (recovered
+    from git 3d5cc6e), Table A.2 = full variant history incl. invalidated first
+    Mamba attempt + AtrousSSM prototype; \thetable switched to A.x in appendix.
+  - references.bib = 43 (added c2akaggle, iea2021gapc, gdpr2016, strubell2019energy,
+    codecarbon). Ch IV budget power corrected to 182–218 W / 10.6 kWh, cross-refs
+    tab:carbon.
+  - Caption/notation audit: fig:curves caption now names F1+F2+dashed operating
+    point; fig:strideprob caption ties to c_d(s)=s/d of eq:coverage. Humanizer
+    grep across all chapters: CLEAN.
+  - NOT DONE (blocked, do on next session with working WSL/Overleaf):
+    (1) full compile chain xelatex+biber; (2) overfull-hbox hunt+fix (last known
+    list: abstract 1.6–5.9pt ×3, tikz gantt/system_overview/size_distribution/
+    waterfall up to 42.8pt — get fresh list from log: grep "Overfull" main.log);
+    (3) whitespace/page-break audit with rendered pages; (4) render-verify
+    abbreviations page, tab:carbon, appendix tables, Ch VI refs resolve
+    (sec:cbam3 etc.); (5) LoT/LoF + TOC regeneration for new floats.
+  - WSL note: wsl.exe front-ends were force-killed; vmmemWSL + wslservice survive
+    without admin rights. Fix = elevated `wsl --shutdown` or reboot, then compile.
+- 2026-07-07 (VERIFICATION session): WSL recovered; FULL verification pass DONE.
+  - Compile chain (xelatex+biber+xelatex×2): EXIT=0, 0 errors, 0 undefined,
+    **0 overfull hboxes** (was 17). Fixes applied:
+    (1) two VERIFY bib stubs REPLACED with real verified data (sar_survey = Zhang,
+    Feng, Wang, Lu, Mei, J. Remote Sensing vol 5 art 0474, 2025, DOI
+    10.34133/remotesensing.0474; aerial_human_video = AlDahoul, Md Sabri, Mansoor,
+    Comput. Intell. Neurosci. 2018 art 1639561, DOI 10.1155/2018/1639561) — the
+    printed "Venue to be confirmed/VERIFY" text is GONE from the PDF;
+    (2) thesisstyle: \sloppy bibfont + biburl*penalty 9000 (killed 107/63/38pt
+    reference overflows) + global \emergencystretch 1.5em (killed 0.4–6pt prose
+    overfulls incl. LoF);
+    (3) tab:main → \small + tabcolsep 3pt (was 42.8pt over margin);
+    (4) waterfall legend note → \footnotesize at x=6.1 (was 30.3pt over);
+    (5) ch02 YOLO11m sentence reworded (was 23.9pt over);
+    (6) fig:explain got a short LoF caption (was 5.9pt over in main.lof).
+  - Whitespace audit: programmatic near-empty-page scan over body pages 15–63 →
+    ZERO hits. Anomaly scan of full text → only "[Figure pending export:
+    figures/fig_intro_scene.png]" remains (user's paste task).
+  - Render-verified: List of Abbreviations (p14, clean 27-entry table), Ch V
+    legal bullets + 5.6/5.7 with tab:carbon narrative (p53), Appendix Tables A.1
+    + A.2 (pp64–65, A-numbering correct, decisions column renders).
+  - Report = 65 physical pages, references end p46-region, bib = 43 entries.
+  - REMAINING for user: (1) paste figures/fig_intro_scene.png (AGIIndia-style
+    aerial flood scene; caption + citation already in place); (2) optional PC1
+    colorbar rerun for cbam_overlay/p2_featuremap (captions already state
+    warm = high). Nothing else outstanding.
+- 2026-07-07 (LoT/LoF + bullets session): user flagged multi-line LoT/LoF entries
+  + misaligned page numbers + too many bullets + caption spacing.
+  - ALL figures/tables (37) got short \caption[...]{} variants → LoT/LoF are now
+    single-line entries with page numbers in one aligned column (render-verified
+    pp. viii-ix). Full captions unchanged under each float.
+  - Bullet reduction: Ch V 5.2-5.5 itemize → prose (content preserved); Ch I
+    Unfamiliarity itemize → prose. KEPT as bullets: Ch I objectives/scope/
+    contribution/applications/organization, Ch III workflow phases, Ch VI WP/EA
+    attributes, Ch VII limitations/recommendations (genuine enumerations).
+  - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
+  - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.

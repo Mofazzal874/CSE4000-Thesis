@@ -67,7 +67,7 @@ faces.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_intro_scene.png}{6.5cm}
-  \caption{Aerial drone footage of a flood-affected region~\cite{agiindia2024drones}.
+  \caption[Aerial drone footage of a flood-affected region.]{Aerial drone footage of a flood-affected region~\cite{agiindia2024drones}.
   Scenes like this are what a search-and-rescue operator must scan: wide areas,
   cluttered structures, and human figures that occupy only a few pixels each.}
   \label{fig:introscene}
@@ -133,26 +133,19 @@ The boundaries of the study are set as follows.
 \section{Unfamiliarity of the Problem}
 No prior solution was reused wholesale. The individual ingredients are
 published, and are cited where they appear, but the specific design and the
-questions asked of it are this work's own.
-\begin{itemize}
-  \item The additive, single-variable ablation chain on disaster imagery does
-        not appear in prior C2A work, which reports whole models against whole
-        models~\cite{nihal2024c2a} and leaves open where a gain actually comes
-        from.
-  \item The state-space experiment places bidirectional local-window Mamba
-        blocks inside the \emph{neck} of an otherwise unchanged CNN detector.
-        Published Mamba detectors replace the backbone
-        instead~\cite{wang2025mambayolo}, which prevents a like-for-like
-        attribution.
-  \item The attention substitution removes the baseline's C2PSA blocks rather
-        than stacking a new module on top, so the attention change arrives at
-        a negative parameter cost. Additive attention bolt-ons are the norm in
-        the small-object literature.
-  \item A negative result is treated as a first-class finding. The state-space
-        variant is documented with the same rigour as the successful
-        components, because knowing what not to deploy is part of the
-        engineering answer.
-\end{itemize}
+questions asked of it are this work's own. The additive, single-variable
+ablation chain on disaster imagery does not appear in prior C2A work, which
+reports whole models against whole models~\cite{nihal2024c2a} and leaves open
+where a gain actually comes from. The state-space experiment places
+bidirectional local-window Mamba blocks inside the \emph{neck} of an
+otherwise unchanged CNN detector, whereas published Mamba detectors replace
+the backbone~\cite{wang2025mambayolo}, which prevents a like-for-like
+attribution. The attention change is a substitution rather than the bolt-on
+that is usual in the small-object literature: it removes the baseline's
+C2PSA blocks, so the improvement arrives at a negative parameter cost. And a
+negative result is treated as a first-class finding here, documented with
+the same rigour as the successful components, because knowing what not to
+deploy is part of the engineering answer.
 
 \section{Project Planning}
 The thesis spans two academic terms of thirteen weeks each. The first term
@@ -168,7 +161,7 @@ the timeline.
 \begin{figure}[tbp]
   \centering
   \resizebox{\linewidth}{!}{\input{tikz/fig_gantt}}
-  \caption{Timeline of the thesis across two thirteen-week terms. First-term
+  \caption[Timeline of the thesis across two thirteen-week terms.]{Timeline of the thesis across two thirteen-week terms. First-term
   phases (blue) built the foundation and the baseline benchmark; second-term
   phases (green and blue) ran the ablation, the state-space exploration, the
   inference-time studies, and the documentation.}

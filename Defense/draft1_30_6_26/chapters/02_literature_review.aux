@@ -10,22 +10,22 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2.3}Human Detection in Disaster and Search-and-Rescue Imagery}{8}{subsection.2.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2.4}State-Space Models for Vision}{8}{subsection.2.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.3}Core Concepts}{8}{section.2.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again.}}{9}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:cbam}{{2.1}{9}{The CBAM module. Channel attention (from global average and max pooling through a shared multi-layer perceptron) refines the feature map, after which spatial attention (from channel-wise pooling and a $7\times 7$ convolution) refines it again}{figure.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces The CBAM module.}}{9}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:cbam}{{2.1}{9}{The CBAM module}{figure.caption.13}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.1}The YOLO11 Baseline}{9}{subsection.2.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.2}Attention: CBAM and ECA}{9}{subsection.2.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.3}Multi-Scale Detection and the P2 Scale}{9}{subsection.2.3.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces Construction of the added P2 branch. The P3 neck feature is upsampled and concatenated with the high-resolution backbone P2 feature (a skip connection), then fused by a C3k2 block into a $160\times 160$ feature that a stride-4 detection head reads. Each P2 grid cell covers about $4\times 4$ input pixels, so the branch resolves targets the coarser P3--P5 scales miss.}}{10}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:p2}{{2.2}{10}{Construction of the added P2 branch. The P3 neck feature is upsampled and concatenated with the high-resolution backbone P2 feature (a skip connection), then fused by a C3k2 block into a $160\times 160$ feature that a stride-4 detection head reads. Each P2 grid cell covers about $4\times 4$ input pixels, so the branch resolves targets the coarser P3--P5 scales miss}{figure.caption.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces Construction of the added P2 branch.}}{10}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:p2}{{2.2}{10}{Construction of the added P2 branch}{figure.caption.14}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.4}State-Space Models and the C3k2Mamba Block}{10}{subsection.2.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.4}Discussion}{10}{section.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4.1}Research Gap and Proposed Solution}{10}{subsection.2.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged.}}{11}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:mamba}{{2.3}{11}{The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged}{figure.caption.14}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{11}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:chain}{{2.4}{11}{The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck}{figure.caption.15}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{12}{table.caption.16}\protected@file@percent }
-\newlabel{tab:gap}{{2.1}{12}{Position of this thesis relative to prior work on small-object aerial human detection}{table.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.3}{\ignorespaces The explored C3k2Mamba block.}}{11}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:mamba}{{2.3}{11}{The explored C3k2Mamba block}{figure.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis.}}{11}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:chain}{{2.4}{11}{The additive ablation studied in this thesis}{figure.caption.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work.}}{12}{table.caption.17}\protected@file@percent }
+\newlabel{tab:gap}{{2.1}{12}{Position of this thesis relative to prior work}{table.caption.17}{}}
 \@setckpt{chapters/02_literature_review}{
 \setcounter{page}{13}
 \setcounter{equation}{0}
@@ -56,7 +56,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{55}
+\setcounter{instcount}{51}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{3}
 \setcounter{maxitems}{3}
@@ -70,7 +70,7 @@
 \setcounter{refsegment}{0}
 \setcounter{maxextratitle}{0}
 \setcounter{maxextratitleyear}{0}
-\setcounter{maxextraname}{2}
+\setcounter{maxextraname}{0}
 \setcounter{maxextradate}{0}
 \setcounter{maxextraalpha}{0}
 \setcounter{abbrvpenalty}{50}
@@ -155,9 +155,9 @@
 \setcounter{textcitemaxnames}{0}
 \setcounter{biburlbigbreakpenalty}{100}
 \setcounter{biburlbreakpenalty}{200}
-\setcounter{biburlnumpenalty}{0}
-\setcounter{biburlucpenalty}{0}
-\setcounter{biburllcpenalty}{0}
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
 \setcounter{smartand}{1}
 \setcounter{bbx:relatedcount}{0}
 \setcounter{bbx:relatedtotal}{0}
@@ -169,5 +169,5 @@
 \setcounter{Item}{5}
 \setcounter{Hfootnote}{0}
 \setcounter{Hy@AnnotLevel}{0}
-\setcounter{bookmark@seq@number}{30}
+\setcounter{bookmark@seq@number}{31}
 }

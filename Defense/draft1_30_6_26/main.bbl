@@ -48,8 +48,8 @@
       \strng{authorbibnamehash}{008a132af3e2d4ff15eb01a8fb4b005c}
       \strng{authornamehash}{4bf4b5f7210e9b6395f54bde43f47ca5}
       \strng{authorfullhash}{008a132af3e2d4ff15eb01a8fb4b005c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Trans. Pattern Analysis and Machine Intelligence}
@@ -92,8 +92,8 @@
       \strng{authorbibnamehash}{b5530443e433a4da53dbe3cf155225b4}
       \strng{authornamehash}{fceadd5e0c88bc623c502d7999f124d7}
       \strng{authorfullhash}{b5530443e433a4da53dbe3cf155225b4}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE Conf. Computer Vision and Pattern Recognition (CVPR)}
@@ -124,8 +124,8 @@
       \strng{authorbibnamehash}{7ffa0dad9709ac21fa40cfa507db39d1}
       \strng{authornamehash}{7ffa0dad9709ac21fa40cfa507db39d1}
       \strng{authorfullhash}{7ffa0dad9709ac21fa40cfa507db39d1}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://github.com/ultralytics/ultralytics}}
@@ -182,8 +182,8 @@
       \strng{authorbibnamehash}{6641d7cadcf152eda77ae2bb481384d3}
       \strng{authornamehash}{6641d7cadcf152eda77ae2bb481384d3}
       \strng{authorfullhash}{ac48645592f0c750b0b1e681728883bc}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)}
@@ -217,8 +217,8 @@
       \strng{authorbibnamehash}{4a7ae8948726135fdd8e1a1741cfa4c2}
       \strng{authornamehash}{4a7ae8948726135fdd8e1a1741cfa4c2}
       \strng{authorfullhash}{4a7ae8948726135fdd8e1a1741cfa4c2}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE Int. Conf. Image Processing (ICIP)}
@@ -249,8 +249,8 @@
       \strng{authorbibnamehash}{babde771e7de935487275312d2f755a5}
       \strng{authornamehash}{babde771e7de935487275312d2f755a5}
       \strng{authorfullhash}{babde771e7de935487275312d2f755a5}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{arXiv preprint arXiv:2312.00752}
@@ -289,8 +289,8 @@
       \strng{authorbibnamehash}{a5afd7622aa07c48285ea84cc83b50a6}
       \strng{authornamehash}{993c7f078386b5af60fc9fa72e9e60c4}
       \strng{authorfullhash}{a5afd7622aa07c48285ea84cc83b50a6}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. Int. Conf. Pattern Recognition (ICPR)}
@@ -433,8 +433,8 @@
       \strng{authorbibnamehash}{146256300e9001c42a4ae2d4cd5aa631}
       \strng{authornamehash}{146256300e9001c42a4ae2d4cd5aa631}
       \strng{authorfullhash}{146256300e9001c42a4ae2d4cd5aa631}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)}
@@ -490,8 +490,8 @@
       \strng{authorbibnamehash}{d4145b4ad8209d9eefd91697296598f5}
       \strng{authornamehash}{d4145b4ad8209d9eefd91697296598f5}
       \strng{authorfullhash}{d5e1ac3dfe6687980f91e701611520ad}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. European Conf. Computer Vision (ECCV)}
@@ -537,8 +537,8 @@
       \strng{authorbibnamehash}{4ccabcfdf9c34f3d9a88fdca5bb95dd5}
       \strng{authornamehash}{5dfe27d1029735fc218d60ace71cfb1d}
       \strng{authorfullhash}{4ccabcfdf9c34f3d9a88fdca5bb95dd5}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE Int. Conf. Computer Vision (ICCV)}
@@ -932,8 +932,8 @@
       \strng{authorbibnamehash}{75586d91885a127bc547d221293c8c70}
       \strng{authornamehash}{75586d91885a127bc547d221293c8c70}
       \strng{authorfullhash}{51877f2531e2afe42b6fc6328f1486ad}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Trans. Pattern Analysis and Machine Intelligence}
@@ -986,8 +986,8 @@
       \strng{authorbibnamehash}{407b643cc48d7ba78686be05e508bfa5}
       \strng{authornamehash}{810de9a8158d576bdd055e689072c3b1}
       \strng{authorfullhash}{407b643cc48d7ba78686be05e508bfa5}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE Conf. Computer Vision and Pattern Recognition (CVPR)}
@@ -1028,8 +1028,8 @@
       \strng{authorbibnamehash}{55c6f52d80efdeda26720e3cbf67708e}
       \strng{authornamehash}{d910466a80782f6083f52705ba6fa700}
       \strng{authorfullhash}{55c6f52d80efdeda26720e3cbf67708e}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE/CVF Int. Conf. Computer Vision Workshops (ICCVW)}
@@ -1080,8 +1080,8 @@
       \strng{authorbibnamehash}{a61f51e99239d4d969872b0436c3bc29}
       \strng{authornamehash}{45867920e79f212ab7fd718c99165f9b}
       \strng{authorfullhash}{a61f51e99239d4d969872b0436c3bc29}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)}
@@ -1136,48 +1136,90 @@
       \endverb
     \endentry
     \entry{sar_survey}{article}{}
-      \name{author}{1}{}{%
-        {{hash=0aaf922b136f8e695a432ef0fa7896b2}{%
-           family={{Author(s) to be confirmed}},
-           familyi={A\bibinitperiod}}}%
+      \name{author}{5}{}{%
+        {{hash=b03284cde1947def12d4b46c63765f33}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Xiangqing},
+           giveni={X\bibinitperiod}}}%
+        {{hash=d1d912509d266eb94dfcd8d6e4984992}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Yan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=a766f0e2c24e1cc8e05b56d8e9d180c4}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Nan},
+           giveni={N\bibinitperiod}}}%
+        {{hash=1803e86cc4b36eb406d38d9ec89658eb}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Guohua},
+           giveni={G\bibinitperiod}}}%
+        {{hash=b3deee92e19ecf34d478dc0c401448c2}{%
+           family={Mei},
+           familyi={M\bibinitperiod},
+           given={Shaohui},
+           giveni={S\bibinitperiod}}}%
       }
-      \strng{namehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{fullhash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{bibnamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authorbibnamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authornamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authorfullhash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \field{extraname}{1}
+      \strng{namehash}{9efa563669fd88eb746c830f8f6cc595}
+      \strng{fullhash}{c321897ffe9e8a60b7481418bbcc0fab}
+      \strng{bibnamehash}{c321897ffe9e8a60b7481418bbcc0fab}
+      \strng{authorbibnamehash}{c321897ffe9e8a60b7481418bbcc0fab}
+      \strng{authornamehash}{9efa563669fd88eb746c830f8f6cc595}
+      \strng{authorfullhash}{c321897ffe9e8a60b7481418bbcc0fab}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Venue to be confirmed}
-      \field{note}{VERIFY authors/venue/DOI}
-      \field{title}{Aerial Person Detection for Search and Rescue: Survey and Benchmarking}
-      \field{year}{2023}
+      \field{journaltitle}{Journal of Remote Sensing}
+      \field{title}{Aerial Person Detection for Search and Rescue: Survey and Benchmarks}
+      \field{volume}{5}
+      \field{year}{2025}
+      \field{pages}{0474}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.34133/remotesensing.0474
+      \endverb
     \endentry
     \entry{aerial_human_video}{article}{}
-      \name{author}{1}{}{%
-        {{hash=0aaf922b136f8e695a432ef0fa7896b2}{%
-           family={{Author(s) to be confirmed}},
-           familyi={A\bibinitperiod}}}%
+      \name{author}{3}{}{%
+        {{hash=d8ee051415c69bb6bad0cb24aa1fa5ca}{%
+           family={AlDahoul},
+           familyi={A\bibinitperiod},
+           given={Nouar},
+           giveni={N\bibinitperiod}}}%
+        {{hash=1ba188be85b8a5466f7791e59689e1a3}{%
+           family={Md\bibnamedelima Sabri},
+           familyi={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Aznul\bibnamedelima Qalid},
+           giveni={A\bibinitperiod\bibinitdelim Q\bibinitperiod}}}%
+        {{hash=3d6bfa415d97272b18114d56972751f6}{%
+           family={Mansoor},
+           familyi={M\bibinitperiod},
+           given={Ali\bibnamedelima Mohammed},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
       }
-      \strng{namehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{fullhash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{bibnamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authorbibnamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authornamehash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \strng{authorfullhash}{0aaf922b136f8e695a432ef0fa7896b2}
-      \field{extraname}{2}
+      \strng{namehash}{3a5b5afa13325763172c9aa10b1817bb}
+      \strng{fullhash}{3a5b5afa13325763172c9aa10b1817bb}
+      \strng{bibnamehash}{3a5b5afa13325763172c9aa10b1817bb}
+      \strng{authorbibnamehash}{3a5b5afa13325763172c9aa10b1817bb}
+      \strng{authornamehash}{3a5b5afa13325763172c9aa10b1817bb}
+      \strng{authorfullhash}{3a5b5afa13325763172c9aa10b1817bb}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Venue to be confirmed}
-      \field{note}{VERIFY authors/venue/DOI}
+      \field{journaltitle}{Computational Intelligence and Neuroscience}
       \field{title}{Real-Time Human Detection for Aerial Captured Video Sequences via Deep Models}
+      \field{volume}{2018}
       \field{year}{2018}
+      \field{pages}{1639561}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1155/2018/1639561
+      \endverb
     \endentry
     \entry{sambolek2021sard}{article}{}
       \name{author}{2}{}{%
@@ -1289,8 +1331,8 @@
       \strng{authorbibnamehash}{eca3f18be1962c35889bdea122881de1}
       \strng{authornamehash}{5a240a26af6830a2a7ab09837517823c}
       \strng{authorfullhash}{eca3f18be1962c35889bdea122881de1}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Pattern Recognition}
@@ -1322,8 +1364,8 @@
       \strng{authorbibnamehash}{c714f2ad667f7e4ed5ab4d2a94055c14}
       \strng{authornamehash}{c714f2ad667f7e4ed5ab4d2a94055c14}
       \strng{authorfullhash}{c714f2ad667f7e4ed5ab4d2a94055c14}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.}
@@ -1360,8 +1402,8 @@
       \strng{authorbibnamehash}{7f1105c096dcd1290eba6a5a667b32d3}
       \strng{authornamehash}{7f1105c096dcd1290eba6a5a667b32d3}
       \strng{authorfullhash}{7f1105c096dcd1290eba6a5a667b32d3}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Int. Conf. Learning Representations (ICLR)}
@@ -1569,8 +1611,8 @@
       \strng{authorbibnamehash}{72b744e79c74738c617fd08b4f3d7e36}
       \strng{authornamehash}{72b744e79c74738c617fd08b4f3d7e36}
       \strng{authorfullhash}{efa664e154982dfbb2d86b95a77d1448}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. European Conf. Computer Vision (ECCV)}
@@ -1580,6 +1622,162 @@
       \range{pages}{16}
       \verb{doi}
       \verb 10.1007/978-3-319-10602-1_48
+      \endverb
+    \endentry
+    \entry{c2akaggle}{online}{}
+      \name{author}{1}{}{%
+        {{hash=8f34bf663e5f631626878817806edb4a}{%
+           family={Nihal},
+           familyi={N\bibinitperiod},
+           given={Ragib\bibnamedelima Amin},
+           giveni={R\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{8f34bf663e5f631626878817806edb4a}
+      \strng{fullhash}{8f34bf663e5f631626878817806edb4a}
+      \strng{bibnamehash}{8f34bf663e5f631626878817806edb4a}
+      \strng{authorbibnamehash}{8f34bf663e5f631626878817806edb4a}
+      \strng{authornamehash}{8f34bf663e5f631626878817806edb4a}
+      \strng{authorfullhash}{8f34bf663e5f631626878817806edb4a}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Kaggle dataset repository}
+      \field{title}{C2A Dataset: Human Detection in Disaster Scenarios}
+      \field{urlday}{7}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.kaggle.com/datasets/rgbnihal/c2a-dataset
+      \endverb
+      \verb{url}
+      \verb https://www.kaggle.com/datasets/rgbnihal/c2a-dataset
+      \endverb
+    \endentry
+    \entry{gdpr2016}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=3179956fa9e74184739a2680047976ee}{%
+           family={{European Parliament and Council}},
+           familyi={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{3179956fa9e74184739a2680047976ee}
+      \strng{fullhash}{3179956fa9e74184739a2680047976ee}
+      \strng{bibnamehash}{3179956fa9e74184739a2680047976ee}
+      \strng{authorbibnamehash}{3179956fa9e74184739a2680047976ee}
+      \strng{authornamehash}{3179956fa9e74184739a2680047976ee}
+      \strng{authorfullhash}{3179956fa9e74184739a2680047976ee}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Official Journal of the European Union, L119}
+      \field{title}{Regulation (EU) 2016/679 (General Data Protection Regulation)}
+      \field{year}{2016}
+    \endentry
+    \entry{strubell2019energy}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=d3bf550429e9ba5e3e93b995e9b40d85}{%
+           family={Strubell},
+           familyi={S\bibinitperiod},
+           given={Emma},
+           giveni={E\bibinitperiod}}}%
+        {{hash=f6ed9182b4527a73a06c24556f54acef}{%
+           family={Ganesh},
+           familyi={G\bibinitperiod},
+           given={Ananya},
+           giveni={A\bibinitperiod}}}%
+        {{hash=17d73a3a5be48993791cbe4db8855331}{%
+           family={McCallum},
+           familyi={M\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \strng{fullhash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \strng{bibnamehash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \strng{authorbibnamehash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \strng{authornamehash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \strng{authorfullhash}{885b3b62ebd4bca1bb8cde91020e4c6f}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proc. 57th Annual Meeting of the Association for Computational Linguistics (ACL)}
+      \field{title}{Energy and Policy Considerations for Deep Learning in {NLP}}
+      \field{year}{2019}
+      \field{pages}{3645\bibrangedash 3650}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.18653/v1/P19-1355
+      \endverb
+    \endentry
+    \entry{codecarbon}{online}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{2}{}{%
+        {{hash=b3c0ea5e0f08075776fb7ce613af07ce}{%
+           family={Courty},
+           familyi={C\bibinitperiod},
+           given={Benoît},
+           giveni={B\bibinitperiod}}}%
+        {{hash=4d273f86a2391b94cec5b72816a9afe4}{%
+           family={Schmidt},
+           familyi={S\bibinitperiod},
+           given={Victor},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \strng{fullhash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \strng{bibnamehash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \strng{authorbibnamehash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \strng{authornamehash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \strng{authorfullhash}{cf3b2f7b1ba75171d34c6621fef69a89}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{CodeCarbon: Estimate and Track Carbon Emissions from Machine Learning Computing}
+      \field{urlday}{7}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/mlco2/codecarbon
+      \endverb
+      \verb{url}
+      \verb https://github.com/mlco2/codecarbon
+      \endverb
+    \endentry
+    \entry{iea2021gapc}{online}{}
+      \name{author}{1}{}{%
+        {{hash=a77849b674b375a2aec420b75c781164}{%
+           family={{International Engineering Alliance}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{a77849b674b375a2aec420b75c781164}
+      \strng{fullhash}{a77849b674b375a2aec420b75c781164}
+      \strng{bibnamehash}{a77849b674b375a2aec420b75c781164}
+      \strng{authorbibnamehash}{a77849b674b375a2aec420b75c781164}
+      \strng{authornamehash}{a77849b674b375a2aec420b75c781164}
+      \strng{authorfullhash}{a77849b674b375a2aec420b75c781164}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Graduate Attributes and Professional Competencies, Version 4}
+      \field{urlday}{7}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.internationalengineeringalliance.org/
+      \endverb
+      \verb{url}
+      \verb https://www.internationalengineeringalliance.org/
       \endverb
     \endentry
     \entry{barekatain2017okutama}{inproceedings}{}
@@ -1626,8 +1824,8 @@
       \strng{authorbibnamehash}{a7da6a240bf3e1c58a7980c2dc0793d1}
       \strng{authornamehash}{a7da6a240bf3e1c58a7980c2dc0793d1}
       \strng{authorfullhash}{439a81890631c97c3723fe8d030d6482}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proc. IEEE Conf. Computer Vision and Pattern Recognition Workshops (CVPRW)}

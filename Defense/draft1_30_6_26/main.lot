@@ -1,21 +1,24 @@
 \lotlofhead {Table}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{12}{table.caption.16}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work.}}{12}{table.caption.17}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Layer configuration of the proposed detector (640-px input). Channel counts are the values realised at the YOLO11m scale (width 1.0, channel cap 512, depth 0.5). Bold rows are the elements added or modified in this work.}}{16}{table.caption.19}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{20}{table.caption.23}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Layer configuration of the proposed detector.}}{16}{table.caption.20}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces The additive ablation configurations.}}{20}{table.caption.24}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 with gradient accumulation keeping the effective batch at 16.}}{24}{table.caption.26}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration.}}{27}{table.caption.27}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary attention-module comparison on C2A (earlier protocol; values are relative, not comparable to Table~\ref {tab:main}). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}}{28}{table.caption.30}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}}{28}{table.caption.31}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy.}}{30}{table.caption.33}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Operating threshold and calibration per configuration on the C2A test set: the confidence that maximises $F_2$, the score at that threshold, and the expected calibration error.}}{30}{table.caption.34}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\blx@tocontentsinit {0}\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation.}}{34}{table.caption.40}%
-\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation.}}{34}{table.caption.41}%
-\contentsline {table}{\numberline {4.9}{\ignorespaces Definitive cost estimate of the experimental workstation (Dhaka retail, mid-2026). The machine was already available; the estimate is what replication would cost.}}{36}{table.caption.43}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration shared by all four models.}}{24}{table.caption.27}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments.}}{27}{table.caption.28}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary attention-module comparison on C2A.}}{28}{table.caption.31}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Additive ablation on the C2A test set (COCO protocol).}}{28}{table.caption.32}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Per-size recall on the C2A test set.}}{30}{table.caption.34}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Operating threshold and calibration per configuration.}}{30}{table.caption.35}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set.}}{34}{table.caption.41}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA for the recommended model.}}{35}{table.caption.42}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces Definitive cost estimate of the experimental workstation.}}{36}{table.caption.44}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Measured training cost and CO$_2$ of the four configurations.}}{40}{table.caption.45}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Detector-family benchmark used to select the baseline.}}{50}{table.caption.49}%
 \contentsfinish 
+\contentsline {table}{\numberline {A.2}{\ignorespaces Every architectural variant attempted, with outcome and decision.}}{51}{table.caption.50}%

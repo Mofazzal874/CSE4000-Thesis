@@ -1,34 +1,113 @@
 \chapter{Addressing Complex Engineering Problems and Activities}
 
 \section{Introduction}
-This chapter maps the thesis onto the complex-engineering-problem and
-complex-engineering-activity attributes, showing where the work required depth of
-knowledge, judgement under conflicting requirements, and integration of tools and
-methods.
+Outcome-based engineering education assesses a final-year project against the
+graduate-attribute framework of the International Engineering
+Alliance~\cite{iea2021gapc}, under which the Washington Accord defines the
+attributes of a Complex Engineering Problem (WP1 to WP7) and of Complex
+Engineering Activities (EA1 to EA5). A problem qualifies as complex when it
+demands in-depth knowledge (WP1) together with some or all of the remaining
+attributes; an activity qualifies when its execution shows the corresponding
+range of resources, interactions, and innovation. This chapter maps the
+thesis onto those attributes, and each claim points at the section, table,
+or figure of this report where the evidence sits.
 
 \section{Complex Engineering Problems Associated with the Current Thesis}
-The work meets several of the attributes that characterise a complex engineering
-problem. It required depth of knowledge across object-detection architectures,
-attention mechanisms, and state-space models, none of which yields to routine
-application. It involved conflicting requirements, higher recall of very small
-targets against a fixed parameter and latency budget for airborne use, that
-could not be satisfied at the same time and had to be traded deliberately, as the
-per-size results in Chapter~IV show. The problem had no obvious single solution:
-the effect of each component was not predictable in advance and had to be
-established empirically, and one plausible addition, the state-space neck, turned
-out not to help. The problem is also infrequently encountered in general practice,
-since very-small-human detection in disaster imagery differs substantially from
-ordinary object detection.
+\begin{itemize}
+  \item \textbf{WP1: Depth of knowledge required.} Detecting sub-ten-pixel
+        humans cannot be solved by applying a detector API with default
+        settings. It required working knowledge of one-stage detection
+        architectures at the layer level (Table~\ref{tab:layers}), of
+        channel and spatial attention (Section~\ref{sec:cbam3}), of selective
+        state-space models and their scan mechanics (Section~\ref{sec:mamba}), and of
+        the loss geometry that makes few-pixel boxes unstable under strict
+        IoU (Sections~\ref{sec:loss3} and~\ref{sec:metrics}), a fundamentals-first analysis rather
+        than tool use.
+  \item \textbf{WP2: Range of conflicting requirements.} The core tension is
+        technical and non-technical at once: recall on the smallest targets
+        against a parameter and latency budget for airborne hardware, and
+        the humanitarian value of the system against its surveillance
+        potential (Chapter~V). The resolution is measured, not asserted: the
+        P2 scale buys very-tiny recall at $+0.5$~M parameters and $+1$~ms
+        (Table~\ref{tab:main}), and the recall-weighted $F_2$ metric encodes
+        the ethical asymmetry directly into the evaluation.
+  \item \textbf{WP3: Depth of analysis, no obvious solution.} Which of
+        attention, resolution, or sequence modelling helps tiny-target
+        detection had no a-priori answer; plausible reasoning supported all
+        three. The additive ablation (Section~\ref{sec:protocol}) is the analytical
+        instrument built to answer it, and the outcome, one strong
+        component, one cheap one, and one null, was not predictable from
+        the literature.
+  \item \textbf{WP4: Familiarity of issues.} The dominant issues are
+        infrequently encountered in standard detection practice: targets
+        smaller than one detection cell (Figure~\ref{fig:strideprob}), a
+        dataset whose instances are $99.6\%$ below 32~px
+        (Figure~\ref{fig:sizedist}), and a training collapse specific to
+        the state-space blocks at epoch 28 (Figure~\ref{fig:training}).
+  \item \textbf{WP5: Beyond standards and codes.} No engineering standard
+        prescribes how to evaluate or deploy a tiny-human detector for
+        search and rescue. The evaluation protocol, the frozen-split and
+        provenance rules, and the operational threshold policy
+        (Sections~\ref{sec:metrics} and~\ref{sec:protocol}) had to be designed for the problem.
+  \item \textbf{WP6: Stakeholder scope.} The stakeholders of a rescue
+        detector, operators who act on its boxes, agencies bound by aviation
+        and data-protection rules, and the people being imaged, have needs
+        that pull in different directions; Chapter~V works through those
+        obligations and the design choices that answer them.
+  \item \textbf{WP7: Interdependence.} The system is a chain of coupled
+        sub-problems: dataset properties drive the architecture
+        (Section~\ref{sec:p2novel}), the architecture drives memory behaviour and hence
+        the training configuration (Section~\ref{sec:setup}), and the evaluation design
+        determines whether any of it can be attributed. The single-variable
+        ablation exists precisely to cut through that interdependence.
+\end{itemize}
 
 \section{Complex Engineering Activities Associated with the Current Thesis}
-The corresponding activities were likewise non-routine. The work applied and
-adapted resources (pretrained detectors, attention and state-space modules, a
-composited benchmark dataset, and a single-GPU training environment) and
-combined them into a controlled study whose components had to interoperate under
-one protocol. It required engineering judgement to isolate variables, to hold the
-training configuration fixed across models, and to keep evaluation protocols fair
-so that measured differences could be attributed to the architecture. It also
-involved managing an experimental process with real constraints: limited GPU
-memory, which forced the batch-size ladder; long training runs on a single machine;
-and the need for reproducible, provenance-tracked results so that the reported
-numbers could be trusted and regenerated.
+\begin{itemize}
+  \item \textbf{EA1: Range of resources.} The work managed diverse
+        resources: a 10{,}215-image benchmark with frozen splits, pretrained
+        weights, a single 16~GB consumer GPU shared across 54 hours of
+        training (Table~\ref{tab:carbon}), open-source frameworks, and a
+        metric pipeline producing per-run manifests, CSV data, and plots so
+        that every reported number is regenerable.
+  \item \textbf{EA2: Level of interactions.} Theoretical design met hardware
+        limits directly. The stride-4 scale quadruples head activation
+        memory, which forced the physical batch to 8 with gradient
+        accumulation holding the effective batch at 16 (Section~\ref{sec:setup}), and
+        the automatic optimiser choice diverged on that same architecture,
+        which forced the pinned AdamW configuration; resolving these
+        interactions without breaking comparability was the day-to-day
+        engineering of the thesis.
+  \item \textbf{EA3: Innovation.} The work uses established principles in a
+        way the source literature does not: attention added by substitution
+        at negative parameter cost rather than as a bolt-on, state-space
+        blocks placed surgically in the neck of an unchanged CNN detector so
+        their effect is attributable (published Mamba detectors replace the
+        backbone~\cite{wang2025mambayolo}), and an evaluation that elevates
+        per-size recall and $F_2$ to first-class metrics because the task
+        demands them.
+  \item \textbf{EA4: Consequences for society and the environment.} The
+        activity was run with its externalities measured: a carbon tracker
+        and power sampler on every run (9.0~kg CO$_2$ total,
+        Table~\ref{tab:carbon}), an ethical position on dual use and
+        training-data dignity (Chapter~V), and a deliverable whose small
+        size lowers the energy cost of every future deployment.
+  \item \textbf{EA5: Familiarity, extension beyond prior experience.} The
+        project extended well past coursework: reading and adapting current
+        detection, attention, and state-space literature; diagnosing a
+        silent model-rebuild fault that had invalidated an earlier line of
+        results; and building failure-tolerant training infrastructure
+        (smoke tests, resume, out-of-memory ladders) for a load-shedding
+        environment, none of which is met in standard undergraduate
+        laboratory work.
+\end{itemize}
+
+\section{Conclusion}
+Measured against the Washington Accord attributes~\cite{iea2021gapc}, the
+thesis presents a complex engineering problem, in-depth knowledge applied to
+an unfamiliar, standard-less task with conflicting requirements and coupled
+sub-problems, and its execution shows the corresponding complex activities,
+from resource and interaction management to innovation and measured
+consequences. The mapping is not decorative: each attribute above is
+anchored to a numbered table, figure, or section of this report where the
+claim can be checked.

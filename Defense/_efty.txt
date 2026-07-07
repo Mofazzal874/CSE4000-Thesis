@@ -1,0 +1,3485 @@
+                                      CHAPTER I
+
+
+                                      Introduction
+
+
+1.1 Introduction
+
+Single-image shadow removal aims to eliminate visual distortions caused by light occlusion,
+restoring the scene's original illumination and appearance. This task is highly challenging
+because shadows cause a severe loss of illumination intensity and high-frequency texture
+details, creating a complex non-linear mapping scenario. Overcoming these degradations is
+crucial for key downstream applications like autonomous driving, surveillance, medical
+imaging, remote sensing, image editing, and preprocessing, where shadows severely hinder
+object tracking, recognition, and segmentation. Consequently, deep learning approaches have
+evolved rapidly. Early CNN methods, such as CANet, excelled at localized feature extraction
+and multi-scale semantic fusion, but their restricted receptive fields limited global context
+modeling [1]. GAN-based frameworks, exemplified by MaskShadowGAN, enforced
+photorealistic domain alignment through dual constraints, yet they frequently suffered from
+color artifacts and training instability [2]. To capture broader interactions, Transformer
+architectures like ShadowFormer and HomoFormer introduced multi-head self-attention to
+model long-range spatial dependencies, though they suffer from prohibitive quadratic
+computational complexity on high-resolution images, [3], [4]. Most recently, diffusion models
+have used progressive stochastic denoising to deliver unmatched reconstruction quality, but
+their iterative sampling pathways impose heavy inference costs that impede real-time execution
+[5], [6]. While lightweight and efficient architectures explicitly target resource-constrained
+deployment by streamlining processing layers, they often trade off fine-grained reconstruction
+fidelity for speed [6], [7]. Despite significant progress, existing methods still struggle to
+simultaneously preserve texture details, maintain structural consistency, remove shadows
+completely, and achieve computational efficiency, highlighting the critical need for improved
+architectures.
+
+
+
+                                              1
+1.2 Problem statement
+
+A shadow occurs when an occluding object partially or completely blocks direct illumination
+from a light source from reaching a surface. Physically, the observed intensity of an image pixel
+𝐼(𝑥, 𝑦) can be formulated using a classical reflection model as a combination of direct
+illumination, ambient light, and surface reflectance:
+
+
+
+                 𝐼(𝑥, 𝑦) = (𝑘(𝑥, 𝑦) ⋅ 𝐿𝑑 (𝑥, 𝑦) + 𝐿𝑎 (𝑥, 𝑦)) ⋅ 𝑅(𝑥, 𝑦)                     (1.1)
+
+
+
+In Equation 1.1, 𝐿𝑑 (𝑥, 𝑦) represents the direct light intensity, 𝐿𝑎 (𝑥, 𝑦) is the diffuse ambient
+light reflected from the surrounding environment, 𝑅(𝑥, 𝑦) denotes the intrinsic surface
+reflectance, and 𝑘(𝑥, 𝑦) ∈ [0,1] is the continuous shadowing factor. In a shadow-free region,
+𝑘(𝑥, 𝑦) = 1, yielding full direct illumination. Within a shadow region, direct light is obstructed
+(𝑘(𝑥, 𝑦) < 1), forcing the surface to rely primarily on the weaker environmental ambient light
+𝐿𝑎 (𝑥, 𝑦). This ambient light analogy explains the severe drop in feature response and color
+shifts characteristic of shadowed zones.
+
+As illustrated in Figure 1.1, real-world shadows are structurally divided into two distinct zones:
+
+
+
+
+  Figure 1.1: Physical structure of a shadow zone highlighting the inner umbra and outer penumbral
+                                             gradient.
+
+
+
+                                                 2
+                      (a)                                                 (b)
+
+ Figure 1.2: Image pair execution: (a) Degraded shadow input image containing severe illumination
+                        attenuation, and (b) Ideal target shadow-free image.
+
+the umbra and the penumbra. The umbra forms the inner core where the light source is
+completely occluded (𝑘(𝑥, 𝑦) = 0), leaving the region illuminated strictly by ambient light.
+Surrounding the umbra is the penumbra, a transition band where the light source is only partially
+
+blocked (0 < 𝑘(𝑥, 𝑦) < 1). The penumbra creates a smooth, gradual illumination gradient
+along the boundary that complicates precise edge detection and consistent reconstruction.
+
+The objective of Single Image Shadow Removal is to take a degraded shadow input image 𝐼𝑠 ,
+as shown in Figure 1.2(a), and reconstruct its corresponding illuminated, shadow-free image 𝐼𝑓 ,
+shown in Figure 1.2(b). The images are taken from ISTD [8] Dataset. Shadow removal task can
+be defined as an ill-posed inverse problem. Given only 𝐼𝑠 and a binary shadow mask 𝑀, the
+system must invert the illumination attenuation:
+
+
+                              𝐼𝑠 (𝑥, 𝑦)   if 𝑀(𝑥, 𝑦) = 0 (Non-Shadow)
+             𝐼𝑓 (𝑥, 𝑦) = {                                                                (1.2)
+                             𝑓(𝐼𝑠 (𝑥, 𝑦))    if 𝑀(𝑥, 𝑦) = 1 (Shadow)
+
+
+
+In Equation 1.2, 𝑓(⋅) represents the target restoration mapping function. Because 𝐿𝑑 , 𝐿𝑎 , and 𝑅
+are unknown for a single input, determining 𝑓(⋅) requires estimating and transferring matching
+color, lighting, and texture properties from adjacent non-shadowed areas (𝑀 = 0) into degraded
+
+
+                                                 3
+shadow zones (𝑀 = 1). As formulated in Equation 1.3, the restoration objective can be
+expressed as the estimation of a residual correction map Δ:
+
+
+                                     𝐼𝑓 = 𝐼𝑠 + Δ                                          (1.3)
+
+
+
+1.3 Objectives
+
+The primary research and engineering goals of this thesis focus on addressing the specific
+limitations of existing shadow removal models through targeted structural interventions:
+
+   •   To develop a unified network that models global scene context and handles local
+       features simultaneously without encountering prohibitive memory requirements.
+
+   •   To implement a baseline mapping function that restores the under-exposed components
+       of a scene by calculating a residual array as formulated in Equation 1.3 instead of
+       predicting absolute pixel values, establishing stable training gradients.
+
+   •   To reconstruct the true illumination of degraded regions by implementing the inverse
+       attenuation function through a neural network defined in Equation 1.2, explicitly
+       separating the treatment of shadow and non-shadow regions.
+
+   •   To enforce illumination-invariant region matching by building a routing engine based
+       on the Pearson correlation coefficient, ensuring the model matches shadow regions to
+       proper non-shadow context fields regardless of light intensity changes.
+
+   •   To correct statistical differences at the deepest semantic level by integrating a bottleneck
+       normalization module that updates shadow tokens using the weighted statistics of their
+       non-shadow neighbors.
+
+   •   To preserve fine structural details and texture patterns across soft transitions by
+       evaluating local feature gaps and applying target boundary corrections within a
+       morphologically defined penumbra band.
+
+
+                                                4
+1.4 Scope
+
+The operational boundaries and constraints of this research are defined as follows:
+
+   •   Dataset Constraints: The evaluation and training pipelines are strictly confined to
+       standard paired benchmark datasets featuring ground-truth shadow-free triples. This
+       study utilizes the original ISTD dataset [8], the illumination-adjusted ISTD+ variant [9],
+       and the complex texture scenes from the Shadow Removal Dataset (SRD) [10].
+       Unpaired training environments, completely unmasked testing setups, or document-
+       specific text shadow datasets are excluded from this study.
+
+   •   Input Specifications: The architecture operates exclusively on single, static RGB
+       images accompanied by a corresponding binary shadow mask. Real-time video
+       processing streams or multi-view image inputs are not supported by the current
+       architecture.
+
+   •   Illumination Limits: The architecture addresses shadows cast under consistent ambient
+       and direct lighting conditions where non-shadow reference patches share semantic
+       properties with the shadowed surfaces. Extreme low-light scenes, total occlusions
+       lacking any structural reflectance information, or colored light sources that distort
+       ambient properties are excluded from this investigation.
+
+   •   Evaluation Framework: Architectural performance is measured based on localized
+       and global reconstruction fidelity across standard spatial scales using objective, pixel-
+       level color and structural metrics. Subjective human perceptual evaluations or
+       downstream high-level task integration, such as direct object detection testing, are
+       beyond the scope of this thesis.
+
+1.5 Unfamiliarity of the Problem
+
+The architectural framework and algorithmic design in this thesis are separate from existing
+literature and do not originate from any single external research source. While single image
+
+
+
+                                               5
+shadow removal is a known domain, the specific components developed in this work resolve
+distinct structural limitations left unaddressed by previous models:
+
+   •   This network combines an illumination-invariant routing path with non-shadow guided
+       normalization to link regions dynamically through permutation-equivariant row-
+       shuffling rather than relying on standard quadratic cross-attention layers.
+
+   •   The feature translation mechanism operates exclusively at the deepest semantic layer to
+       update shadow tokens based on localized Pearson matching scores from non-shadow
+       neighbors, bypassing global or uniform transformation loops.
+
+   •   The texture reference path resolves fine-grained detail deficits at the highest-resolution
+       skip-connection level using a vector split-and-gate operator that calculates structural
+       variations directly on the hardware without external templates.
+
+   •   The optimization framework joins a shadow-weighted smoothing penalty in standard
+       color space with an absolute deviation tracking method in a perceptually uniform color
+       space, preventing standard channel-swapping estimation shortcuts.
+
+1.6 Project planning
+
+To ensure the timely completion of this thesis, a structured project plan was developed at the
+onset of the research. The study was divided into distinct phases spanning literature review,
+architectural design, model training, and final documentation as outlined in Table 1.1. As shown
+in the table, the project follows a systematic flow, ensuring that the theoretical foundation was
+solidified before commencing the implementation and validation stages.
+
+1.7 Contribution
+
+The primary technical contributions of this thesis are summarized as follows:
+
+   •   We design an illumination-invariant patch matching framework utilizing a mask-guided
+       Pearson correlation mechanism to reliably map degraded shadow regions to clean
+       reference zones across the scene.
+
+                                               6
+                                Table 1.1: A preliminary timeline of the thesis.
+
+
+          Week                              1st Term                                                 2nd Term
+
+
+ Task               1   2   3   4   5   6    7   8   9   10   11   12   13   1   2   3   4   5   6    7   8   9   10   11   12   13
+
+
+ Topic Selection
+
+     Topic
+  Confirmation
+
+Literature Review
+
+     Dataset
+   Preparation
+
+  Architecture
+   Analysis
+
+  Pre-defense
+  Preparation
+
+  Presentation
+  Preparation
+
+   Developing
+     Model
+
+  Performance
+   Evaluation
+
+ Ablation Study
+
+
+ Result Analysis
+
+
+  Fine Tuning
+
+
+ Documentation
+
+
+
+
+                                                         7
+   •   We introduce an efficient spatial guided row shuffle block that interleaves shadow and
+       non-shadow tokens, enabling long-range contextual information transfer without global
+       attention overhead.
+
+   •   We develop an NS-Guided Adaptive Normalization module at the bottleneck layer to
+       shift shadow feature statistics toward background distributions using conservative
+       capping safeguards.
+
+   •   We present a high-resolution Texture Reference Module that computes localized non-
+       shadow statistical means to inject high-frequency texture residuals directly back into
+       shaded pixels.
+
+   •   We implement a post-decoder boundary refinement block operating exclusively on
+       morphologically isolated bands to eliminate transition halos and color artifacts around
+       shadow edges.
+
+   •   We formulate a multi-component optimization function integrating a normalized LAB
+       color space penalty with a shadow-weighted reconstruction loss to improve overall
+       restoration quality.
+
+1.8 Application of the Work
+
+The shadow removal framework developed in this thesis has direct utility across several real-
+world domains:
+
+   1. Satellite and Aerial Imagery: Restores critical ground details obscured by cloud or
+       structural shadows to improve land-cover classification and mapping accuracy.
+
+   2. Autonomous Driving Perception: Eliminates dynamic road shadows to prevent
+       perception failures in lane tracking, obstacle detection, and pedestrian identification
+       systems.
+
+   3. Surveillance and Forensics: Clarifies dark, shadowed regions in security footage to aid
+       biometric identification, facial recognition, and license plate extraction.
+
+                                               8
+   4. Consumer Photography: Enhances smartphone image processing by seamlessly
+       removing unwanted ambient shadows from casual and professional portraits.
+
+   5. Medical Diagnostic Imaging: Normalizes uneven illumination artifacts in endoscopy
+       and clinical scans to assist computerized models in detecting tissue anomalies.
+
+1.9 Organization of Report
+
+The purpose of this section is to provide readers with a clear understanding of the order in which
+information is presented and to assist them in navigating the document. The remaining part of
+this thesis consists of the following chapters:
+
+   •   Chapter I: Provides the background of single-image shadow removal, along with the
+       problem statement, scope, objectives, and the structured project plan developed for this
+       thesis.
+
+   •   Chapter II: Explores the literature review, providing an insight into current
+       advancements, traditional frameworks, and deep learning methods in the field of
+       shadow removal, followed by a comparative discussion of their architectures.
+
+   •   Chapter III: Details the research design, proposed U-Net and Vision Transformer
+       methodology, and mathematical formulations employed in the study. It explains the
+       approach to data preparation and provides a rationale for the chosen architectural
+       modules.
+
+   •   Chapter IV: Presents and analyzes the experimental findings. This chapter describes
+       how the model was trained and evaluated, presenting quantitative metrics and
+       qualitative visual comparisons on standard benchmarks to demonstrate restoration
+       quality.
+
+   •   Chapter V: Delves into the broader implications of the research on various societal,
+       environmental, safety, ethical, legal, and cultural aspects, considering the impact of
+       image restoration tools in real-world deployments.
+
+
+                                                  9
+•   Chapter VI: Discusses the complex engineering problems addressed during the
+    development of the framework, highlighting the innovative token-routing,
+    normalization, and boundary processing solutions designed to overcome these
+    challenges.
+
+•   Chapter VII: Summarizes the key findings of the thesis, reflects on the research
+    objectives, and suggests future avenues of inquiry for complex scene illumination
+    restoration.
+
+
+
+
+                                       10
+                                       CHAPTER II
+
+
+                                     Related Works
+
+
+2.1 Introduction
+
+Single-image shadow removal is a vital yet difficult task in low-level computer vision. Shadows
+form when an opaque object blocks light from a primary source, causing localized illumination
+drops, color shifts, and a severe loss of underlying texture details. Because these distortions
+corrupt the visual properties of a scene, they often degrade the performance of downstream
+applications like object detection, semantic segmentation, and tracking systems. Effective
+shadow restoration is therefore useful for both preprocessing pipelines and consumer image
+editing software.Over the past two decades, methodologies for addressing this inverse problem
+have shifted significantly. Early works relied on physical models, hand-crafted chromaticity
+priors, and gradient manipulation to reconstruct unshaded regions. While mathematically direct,
+these methods frequently failed when applied to multi-source lighting environments or highly
+textured real-world scenes. The emergence of deep learning changed this approach, moving the
+domain from rigid statistical priors to flexible, data-driven deep neural networks. To position
+the contributions of this thesis, this chapter reviews the historical evolution and current
+advancements in shadow removal. The discussion is structured across three paradigms:
+traditional physical modeling, early deep learning methods utilizing convolutional neural
+networks (CNNs) and generative adversarial networks (GANs), and modern configurations
+centered around U-Net backbones and vision transformers (ViTs). Finally, we highlight
+persistent limitations in existing frameworks, such as edge boundary artifacts, color imbalances,
+and heavy computational overhead, to establish the research gaps this thesis resolves.
+
+2.2 Relevant Terminology
+
+To provide a common theoretical basis, this section briefly introduces the key concepts,
+architectural components, and evaluation metrics used throughout this thesis.
+
+
+                                               11
+Shadow Removal: The low-level image restoration process of identifying shadowed regions
+and correcting their pixel values to match the illumination of the unshaded background.
+
+Pearson Correlation: A statistical metric that evaluates the linear relationship between two
+variables, used in image processing to match features based on distribution similarity.
+
+Loss Functions: Optimization objectives used in shadow removal, including Charbonnier loss,
+perceptual loss, multi-scale structural similarity (MS-SSIM), and color-space penalties to
+minimize pixel error and preserve realistic color balance.
+
+U-Net: An encoder-decoder architecture that extracts multi-scale contextual features during
+downsampling and progressively restores fine spatial details through skip connections.
+
+Vision Transformer (ViT): An architecture that applies self-attention to process images as
+sequences of patch tokens, capturing long-range contextual relationships.
+
+Spatial Attention: An attention mechanism that generates spatial weight maps to emphasize
+informative regions within feature maps.
+
+Channel Attention: A mechanism that models interdependencies across feature channels,
+selectively emphasizing important semantic features.
+
+Window-Based Self-Attention: A computationally efficient self-attention mechanism that
+restricts token interactions to local non-overlapping windows.
+
+Token Shuffle and Inverse Shuffle: Operations that rearrange spatial tokens to mix contextual
+information, followed by an exact reversal to restore the original layout.
+
+Position Recovery MLP: A feed-forward layer that restores shuffled spatial tokens to their
+original positions.
+
+Residual Learning: A learning strategy that predicts the residual (difference) instead of the full
+target image.
+
+
+
+
+                                               12
+Region Routing: An architectural mechanism that dynamically routes features or tokens
+between image regions based on semantic or illumination relevance.
+
+Illumination Invariance: A property where feature representations remain consistent despite
+changes in lighting or brightness.
+
+Adaptive Normalization: A feature alignment technique that dynamically adjusts the statistical
+distribution of a degraded region to match a reference profile.
+
+2.3 Literature Review
+
+Over the years, researchers have developed various methods to handle image shadow removal
+and restoration. Common strategies include using convolutional neural networks, generative
+adversarial networks, vision transformers, and specialized lightweight architectures. Each
+approach has distinct advantages and drawbacks depending on the complexity of the scene and
+resource limits. Several prominent works in this domain are detailed below:
+
+2.3.1 Classical Method Based Shadow Removal Approaches
+
+Traditional shadow removal methodologies operate by explicitly exploiting physical lighting
+properties, intrinsic material constraints, and structural geometries to isolate illumination
+variations from surface reflectance. Instead of relying on learned parameters, these approaches
+focus on deriving illumination-invariant representations or estimating color transformations by
+directly comparing shadowed and unshadowed regions. A prominent strategy involves
+transforming images into illumination-invariant spaces, such as projecting log-chromaticity
+properties to generate a one-dimensional grayscale image [11]. This invariant mapping allows
+models to identify shadow boundaries by comparing gradient fields, zeroing the illumination
+edges, and performing surface reintegration [11]. While this approach isolates simple intensity
+drops under uniform illumination, it struggles in spatially non-uniform environments where
+ambient lighting varies across the scene. To handle this non-uniformity, later methods
+introduced region-based and neighbor-based relighting frameworks that analyze broader spatial
+structures [12], [13]. For instance, grouping identical materials via graph-cut segmentation
+enables models to calculate a continuous matte layer to adjust illumination across paired regions
+
+                                               13
+[12]. Similarly, matching luminance histograms and adjusting chromaticity channels within the
+CIELAB space allows for effective color restoration without strict geometric constraints [13].
+However, these region-matching methods degrade significantly if a clean, unshaded instance of
+the exact same material is not present nearby in the scene. To bypass the need for exact region
+pairs, alternative techniques leverage intrinsic image analysis or multi-scale boundary modeling
+[14], [15]. Affine shadow formation models match shadowed patches from the core umbra
+outward using pyramid reconstruction structures, though they rely on manual user scribbles to
+locate reference regions [14]. In contrast, information-theoretic models formulate shadow
+removal as an entropy-minimization problem, operating under the principle that illumination
+borders artificially inflate the local entropy of texture intensities [15]. This statistical
+optimization removes shadows without manual intervention, but it frequently misidentifies
+legitimate structural changes as illumination gradients when true texture borders mirror the
+properties of shadow edges.
+
+2.3.2 CNN-Based Shadow Removal Approaches
+
+Early deep learning methods for shadow removal mainly relied on convolutional neural
+networks (CNNs) to learn the mapping from shadow images to shadow-free images. ST-CGAN
+[8] jointly learned shadow detection and removal using a stacked conditional GAN framework.
+Mask-ShadowGAN [2] removed the requirement for paired training data through cycle-
+consistent adversarial learning with shadow masks. DSC [16] introduced direction-aware
+spatial context features to better model shadow boundaries and illumination changes. DC-
+ShadowNet [12] improved feature learning with domain-guided supervision, allowing effective
+removal of both hard and soft shadows. G2R-ShadowNet [17] generated synthetic shadow pairs
+to improve restoration quality under weak supervision. BMNet [18] further enhanced
+reconstruction by incorporating boundary-aware learning to preserve edge details. Although
+these CNN-based methods achieved strong performance, they mainly capture local features due
+to the limited receptive field of convolutions, making it difficult to model long-range
+dependencies and global illumination variations.
+
+
+
+
+                                              14
+2.3.3 Vision Tranformers-Based Shadow Removal Approaches
+
+Transformer-based methods have changed the shadow removal landscape by replacing local
+convolutional architectures with self-attention layers capable of capturing global image
+dependencies. These architectures focus on mapping structural context across long distances to
+transfer clean appearance details into shaded zones. For instance, global self-attention networks
+exploit multi-channel spatial attention within a Retinex-based framework to build distinct
+correlations between shadowed and lit portions of an image [3]. While this approach
+successfully gathers wide contextual cues, modeling long-range interactions uniformly creates
+immense computational complexity on high-resolution inputs. To reduce this computational
+burden, modern frameworks adopt window-based local attention strategies combined with
+localized mapping steps [4], [19]. Homogenizing non-uniform shadow distributions through
+random row-shuffling operators allows local transformers to process scattered degradations
+with linear complexity [4]. Alternatively, regional attention mechanisms restrict spatial
+interactions by enforcing adaptive matching strictly between each shadow token and its
+immediate non-shadow neighborhood, striking a balance between detail recovery and speed
+[19]. Other vision transformer variants incorporate multi-branch structures, domain-guided
+scans, or directional scanning vectors to handle specific texture challenges [20], [21], [22].
+Cross-region transformers utilize dedicated feature-matching layers to align cross-domain
+representations across spatial boundaries [20]. Spatial-transformer models integrate dual
+spatial-attention modules with joint Fourier transform blocks to eliminate the need for separate
+shadow detection steps, facilitating one-stage restoration [21]. Furthermore, high-resolution
+processing models split inputs into patch embeddings handled by unified U-shaped networks,
+blending global transformers with deterministic degradation estimators to limit block artifacts
+[22]. Despite these structural variations, all self-attention methods remain constrained by a
+fundamental trade-off, as expanding the token receptive field to improve color matching
+inevitably inflates runtime memory demands.
+
+2.3.4 GAN-Based Shadow Removal Approaches
+
+Generative adversarial networks (GANs) reformulated shadow removal as an image-to-image
+translation task, shifting the focus from pixel-level regression toward full perceptual
+
+                                              15
+distribution alignment. Early adversarial frameworks enforced joint detection and removal
+configurations, utilizing stacked conditional architectures to predict shadow masks and clean
+restorations simultaneously [8]. This joint optimization enables models to generate sharper
+textures and more realistic illumination transitions than simple pixel loss constraints. To
+eliminate the need for costly paired training data, unsupervised methods introduced cycle-
+consistent structures to learn mapping functions directly from unpaired shadow and shadow-
+free images [2], [23]. Mask-guided adversarial loops and domain-classifier networks optimize
+these translation paths by isolating region properties during the generation process [2], [23].
+Furthermore, incorporating recurrent attention layers within adversarial systems allows
+generators to refine illumination fields progressively across multiple steps [24], [25]. Despite
+their capacity to synthesize visually convincing textures, GAN-based frameworks are heavily
+limited by their training behavior. Because adversarial optimization lacks deterministic
+constraints, these models are prone to severe color distortions, boundary artifacts, and random
+visual hallucinations, especially when handling complex real-world scenes that differ from the
+training distribution.
+
+             Table 2.1: Domain-level comparison of image shadow removal paradigms.
+
+
+  Domain paradigm                Key advantages                      Primary limitations
+
+
+                         •   Eliminates training dataset        •   Fails under non-uniform or
+                             dependence.                            multi-source          ambient
+                                                                    lighting.
+                         •   Guarantees     exact     texture
+                             preservation   in      unshaded    •   Relies on rigid, manually
+ Traditional physical
+                             regions.                               hand-crafted chromaticity
+       modeling
+                                                                    assumptions.
+                         •   Requires zero specialized
+                             GPU hardware.                      •   Demands        manual    user
+                                                                    interactions    for   optimal
+                                                                    patch matching.
+
+
+
+                                                 16
+       Table 2.1: Domain-level comparison of image shadow removal paradigms(Cont’d).
+
+
+Domain paradigm                         Key advantages                      Primary limitations
+
+
+                       •        Solves    uniform        lighting   •   Misses complex structural
+Traditional physical            steps         via          direct       changes on highly textured
+     modeling                   mathematical illumination               surfaces.
+                                equations.
+
+
+                        •       Performs highly efficient           •   Constrained           by      an
+                                localized spatial feature               inherently limited receptive
+                                extraction.                             field.
+
+                        •       Maintains           translation     •   Struggles to model long-
+                                invariance across the entire            range       context     between
+                                image space.                            distant image coordinates.
+  Convolutional
+ neural networks
+                        •       Restricts           operational     •   Drops global illumination
+                                memory footprints during                relationships across distant
+                                inference runtime.                      regions.
+
+                        •       Executes stable multi-scale         •   Truncates high-frequency
+                                semantic      feature     fusion        spatial structures during
+                                loops.                                  downsampling.
+
+
+                            •     Captures     global      scene    •   Incurs                prohibitive
+                                  context     and    structural         quadratic       computational
+Vision transformers               dependencies.                         complexity.
+
+
+
+
+                                                    17
+         Table 2.1: Domain-level comparison of image shadow removal paradigms(Cont’d).
+
+
+Domain paradigm                  Key advantages                       Primary limitations
+
+
+                        •   Establishes direct feature         •   Imposes         high    hardware
+                            interactions      via      self-       VRAM memory overheads
+                            attention layers.                      during training.
+
+                        •   Mitigates              localized   •   Restricts scalability when
+Vision transformers         receptive field limits across          processing high-resolution
+                            distant channels.                      image inputs.
+
+                        •   Links          complementary       •   Requires               specialized
+                            illumination profiles across           processing layers to handle
+                            spatial boundaries.                    spatial texturing deficits.
+
+
+                        •   Promotes          exceptional      •   Prone      to    severe     color
+                            perceptual      realism     via        distortions       and     random
+                            adversarial       distribution         visual hallucinations.
+                            alignment.
+                                                               •   Suffers from notoriously
+    Generative
+                        •   Captures       high-frequency          unstable training loops and
+    adversarial
+                            spatial structures and edge            gradient collapse.
+     networks
+                            transitions.
+                                                               •   Lacks      rigid       pixel-level
+                        •   Supports        unsupervised           semantic                constraint
+                            learning       paths       from        anchors.
+                            unpaired data pools.
+
+
+
+
+                                                18
+2.3.5 Identified Research Gap
+
+A look at past research shows a constant struggle between fixing global lighting and keeping
+sharp local details. Vision transformers are great at matching colors across an entire image,
+which helps fix the limits of standard CNNs, but their high computational cost forces them to
+use small local windows or shrink the image too much. This breaking down of the image hurts
+the overall layout and leaves messy halo artifacts around shadow edges. Plus, treating every
+pixel the same way often leads to weird color shifts or overly bright spots in parts of the
+background that never even had shadows.
+
+These problems happen because of big design flaws in current transformer models, especially
+when looking at the gaps in HomoFormer [4]. HomoFormer [4] uses a random token-shuffling
+trick to spread out and weaken the shadow distortion across the network. However, this
+shuffling happens blindly. It offers no structural guarantee that a dark, shadowed patch will
+actually land inside the same local window as its perfect, unshadowed matching texture.
+Because the model shuffles tokens without checking if the material or surface properties
+actually match, it frequently scrambles local patterns and breaks the visual flow of the image.
+Other models try to fix this by using dual-attention setups that combine global color matching
+with local shape rules, but this mixes up the features. The network ends up fighting itself, trying
+to balance smooth, widespread lighting changes with sharp, detailed boundary lines at the same
+time. Even new models that use sparse patterns to save memory just group areas by basic visual
+similarity instead of looking at the actual lighting context. This leaves a clear research gap for
+a fast, simple setup that can smartly route and align features directly between dark and bright
+zones. We need a way to build clean edge transitions and balanced colors across the whole scene
+without demanding massive computer power.
+
+2.4 Conclusion
+
+This chapter reviewed the technological shift in single image shadow removal from traditional
+physical models to data-driven deep networks, including CNNs, GANs, and vision
+transformers. While each paradigm improves low-level image restoration, existing models
+remain constrained by distinct trade-offs between global color harmony, local texture
+
+
+                                               19
+preservation, and computational complexity. Specifically, current state-of-the-art architectures
+like HomoFormer [4] rely on random token-shuffling mechanics that diffuse shadow
+degradation but offer no structural guarantee that a degraded patch will align inside a processing
+window with its ideal non-shadow counterpart texture. This blind allocation breaks local visual
+coherence and leaves messy penumbral edge artifacts. These persistent structural limitations
+highlight a clear research gap for an efficient architecture capable of dynamically routing and
+aligning features across different illumination zones without demanding massive computational
+power. These empirical limits directly motivate the methodology developed in this thesis.
+
+
+
+
+                                               20
+                                      CHAPTER III
+
+
+                                      Methodology
+
+
+3.1 Introduction
+
+This chapter presents the design and architectural implementation of the proposed framework
+for single-image shadow removal. The methodology models shadow removal as an
+illumination-guided feature routing problem. The core architecture utilizes a Vision
+Transformer [26] backbone integrated with three primary components: an illumination-aware
+region partitioning block to isolate distinct degradation zones, a dynamic feature routing engine
+to align degraded tokens with structurally matching unshaded references, and a hierarchical
+multi-scale restorative head to reconstruct penumbra boundaries. The following sections detail
+the mathematical formulations, network block interactions, and multi-scale optimization
+functions that constitute this framework.
+
+3.2 System Architecture Overview
+
+The proposed single-image shadow removal framework processes a degraded image through a
+unified, illumination-guided pipeline, as illustrated in Figure 3.1. Given a single degraded RGB
+image 𝐼 ∈ ℝ𝐻×𝑊×3 and its corresponding binary shadow mask 𝑀 ∈ ℝ𝐻×𝑊×1 , the objective is
+to reconstruct a shadow-free image 𝐼ˆ ∈ ℝ𝐻×𝑊×3 that restores both the lost illumination balance
+and underlying texture details.
+
+The overall workflow follows a sequential routing and reconstruction pipeline:
+
+   •   Feature Extraction and Partitioning: The input image 𝐼 and mask 𝑀 are projected
+       into flat patch tokens via the linear-complexity Vision Transformer backbone. As shown
+       in Figure 3.1, these tokens are simultaneously processed by the illumination-aware
+       region partitioning block to split the feature map into distinct shadow (𝑆) and non-
+       shadow (𝑁𝑆) spatial zones.
+
+                                               21
+                                                                        Illumination
+              Input Image               Feature Projection                  Aware
+               Shadow Mask                  Embedding                      Region
+                                                                        Partitioning
+
+
+
+
+              Shadow-Free               Hierarchical Multi            Feature Routing
+                 output                 Scale Restoration                 Engine
+
+
+
+       Figure 3.1: High-level schematic flowchart of the proposed unified shadow removal framework.
+
+   •    Dynamic Context Routing: The partitioned tokens are passed to the dynamic feature
+        routing engine. This module calculates structural similarity matrix mappings to
+        explicitly align the degraded shadow tokens with matching unshaded background
+        tokens across the spatial layout.
+
+   •    Hierarchical Reconstruction: The aligned feature representations are decoded through
+        the hierarchical multi-scale restorative head, which processes the features at varying
+        resolution scales to reconstruct sharp details across penumbra boundaries and generate
+        the final output 𝐼ˆ.
+
+3.3 Proposed System Architecture
+
+The complete forward pass of the proposed framework follows an end-to-end hierarchical
+encoder-decoder architecture [27], [28] that maps a degraded input tensor to a restored, shadow-
+free image through a series of deterministic operational stages, as illustrated in the system
+schematic in Figure 3.2. Given an input degraded RGB image 𝐼 ∈ ℝ𝐻×𝑊×3 and its
+corresponding binary shadow mask 𝑀 ∈ ℝ𝐻×𝑊×1 , where a value of 1 denotes shadowed pixels
+and 0 denotes the unshaded background, the primary objective is to reconstruct a clean, shadow-
+free image 𝐼ˆ ∈ ℝ𝐻×𝑊×3 . As shown in Figure 3.2, the network avoids uniform token processing
+to prevent background color drifting; instead, 𝐼 and 𝑀 are first concatenated along the channel
+dimension and passed through the Input Projection layer to yield an initial feature map. This
+tensor propagates down a hierarchical U-Net style structure through an Encoder Block
+
+                                                22
+composed of four progressive resolution levels, where each level utilizes a specialized
+GuidedShuffleBlock executing Guided Shuffle Attention. Within these blocks, the feature space
+breaks localized processing constraints by sequentially performing Pearson-guided correlation
+routing [29], spatial shuffling mechanics [4], [30], and local window self-attention [10] to
+dynamically map and link scattered shadow representations based on non-shadow guidance
+fields, before passing through a Channel Attention Block (CAB) [31] and a strided
+downsampling operation. At the deepest semantic layer (24 × 24 × 512), the resulting low-
+resolution features enter the Bottleneck zone, which houses the Non-shadow Guided Adaptive
+Normalization (NGAN) module [32]; here, spatial indices derived from the original binary
+mask 𝑀 guide the system to selectively update the statistics of degraded shadow tokens using
+the weighted distribution properties of their clean non-shadow neighbors based on the routing
+matrix map. Following this deep alignment, the feature map enters the Decoder Block to be
+progressively upsampled and processed by sequential StandardBlock layers across four
+resolution levels, drawing structural details from the encoder via skip connections. At the final
+high-resolution decoder stage (Level 1), the features are routed into the Texture Reference
+Module (TRM) [33], which directly ingests the initial image 𝐼, the mask 𝑀, and the upsampled
+deep features to inject a gated, non-shadow texture residual map into the shadow pixels,
+resolving fine-grained textural deficits at the highest resolution skip-connection boundary to
+prevent structural over-smoothing. Finally, the texture-refined representations pass through the
+Output Projection layer and a Boundary Refinement (BR) block [34] which utilizes multi-scale
+dilated depthwise convolutions to smooth out transitional penumbral lighting artifacts
+exclusively along the soft shadow boundary band, producing the clean shadow-free image 𝐼ˆ. To
+maintain strict tracking of structural shapes throughout this entire pipeline, the precise
+transformation of tensor resolutions, channel depths, flattened token counts, and layer
+hyperparameters across each consecutive step is detailed in Table 3.1.
+
+To provide a granular operational tracking of the feature maps as they propagate through the
+structural pipeline, the comprehensive layer-by-layer hyperparameter transitions, resolution
+changes, and token scaling steps are systematically detailed in Table 3.1. As indicated by the
+workflow configuration, the input projection establishes an initial token sequence length of
+
+
+
+                                               23
+                                                        TRM
+
+
+
+
+                                                                                       C
+                                  Boundary Refinement
+
+
+                                                                      Skip
+                                   Output Projection       C                    Input Projection
+
+
+
+
+                                     StandardBlock             Skip          GuidedShuffleBlock
+
+
+
+
+                                                                                                   Level 1
+                        Level 1
+
+
+
+
+                                       Up sample                               Down sample
+        Decoder Block
+
+
+
+
+                                                                                                             Encoder Block
+                                     StandardBlock             Skip          GuidedShuffleBlock
+
+
+
+
+                                                                                                   Level 2
+                        Level 2
+
+
+
+
+                                       Up sample                                Down sample
+
+
+
+
+                                                               Skip
+
+
+
+
+                                                               Skip
+
+
+
+
+C : Concatenation                                         Bottleneck
+
+       : Feature Map                                       NGAN
+
+TRM        : Texture Reference Module
+NGAN        : Non-shadow Guided Adaptive Normalization
+                        : Level-K Encoder Decoder Layer
+
+        Figure 3.2: Detailed architectural of the proposed shadow removal network.
+
+
+
+
+                                                               24
+                     Table 3.1: Layer-by-layer tensor dimension transitions.
+
+                      Spatial                       Token Seq.
+      Stage                         Channels                          Heads       Blocks
+                     (𝐻 × 𝑊)                          Length
+   Input Proj.     384 × 384            32           147456              -           -
+   Encoder-1       384 × 384            32           147456              1           2
+ Downsample-1            -           32 → 64             -               -           -
+   Encoder-2       192 × 192            64            36864              2           2
+ Downsample-2            -          64 →128              -               -           -
+   Encoder-3         96 × 96           128             9216              4           2
+ Downsample-3            -         128 → 256             -               -           -
+   Encoder-4         48 × 48           256             2304              8           2
+ Downsample-4            -             256               -               -           -
+   Bottleneck        24 × 24       256 → 512           576              16           2
+     NGAN            24 × 24           512             576               -           -
+  Upsample-1             -           512 256             -               -           -
+   Decoder-1         48 × 48           512             2304             16           2
+  Upsample-2             -         512 → 128             -               -           -
+   Decoder-2         96 × 96           256             9216              8           2
+  Upsample-3             -          256 → 64             -               -           -
+
+147,456 elements with 32 hidden channels, which is maintained through the first encoder tier
+before consecutive downsampling operations systematically half the spatial grid size and
+double the channel width, reducing the feature maps down to a compact bottleneck sequence
+length of 576 elements at a deep capacity of 512 channels. This spatial compression allows the
+NGAN block to efficiently compute long-range dependencies at the coarsest feature resolution
+before the spatial coordinates are symmetrically upsampled through the decoder stack, re-
+expanding the token counts back to their high-resolution states. Crucially, as detailed in the
+structural specifications under Table 3.1, the final decoder tier (Decoder-4) acts as a high-
+fidelity fusion stage that concatenates the upsampled 32-channel deep features, the incoming
+32-channel skip-connection features from Encoder-1, and the 1-channel downsampled spatial
+
+                                               25
+mask, resulting in a joint input dimension of 65 channels specifically designed to feed the
+Texture Reference Module (TRM). This accumulated structural state then passes through the
+final output projection layers, which process the 65 aggregated channels to reconstruct the
+precise 3-channel spatial color residual required to synthesize the final shadow-free output
+image 𝐼ˆ.
+
+3.4 Architecture Novelties
+
+To overcome the roadblocks found in traditional single-image shadow removal systems, this
+framework completely reorganizes and fine-tunes standard architectural components into a
+specialized, task-specific layout. The core design philosophy centers on division of labor:
+instead of forcing a single layer to resolve multiple structural problems simultaneously, the
+network separates global illumination balancing from localized texture reconstruction. Relying
+on generic, uniform processing across the entire image space, the system uses a targeted layout
+where individual modules handle distinct characteristics of shadow degradation. The unique
+structural components and design choices engineered to achieve these objectives are detailed in
+the following subsections.
+
+3.4.1 Pearson Correlation Guided Shadow–Non-Shadow Routing
+
+Motivation: To effectively reconstruct shadow regions, a network must locate and retrieve
+clean color and texture profiles from semantically identical, unshaded zones within the scene.
+Standard self-attention [35] mechanisms distribute feature gradients uniformly across all spatial
+dimensions, which dilutes the vital shadow-specific cues needed for accurate restoration. The
+proposed framework resolves this limitation by introducing an illumination-guided routing [36]
+mechanism that establishes explicit structural connections between degraded shadow regions
+and clean non-shadow (NS) reference regions.The primary challenge in matching these distinct
+regions lies in selecting an appropriate similarity metric. Shadow degradation is fundamentally
+characterized by a global attenuation of feature responses relative to unshaded areas. Standard
+geometric metrics like the dot product and Euclidean distance fail because they are sensitive to
+vector magnitude variations caused by lighting changes. Similarly, cosine similarity fails to
+maintain illumination invariance because an overall brightness drop shifts the vector's mean
+
+                                               26
+relative to the origin, artificially changing the computed angle even if the underlying structural
+and textural content is identical. To overcome this bottleneck, the Pearson correlation
+coefficient is chosen as the core routing metric. The Pearson correlation first mean-centers each
+feature vector effectively stripping away illumination biases and mean shifts and then computes
+the cosine similarity in this mean-centered space. As a result, a shadowed patch and its clean
+NS counterpart yield a high correlation score even when illumination differences attenuate the
+feature channels by a constant factor. This mathematical guarantee is achieved with an efficient
+computational complexity of O(C) per channel dimension, outperforming more complex
+invariant transformations.
+
+Mathematical Formulation and Regional Routing Strategy: The routing operation begins
+with structural region decomposition. An intermediate feature map is partitioned into an 𝑁 × 𝑁
+grid of non-overlapping windows (where N = 8), yielding a total of 𝑅 = 𝑁 2 = 64 distinct
+regions. For each individual region 𝑟, a single representative vector is generated via spatial
+average pooling over its token set:
+
+
+                                             1
+                                𝑞𝑟 = 𝑘𝑟 =         ∑ 𝑌𝑡                                       (3.1)
+                                            |Ω𝑟 |
+                                                 𝑡∈Ω𝑟
+
+
+
+
+where Ω𝑟 denotes the set of token indices belonging to region 𝑟, and 𝑌𝑡 ∈ ℝ𝐶 represents the 𝐶-
+dimensional token features at spatial position 𝑡.
+
+To establish an illumination-invariant similarity score between a query region 𝑟 and a key
+region 𝑠, the system computes the classical Pearson correlation coefficient 𝜌𝑟𝑠 . Statistically, for
+two 𝐶-dimensional vectors 𝑞𝑟 and 𝑘𝑠 , the correlation coefficient is defined as the ratio of their
+covariance to the product of their standard deviations:
+
+
+
+                                ∑𝐶𝑐=1(𝐵𝑟,𝑐 − 𝑞̅𝑟 ) (𝑘𝑠,𝑐 − 𝑘̅𝑠 )                             (3.2)
+                   𝜌𝑟𝑠 =
+                                              2                    2
+                           √∑𝐶𝑐=1(𝐵𝑟,𝑐 − 𝑞̅𝑟 ) √∑𝐶𝑐=1(𝑘𝑠,𝑐 − 𝑘̅𝑠 )
+
+
+
+                                                27
+where (𝐵𝑟,𝑐 ) and (𝑘𝑠,𝑐 ) represent the values of the 𝑐-th feature channel for regions 𝑟 and 𝑠,
+while 𝑞̅𝑟 and 𝑘̅𝑠 represent the scalar channel-wise means of their respective vectors:
+                                   𝐶                             𝐶
+                             1                                1
+                        𝑞̅𝑟 = ∑(𝐵𝑟,𝑐 ) ,            𝑘̅𝑠 =       ∑(𝑘𝑠,𝑐 )                  (3.3)
+                             𝐶                                𝐶
+                                  𝑐=1                           𝑐=1
+
+
+To execute this statistical operation with an efficient computational complexity of 𝑂(𝐶) inside
+the transformer matrix layers, Equation (3.2) is implemented via vector mean-centering and ℓ2 -
+normalization. Let 𝟏 represent a vector of ones. The mean-centered vectors 𝑞˜𝑟 and 𝑘˜𝑠 are first
+computed to eliminate the illumination bias:
+
+                                        𝑞˜𝑟 = 𝑞𝑟 − 𝑞̅𝑟 𝟏                                  (3.4)
+                                        𝑘˜𝑠 = 𝑘𝑠 − 𝑘̅𝑠 𝟏                                  (3.5)
+
+These centered representations are then scaled by their Euclidean ℓ2 −norms, incorporating a
+small stability constant 𝜀 = 10−8 to prevent division-by-zero errors in uniform feature zones.
+This yields the fully normalized vectors 𝑞ˆ𝑟 and 𝑘ˆ𝑠 :
+
+                                      𝑞˜𝑟                         𝑘˜𝑠
+                         𝑞ˆ𝑟 =               ,      𝑘ˆ𝑠 =                                 (3.6)
+                                 ‖𝑞˜𝑟 ‖2 + 𝜀                  ‖𝑘˜𝑠 ‖2 + 𝜀
+
+
+By pre-processing the vectors this way, the dot product of 𝑞ˆ𝑟 and 𝑘ˆ𝑠 becomes mathematically
+identical to the statistical correlation defined in Equation (3.2). Using a temperature parameter
+𝜏 = 0.1 to sharpen the distribution profiles, the complete attention logit matrix 𝐴 ∈ ℝ𝑅×𝑅 is
+constructed as:
+
+                                                  𝑞ˆ𝑟 ⋅ 𝑘ˆ𝑠
+                                        𝐴𝑟𝑠 =                                             (3.7)
+                                                      𝜏
+
+To leverage the spatial layout of the scene, a Gaussian locality prior is applied to these raw
+correlation logits. This prior penalizes long-range matching based on the Euclidean grid
+distance 𝑑𝑟𝑠 between regions 𝑟 and 𝑠, and is formulated as:
+                                         2
+                                        𝑑𝑟𝑠                             𝑁
+                  𝐵𝑟𝑠 = 𝜆 ⋅ exp (−           ),      where 𝜎 =            , 𝜆 = 2.0       (3.8)
+                                        2𝜎 2                            4
+
+
+                                                       28
+              (a)                               (b)                                (c)
+  Figure 3.3: Regional grid decomposition displaying (a) the original input degraded scene, (b) the
+       shadow mask and (c) the corresponding 8 × 8 non-overlapping spatial window layout.
+
+The distance-bias matrix 𝐵 is directly added to the attention logit matrix to yield the final
+distance-biased routing matrix 𝐴′:
+
+                                      𝐴′ = 𝐴 + 𝐵                                               (3.9)
+
+Spatial Decomposition and Correlation Analysis: To visually map this routing logic, Figure
+3.3 illustrates the initial step where the raw scene geometry is decomposed into a structured
+grid representation. The 8 × 8 uniform partitioning isolates degraded spatial patches from
+pristine background components, allowing the network to explicitly categorize localized token
+sets based on their dominant illumination state.
+
+From the Figure 3.3 we can classify the regions. The regions 1, 2, 3, 8, 8,10,11, 16, 17, 18, 19,
+20, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 41, 42 are strictly classified as shadow regions. All
+other remaining regions are non-shadow regions.
+
+Following this grid decomposition, the system performs a localized channel-wise comparison
+to determine which clean background zones share matching structural textures with the
+occluded regions. Figure 3.4 tracks the resulting illumination-invariant similarity mappings
+generated by Equation (3.7), displaying a clear correlation spike where structural properties
+match across distinct lighting boundaries.
+
+Hard Constraints and Top-𝒌 Feature Selection: Before final feature selection, the distance-
+biased routing matrix 𝐴′ is subjected to two hard topological constraints enforced via a masked
+fill operation to prevent invalid feature propagation:
+
+                                                29
+  Figure 3.4: Pearson correlation coefficient heatmap representing the computed similarity
+                  logits matrix 𝐴 between the 64 partitioned spatial regions.
+
+   1. Shadow-to-Shadow Block: A shadowed query region is strictly barred from routing to
+       any other shadowed key region (𝐴′𝑟𝑠 = −∞ if key region 𝑠 is classified as a shadow
+       zone). This forces the network to look exclusively at unshaded areas for restoration
+       details.
+
+   2. Non-Shadow Identity Block: A clean, non-shadow query region is restricted from
+       cross-region routing and may only route to itself (𝐴′𝑟𝑠 = −∞ for all 𝑠 ≠ 𝑟 if query
+       region 𝑟 is an 𝑁𝑆 zone). This preserves the original textures of valid background
+       regions.
+
+To guarantee numerical stability during training, a fallback check is implemented for degenerate
+cases where a shadow query is entirely surrounded by other shadow regions (rendering all
+possible key logits −∞). In this scenario, the row is zeroed out prior to the activation stage,
+
+
+                                              30
+producing a uniform attention distribution instead of a NaN error.Finally, the top-𝑘 most
+structurally coherent non-shadow reference regions (where 𝑘 = 4) are isolated for each query
+region. The final routing weights 𝜔 are calculated by applying a softmax function over the
+chosen top-𝑘 indices:
+
+                           {𝑟1 , 𝑟2 , … , 𝑟𝑘 } = argtop-k 𝑗 (𝐴′𝑟⋅ )                            (3.10)
+
+                                            exp (𝐴′𝑟,𝑟𝑗 )
+                               𝜔𝑟,𝑗 =                                                          (3.11)
+                                        ∑𝑘𝑚=1 exp(𝐴′𝑟,𝑟𝑚 )
+
+This routing pipeline outputs a structured triplet containing the final routing weights 𝝎, the top-
+𝒌 region indices, and the original unshaded source tokens as mapped structurally in Figure 3.6
+and Figure 3.7. These elements are passed to the subsequent encoder layers to guide the context-
+aware spatial restoration. A typical snapshot of these structured outputs is tracking-logged in
+Table 3.2, demonstrating how the system systematically ranks non-shadow matches for each
+degraded zone.
+
+
+
+
+   Figure 3.5: Filtered Pearson correlation coefficient heatmap representing the constrained routing
+ matrix 𝐴′ after the application of the shadow-to-shadow block and non-shadow identity constraints.
+
+                                                   31
+To finalize the module analysis, the distance-biased routing matrix 𝐴′ is filtered using strict
+topological constraints before mask generation. Figure 3.5 shows the resulting Pearson
+correlation heatmap, where shadow-to-shadow connections are removed (−∞), forcing cross-
+attention to focus only on clean non-shadow textures.With the hard constraints applied, the
+network performs top-𝑘 selection using Equation (3.10) and Equation (3.11). Figure 3.6
+visualizes the routing behavior, showing how shadow tokens bypass degraded regions and
+connect with structurally similar non-shadow areas.
+
+
+
+
+     Figure 3.6: Spatial visualization of in-image token routing from shadow queries to the top-𝑘
+                         structurally similar non-shadow reference regions.
+
+                                                 32
+   Figure 3.7: Graph representation of directed feature routing between non-shadow key nodes and
+                                     shadow query nodes.
+
+The routing behavior is generalized as a bipartite matching structure across the transformer
+stack. Figure 3.7 illustrates the directed transfer of illumination-invariant features from non-
+shadow source nodes to shadow query nodes.
+
+3.4.2 Guided Shuffle Block
+
+To integrate illumination-invariant spatial information into the feature representation, the
+standard transformer block is replaced with a customized Guided Shuffle Block. The module is
+placed inside the hierarchical encoder stages, allowing the network to capture wider contextual
+relationships while keeping the computational cost low. The overall workflow of the block,
+including feature projection and transformation steps, is shown in Figure 3.8.
+
+Rather than relying only on conventional self-attention, the block processes features through
+
+
+                                               33
+ Table 3.2: Ranked non-shadow matching cells for individual shadow source cells based on Pearson
+                                          routing scores.
+
+      Source Cell             Match Cell
+                                                            Rank              Pearson Score
+       (Shadow)              (Non-Shadow)
+
+           1                       0                         1                    0.6771
+
+           1                       8                         2                    0.1332
+
+           1                       49                        3                    0.0975
+
+           1                       40                        4                    0.0922
+
+           2                       8                         1                    0.5195
+
+           2                       12                        2                    0.1667
+
+           2                       0                         3                    0.1626
+
+           2                       4                         4                    0.1512
+
+           3                       4                         1                    0.5133
+
+           3                       12                        2                    0.2915
+
+           3                       43                        3                    0.1160
+
+           3                       51                        4                    0.0792
+
+two complementary branches: a guided interaction branch and a local feature extraction branch.
+This combination helps preserve fine spatial details while improving global feature
+understanding through efficient context routing and attention-based operations.
+
+The forward pass through the Guided Shuffle Block processes an input feature tensor 𝐹𝑖𝑛 ∈
+ℝ𝐻×𝑊×𝐶 . The block begins by splitting the input tensor along the channel dimension into two
+distinct feature splits to manage processing efficiency:
+
+                                 𝐹1 , 𝐹2 = Split(𝐹𝑖𝑛 )                                     (3.12)
+
+                       𝐶
+where 𝐹1 , 𝐹2 ∈ ℝ𝐻×𝑊×2 . The first split, 𝐹1 , passes directly into the Guided Shuffle Attention
+(GSA) module. This module ingests llumination-guided spatial routing triplets computed in
+
+                                                34
+                                                              Guided Shuffle Block
+
+                   Guided Shuffle Block                               Feed-Forward Branch
+
+
+
+
+                                     GuidedShuffleAttention
+
+
+
+
+                                                                                                  Channel Attention
+
+
+                                                                                                                      Down sample
+                       Layer Norm
+
+
+
+
+                                                                          Layer Norm
+
+
+                                                                                       PMLP
+             : Feature map          PMLP                      : Position Recovery MLP         : Element-wise addition
+
+
+
+   Figure 3.8: Detailed architectural layout of the proposed Guided Shuffle Block, highlighting the
+   interaction pathways, Guided Shuffle Attention, and sequential Channel Attention Block (CAB)
+                                                                     stages.
+
+section 3.4.1 To resolve long-range structural dependencies while keeping a lean computational
+footprint, the GSA module executes Pearson-guided correlation routing [29] alongside spatial
+shuffling mechanics adapted from HomoFormer [4], [30]. This shuffling operation mixes
+features across regional boundaries, allowing the degraded shadow tokens to pull valid texture
+properties directly from their top-𝑘 matched non-shadow neighbors. Simultaneously, the second
+split, 𝐹2 , handles localized structural details. It passes through a localized window self-attention
+layer to extract high-frequency textures within close spatial boundaries, using the shifted-
+window layout popularized by Swin Transformer [37]:
+
+                  𝐹′1 = GSA(𝐹1 , 𝜔, 𝐼),                          𝐹′2 = WinAttention(𝐹2 )                                            (3.13)
+
+Once both tracks finish processing, the updated feature splits are joined back together along the
+channel axis to restore the original tensor shape:
+
+
+                                    𝐹𝑐𝑜𝑛𝑐𝑎𝑡 = Concat(𝐹′1 , 𝐹′2 )                                                                    (3.14)
+
+
+
+
+                                                                       35
+To enforce cross-channel communication after the spatial mixing stages, the combined tensor
+𝐹𝑐𝑜𝑛𝑐𝑎𝑡 is passed into a Channel Attention Block (CAB) [31], directly utilizing the channel-
+filtering architecture from SwinIR [38]. The CAB module uses global average pooling and
+localized convolutions to dynamically scale channel weights, accentuating pristine background
+textures while dampening residual shadow artifacts:
+
+
+                              𝐹𝑐ℎ𝑎𝑛𝑛𝑒𝑙 = CAB(𝐹𝑐𝑜𝑛𝑐𝑎𝑡 )                                      (3.15)
+
+
+Finally, a position-recovery Multi-Layer Perceptron (MLP) [4] containing standard non-linear
+gelu layers processes the features to generate the output tensor 𝐹𝑜𝑢𝑡 , which is added to the
+original input via a residual connection to complete the block's execution:
+
+
+                            𝐹𝑜𝑢𝑡 = 𝐹𝑖𝑛 + MLP(𝐹𝑐ℎ𝑎𝑛𝑛𝑒𝑙 )                                     (3.16)
+
+
+This structured flow ensures that every layer of the encoder actively utilizes global background
+properties to guide local pixel restorations, as tracked systematically through the pipeline details
+in Table 3.1.
+
+3.4.3 Non-Shadow Guided Adaptive Normalization (NGAN)
+
+At the bottleneck stage, where features contain rich semantic information at a compressed
+resolution, the network introduces the Non-shadow Guided Adaptive Normalization (NGAN)
+module to reduce illumination inconsistencies. The overall structure of this module is shown in
+Figure 3.9. Unlike standard normalization methods that compute statistics over the whole
+feature space, NGAN performs targeted feature adaptation. Inspired by spatially adaptive
+normalization [32], it uses the Pearson-based routing indices (𝐼) from Section 3.4.1 to transfer
+statistics from matched non-shadow regions. This guides shadow features toward structurally
+similar clean regions before the decoder reconstruction process. However, to optimize the
+framework explicitly for illumination recovery without artifact propagation, we modify this
+setup by introducing three specialized tracking sub-components: an AlphaNet scaling layer, a
+Cap limit filter, and a Clamp operational boundary.
+
+
+
+                                                36
+                                                                      (B × C ×        ×       )
+
+                             Split into
+                           8 × 8 regions
+                                                      Region
+                                                     Partition                        Tok-k non-shadow
+                                                                                        region indices
+                M (B × 1 ×    ×     )
+                                                                                  1       2               k
+
+                                            Mask Guided Routing                    Similarity weights
+                                             (top-k NS indices                   w1 w2             wk
+
+
+
+                    Matched NS Features      n                      Shadow Feature
+
+
+
+
+                      Weighted Statistics                           Shadow Statistics
+                        (Per channel)                                  (Per channel)
+                          n         n
+
+
+
+
+                                            Adaptive Normalization
+
+                                                             +
+
+
+
+
+                                                   Alpha Network
+
+
+
+                                                        +
+
+                                                                                 (B × C ×         ×   )
+
+
+Figure 3.9: Workflow of the proposed NGAN module for adaptive transfer of non-shadow statistics to
+                                                 shadow features.
+
+The NGAN module processes the deep bottleneck feature map 𝐹𝑏𝑜𝑡 ∈ ℝ𝐻𝑏 ×𝑊𝑏 ×𝐶𝑏 . The operation begins
+by calculating the localized, channel-wise mean 𝜇𝑐 and standard deviation 𝜎𝑐 across the non-shadow
+spatial regions to capture a clean environmental baseline. Let 𝜇𝑠 and 𝜎𝑠 denote the channel-wise mean
+
+
+                                                       37
+and standard deviation calculated across the degraded shadow spatial zones, while 𝜇𝑛𝑠 and 𝜎𝑛𝑠 represent
+the corresponding mean and standard deviation extracted from the matched clean non-shadow ($NS$)
+regions using the routing indices 𝐼.The core feature-distribution alignment for an individual shadow
+feature token 𝐹 is formulated as:
+
+
+                                           𝐹 − 𝜇𝑠
+                           𝐹ˆ𝑎𝑙𝑖𝑔𝑛𝑒𝑑 = (          ) ⋅ 𝜎𝑛𝑠 + 𝜇𝑛𝑠                                (3.17)
+                                           𝜎𝑠 + 𝜀
+
+
+where 𝜀 = 10−5 is a numerical stability constant.
+
+
+To refine the aligned feature representation 𝐹ˆ𝑎𝑙𝑖𝑔𝑛𝑒𝑑 while avoiding unstable feature shifts,
+NGAN applies an adaptive modulation step controlled by AlphaNet. The network generates
+dynamic scaling and shifting parameters from the matched non-shadow guidance features
+obtained using Pearson routing indices 𝐼:
+
+
+                      𝛾𝑥,𝑦,𝑐 , 𝛽𝑥,𝑦,𝑐 = AlphaNet(Gather(𝐹𝑏𝑜𝑡 , 𝐼))                             (3.18)
+
+
+Here, Gather extracts the corresponding clean reference features from non-shadow regions. To
+prevent excessive illumination changes and color distortion, the generated parameters are
+restricted using a clamp operation as shown in Equation (3.19):
+
+
+                    𝛾′𝑥, 𝑦, 𝑐 = Clamp(𝛾𝑥, 𝑦, 𝑐,Cap𝑚𝑖𝑛,Cap𝑚𝑎𝑥)                                  (3.18)
+
+
+Finally, the bounded modulation parameters are applied to the aligned feature map to produce
+the NGAN output feature 𝐹𝑛𝑔𝑎𝑛 :
+
+
+                         𝐹𝑛𝑔𝑎𝑛 = 𝛾′𝑥, 𝑦, 𝑐 ⋅ 𝐹ˆ 𝑎𝑙𝑖𝑔𝑛𝑒𝑑 + 𝛽𝑥,𝑦,𝑐                               (3.18)
+
+
+This adaptive scaling process updates shadow-region features using structurally matched non-
+shadow statistics, providing a consistent representation for the decoder reconstruction stage.
+
+
+
+
+                                                    38
+3.4.4 Texture Reference Module (TRM)
+
+To isolate and preserve high-frequency surface details before the final projection layer, the
+framework incorporates a specialized Texture Reference Module (TRM) at the highest-
+resolution stage of the decoder (Level 1). Rather than allowing deep spatial upsampling blocks
+to over-smooth the output, this module explicitly introduces a direct texture-preservation [33]
+shortcut. The TRM module acts as a task-specific boundary and texture anchor. It functions by
+combining the deep upsampled features (32-ch) with direct structural hooks to the original
+inputs, ensuring that fine-grained texture details are injected back into the shadow zones without
+causing color drifting or structural over-smoothing in the final reconstruction. The TRM
+operates by explicitly concatenating features from three distinct abstraction layers. As detailed
+in the operational specifications of Table 3.1, the module ingests the upsampled Stage-1
+decoder features 𝐹𝑑𝑒𝑐 ∈ ℝ𝐻×𝑊×32 , the high-resolution structural skip features from Encoder-1
+𝐹𝑠𝑘𝑖𝑝 ∈ ℝ𝐻×𝑊×32, and a single-channel downsampled version of the spatial binary mask 𝑀 ∈
+ℝ𝐻×𝑊×1 . These inputs are joined along the channel axis to form a multi-scale joint descriptor
+tensor 𝐹𝑗𝑜𝑖𝑛𝑡 :
+
+
+                    𝐹𝑗𝑜𝑖𝑛𝑡 = Concat(𝐹𝑑𝑒𝑐 , 𝐹𝑠𝑘𝑖𝑝 , 𝑀) ∈ ℝ𝐻×𝑊×65                           (3.19)
+
+
+This concatenated 65-channel state is immediately passed through a set of compact localized
+convolutional layers to calculate a gated residual map. This operation isolates high-frequency
+surface textures from the pristine background zones and transfers them directly to the degraded
+shadow tokens:
+
+
+                        𝐺𝑡𝑒𝑥𝑡𝑢𝑟𝑒 = Sigmoid (Conv(𝐹𝑗𝑜𝑖𝑛𝑡 ))                                (3.20)
+
+
+                         𝐹𝑡𝑟𝑚 = 𝐹𝑑𝑒𝑐 + (𝐺𝑡𝑒𝑥𝑡𝑢𝑟𝑒 ⊙ 𝐹𝑠𝑘𝑖𝑝 )                                (3.21)
+
+
+where ⊙ denotes element-wise multiplication. This gating mechanism dynamically determines
+how much structural detail to pass through, effectively acting as an anchor that locks in local
+surface details immediately before the feature space enters the final output projection layers.
+
+                                               39
+3.5 Loss function Design
+
+The optimization objective plays an important role in single-image shadow removal, as the
+network must simultaneously recover illumination, preserve surface texture, and maintain
+smooth transitions between shadow and non-shadow regions. Existing shadow removal
+methods combine different loss constraints to supervise these properties.
+
+Early deep learning methods such as DeshadowNet [10] mainly relied on pixel reconstruction
+objectives to directly reduce the difference between the predicted shadow-free image 𝐼̂ and
+ground truth image 𝐼. A commonly used formulation is the mean squared error (MSE) loss:
+
+                                           𝑁
+                                     1             2
+                               𝐿𝑀𝑆𝐸 = ∑(𝐼ˆ𝑖 − 𝐼𝑖 )                                         (3.22)
+                                     𝑁
+                                          𝑖=1
+
+
+
+This loss heavily penalizes large pixel deviations, forcing the model to restore global intensity
+values. However, the squared penalty can over-smooth fine texture details because it favors
+averaged solutions. To improve structural preservation, later restoration networks adopted
+absolute reconstruction losses such as 𝐿1 loss [9]:
+
+                                           𝑁
+                                     1
+                                 𝐿1 = ∑|𝐼ˆ𝑖 − 𝐼𝑖 |                                         (3.23)
+                                     𝑁
+                                          𝑖=1
+
+
+
+The 𝐿1 objective penalizes reconstruction errors linearly, making it less sensitive to outliers and
+better at preserving image edges compared with MSE.
+
+Recent shadow removal approaches such as ShadowFormer [3], HomoFormer [4] employ
+robust reconstruction objectives based on Charbonnier loss. It is a differentiable approximation
+of 𝐿1 loss:
+
+                                           𝑁
+                                     1
+                                 𝐿1 = ∑|𝐼ˆ𝑖 − 𝐼𝑖 |                                         (3.24)
+                                     𝑁
+                                          𝑖=1
+
+
+
+                                                40
+where 𝜖 prevents gradient instability. This loss maintains sharp restoration quality while
+providing smoother convergence during training.
+
+Since shadow degradation mainly appears as illumination and color inconsistency, several
+methods introduce perceptual or color-based constraints. LAB-space [16] supervision is
+commonly used to separate luminance information from chromatic components:
+
+                                𝑁
+                           1
+                     𝐿𝐿𝐴𝐵 = ∑| | 𝐿𝐴𝐵(𝐼ˆ𝑖 ) − 𝐿𝐴𝐵(𝐼𝑖 )| |1                               (3.25)
+                           𝑁
+                               𝑖=1
+
+
+
+This directly penalizes perceptual color differences and encourages realistic illumination
+recovery.
+
+To further preserve high-level structural and texture consistency, several image restoration and
+shadow removal methods introduce perceptual loss using features extracted from a pretrained
+VGG network [39]. Instead of directly comparing pixel values, perceptual loss minimizes the
+difference between deep feature representations:
+
+
+                                         1
+                          𝐿𝑝𝑒𝑟𝑐 = ∑        ‖𝜙 (𝐼ˆ) − 𝜙𝑙 (𝐼)‖1                           (3.26)
+                                         𝑁𝑙 𝑙
+                                     𝑙
+
+
+
+where 𝜙𝑙 (⋅) represents the feature activation extracted from the 𝑙 𝑡ℎ layer of a pretrained VGG
+network and 𝑁𝑙 is the number of feature elements. This loss penalizes semantic and texture-
+level differences, helping the restored image maintain realistic structures even when multiple
+pixel-level solutions exist.
+
+Another common problem in shadow removal is boundary inconsistency, where the transition
+between restored shadow and original non-shadow regions remains visible. Boundary-aware
+[40] methods introduce additional constraints around shadow edges:
+
+
+                                          1
+                          𝐿𝐵𝑜𝑢𝑛𝑑𝑎𝑟𝑦 =       ∑(𝐵 ⊙ |𝐼ˆ − 𝐼|)                             (3.27)
+                                          𝑁
+
+
+                                                 41
+where 𝐵 represents the shadow boundary region. This forces the network to focus more on
+difficult transition areas.
+
+3.5.1 Proposed Shadow-Aware Loss Function
+
+Although existing losses improve reconstruction quality, they treat all spatial regions equally.
+However, in shadow removal, degraded shadow pixels require stronger supervision than already
+clean non-shadow areas. Therefore, our framework introduces a shadow-weighted
+reconstruction objective based on Charbonnier loss:
+
+                                      𝑁
+                            1                          2
+                      𝐿𝑆𝑊𝐶 = ∑ √(1 + 𝜆𝑠 𝑀𝑖 )(𝐼ˆ𝑖 − 𝐼𝑖 ) + 𝜖 2                           (3.28)
+                            𝑁
+                                      𝑖=1
+
+
+
+
+where 𝑀denotes the binary shadow mask and 𝜆𝑠 controls the additional importance assigned to
+shadow regions. This encourages the network to prioritize illumination recovery in degraded
+areas.
+
+To maintain natural color reconstruction, LAB consistency loss from Equation (3.24) is
+combined with the objective. Total variation regularization is further added to suppress local
+artifacts:
+
+
+                       𝐿 𝑇𝑉 = ∑(|𝐼ˆ𝑖+1,𝑗 − 𝐼ˆ𝑖,𝑗 | + |𝐼ˆ𝑖,𝑗+1 − 𝐼ˆ𝑖,𝑗 |)                (3.28)
+                                𝑖,𝑗
+
+
+
+A single loss function is insufficient to handle all challenges involved in shadow removal, as
+the task requires accurate illumination recovery, color correction, boundary preservation, and
+artifact reduction. Therefore, the final objective combines multiple complementary constraints.
+The shadow-aware reconstruction loss from Equation (3.26) focuses on restoring degraded
+shadow regions, the LAB color consistency loss from Equation (3.24) maintains perceptual
+illumination and color accuracy, the boundary refinement loss from Equation (3.25) improves
+
+
+                                                    42
+transition regions between shadow and non-shadow areas, and the total variation loss from
+Equation (3.27) enforces spatial smoothness. The complete optimization objective is formulated
+as:
+
+
+               ℒ𝑡𝑜𝑡𝑎𝑙 = 𝜆1 ℒ𝑆𝑊𝐶 + 𝜆2 ℒ𝐿𝐴𝐵 + 𝜆3 ℒ𝐵𝑜𝑢𝑛𝑑𝑎𝑟𝑦 + 𝜆4 ℒ 𝑇𝑉                       (3.29)
+
+
+Where (𝜆1 , 𝜆2 , 𝜆3 , 𝜆4 ) represent the balancing weights for each loss component. This combined
+objective function improves shadow reconstruction while simultaneously maintaining color
+consistency, smooth illumination transitions, and sharp boundary accuracy.
+
+3.6 Conclusion
+
+This chapter detailed the structural layout and operational pipeline of the proposed single-image
+shadow removal framework. By shifting the restoration paradigm toward an illumination-
+guided spatial routing problem, the network successfully separates global lighting adjustments
+from fine-grained texture recovery. The core of this architecture relies on the Pearson
+Correlation Guided Routing mechanism, which establishes illumination-invariant matching
+fields between degraded shadow zones and clean background references.
+
+When integrated with the parallelized processing tracks of the Guided Shuffle Blocks and the
+distribution alignments of the Non-Shadow Guided Adaptive Normalization (NGAN) module,
+the framework effectively corrects severe intensity deficits without incurring heavy
+computational overhead. Furthermore, high-frequency boundary artifacts and penumbral
+variations are explicitly resolved through the localized spatial operations of the Texture
+Reference Module (TRM) working alongside the Boundary Refinement block. Backed by a
+specialized multi-task loss formulation that penalizes regional color distortions and edge-
+gradient misalignments, this unified framework provides a structurally sound and
+computationally efficient solution for high-fidelity scene restoration.
+
+
+
+
+                                               43
+                                       CHAPTER IV
+
+
+                            Implementation and Results
+
+
+4.1 Introduction
+
+To evaluate the practical performance of our proposed model, we established a robust empirical
+setup designed to measure illumination correction, color accuracy, and texture preservation.
+The evaluation pipeline relies on standard image restoration benchmark datasets that present a
+wide range of shadow geometries, lighting variations, and surface materials. These experiments
+verify that forcing non-shadow reference tokens into local attention windows and regularizing
+bottleneck features yields clear improvements over conventional, unconstrained architectures.
+The following sections outline the complete implementation lifecycle, detailing our hardware
+environment, training parameters, evaluation metrics, and comparative analysis against state-
+of-the-art frameworks.
+
+4.2 Experimental Setup
+
+To guarantee the reproducibility of our experimental results and establish a standardized
+benchmark environment, the training and evaluation phases are executed under a strictly
+controlled infrastructure pipeline. This section details both the high-performance computing
+hardware utilized to accelerate model optimization and the specific software environment
+configurations maintained via virtual package managers.
+
+4.2.1 Hardware Configuration
+
+The deep learning model is trained and evaluated using a dedicated desktop engineering
+workstation. The high computational requirements of multi-scale attention window partitioning
+and iterative structural feature routing necessitate high-performance storage and processing
+units. The specific component specifications are listed in the table 4.1:
+
+
+
+                                               44
+                   Table 4.1: Hardware specifications and core utilization roles.
+
+                                                                          Operational Role in
+    Hardware Component              Technical Specification
+                                                                            Architecture
+
+                                                                    Handles dataset serialization,
+                                   Intel Core i7-14700K (20
+   Central Processing Unit                                          boundary                mask
+                                   Cores / 28 Threads, Up to
+            (CPU)                                                   preprocessing,            and
+                                     5.6 GHz clock speed)
+                                                                    asynchronous batch loading.
+
+                                                         Accelerates
+                                 NVIDIA GeForce RTX 4070
+   Graphics Processing Unit                              forward/backward     passes
+                                    Ti SUPER (16 GB
+            (GPU)                                        and caches dense multi-scale
+                                    GDDR6X VRAM)
+                                                         attention maps.
+
+                                                                    Caches uncompressed image
+                                                                    triplets in host memory to
+   System Memory (RAM)                    64 GB DDR5
+                                                                    eliminate    data   loading
+                                                                    bottlenecks.
+
+                                                                    Manages tensor hardware
+                                   NVIDIA CUDA Platform
+     Compute Core Laye                                              allocation and accelerates
+                                       (Version 12.6)
+                                                                    mixed-precision operations.
+
+4.2.2 Software Environment and Package Dependency
+
+The application layer is implemented on top of a 64-bit Microsoft Windows architecture
+utilizing Python 3.12 within an isolated Anaconda environment. To prevent runtime library
+conflicts and guarantee environment deterministic consistency across deployment platforms,
+package versions are frozen via an export specification. Rather than dumping raw code scripts
+into the narrative text, the core system library dependency structure is summarized
+comprehensively in Table 4.2.
+
+4.3 Evaluation Metrics
+
+To quantitatively check our model's performance and ensure fair benchmarking against state-
+of-the-art frameworks, we rely on three standard image evaluation metrics. A good shadow
+removal setup needs to balance global lighting fixes with local surface texture preservation.
+While pixel-level errors track how well the overall brightness and color profile align with the
+
+                                                45
+  Table 4.2: Primary software framework and library dependencies deployed within the Anaconda.
+
+                                                                      Operational Role in
+         Core Library                       Version
+                                                                        Architecture
+
+                                                                    Base runtime execution
+            Python                          3.12.13
+                                                                           engine.
+
+                                                                   Tensor graph compilation
+       Torch (PyTorch)                   2.12.1+cu126
+                                                                    and autograd pipeline.
+
+                                                                   Vision preprocessing and
+          Torchvision                    0.27.1+cu126
+                                                                     image I/O functions.
+
+                                                                    Differentiable CIE LAB
+            Kornia                           0.8.3
+                                                                    color space conversion.
+
+                                                                   Low-level morphological
+       OpenCV-Python                       4.13.0.92
+                                                                     mask computations.
+
+                                                                    Structural similarity and
+         Scikit-Image                        0.26.0
+                                                                       evaluation metrics.
+
+                                                                    High-performance array
+            Numpy                            2.4.4
+                                                                    operations and statistics.
+
+                                                                   Real-time hyperparameter
+         TensorBoard                         2.20.0
+                                                                       and loss tracking.
+
+ground truth, structural metrics confirm that fine-grained surface patterns stay sharp and
+artifact-free. The mathematical formulations, structural definitions, and specific roles of each
+chosen metric within the shadow removal domain are outlined below.
+
+4.3.1 Peak Signal-to-Noise Ratio (PSNR)
+
+Peak Signal-to-Noise Ratio evaluates the global reconstruction quality of the restored image by
+calculating the ratio between the maximum possible power of the signal and the corrupting
+noise affecting its fidelity, as widely formalized in baseline signal processing frameworks [41].
+
+Mathematical Formulation: For an 𝐻 × 𝑊 image with 𝐶 color channels, PSNR is calculated
+using the Mean Squared Error (MSE) as a baseline:
+
+                                              46
+                               𝐻   𝑊   3
+                       1                                      2
+                MSE =     ∑ ∑ ∑ (𝐼𝑔𝑡 (𝑥, 𝑦, 𝑐) − 𝐼ˆ(𝑥, 𝑦, 𝑐))                             (4.1)
+                      𝐻𝑊𝐶
+                              𝑥=1 𝑦=1 𝑐=1
+
+
+
+                                                  MAX 𝐼2
+                            PSNR = 10 ⋅ log10 (          )                                (4.2)
+                                                  MSE
+
+
+Where:
+
+   •   𝐼ˆ: The restored shadow-free output image generated by the network.
+
+   •   𝐼𝑔𝑡 : The clean ground-truth shadow-free reference image.
+
+   •   MAX 𝐼 : The maximum possible pixel intensity value of the image representation (for
+       standard 8-bit unsigned integer images, (MAX 𝐼 = 255).
+
+Motivation:
+
+In shadow removal tasks, severe illumination drops introduce massive pixel-value disparities
+compared to unshaded regions. PSNR serves as a primary metric to evaluate how successfully
+the network restores large-scale luminance and balances global brightness across the entire
+image canvas. Higher is better (↑). A higher PSNR score directly correlates with superior overall
+illumination reconstruction and minimized residual shadow presence. A higher PSNR decibel
+(dB) value indicates that the reconstructed image contains less mathematical noise and fewer
+illumination discrepancies relative to the ground truth. Achieving a high global PSNR proves
+that the model has successfully matched the overall ambient lighting without leaving behind
+distracting, under-corrected dark patches.
+
+4.3.2 Structure Similarity Index Measure
+
+The Structural Similarity Index shifts away from basic pixel-to-pixel error checking to evaluate
+image quality based on human visual perception, assessing three distinct components:
+luminance, contrast, and structure. This metric follows the standard formulation established by
+Wang et al. [29].
+
+                                              47
+Mathematical Formulation: The SSIM metric between the ground-truth reference image 𝐼
+and the restored output image 𝐼ˆ calculated over localized spatial windows is defined as:
+
+
+                                         (2𝜇𝐼 𝜇𝐼ˆ + 𝐶1 )(2𝜎𝐼𝐼ˆ + 𝐶2 )
+                      SSIM(𝐼, 𝐼ˆ) =                                                         (4.3)
+                                      (𝜇𝐼2 + 𝜇𝐼2ˆ + 𝐶1 )(𝜎𝐼2 + 𝜎𝐼ˆ2 + 𝐶2 )
+
+
+where:
+
+   •     𝐼ˆ represents the restored, shadow-free output image generated by the network.
+
+   •     𝐼 represents the clean, ground-truth shadow-free reference image.
+
+   •     𝜇𝐼 and 𝜇𝐼ˆ represent the localized spatial means of images 𝐼 and 𝐼ˆ, tracking luminance
+         characteristics.
+
+   •     𝜎𝐼2 and 𝜎𝐼ˆ2 denote the localized spatial variances, serving as indicators of contrast
+         intensity.
+
+   •     𝜎𝐼𝐼ˆ represents the cross-covariance between the two images, capturing structural
+         alignment.
+
+   •     𝐶1 = (𝐾1 𝐿)2 and 𝐶2 = (𝐾2 𝐿)2 are regularizing constants introduced to stabilize the
+         division in near-uniform regions, where 𝐿 is the dynamic range of pixel values (𝐿 =
+         255) and 𝐾1 = 0.01, 𝐾2 = 0.03 by default.
+
+Motivation: Standard regression metrics often fail to penalize localized blurring, which can
+cause networks to output smooth, artifact-free surfaces that completely lack authentic texture.
+SSIM is critical because it directly checks if high-frequency details such as concrete grain,
+fabric weaves, or fine foliage are preserved inside former shadow zones.The metric is strictly
+bounded within the range [0,1], where a higher value (↑) indicates superior performance. An
+SSIM score approaching 1.0 confirms that the output features a near-perfect perceptual
+correlation with the ground truth. It mathematically proves that the module has successfully
+
+
+
+                                                    48
+restored illumination without smoothing out, distorting, or washing away the image's original
+high-frequency structural signatures.
+
+4.3.3 Root Mean Square Error (RMSE)
+
+Root Mean Square Error computes the square root of the average squared discrepancies
+between the predicted pixel values and the ground-truth targets, operating directly in the
+designated color space. In accordance with standard shadow removal evaluation frameworks
+[8], the error tracking is split into regional targets.
+
+Mathematical Formulation: Unlike evaluations conducted in the standard RGB space,
+measuring RMSE in the CIELAB space decouples the luminance channel (𝐿∗ ) from the
+chrominance channels (𝑎∗ , 𝑏 ∗ ). This separation allows the metric to penalize subtle color cast
+distortions and residual shadow boundary traces accurately. The RMSE between the target
+ground-truth reference image 𝐼 and the restored output image 𝐼ˆ is calculated as:
+
+
+                                            𝑁
+                                    1               2
+                            RMSE = √ ∑‖𝐼(𝑖) − 𝐼ˆ(𝑖)‖2                                      (4.4)
+                                    𝑁
+                                           𝑖=1
+
+
+
+
+where:
+
+    •    𝐼ˆ represents the restored, shadow-free output image generated by the network.
+
+    •    𝐼 represents the clean, ground-truth shadow-free reference image.
+
+    •    𝑁 represents the total number of pixels evaluated within the specified spatial zone.
+
+    •    ‖⋅‖2 denotes the Euclidean distance between the color vectors at pixel index 𝑖.
+
+Motivation: In shadow removal literature, RMSE is rarely computed purely as a single global
+value. Instead, it is broken down into three independent regional scores using the ground-truth
+shadow mask: Shadow Regions (RMSE𝒔 ), Non-Shadow Regions (RMSE𝒏𝒔 ), and the All-Image
+Area (RMSE𝒂𝒍𝒍 ).
+
+                                                  49
+A lower RMSE (↓) value indicates superior color reconstruction accuracy. Evaluating these
+three zones independently prevents the large number of unshaded background pixels from
+hiding remaining lighting artifacts or color distortions inside the restored shadow patches. A
+significant drop in RMSE𝑠 mathematically demonstrates that the network's illumination-guided
+attention paths successfully matched and restored the degraded regions without introducing
+unauthentic color modifications to the clean background.
+
+4.4 Datasets
+
+Evaluating shadow removal models requires benchmark datasets that capture complex, real-
+world illumination variations and surface textures. We evaluate our methodology on the two
+most widely acknowledged image libraries in the shadow removal community: the Adjusted
+Image Shadow Triplets Dataset (ISTD+) [8] and the Shadow Removal Dataset (SRD) [10].
+
+4.4.1 ISTD+ Dataset
+
+The original Image Shadow Triplets Dataset (ISTD), introduced by Wang et al. [8], contains
+1,870 image triplets with 1,330 training and 540 testing samples. Each image 640 × 480 pixels
+(𝑤𝑖𝑑𝑡ℎ × height) stored in the standard 24-bit three-channel RGB color format. However, the
+dataset suffers from color and gamma inconsistencies caused by time differences between
+shadow and shadow-free image acquisition, introducing unwanted illumination shifts in non-
+shadow regions. To address this issue, Le and Samaras [9] proposed the modified ISTD+ dataset
+by applying linear color correction and gamma adjustment to the ground-truth images while
+keeping the shadow inputs and masks unchanged. This correction reduces background
+illumination mismatch, allowing the network to focus on restoring shadow regions rather than
+compensating for unrelated color variations. Sample triplets from the ISTD+ dataset are shown
+in Figure 4.1.
+
+4.4.2 SRD Dataset
+
+The Shadow Removal Dataset (SRD) [10] was introduced as a large-scale benchmark
+containing paired shadow and shadow-free images without explicit shadow masks. Unlike
+ISTD- based datasets, SRD originally provide only paired shadow and shadow-free images,
+
+                                             50
+           (a)                               (b)                               (c)
+
+Figure 4.1: Sample triplets from the original ISTD dataset: (a) shadow input image, (b) shadow
+                        mask and (c) ground-truth shadow free image.
+
+
+
+
+                                             51
+           (a)                               (b)                               (c)
+
+Figure 4.1: Sample triplets from the original ISTD dataset: (a) shadow input image, (b) shadow
+                   mask and (c) ground-truth shadow free image (Cont’d).
+
+
+
+
+                                             52
+limiting its use for mask-guided shadow removal approaches, contains 3,088 image triplets with
+2,680 training and 408 testing samples. To enable shadow-aware training, DHAN [40] later
+introduced pseudo shadow masks generated from the input shadow images. With these
+additional masks, SRD can be represented as triplets similar to ISTD+, consisting of shadow
+input images, binary shadow masks, and corresponding shadow-free references. Sample triplets
+from the SRD dataset are shown in Figure 4.2.
+
+4.5 Experimentation
+
+To ensure stable convergence and improve robustness across different image resolutions, the
+network is trained using a structured multi-scale strategy. Instead of using fixed-size inputs
+throughout training, the pipeline gradually adapts the crop resolution to expose the model to
+different spatial contexts. This section describes the training configuration, including multi-
+scale crop scheduling, optimization settings, and validation strategy used for reliable model
+convergence.
+
+4.5.1 Multi-Scale Curriculum Training
+
+To improve scale robustness and reduce overfitting to a fixed input size, a multi-scale
+curriculum training strategy is applied. Instead of using a constant patch resolution, the crop
+size is gradually increased during training, allowing the network to learn both local shadow
+details and wider contextual relationships. The training process is divided into three stages with
+different crop resolutions and epoch ranges, as summarized in Table 4.3. This progressive
+strategy helps the model adapt to diverse shadow sizes and spatial patterns during testing.
+
+4.5.2 Optimization and Learning Rate Schedule
+
+To ensure stable optimization, the network is trained using the AdamW optimizer [1] with
+momentum parameters (𝛽1 = 0.9 ), (𝛽2 = 0.999), and a weight decay of (1 × 10−4 .). The
+learning rate follows a warm-up cosine annealing strategy [42], combining an initial
+stabilization stage with gradual convergence control. The learning rate first increases linearly
+from 5 × 10−5 to 2 × 10−4 during the first five epochs , reducing unstable gradient updates at
+the beginning of training. After the warm-up phase gradients update at the beginning of training.
+
+                                               53
+             (a)                              (b)                              (c)
+
+Figure 4.2: Sample triplets from the SRD dataset: (a) shadow input image, (b) pseudo shadow mask
+               generated by DHAN [40], and (c) ground-truth shadow-free image.
+
+
+
+
+                                              54
+             (a)                              (b)                              (c)
+
+Figure 4.2: Sample triplets from the SRD dataset: (a) shadow input image, (b) pseudo shadow mask
+           generated by DHAN [40], and (c) ground-truth shadow-free image (Cont’d).
+
+
+
+
+                                              55
+     Table 4.3: Multi-scale curriculum training schedule and phase-specific optimization targets.
+
+                                                        Spatial Crop               Primary
+    Training Phase           Epoch Interval
+                                                         Resolution           Optimization Target
+
+                                                                              Accelerates  initial
+                                                                              convergence    and
+  Curriculum Phase 1           Epoch ≤ 𝟓              𝟐𝟓𝟔 × 𝟐𝟓𝟔 pixels
+                                                                              low-level   feature
+                                                                              learning.
+
+                                                                              Expands      attention
+                                                                              context and improves
+  Curriculum Phase 2          Epoch 𝟔 − 𝟏𝟓            𝟑𝟐𝟎 × 𝟑𝟐𝟎 pixels
+                                                                              regional         token
+                                                                              routing.
+
+                                                                              Refines      boundary
+                                                                              consistency        and
+  Curriculum Phase 3           Epoch > 𝟏𝟓             𝟑𝟖𝟒 × 𝟑𝟖𝟒 pixels
+                                                                              high-resolution
+                                                                              texture restoration.
+
+After the warm-up phase, the scheduler follows the expected smooth S-shaped cosine decay
+[43] curve, gradually decreasing the learning rate to 1 × 10−6 . This allows larger parameter
+updates during early optimization and fine-grained adjustments as the model approaches
+convergence.
+
+4.5.3 K-Fold Cross Validation Strategy
+
+Training transformer-based models for shadow removal is challenging due to the limited size
+of available datasets such as ISTD+ [9] and SRD [23], [40]. Since ViTs contain fewer built-in
+image assumptions compared to CNNs, they are more prone to overfitting when trained on
+small datasets.
+
+To evaluate the generalization ability of the proposed network, a 5-fold cross-validation strategy
+is applied with two main objectives:
+
+   1. Overfitting analysis: Ensuring that the model learns general shadow restoration
+       patterns instead of memorizing specific training images.
+
+
+
+                                                 56
+   2. Stability verification: Measuring whether the proposed modules achieve consistent
+       performance across different data splits.
+
+The cross-validation results are used to determine stable training configurations and the optimal
+convergence point. Following the model selection strategy described by Goodfellow et al. [44],
+the final training is performed in two stages:
+
+   •   Phase 1 (K-Fold Validation): The model is trained and evaluated across five folds to
+       estimate the average convergence epoch (𝐸𝑎𝑣𝑔 ) before overfitting occurs.
+
+   •   Pahse 2 (Full Dataset Training): After fixing the training configuration, the model is
+       retrained from scratch using the complete training dataset for (𝐸𝑎𝑣𝑔 ) epochs to maximize
+       data utilization.
+
+4.5.4 Hyperparameter Configuration Summary
+
+The final hyperparameter configuration was selected using the validation results from the 5-
+fold cross-validation strategy described in Section 4.5.3. Different settings were evaluated
+based on convergence behavior, training stability, and reconstruction performance to identify a
+balanced configuration with reduced overfitting risk. The selected architectural, optimization,
+scheduling, and loss function hyperparameters used in the final framework are summarized in
+Table 4.4.
+
+4.6 Quantitative Results
+
+This section analyzes the training convergence behavior and stability of the proposed
+architecture. All training experiments, hyperparameter tuning, convergence analysis, and
+testing were performed on the adjusted ISTD+ [9] dataset. The gamma-corrected ground truths
+of ISTD+ provide consistent supervision, allowing the network to focus on shadow removal
+without interference from background illumination variations. The evaluation focuses on
+measuring how effectively the network removes shadow degradation while preserving the
+original scene structure and color consistency. Standard evaluation metrics are used to provide
+an objective comparison with previous methods and verify the impact of the proposed modules.
+
+
+                                                 57
+Table 4.4: Summary of the primary architectural, optimization, and loss function hyperparameters
+                              verified via K-Fold cross-validation.
+
+                                                                             Core Functional
+     Category             Hyperparameter            Optimized Value
+                                                                                  Role
+
+                                                                          Base channel width
+                          Base Embedding
+                                                            32            across early encoder
+                          Dimension (𝒅𝒆 )
+                                                                          stages.
+
+                                                                          Defines the localized
+                          Region Grid Side
+   Architecture                                             8             window           grid
+                              (𝑵𝒘𝒊𝒏 )
+                                                                          partition size.
+
+                                                                          Number of matched
+                           Non-Shadow
+                                                            4             background clusters
+                           Routing Top-k
+                                                                          for NGAN.
+
+                                                                          Base           scaling
+                        Initial Global Scale                              coefficient        for
+                                                           0.1
+                                (𝜸𝒊𝒏𝒊𝒕 )                                  localized      AdaIN
+                                                                          routing.
+      NGAN
+                                                                          Gating        threshold
+                         Initial Alpha Bias                               initialization,
+                                                           −1.4
+                               (𝜶𝒃𝒊𝒂𝒔 )                                   mapping to σ(−1.4) ≈
+                                                                          0.20.
+
+                                                                          Spatial width of the
+                          Boundary Band
+                                                          10px            morphologically
+                           Half-Width
+                                                                          extracted perimeter.
+       BRM
+                                                                          Receptive fields for
+                           Parallel Branch
+                                                        {1, 3, 5}         capturing penumbra
+                              Dilations
+                                                                          edge bleeding.
+
+                                                                          Decoupled weight
+                                Type                    AdamW             decay optimization
+                                                                          engine.
+    Optimizer
+                                                                          Maximum         target
+                        Peak Learning Rate                                learning          rate
+                                                       𝟐 × 𝟏𝟎−𝟒
+                              (𝜼𝒎𝒂𝒙                                       achieved after warm-
+                                                                          up.
+
+
+
+                                               58
+Table 4.4: Summary of the primary architectural, optimization, and loss function hyperparameters
+                         verified via K-Fold cross-validation (Cont’d).
+
+                                                                             Core Functional
+     Category             Hyperparameter           Optimized Value
+                                                                                  Role
+
+                                                                          First- and second-
+                           Momentum
+                                                                          moment decay rates
+    Optimizer            Coefficients (β_1,           (0.9, 0.999)
+                                                                          for        tracking
+                               β_2)
+                                                                          gradients.
+
+                                                                          Warm-up period to
+                          Linear Warm-up
+                                                        5 epochs          stabilize     early
+                             Duration
+                                                                          optimization.
+
+                                                                          Cosine      annealing
+                        Cosine Deceleration
+                                                   𝑵𝑴𝒂𝒙 − 𝟓 epochs        duration after warm-
+                           Period (𝑻𝒎𝒂𝒙
+                                                                          up.
+    Scheduler
+
+
+                                                                          Lower bound of the
+                        Minimum Learning                         −𝟔
+                                                      𝟏 × 𝟏𝟎              learning      rate
+                           Rate (𝜼𝒎𝒊𝒏
+                                                                          schedule.
+
+
+
+
+                           Charbonnier                                    Prevents          non-
+                        Smoothing Constant                       −𝟑       differentiability
+                                                      𝟏 × 𝟏𝟎
+                               (ε)                                        around zero error.
+
+                                                                          Reduces
+                                                                          checkerboard
+                           Total Variation
+       Loss                                                0.1            artifacts          and
+                            Weight (𝝀𝑻𝑽 )
+                                                                          improves
+                                                                          smoothness.
+
+                                                                          Increases supervision
+                        Penumbra Boundary
+                                                           2.0            around       shadow
+                           Weight (𝝀𝒃𝒏𝒅 )
+                                                                          boundaries.
+
+
+
+
+                                              59
+  Table 4.4: Summary of the primary architectural, optimization, and loss function hyperparameters
+                           verified via K-Fold cross-validation (Cont’d).
+
+                                                                               Core Functional
+       Category             Hyperparameter           Optimized Value
+                                                                                    Role
+
+                                                                            Improves chromatic
+                             CIELAB Color
+          Loss                                               0.3            consistency      in
+                             Weight (𝝀𝑳𝑨𝑩 )
+                                                                            restored images.
+
+                                                                            Number of image
+                           Global Batch Size                  8             triplets processed per
+                                                                            optimization step.
+
+                           Total Optimization                               Maximum        training
+        Training                                         300 epochs
+                                 Budget                                     duration.
+
+                                                                            Number of folds used
+                            Cross-Validation
+                                                              5             for        robustness
+                               Folds (K)
+                                                                            evaluation.
+
+4.6.1 5-Fold Results
+
+To evaluate the stability and generalization capability of the proposed architecture, a 5-fold
+cross-validation experiment is performed on the ISTD+ [9] training set. Each fold uses a
+different training-validation split, allowing the model behavior to be observed across multiple
+data distributions before final training. The main objective of this experiment is to identify a
+stable convergence point and verify that the network performance does not depend on a specific
+validation split.
+
+The training and validation loss curves for all five folds are illustrated in Figures 4.3–4.7, while
+their corresponding convergence epochs are summarized in Table 4.5. Across all folds, the loss
+values show a consistent decreasing trend, with rapid optimization during the early epochs
+followed by gradual stabilization in the later stages.
+
+The validation curves closely follow the training curves with only a small performance gap,
+indicating that the model maintains good generalization without significant overfitting. Minor
+fluctuations appear during the initial epochs due to parameter adaptation, but the curves become
+
+                                                60
+                        Table 4.5: Convergence epoch analysis from 5-fold cross-validation
+
+                            Fo1ld                                                Converge Epoch
+
+                            Fold-1                                                        193
+
+                            Fold-2                                                        204
+
+                            Fold-3                                                        211
+
+                            Fold-4                                                        218
+
+                            Fold-5                                                        183
+
+                           Average                                                        202
+
+
+
+
+                                          Fold-1 Train vs Validation Loss Curve
+                                                 Train Marker      Val Marker
+
+              0.3
+             0.28
+             0.26
+             0.24
+Loss Value
+
+
+
+
+             0.22
+              0.2
+             0.18
+             0.16
+             0.14
+             0.12                                                                     Epoch 193
+              0.1
+                    1        21      41     61       81         101    121      141     161       181   201
+                                                                 Epoch
+
+
+
+             Figure 4.3: Fold-1 training and validation loss curve with convergence epoch
+
+
+
+
+                                                           61
+                                                    Fold-2 Train vs Validation Loss Curve
+                                                               Train Marker           Val Marker
+
+              0.3
+             0.28
+             0.26
+             0.24
+Loss Value
+
+
+
+
+             0.22
+              0.2
+             0.18
+             0.16
+             0.14
+             0.12
+                                                                                                                Epoch 204
+              0.1
+                           1         21        41        61        81        101     121      141      161      181     201       221
+                                                                             Epoch
+
+                          Figure 4.4: Fold-2 training and validation loss curve with convergence epoch.
+
+
+
+                                                         Fold-3 Train vs Validation Loss Curve
+                                                                    Train Marker             Val Marker
+
+                           0.3
+                          0.28
+                          0.26
+                          0.24
+             Loss Value
+
+
+
+
+                          0.22
+                           0.2
+                          0.18
+                          0.16
+                          0.14
+                          0.12
+                                                                                                                      Epoch 211
+                           0.1
+                                 1        21        41        61        81     101     121       141      161    181      201      221
+                                                                                   Epoch
+
+                   Figure 4.5: Fold-3 training and validation loss curve with convergence epoch.
+
+
+
+
+                                                                             62
+                                   Fold-4 Train vs Validation Loss Curve
+                                           Train Marker           Val Marker
+
+              0.3
+             0.28
+             0.26
+             0.24
+Loss Value
+
+
+
+
+             0.22
+              0.2
+             0.18
+             0.16
+             0.14
+             0.12
+                                                                                      Epoch 218
+              0.1
+                    1   21    41     61     81    101       121     141        161   181   201    221
+                                                          Epoch
+
+                Figure 4.6: Fold-4 training and validation loss curve with convergence epoch.
+
+
+                                   Fold-5 Train vs Validation Loss Curve
+                                           Train Marker           Val Marker
+
+              0.3
+             0.28
+             0.26
+             0.24
+Loss Value
+
+
+
+
+             0.22
+              0.2
+             0.18
+             0.16
+             0.14
+             0.12
+                                                                               Epoch 183
+              0.1
+                    1   21    41     61     81    101       121     141        161   181
+                                                          Epoch
+
+                Figure 4.7: Fold-5 training and validation loss curve with convergence epoch.
+
+
+
+
+                                                     63
+smoother as training progresses. The five folds converge between 183 and 218 epochs,
+producing an average convergence point of (𝐸𝑎𝑣𝑔 = 202). This stable convergence behavior
+confirms the robustness of the proposed architecture across different data distributions, and the
+average epoch value is selected for the final full-dataset training phase.
+
+Table 4.6 summarizes the overall quantitative evaluation of the proposed model using both the
+5-fold cross-validation strategy and the final Phase-2 training. The cross-validation results show
+that the model achieves consistent restoration performance across different training and
+validation distributions. The shadow-region metrics remain highly stable among all folds, with
+an average PSNR of 39.644 dB, SSIM of 0.992, and RMSE of 4.992. The low standard
+deviation values (0.103 PSNR and 0.114 RMSE) indicate minimal performance variation,
+confirming that the network learns generalized shadow removal patterns rather than depending
+on a specific data split. For non-shadow regions, the model maintains strong preservation ability
+with an average PSNR of 38.009 dB and RMSE of 2.386. This demonstrates that the restoration
+process mainly modifies degraded shadow areas while preserving already clean background
+regions. The all-region results also remain consistent across folds, further validating the stability
+of the proposed architecture. After the convergence analysis, the Phase-2 model is retrained
+using the complete ISTD+ [9] training dataset with the selected average convergence epoch.
+The final model achieves a shadow-region PSNR of 39.70 dB and RMSE of 4.836, slightly
+improving over the cross-validation average. The close agreement between the 5-fold average
+and Phase-2 performance confirms the effectiveness of the selected training strategy and the
+generalization capability of the proposed framework.
+
+4.6.2 Comparison with State-of-the-Art Vision Transformer Models
+
+To evaluate the effectiveness of the proposed framework, a comparative analysis is conducted
+against recent state-of-the-art Vision Transformer (ViT)-based shadow removal methods. The
+comparison assesses the proposed model's ability to restore shadow regions while preserving
+structural details and overall image quality. The quantitative results on the ISTD+ benchmark
+dataset are summarized in Table 4.7, where the best and second-best performances are
+highlighted in bold and underlined, respectively. As presented in Table 4.7, the proposed
+
+
+
+                                                64
+  Table 4.6: Quantitative performance analysis of 5-fold cross-validation and final Phase-2 training
+                                  results on the ISTD+ [9] dataset.
+
+            Image         Shadow Region            Non-shadow Region                  All Region
+Method
+             Size     PSNR     SSIM     RMSE PSNR          SSIM       RMSE PSNR         SSIM    RMSE
+
+Fold-1    256×256 39.507        0.992    4.898   37.959    0.979      2.393   35.050    0.967      2.776
+
+Fold-2    256×256 39.480        0.964    5.190   37.706    0.978      2.432   34.839    0.964      2.850
+
+Fold-3    256×256 39.681        0.992    4.952   38.269    0.983      2.343   35.270    0.970      2.743
+
+Fold-4    256×256 39.677        0.991    5.031   37.902    0.978      2.388   35.083    0.965   2.7931
+
+Fold-5    256×256 39.712        0.992    4.955   38.209    0.982      2.376   35.296    0.969      2.767
+
+ Avg.     256×256 39.644        0.992    4.992   38.009    0.980      2.386   35.105    0.967      2.786
+
+ S.D.     256×256      0.103    0.012    0.114    0.222    0.002      0.032   0.176     0.003      0.040
+
+Phase-2   256×256     39.70    0.992    4.836     37.76    0.978      2.406   34.98     0.965      2.777
+
+the proposed method achieves competitive performance compared with recent state-of-the-art
+shadow removal approaches. In the shadow region, the proposed model attains a PSNR of 39.70
+dB, an SSIM of 0.992, and an RMSE of 4.836, outperforming HomoFormer [4] in terms of
+PSNR and RMSE while achieving performance comparable to ShadowFormer [3]. Compared
+with RASM [19], the proposed method yields slightly lower quantitative performance across
+all evaluation metrics. In the non-shadow and overall image regions, the proposed method
+preserves high structural similarity and maintains competitive restoration quality, although its
+PSNR is lower than that of the strongest baseline methods. Overall, these results demonstrate
+that the proposed architecture provides stable and effective shadow removal performance,
+achieving results that are competitive with existing state-of-the-art methods while maintaining
+robust generalization across the evaluation dataset.
+
+4.7 Qualitative Results
+
+Although quantitative evaluation provides numerical measurements of restoration accuracy,
+visual analysis is essential to understand the perceptual quality of shadow removal. A successful
+
+                                                 65
+  Table 4.7: Quantitative comparisons with the SOTA methods on the ISTD+ dataset. The best and the second
+                              results are boldfaced and underlined, respectively.
+
+                                     Shadow Region            Non-shadow Region                All Region
+                     Image
+    Method
+                      Size
+                                PSNR     SSIM RMSE           PSNR     SSIM RMSE PSNR             SSIM RMSE
+
+ShadowFormer [3]    256×256     39.67       -       5.2      38.82      -       2.3    35.46       -         2.8
+
+HomoFormer [4]      256×256     39.52    0.991     4.917     38.41    0.982    2.303   35.221    0.970   3.7007
+
+  RASM [19]         256×256     40.73    0.993      4.41     39.23    0.985     2.17   36.16     0.976      2.53
+
+      Ours          256×256     39.70    0.992     4.836     37.76    0.978    2.406   34.98     0.965      2.777
+
+     shadow removal model should not only reduce pixel-level errors but also recover natural
+     illumination, preserve texture details, and avoid artifacts such as color distortion, boundary
+     inconsistency, and structural degradation. This section provides a qualitative evaluation of the
+     proposed framework on the ISTD+ dataset from multiple perspectives. First, the intermediate
+     outputs of the proposed architecture are analyzed to observe how different stages contribute to
+     the restoration process. Then, the final restored images are examined to evaluate visual
+     consistency and shadow removal quality. Finally, comparisons with recent state-of-the-art
+     methods are presented to demonstrate the effectiveness of the proposed approach under
+     different shadow conditions and scene complexities.
+
+     4.7.1 Intermediate Step Analysis
+
+     To gain a deeper understanding of how the network processes shadows, we extract and visualize
+     internal feature maps across different stages of our network. This analysis confirms that the
+     architectural constraints we designed actually perform their intended roles at each stage of the
+     network.
+
+     In the early encoder layers, Stage 1 features shown in Figure 4.8(a) mainly capture local
+     information, including edges, textures, and shadow boundary structures. As the network moves
+     deeper, Stage 2 representations in Figure 4.8(b) reduce unnecessary fine details and focus more
+     on regional and Figure 4.8(c) show more abstract structural responses, surface-level patterns
+
+
+                                                       66
+                        (a)                                                 (b)
+
+
+
+
+                        (c)                                                 (d)
+
+ Figure 4.8: Visualization of hierarchical encoder feature progression: (a) Stage 1 blocks, (b) Stage 2
+                          blocks, (c) Stage 3 blocks, and (d) Stage 4 blocks.
+
+
+rather than raw pixel intensity. Finally, Stage 4 features in Figure 4.8(d) contain highly
+compressed semantic information, capturing global illumination context required for the
+Pearson Correlation Guided Routing mechanism.
+
+To evaluate the exact impact of the Non-Shadow Guided Adaptive Normalization (NGAN)
+module, we isolate and visualize the internal feature activation heatmaps immediately before
+and after the normalization operation, alongside their absolute spatial difference map.
+
+
+
+
+             (a)                              (b)                                  (c)
+
+  Figure 4.9: Feature map heatmap visualization tracking NGAN layer effects: Left to right (a) Input
+   feature state before NGAN, (b) Stabilized feature state after NGAN, and (c) Absolute difference
+                               map isolating the regional adjustments.
+
+
+                                                    67
+Figure 4.9 illustrates the feature response changes introduced by the NGAN module by
+comparing the feature state before and after adaptive normalization. Before applying NGAN,
+the feature map in Figure 4.9(a) shows an imbalance between shadow and non-shadow regions,
+where shadow features have weaker activations due to illumination degradation. After NGAN
+processing, Figure 4.9(b) demonstrates a more balanced feature distribution as shadow
+representations are adjusted using statistics from matched non-shadow reference regions. The
+absolute difference map in Figure 4.9(c) highlights the regions modified by the module. The
+stronger responses mainly appear within shadow areas, while non-shadow regions remain
+mostly unchanged. This confirms that NGAN selectively adjusts degraded features while
+preserving the original background information.
+
+The decoder network progressively recovers spatial resolution and reconstructs fine structural
+details by fusing bottleneck tokens with skip-connections from the encoder. We track and
+visualize the internal feature representations across all four decoder stages to observe how the
+network progressively resolves shadow degradation.
+
+
+
+
+                       (a)                                                  (b)
+
+
+
+
+                       (c)                                                  (d)
+
+ Figure 4.10: Visualization of hierarchical decoder feature progression: (a) Stage 1 blocks, (b) Stage
+                         2 blocks, (c) Stage 3 blocks, and (d) Stage 4 blocks.
+
+
+
+                                                 68
+The decoder gradually reconstructs spatial details from the compressed bottleneck
+representation while restoring the final shadow-free image. Figure 4.10 shows the progressive
+feature refinement across the decoder stages. The initial decoder features in Figure 4.10(a) and
+operate at the lowest resolution, focusing on coarse illumination correction and global feature
+reconstruction. As the resolution increases, Stage 2 features shown in Figure 4.10(b) refine
+structural information and reduce the differences between shadow and non-shadow regions. In
+deeper reconstruction stages, Figure 4.10(c) demonstrate the recovery of surface textures and
+medium-level image details. Finally, the high-resolution features in Figure 4.10(d) restore fine
+spatial details and texture consistency before generating the final shadow-free output.
+
+The Texture Refinement Module (TRM) enhances fine structural details that may be weakened
+during the shadow removal process. Figure 4.11 presents the feature changes before and after
+applying the TRM layer. Before TRM processing, Figure 4.11(a) shows that although the main
+illumination difference is reduced, some local textures remain slightly smooth due to the
+reconstruction process. After applying TRM, Figure 4.11(b) demonstrates improved texture
+representation by enhancing high-frequency details using reference information from clean
+background regions. The absolute difference map in Figure 4.11(c) highlights the specific
+refinements introduced by TRM. Most adjustments appear in the recovered shadow regions,
+while unchanged areas receive minimal modification. This confirms that TRM improves
+missing texture details while preserving the original scene structure.
+
+
+
+
+              (a)                                  (b)                              (c)
+   Figure 4.11: Feature map visualization tracking TRM layer effects: (a) Input feature state before
+ TRM, (b) Texture-refined feature state after TRM, and (c) Absolute difference map highlighting the
+                                       injected micro-textures.
+
+
+                                                 69
+4.7.2 Restored Image Analysis
+
+This section presents the final shadow removal outputs generated by the proposed framework
+on the ISTD+ [9] dataset. The restored images are visually analyzed to evaluate illumination
+correction, texture preservation, and the ability to remove shadows while maintaining natural
+scene appearance. Representative restoration examples are shown in Figure 4.12.
+
+
+
+
+          (a)                      (b)                       (c)                      (d)
+ Figure 4.12: Visual results of the proposed shadow removal framework: (a) input shadow image, (b)
+   restored shadow-free output, (c) ground-truth reference image, and (d) reconstruction error map.
+
+                                                70
+          (a)                      (b)                      (c)                      (d)
+ Figure 4.12: Visual results of the proposed shadow removal framework: (a) input shadow image, (b)
+   restored shadow-free output, (c) ground-truth reference image, and (d) reconstruction error map
+                                            (Cont’d).
+
+From Figure 4.12, it can be observed that the proposed framework effectively removes shadow
+regions while preserving the original scene structure and color consistency. The restored outputs
+are visually close to the ground-truth images, producing natural illumination transitions without
+noticeable artifacts. Although the error maps highlight minor pixel-level differences in some
+
+
+
+                                                71
+regions, these variations are visually negligible and have minimal impact on the overall
+perceptual quality.
+
+4.7.3 Comparison with State-of-the-Art Vision Transformer Models
+
+To further evaluate the effectiveness of the proposed framework, the restored results are
+compared with recent state-of-the-art shadow removal approaches. Figure 4.13 presents visual
+comparisons against ShadowFormer [3] and HomoFormer [4] on the ISTD+ [9] dataset. The
+comparison focuses on shadow removal quality, color consistency, texture preservation, and the
+reduction of boundary artifacts.
+
+
+
+
+        (a)                  (b)                 (c)                 (d)                (e)
+  Figure 4.13: Qualitative comparison with state-of-the-art shadow removal methods on ISTD+ [9]
+    dataset: (a) input shadow image, and (b) ground-truth image (c) ShadowFormer [3] result, (d)
+                        HomoFormer [4] result and (e) proposed method result.
+
+
+
+                                               72
+4.8 Failed Cases
+
+Although the proposed framework achieves strong quantitative and visual performance on
+standard benchmarks, some limitations remain under challenging conditions. Extreme
+illumination loss and complex scene structures can still affect the restoration process. These
+failure cases mainly occur in two situations: heavily shadowed regions with limited color
+information and scenes where dark non-shadow objects create ambiguity during restoration.
+Representative examples from the ISTD+ [9] dataset are shown in Figure 4.14 to highlight these
+limitations.
+
+
+
+
+           (a)                      (b)                      (c)                      (d)
+  Figure 4.14: Representative failure cases of the proposed framework: (a) input shadow image, (b)
+  ground-truth shadow-free image, (c) restored output image, and (d) reconstruction error map.
+
+
+                                                73
+A detailed analysis of the failure cases shows that the proposed framework has some limitations
+under highly complex illumination and texture conditions. Based on the observed
+reconstruction errors, these limitations can be grouped into three main cases:
+
+   1. Multi-surface color in consistency: When a shadow covers multiple regions with
+       different background colors, the model may struggle to estimate separate illumination
+       corrections for each surface. This can introduce slight color bleeding or residual artifacts
+       near strong geometric boundaries.
+
+   2. Sharp shadow boundary restoration: For high-contrast shadows on saturated
+       surfaces, the network may preserve minor transition lines after restoration. This occurs
+       when strong illumination loss removes fine texture information required for completely
+       smooth reconstruction.
+
+   3. Cross-material color mismatch: When shadows appear across materials with different
+       reflectance properties, the model can produce small color shifts or halo effects. This
+       happens because estimating the original surface appearance becomes difficult when the
+       underlying material information is heavily degraded.
+
+4.9 Ablation Study
+
+To analyze the contribution and importance of each major component in the proposed
+framework, a systematic ablation study is performed on the ISTD+ [9] dataset. Three key
+components are evaluated separately: the Non-Shadow Guided Adaptive Normalization
+(NGAN), the Texture Reference Module (TRM), and the CIELAB color-space loss function
+(𝐿𝐿𝐴𝐵 ). Each component is individually removed while keeping all other training settings
+unchanged to observe its effect on shadow regions, non-shadow regions, and overall restoration
+quality. The complete ablation configuration summary is presented in Table 4.8.
+
+Table 4.9 presents the quantitative comparison of different ablation configurations,
+highlighting the contribution of each component in the proposed framework. The complete
+model achieves the most balanced performance, obtaining the lowest shadow-region RMSE of
+
+
+
+                                               74
+      Table 4.8: Ablation study configuration of the proposed framework showing the evaluated
+                components and their contribution to shadow removal performance.
+
+                                                                           CIELAB color-space
+        Model                    NGAN                      TRM
+                                                                              loss function
+
+       Model-A                      ×                       ✓                        ✓
+
+       Model-B                      ✓                       ×                        ✓
+
+       Model-C                      ×                       ×                        ✓
+
+       Model-D                      ✓                       ✓                        ×
+
+4.836 and overall RMSE of 2.777, showing better pixel-level restoration compared with all
+ablated variants.
+
+Among the ablation models, Model-A achieves the strongest performance with a shadow-region
+PSNR of 39.78 dB and overall RMSE of 2.780, making it the closest variant to the complete
+framework. However, its higher shadow RMSE (5.004) compared to the proposed model
+indicates reduced accuracy in recovering degraded shadow pixels. Model-C provides the
+second-best ablation performance with a shadow RMSE of 5.014 and overall RMSE of 2.802,
+showing moderate degradation after removing the corresponding component.
+
+Larger performance drops are observed in Model-B and Model-D, where the shadow-region
+RMSE increases to 5.1098 and 5.094, respectively. These reductions demonstrate the
+importance of each proposed component for maintaining illumination correction and structural
+consistency. Overall, the results in Table 4.12 confirm that combining all modules provides the
+most reliable restoration performance across shadow, non-shadow, and overall image regions.
+
+Representative qualitative results of the ablation study are presented to analyze the visual
+impact of each architectural component on shadow removal performance.
+
+Although the numerical differences between ablated variants are relatively small, the visual
+comparison in Figure 4.15 reveals clearer differences in restoration behavior. The error across
+
+
+
+                                               75
+  Table 4.9: Quantitative ablation results evaluating the architectural importance of NGAN, TRM, and
+                            CIELAB color loss on the ISTD+ [9] dataset.
+
+                            Shadow Region               Non-shadow Region               All Region
+               Image
+Method
+                Size
+                        PSNR    SSIM     RMSE          PSNR    SSIM     RMSE    PSNR      SSIM       RMSE
+
+Model-A       256×256   39.78   0.9921    5.004        38.00   0.9799   2.380   35.14    0.9670      2.780
+
+Model-B       256×256   39.54   0.9921   5.1098        37.77   0.9794 2.4418    34.94    0.9664 2.8472
+
+Model-C       256×256   39.57   0.9919    5.014        37.82   0.9790   2.406   34.97     0.965      2.802
+
+Model-D       256×256   39.66   0.9918    5.094        37.53   0.9747   2.435   34.83     0.961      2.8434
+
+  Full        256×256   39.70   0.992     4.836        37.76   0.978    2.406   34.98     0.965      2.777
+
+the recovered regions. The complete model produces fewer residual artifacts and more
+concentrated error responses, demonstrating better shadow restoration while preserving the
+surrounding image structure.
+
+4.10 Analysis of the Results
+
+To rigorously evaluate the performance of our proposed shadow removal model against the
+baseline Homoformer [4] architecture, we conducted a statistical significance test on the Peak
+Signal-to-Noise Ratio (PSNR) values obtained from the shadow-restored regions across the
+dataset (𝑛 = 540). Our objective was to determine whether the observed improvements in
+PSNR provided by our model are statistically meaningful or a result of random variation.
+
+We selected the parametric paired Student's t-test as our primary analytical tool, which
+assumes that the differences between the paired samples follow a normal distribution. To
+validate this assumption, we first subjected the distribution of PSNR differences to a normality
+assessment.
+
+As shown in the Histogram of PSNR Differences in Figure 4.16(a), the distribution exhibits
+excellent symmetry and a clear bell-shaped curve that closely mirrors the ideal normal
+distribution profile around the center. This observation is further corroborated by the Q-Q Plot
+
+
+                                                  76
+       (a)                      (b)                       (c)                        (d)
+
+Figure 4.15: Qualitative visualization of the ablation study: (a) input shadow image, (b) ground-
+ truth shadow-free image, (c) restored outputs from different configurations (top to bottom: full
+model, Model-A, Model-B, Model-C, and Model-D), and (d) corresponding reconstruction error
+                                      maps for each output.
+
+
+                                              77
+       (a)                      (b)                       (c)                        (d)
+
+Figure 4.15: Qualitative visualization of the ablation study: (a) input shadow image, (b) ground-
+ truth shadow-free image, (c) restored outputs from different configurations (top to bottom: full
+model, Model-A, Model-B, Model-C, and Model-D), and (d) corresponding reconstruction error
+                                 maps for each output (Cont’d).
+
+
+
+                                              78
+                      (a)                                               (b)
+
+      Figure 4.16: Normality diagnostics of PSNR differences between the proposed model and
+ Homoformer [4] (𝑛 = 540). (a) Histogram with ideal normal curve overlay. (b) Q-Q plot of ordered
+                                           differences.
+
+
+of PSNR Differences in Figure 4.16(b), where the empirical data points strictly align with the
+diagonal reference line across the primary quantiles, experiencing only minor deviations
+(heavy-tailed "S-curve" behavior) at the extreme ends.
+
+According to the Central Limit Theorem (CLT), paired t-tests are exceptionally robust to
+minor tail deviations in large sample sizes (𝑛 > 30). Given the strong central symmetry
+observed in Figure 4.18 and our substantial sample size of 540, the assumption of normality is
+sufficiently satisfied for practical inference. We therefore proceeded with the paired Student's
+t-test to safely evaluate the significance of our model's performance gains.
+
+Quantitative Significance Analysis: To formally evaluate whether the proposed model
+significantly outperforms the Homoformer [4] baseline in terms of shadow-restored region
+PSNR, we define a paired-sample hypothesis framework. Let 𝑋ours and 𝑋SOTA represent the
+PSNR values achieved by our model and the Homoformer [4] baseline, respectively, across the
+dataset (𝑛 = 540). The paired difference is defined as:
+
+
+
+
+                                               79
+                                  𝐷 = 𝑋our − 𝑋SOTA                                         (4.1)
+
+Hypothesis Formulation: We test the null hypothesis (𝐻0 ) against the alternative hypothesis
+(𝐻1 ):
+
+    •    Null Hypothesis (𝐻0 ): There is no significant difference between the PSNR
+         performance of our model and the Homoformer [4] baseline (𝜇𝐷 = 0).
+
+    •    Alternative Hypothesis (𝐻1 ): There is a statistically significant difference between the
+         PSNR performance of our model and the Homoformer [4] baseline (𝜇𝐷 ≠ 0).
+
+Test Statistic Calculation: The paired Student's t-test statistic (𝑡) is computed using the sample
+                 ̅ ), the sample standard deviation of the differences (𝑠𝐷 ), and the total number
+mean difference (𝐷
+of paired samples (𝑛) via the following formulation:
+
+                                            ̅ − 𝜇0
+                                            𝐷
+                                       𝑡=                                                  (4.2)
+                                            𝑠𝐷 /√𝑛
+
+Given our empirical evaluations, the measured parameters are:
+
+    •    Sample size (𝑛): 540
+
+    •                     ̅ ): +0.0001 dB
+         Mean difference (𝐷
+
+    •    Standard deviation (𝑠𝐷 ): 0.0026 dB
+
+    •    Hypothesized mean difference under 𝐻0 (𝜇0 ): 0
+
+Substituting these values into the equation yields:
+
+                     0.0001 − 0            0.0001       0.0001
+               𝑡=                  =                 =          ≈ 1.6947
+                    0.0026/√540        0.0026/23.2379 0.0001119
+
+
+The degrees of freedom for this paired test are calculated as:
+
+                                  𝑑𝑓 = 𝑛 − 1 = 540 − 1 = 539
+
+                                                80
+Using a two-tailed distribution with 𝑑𝑓 = 539 and a critical significance threshold of 𝛼 = 0.05,
+the cumulative probability yields a 𝑝-value of:
+
+                                 𝑝 = 9.07 × 10−2        (0.0907)
+
+Because the calculated 𝑝-value (0.0907) is greater than the standard significance level (𝛼 =
+0.05), we fail to reject the null hypothesis (𝐻0 ).
+
+Statistically, the marginal average increase of +0.0001 dB in shadow-restored region PSNR
+cannot be confidently distinguished from random variation. However, from an architectural
+standpoint, these results demonstrate that our proposed model successfully matches the peak
+restoration capability of the complex Homoformer [4] baseline.
+
+4.11 Objectives Achieved
+
+The proposed framework successfully addresses the research objectives defined in Section 1.3
+by introducing targeted architectural components for efficient and robust shadow removal. The
+major achievements of this work are summarized below:
+
+   •   A unified encoder-decoder transformer framework was developed to capture both long-
+       range contextual information and local spatial details while maintaining computational
+       efficiency.
+
+   •   A residual learning strategy was implemented to predict the required restoration
+       difference instead of directly generating the shadow-free image, improving optimization
+       stability and reconstruction accuracy.
+
+   •   The proposed network successfully approximates the inverse shadow degradation
+       process by restoring illumination differences between shadow and non-shadow regions
+       while preserving the original scene structure.
+
+   •   An illumination-invariant region matching mechanism was achieved through Pearson
+       correlation-based guided routing, allowing shadow regions to retrieve structurally
+       similar information from clean non-shadow areas.
+
+                                                81
+   •   The Non-shadow Guided Adaptive Normalization (NGAN) module was integrated at
+       the bottleneck stage to reduce feature distribution gaps by transferring statistical
+       information from matched non-shadow regions.
+
+   •   Fine structural details and shadow boundary consistency were improved using targeted
+       refinement modules, enabling smoother transitions and better texture preservation in
+       restored images.
+
+4.12 Financial Analysis and Budget
+
+The development of the proposed shadow removal framework requires proper resource
+planning to support model training, evaluation, and data management. Since this research
+mainly relies on computational experiments, most of the budget is allocated to hardware
+resources, while open-source tools and public datasets reduce additional costs.
+
+The estimated expenses, including computing resources, storage requirements, and supporting
+components, are summarized in Table 4.10
+
+             Table 4.10: Proposed financial budget for the Shadow Removal research.
+
+               Budget Category                           Estimated Cost Range (BDT)
+
+    GPU Workstation (essential for model
+                                                                85,000–105,000
+          training and testing)
+
+ Software Resources (deep learning libraries,
+                                                                       0
+           IDEs – open-source)
+
+    Public Datasets (ISTD, ISTD+, SRD)                                 0
+
+   External Storage Devices (SSD/HDD for
+                                                                 5,000–7,000
+             datasets and results)
+
+    Operational Costs (Internet, electricity,
+                                                                 1,500–2,500
+              backup, printing)
+
+  Contingency / Miscellaneous (unexpected
+                                                                 1,000–2,000
+             small expenses)
+
+        Total Estimated Budget Range                            92,500–116,500
+
+                                                82
+4.13 Conclusion
+
+In summary, the implementation and evaluation results demonstrate the effectiveness of the
+proposed shadow removal framework. Experiments on the ISTD+ [9] dataset show stable
+optimization behavior, where all five cross-validation folds achieved consistent convergence
+without significant overfitting. Based on the average convergence point of 202 epochs, the final
+Phase-2 training was performed using the complete dataset, achieving a shadow-region PSNR
+of 39.70 dB and SSIM of 0.992. The quantitative comparisons with existing state-of-the-art
+methods confirm the competitive performance of the proposed approach, while qualitative
+evaluations show its ability to recover natural illumination, preserve textures, and reduce
+shadow boundary artifacts. Although some limitations remain under extreme illumination loss
+and complex material conditions, the ablation study verifies the importance of the proposed
+NGAN module, Texture Refinement Module (TRM), and CIELAB color-space loss. Overall,
+the results validate that the proposed framework provides a stable, robust, and visually
+consistent solution for single-image shadow removal.
+
+
+
+
+                                              83
+                                      CHAPTER V
+
+
+Societal, Health, Environment, Safety, Ethical, Legal and Cultural
+                                           Issues
+
+
+5.1 Introduction
+
+Moving single-image shadow removal methods from benchmark datasets to real-world
+applications requires considering factors beyond standard metrics such as PSNR and SSIM.
+Since shadow removal modifies image illumination and local pixel information, its use in areas
+such as autonomous systems, remote sensing, and digital photography may introduce practical
+and ethical concerns. This chapter discusses the regulatory considerations, ethical
+responsibilities, and safe usage boundaries related to the proposed shadow removal framework.
+
+5.2 Intellectual Property Considerations
+
+The development of a deep learning-based shadow removal framework involves the use of
+several external resources, including software libraries, public datasets, and existing research
+methodologies. Therefore, maintaining proper intellectual property compliance is important to
+ensure responsible development, reproducibility, and ethical use of the proposed system. The
+major considerations regarding software usage, dataset access, and research contributions are
+discussed below.
+
+   •   Open-Source Compliance: The proposed framework is developed using open-source
+       deep learning tools such as PyTorch and supporting libraries. These resources are used
+       according to their respective open-source licenses and development guidelines.
+
+   •   Dataset Usage: The training and evaluation processes rely on publicly available shadow
+       removal datasets, including ISTD+ [9] and SRD [23]. These datasets are utilized only
+       for academic experimentation and performance evaluation while following their
+       original usage policies.
+
+                                              84
+   •   Research Contribution Ownership: The proposed architectural components, including
+       the Pearson Correlation Guided Routing mechanism and refinement modules, are
+       presented as the original contributions of this thesis, while related methods and baseline
+       approaches are properly acknowledged.
+
+   •   Responsible Usage: Although the framework is designed to improve image quality by
+       removing unwanted shadows, image restoration methods can alter visual information.
+       Therefore, responsible usage practices should be maintained to prevent misleading or
+       unauthorized modifications.
+
+5.3 Ethical Considerations
+
+The ethical evaluation of the proposed shadow removal framework requires consideration of
+data limitations, responsible image modification, and computational impact. Since the model
+modifies illumination patterns within an image, it is important to ensure that the restoration
+process improves visibility without introducing misleading visual information. The major
+ethical considerations are discussed below.
+
+   •   Dataset Bias: The ISTD+ [9] and SRD [23] datasets mainly contain outdoor scenes
+       with specific lighting conditions. As a result, the model may show reduced performance
+       on unseen environments, such as complex indoor scenes or significantly different
+       illumination conditions.
+
+   •   Visual Consistency and Hallucination Control: Deep restoration networks may
+       generate unrealistic textures during image enhancement. To reduce this issue, the
+       proposed Texture Refinement Module (TRM) uses reference information from existing
+       non-shadow regions instead of creating unsupported visual details.
+
+   •   Computational Responsibility: Training deep vision models requires significant GPU
+       resources. The proposed framework improves efficiency through optimized
+       architectural components such as Guided Shuffle Blocks, reducing unnecessary
+       computational overhead.
+
+
+
+                                              85
+   •   Image Integrity and Responsible Application: Although the model is designed for
+       shadow removal and visibility enhancement, image editing technologies can be misused
+       for altering visual evidence. Therefore, responsible deployment with proper verification
+       methods is necessary to maintain image authenticity.
+
+5.4 Safety Considerations
+
+Deploying shadow removal models in real-world vision systems requires reliable performance,
+as incorrect illumination correction or confusion between actual objects and shadows can affect
+downstream decision-making. Therefore, several safety aspects must be considered before
+practical deployment.
+
+   •   Perception Reliability for Autonomous Systems: If applied in autonomous navigation
+       or monitoring systems, incorrect shadow restoration may influence object recognition
+       performance. The proposed framework focuses on accurate shadow boundary handling
+       and structural preservation to reduce such failure cases.
+
+   •   Artifact Control and Model Stability: Unexpected restoration artifacts can reduce the
+       reliability of image enhancement systems. The framework uses controlled feature
+       refinement and bounded feature adaptation mechanisms to maintain stable outputs and
+       prevent excessive visual modifications.
+
+   •   Hardware and Deployment Safety: Real-time shadow removal on resource-limited
+       devices can increase computational load and hardware usage. Efficient architectural
+       design and optimized processing strategies help reduce memory consumption and
+       improve deployment stability.
+
+5.5 Legal Considerations
+
+Since shadow removal modifies image content by adjusting illumination and restoring hidden
+details, legal aspects related to privacy, data usage, and image authenticity must be considered.
+The framework should be applied responsibly to ensure that restored images are not misused or
+interpreted incorrectly.
+
+
+                                               86
+   •   Data Privacy Protection: The benchmark datasets used in this research mainly contain
+       public scenes and environmental objects. The data handling process avoids collecting
+       or storing sensitive personal information, maintaining compliance with privacy
+       protection principles.
+
+   •   Forensic and Evidence Integrity: Although the proposed model improves image
+       visibility, the restored outputs represent enhanced versions of the original images.
+       Therefore, they should not be treated as unmodified forensic evidence without proper
+       verification and documentation.
+
+   •   Institutional Research Compliance: All dataset processing, experimental evaluation,
+       and model development procedures are conducted following academic research
+       guidelines and ethical practices.
+
+5.6 Impact of the Project on Societal, Health, and Cultural Issues
+
+The proposed single-image shadow removal framework can provide practical benefits in
+different real-world applications by improving image visibility and reducing the effect of
+unwanted illumination variations. By recovering shadow-degraded regions, the technology can
+support more reliable visual analysis across multiple domains.
+
+   •   Public Safety and Monitoring: Shadow removal can improve the visibility of
+       surveillance and monitoring systems by reducing dark regions that may hide important
+       scene information, supporting better interpretation of visual data.
+
+   •   Medical Imaging Support: The illumination correction concepts used in shadow
+       removal can be adapted to imaging tasks where uneven lighting or contrast variations
+       affect the visibility of important structures.
+
+   •   Cultural and Historical Preservation: Restoration techniques can assist in improving
+       the quality of old photographs and digital archives affected by poor lighting conditions
+       while maintaining important visual details.
+
+
+
+
+                                                87
+   •   Reducing Manual Analysis Effort: Automated shadow correction can reduce the
+       workload of professionals working with satellite images, drone mapping, and other
+       visual analysis tasks by improving image clarity and consistency.
+
+5.7 Conclusion
+
+Analyzing the regulatory, ethical, and practical constraints of this framework confirms that
+shadow removal technology does not operate in isolation. By addressing potential dataset
+biases, implementing architectural safeguards against hallucination, and respecting data privacy
+laws, we ensure our single-image shadow removal model remains safe and reliable. Ultimately,
+balancing technical performance with these ethical considerations ensures our research
+contributes positively to both computer vision science and its real-world applications.
+
+
+
+
+                                              88
+                                     CHAPTER VI
+
+
+       Addressing Complex Engineering Problems and Activities
+
+
+6.1 Introduction
+
+The development of an automated single-image shadow removal framework involves multiple
+computer vision challenges that require more than conventional programming solutions.
+Following the Washington Accord guidelines, final-year engineering projects should address
+Complex Engineering Problems (WPs) and Complex Engineering Activities (EAs). This
+chapter explains how the proposed Vision Transformer-based shadow removal framework
+satisfies these attributes by combining theoretical concepts, advanced model design, and
+practical engineering implementation.
+
+6.2 Complex Engineering Problems Associated with the Work
+
+A Complex Engineering Problem (CEP) requires advanced technical knowledge and involves
+multiple challenges such as conflicting requirements, deep analysis, and interconnected system
+components. The proposed single-image shadow removal framework satisfies these attributes
+through the following aspects:
+
+   •   WP1: Depth of Knowledge Required: The problem requires advanced understanding
+       of computer vision, deep learning, and image processing rather than applying standard
+       filters or existing APIs. The proposed framework utilizes illumination-invariant Pearson
+       correlation-based feature matching to connect shadow regions with relevant non-
+       shadow references by analyzing structural similarity instead of relying only on pixel
+       intensity values.
+
+   •   WP2: Range of Conflicting Requirements: Shadow removal requires balancing
+       multiple competing objectives. Increasing brightness in shadow regions may introduce
+       color distortion or noise, while excessive smoothing can remove important textures. The
+
+
+                                             89
+       framework addresses this trade-off by jointly optimizing illumination recovery and
+       structural preservation.
+
+   •   WP3: Depth of Analysis Required: Recovering a shadow-free image from a single
+       input is an ill-posed problem that requires advanced modeling. The proposed encoder-
+       decoder architecture, guided routing strategy, and refinement modules are designed to
+       estimate illumination correction while maintaining natural image structures.
+
+   •   WP4: Familiarity of Issues: Unlike general image enhancement tasks, shadow
+       removal contains complex challenges such as irregular shadow patterns, soft boundary
+       transitions, and non-uniform illumination changes. These variations require adaptive
+       learning-based solutions beyond traditional image processing approaches.
+
+   •   WP5: Extent of Applicable Codes: There are no fixed engineering standards or
+       predefined algorithms that can solve arbitrary shadow removal problems. Therefore,
+       customized architectures, loss functions, and optimization strategies are developed to
+       handle the restoration process effectively.
+
+   •   WP7: Interdependence of Sub-Problems: The overall framework consists of several
+       connected components, including shadow-aware feature matching, illumination
+       normalization, and texture reconstruction. The performance of each module directly
+       affects the final restoration quality, making the system highly interdependent.
+
+6.3 Complex Engineering Activities Associated with the Work
+
+Complex Engineering Activities evaluate the execution, resource allocation, and real-world
+implementation of the proposed engineering project. Our development lifecycle aligns with the
+EA1 to EA5 attributes specified under international accreditation frameworks:
+
+   •   EA1: Range of Resources Utilized
+
+       Developing this framework requires managing diverse technical resources. The pipeline
+       uses high-compute hardware clusters (NVIDIA GPUs), parallel PyTorch processing
+
+
+                                              90
+    environments, advanced statistical data analysis libraries, and extensive benchmark
+    image repositories (ISTD+ and SRD). Effectively managing these computational tools
+    and data sets is crucial to completing the project.
+
+•   EA2: Level of Interactions and Conflicting Issues
+
+    The implementation must resolve sharp interactions between theoretical design and
+    hardware boundaries. For example, deploying high-parameter Vision Transformers
+    introduces a direct conflict between accuracy and resource limits (GPU memory
+    constraints and processing speeds). We resolve this interaction by integrating Guided
+    Shuffle Blocks into our architecture to maximize token processing speed without
+    sacrificing accuracy.
+
+•   EA3: Innovation and Novel Use of Principles
+
+    The project involves the creative use of digital signal processing and deep learning
+    principles in novel ways. Instead of relying on unconstrained self-attention mechanisms
+    which regularly drift because transformers easily confuse shadow boundaries with
+    material changes we leverage the illumination invariance of the Pearson Correlation. By
+    adapting this classical statistical dependency equation directly into our Vision
+    Transformer's cross-attention layers, we created a novel token routing mechanism. This
+    allows the network to calculate structural affinity across extreme exposure gaps, proving
+    that fundamental mathematical invariants can eliminate the need for computationally
+    heavy parametric illumination modeling.
+
+•   EA5: Familiarity and Extension Beyond Previous Experience
+
+    Building this pipeline extends far beyond traditional undergraduate programming lab
+    assignments. It requires applying principles-based engineering approaches to read,
+    adapt, and build upon state-of-the-art computer vision literature. It involves
+    synthesizing concepts like generative adversarial networks, structural similarity
+    regularizers, and color-space theory to construct an original, functional system.
+
+
+
+                                            91
+6.4 Conclusion
+
+Analyzing our single-image shadow removal framework through the lens of the Washington
+Accord confirms that this research addresses a legitimate Complex Engineering Problem while
+demanding Complex Engineering Activities. By mapping our architectural designs such as
+NGAN, TRM, and boundary layer to specific attributes like WP1, WP2, and EA3, we
+demonstrate that this work goes beyond basic code implementation. It represents a structured,
+first-principles engineering effort that successfully solves non-linear visual degradation
+problems while remaining within strict real-world computing limits.
+
+
+
+
+                                             92
+                                     CHAPTER VII
+
+
+                                       Conclusions
+
+
+7.1 Summary
+
+This thesis presents a robust, principles-based engineering approach to single-image shadow
+removal by leveraging our core mathematical realization that the Pearson Correlation
+Coefficient remains completely invariant under linear illumination shifts. By embedding this
+fundamental statistical property directly into a customized Vision Transformer architecture, we
+developed a localized token routing mechanism capable of mapping structural affinities and
+matching textures across severe exposure gaps without relying on complex, error-prone
+parametric modeling. Evaluated on the illumination-adjusted ISTD+ [9] dataset, our multi-stage
+framework successfully balances the conflicting technical requirements of regional luminance
+recovery and micro-texture retention. The network utilizes Non-Shadow Guided Adaptive
+Normalization (NGAN) to balance regional feature distributions and safeguard unshaded
+backgrounds from color drift, while simultaneously deploying a Texture Reference Module
+(TRM) and an advanced Boundary Refinemen layer governed by a specialized to eliminate halo
+artifacts. Ultimately, this architecture addresses the non-linear degradation constraints of
+localized shadows, achieving a highly accurate shadow-zone SSIM of 0.9921 and a stable 5-
+fold cross-validation error (𝐸𝑎𝑣𝑔 ) of 4.992 while maintaining an efficient parameter footprint
+optimized for deployment in real-world computer vision systems.
+
+7.2 Limitations
+
+Although the proposed framework achieves strong performance under standard benchmark
+evaluations, several technical limitations remain when applying it to highly unconstrained real-
+world scenarios. The major constraints are summarized below:
+
+   •   Dependency on Shadow Mask Accuracy: The framework relies on the input shadow
+       mask to guide routing, feature normalization, and boundary refinement operations.
+
+                                              93
+       Incorrect masks can directly affect restoration quality, where missing shadow regions
+       may remain untreated and incorrectly detected areas may introduce unnecessary
+       illumination changes.
+
+   •   Routing Matching Limitations: The Pearson Correlation Guided Routing mechanism
+       depends on finding reliable non-shadow reference regions for feature transfer. In cases
+       involving texture less surfaces or objects that only appear inside shadow regions, finding
+       suitable reference tokens becomes difficult, which may reduce color and illumination
+       accuracy.
+
+   •   Multi-Loss Optimization Complexity: The proposed objective function combines
+       several loss components to balance reconstruction accuracy, color consistency, and
+       boundary preservation. However, selecting proper loss weights requires careful tuning
+       to avoid conflicting optimization behavior during training.
+
+   •   Complex Illumination Conditions: Performance may decrease under highly irregular
+       lighting environments, such as overlapping shadows, multiple light sources, or complex
+       outdoor illumination patterns, where estimating consistent shadow correction becomes
+       more challenging.
+
+   •   Domain Generalization Limitations: The framework is mainly designed for natural
+       scene shadow removal. Specialized domains such as document shadow correction or
+       inner-object shadow removal may require additional adaptation due to their different
+       structural and texture characteristics.
+
+7.3 Recommendations for Future Works
+
+Although the proposed framework demonstrates effective shadow removal performance,
+several research directions can be explored to further improve its robustness, efficiency, and
+real-world applicability. The following improvements are recommended for future extensions:
+
+   •   Automatic Shadow Detection Integration: The current framework depends on externally
+       provided shadow masks for guiding the restoration process. Future work can integrate
+
+
+                                                 94
+    a dedicated shadow detection branch to develop a fully end-to-end system capable of
+    detecting and removing shadows simultaneously.
+
+•   Improved Cross-Domain Generalization: The model can be further extended by training
+    on more diverse datasets containing indoor scenes, document images, complex lighting
+    conditions, and different environmental settings to improve performance beyond natural
+    outdoor scenarios.
+
+•   Enhanced Region Matching Mechanisms: Future research can explore more adaptive
+    feature-matching strategies to improve reference selection in challenging cases where
+    suitable non-shadow regions are unavailable or surface textures are highly uniform.
+
+•   Lightweight Model Optimization: Although the proposed architecture maintains
+    computational efficiency, additional compression techniques such as pruning,
+    quantization, or knowledge distillation can be applied to improve deployment on mobile
+    and edge devices.
+
+•   Video-Based Shadow Removal Extension: Extending the framework from single-image
+    restoration to video shadow removal can be investigated by incorporating temporal
+    consistency mechanisms to maintain stable results across consecutive frames.
+
+
+
+
+                                          95
+                                   REFERENCES
+
+
+[1]   Z. Chen, C. Long, L. Zhang, and C. Xiao, “CANet: A Context-Aware Network for
+      Shadow Removal,” presented at the Proceedings of the IEEE/CVF International
+      Conference on Computer Vision, 2021, pp. 4743–4752.
+[2]   X. Hu, Y. Jiang, C.-W. Fu, and P.-A. Heng, “Mask-ShadowGAN: Learning to Remove
+      Shadows From Unpaired Data,” presented at the Proceedings of the IEEE/CVF
+      International Conference on Computer Vision, 2019, pp. 2472–2481.
+[3]   L. Guo, S. Huang, D. Liu, H. Cheng, and B. Wen, “ShadowFormer: Global Context
+      Helps Shadow Removal,” Proc. AAAI Conf. Artif. Intell., vol. 37, no. 1, pp. 710–718,
+      Jun. 2023, doi: 10.1609/aaai.v37i1.25148.
+[4]   J. Xiao et al., “HomoFormer: Homogenized Transformer for Image Shadow Removal,”
+      in 2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR),
+      Jun. 2024, pp. 25617–25626. doi: 10.1109/CVPR52733.2024.02420.
+[5]   C. Li, B. Yang, Z. Wu, G. Chen, Y. Yu, and S. Zhou, “Shadow Removal based on
+      Diffusion Segmentation and Super-resolution Models,” presented at the Proceedings of
+      the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2024, pp.
+      6045–6054.
+[6]   F.-A. Vasluianu et al., “NTIRE 2024 Image Shadow Removal Challenge Report,”
+      presented at the Proceedings of the IEEE/CVF Conference on Computer Vision and
+      Pattern Recognition, 2024, pp. 6547–6570.
+[7]   W. Dong, H. Zhou, S. A. Mousavi, and J. Chen, “Retinex-Guided Histogram
+      Transformer for Mask-Free Shadow Removal,” presented at the Proceedings of the
+      IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2025, pp. 1471–
+      1481.
+[8]   J. Wang, X. Li, and J. Yang, “Stacked Conditional Generative Adversarial Networks for
+      Jointly Learning Shadow Detection and Shadow Removal,” presented at the
+      Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition,
+      2018, pp. 1788–1797.
+[9]   H. Le and D. Samaras, “Shadow Removal via Shadow Image Decomposition,”
+      presented at the Proceedings of the IEEE/CVF International Conference on Computer
+      Vision, 2019, pp. 8578–8587.
+
+
+
+
+                                           96
+[10]   L. Qu, J. Tian, S. He, Y. Tang, and R. W. H. Lau, “DeshadowNet: A Multi-Context
+       Embedding Deep Network for Shadow Removal,” presented at the Proceedings of the
+       IEEE Conference on Computer Vision and Pattern Recognition, 2017, pp. 4067–4075.
+[11]   G. D. Finlayson, S. D. Hordley, and M. S. Drew, “Removing Shadows from Images,”
+       in Computer Vision — ECCV 2002, A. Heyden, G. Sparr, M. Nielsen, and P. Johansen,
+       Eds., Berlin, Heidelberg: Springer, 2002, pp. 823–836. doi: 10.1007/3-540-47979-1_55.
+[12]   R. Guo, Q. Dai, and D. Hoiem, “Single-image shadow detection and removal using
+       paired regions,” in CVPR 2011, Jun. 2011, pp. 2033–2040. doi:
+       10.1109/CVPR.2011.5995725.
+[13]   T. F. Y. Vicente and D. Samaras, “Single image shadow removal via neighbor-based
+       region relighting,” in European Conference on Computer Vision, Springer, 2014, pp.
+       309–320.
+[14]   Y. Shor and D. Lischinski, “The Shadow Meets the Mask: Pyramid-Based Shadow
+       Removal,” Comput. Graph. Forum, vol. 27, no. 2, pp. 577–586, 2008, doi:
+       10.1111/j.1467-8659.2008.01155.x.
+[15]   V. Kwatra, M. Han, and S. Dai, “Shadow removal for aerial imagery by information
+       theoretic intrinsic image analysis,” in 2012 IEEE International Conference on
+       Computational Photography (ICCP), IEEE, 2012, pp. 1–8.
+[16]   X. Hu, L. Zhu, C.-W. Fu, J. Qin, and P.-A. Heng, “Direction-Aware Spatial Context
+       Features for Shadow Detection,” presented at the Proceedings of the IEEE Conference
+       on Computer Vision and Pattern Recognition, 2018, pp. 7454–7462.
+[17]   Z. Liu, H. Yin, X. Wu, Z. Wu, Y. Mi, and S. Wang, “From Shadow Generation To
+       Shadow Removal,” presented at the Proceedings of the IEEE/CVF Conference on
+       Computer Vision and Pattern Recognition, 2021, pp. 4927–4936.
+[18]   Y. Zhu, J. Huang, X. Fu, F. Zhao, Q. Sun, and Z.-J. Zha, “Bijective Mapping Network
+       for Shadow Removal,” presented at the Proceedings of the IEEE/CVF Conference on
+       Computer Vision and Pattern Recognition, 2022, pp. 5627–5636.
+[19]   H. Liu, M. Li, and X. Guo, “Regional Attention For Shadow Removal,” in Proceedings
+       of the 32nd ACM International Conference on Multimedia, in MM ’24. New York, NY,
+       USA: Association for Computing Machinery, Oct. 2024, pp. 5949–5957. doi:
+       10.1145/3664647.3681126.
+[20]   J. Wan, H. Yin, Z. Wu, X. Wu, Z. Liu, and S. Wang, “CRFormer: A cross-region
+       transformer for shadow removal,” Image Vis. Comput., vol. 151, p. 105273, Nov. 2024,
+       doi: 10.1016/j.imavis.2024.105273.
+
+
+                                            97
+[21]   X. Zhang, Y. Zhao, C. Gu, C. Lu, and S. Zhu, “SpA-Former:An Effective and
+       lightweight Transformer for image shadow removal,” in 2023 International Joint
+       Conference on Neural Networks (IJCNN), Jun. 2023, pp. 1–8. doi:
+       10.1109/IJCNN54540.2023.10191081.
+[22]   X. Lu et al., “HirFormer: Dynamic High Resolution Transformer for Large-Scale Image
+       Shadow Removal,” presented at the Proceedings of the IEEE/CVF Conference on
+       Computer Vision and Pattern Recognition, 2024, pp. 6513–6523.
+[23]   Y. Jin, A. Sharma, and R. T. Tan, “DC-ShadowNet: Single-Image Hard and Soft Shadow
+       Removal Using Unsupervised Domain-Classifier Guided Network,” presented at the
+       Proceedings of the IEEE/CVF International Conference on Computer Vision, 2021, pp.
+       5027–5036.
+[24]   L. Zhang, C. Long, X. Zhang, and C. Xiao, “RIS-GAN: Explore Residual and
+       Illumination with Generative Adversarial Networks for Shadow Removal,” Proc. AAAI
+       Conf. Artif. Intell., vol. 34, no. 07, pp. 12829–12836, Apr. 2020, doi:
+       10.1609/aaai.v34i07.6979.
+[25]   B. Ding, C. Long, L. Zhang, and C. Xiao, “ARGAN: Attentive Recurrent Generative
+       Adversarial Network for Shadow Detection and Removal,” presented at the Proceedings
+       of the IEEE/CVF International Conference on Computer Vision, 2019, pp. 10213–
+       10222.
+[26]   A. Dosovitskiy et al., “An Image is Worth 16x16 Words: Transformers for Image
+       Recognition at Scale,” presented at the International Conference on Learning
+       Representations, Oct. 2020.
+[27]   O. Ronneberger, P. Fischer, and T. Brox, “U-Net: Convolutional Networks for
+       Biomedical Image Segmentation,” in Medical Image Computing and Computer-
+       Assisted Intervention – MICCAI 2015, N. Navab, J. Hornegger, W. M. Wells, and A. F.
+       Frangi, Eds., Cham: Springer International Publishing, 2015, pp. 234–241. doi:
+       10.1007/978-3-319-24574-4_28.
+[28]   H. Chen et al., “Pre-Trained Image Processing Transformer,” presented at the
+       Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern
+       Recognition, 2021, pp. 12299–12310.
+[29]   Z. Wang, A. C. Bovik, H. R. Sheikh, and E. P. Simoncelli, “Image quality assessment:
+       from error visibility to structural similarity,” IEEE Trans. Image Process., vol. 13, no.
+       4, pp. 600–612, Apr. 2004, doi: 10.1109/TIP.2003.819861.
+
+
+
+
+                                              98
+[30]   J. Xiao, X. Fu, M. Zhou, H. Liu, and Z.-J. Zha, “Random Shuffle Transformer for Image
+       Restoration,” in Proceedings of the 40th International Conference on Machine
+       Learning, PMLR, Jul. 2023, pp. 38039–38058.
+[31]   S. W. Zamir, A. Arora, S. Khan, M. Hayat, F. S. Khan, and M.-H. Yang, “Restormer:
+       Efficient Transformer for High-Resolution Image Restoration,” presented at the
+       Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern
+       Recognition, 2022, pp. 5728–5739.
+[32]   X. Huang and S. Belongie, “Arbitrary Style Transfer in Real-Time With Adaptive
+       Instance Normalization,” presented at the Proceedings of the IEEE International
+       Conference on Computer Vision, 2017, pp. 1501–1510.
+[33]   Z. Li et al., “STNet: Structure and texture-guided network for image inpainting,”
+       Pattern Recognit., vol. 156, p. 110786, Dec. 2024, doi: 10.1016/j.patcog.2024.110786.
+[34]   X. Liu, Y. Ma, Z. Shi, and J. Chen, “GridDehazeNet: Attention-Based Multi-Scale
+       Network for Image Dehazing,” presented at the Proceedings of the IEEE/CVF
+       International Conference on Computer Vision, 2019, pp. 7314–7323.
+[35]   A. Vaswani et al., “Attention is All you Need,” in Advances in Neural Information
+       Processing Systems, Curran Associates, Inc., 2017.
+[36]   L. Zhu, X. Wang, Z. Ke, W. Zhang, and R. W. H. Lau, “BiFormer: Vision Transformer
+       With Bi-Level Routing Attention,” presented at the Proceedings of the IEEE/CVF
+       Conference on Computer Vision and Pattern Recognition, 2023, pp. 10323–10333.
+[37]   Z. Liu et al., “Swin Transformer: Hierarchical Vision Transformer Using Shifted
+       Windows,” presented at the Proceedings of the IEEE/CVF International Conference on
+       Computer Vision, 2021, pp. 10012–10022.
+[38]   J. Liang, J. Cao, G. Sun, K. Zhang, L. Van Gool, and R. Timofte, “SwinIR: Image
+       Restoration Using Swin Transformer,” presented at the Proceedings of the IEEE/CVF
+       International Conference on Computer Vision, 2021, pp. 1833–1844.
+[39]   J. Johnson, A. Alahi, and L. Fei-Fei, “Perceptual Losses for Real-Time Style Transfer
+       and Super-Resolution,” in Computer Vision – ECCV 2016, B. Leibe, J. Matas, N. Sebe,
+       and M. Welling, Eds., Cham: Springer International Publishing, 2016, pp. 694–711. doi:
+       10.1007/978-3-319-46475-6_43.
+[40]   X. Cun, C.-M. Pun, and C. Shi, “Towards Ghost-Free Shadow Removal via Dual
+       Hierarchical Aggregation Network and Shadow Matting GAN,” Proc. AAAI Conf. Artif.
+       Intell., vol. 34, no. 07, pp. 10680–10687, Apr. 2020, doi: 10.1609/aaai.v34i07.6695.
+
+
+
+                                            99
+[41]   A. M. Eskicioglu and P. S. Fisher, “Image quality measures and their performance,”
+       IEEE Trans. Commun., vol. 43, no. 12, pp. 2959–2965, Dec. 1995, doi:
+       10.1109/26.477498.
+[42]   I. Loshchilov and F. Hutter, “Decoupled Weight Decay Regularization,” Jan. 04, 2019,
+       arXiv: arXiv:1711.05101. doi: 10.48550/arXiv.1711.05101.
+[43]   I. Loshchilov and F. Hutter, “SGDR: Stochastic Gradient Descent with Warm Restarts,”
+       May 03, 2017, arXiv: arXiv:1608.03983. doi: 10.48550/arXiv.1608.03983.
+[44]   I. Goodfellow, Y. Bengio, A. Courville, and Y. Bengio, Deep learning, vol. 1. MIT press
+       Cambridge, 2016.
+
+
+
+
+                                            100
+

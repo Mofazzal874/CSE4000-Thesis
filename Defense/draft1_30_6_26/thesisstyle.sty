@@ -93,7 +93,7 @@
   labelsep=colon,
   justification=centering,
   singlelinecheck=true,
-  skip=6pt
+  skip=10pt
 }
 \captionsetup{font+={small}}  % ~11pt at a 12pt base
 
@@ -118,9 +118,16 @@
 
 % ---- IEEE references via biblatex (spec 9) ---------------------------------
 \RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}
-% Reference list: 1.2 line spacing, hanging indent 0.31in.
+% Reference list: 1.2 line spacing, hanging indent 0.31in. \sloppy + URL break
+% penalties keep long venue strings, arXiv ids, and URLs inside the margin.
 \setlength{\biblabelsep}{0.31in}
-\renewcommand*{\bibfont}{\normalfont\setstretch{1.2}}
+\renewcommand*{\bibfont}{\normalfont\setstretch{1.2}\sloppy}
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+
+% ---- Mild global stretch so justified lines never cross the margin ---------
+\setlength{\emergencystretch}{1.5em}
 
 % ---- Table of Contents formatting (template page 5-7) ----------------------
 % Chapters: "CHAPTER <Roman>  Title ..... page" (bold). Front-matter items
