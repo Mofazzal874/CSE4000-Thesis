@@ -1,66 +1,107 @@
 \chapter{Methodology}
 
 \section{Introduction}
-This chapter describes the detection pipeline proposed in this thesis and the
-systematic procedure used to build it. The design goal is a compact detector
-that recovers very small human targets in aerial search-and-rescue imagery
-without inflating the parameter or latency budget. Rather than adopting a single
-fixed architecture, the model is developed through an \emph{additive ablation}:
-starting from the YOLO11m baseline (reviewed in Chapter~II), one architectural
-change is introduced at a time so that the contribution of each component can be
-attributed independently. The chapter first presents the overall framework as a
-structural anchor, then details each proposed modification, the state-space neck
-variant that was explored, the ablation protocol, and a running example that
-follows a single image through the pipeline. The baseline YOLO11 architecture and
-the attention, multi-scale, and state-space concepts are covered in Chapter~II;
-here the focus is strictly on the proposed modifications.
+This chapter presents the design and architectural implementation of the proposed
+detector for very small human targets in aerial search-and-rescue imagery. The
+methodology treats the task as a resolution-and-attention problem: the targets of
+interest are frequently smaller than the finest detection cell of a standard
+one-stage detector, and they sit in heavy background clutter. The proposed model
+therefore modifies the YOLO11m baseline (reviewed in Chapter~II) in exactly two
+places: a Convolutional Block Attention Module (CBAM) replaces the C2PSA attention
+block at the end of the backbone, and the neck and head are extended with a
+stride-4 (P2) detection scale. A third component, a bidirectional state-space
+(Mamba) neck block, was explored under the same protocol and is reported honestly
+as a negative result. Rather than adopting a single fixed architecture, the model
+is developed through an \emph{additive ablation}: one architectural change is
+introduced at a time so that the contribution of each component can be attributed
+independently. The following sections give the system overview, the layer-level
+architecture, the novelties and their rationale, the loss design, and the
+inference-time enhancement procedures evaluated in Chapter~IV.
 
-\section{Overall Framework}
-The complete detection pipeline is shown in Figure~\ref{fig:framework}. An input
-aerial image is letterbox-resized to $640 \times 640$ and passed through the
-YOLO11m backbone, in which the terminal C2PSA attention block is replaced by a
-Convolutional Block Attention Module (CBAM). The resulting multi-scale features
-are aggregated by a PAN--FPN neck and decoded by a four-scale detection head that
-adds a high-resolution P2 level (stride~4) to the standard P3--P5 levels. A final
-non-maximum-suppression (NMS) stage produces the human bounding boxes. The two
-proposed modifications, the CBAM attention block and the P2 detection scale,
-are highlighted in the figure; the optional state-space neck variant
-(Section~\ref{sec:mamba}) replaces selected neck blocks and is evaluated
-separately.
+\section{System Architecture Overview}
+The complete pipeline is shown in Figure~\ref{fig:framework}. Given an aerial
+image, the system letterbox-resizes it to $640 \times 640$, extracts multi-scale
+features with the YOLO11m backbone, refines the deepest features with CBAM,
+fuses all scales in a PAN--FPN neck extended down to stride~4, and decodes boxes
+at four scales before non-maximum suppression (NMS) produces the final human
+detections.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_overall_framework.png}{6cm}
-  \caption{Overall framework of the proposed detector. An aerial image is
-  preprocessed and passed through the YOLO11m backbone (with CBAM replacing the
-  C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection
-  head; the added P2 level at stride~4 targets very small targets, and NMS yields
-  the final human detections.}
+  \input{tikz/fig_system_overview}
+  \caption{High-level schematic of the proposed detection pipeline. An aerial
+  image passes through the YOLO11m backbone, the CBAM attention block, and a
+  PAN--FPN neck extended to stride~4; a four-scale head and NMS produce the
+  final detections. Red-dashed elements mark the two proposed modifications.}
   \label{fig:framework}
 \end{figure}
 
-\section{Detailed Methodology}
-The complete layer-level architecture of the proposed detector is shown in
-Figure~\ref{fig:fullarch}. The backbone follows the YOLO11m layout (layers 0--9),
-with the CBAM block at layer~10 in place of the original C2PSA attention. The neck
-runs a top-down pass (layers 11--19) that now extends one level further than the
-standard design, up to the stride-4 P2 resolution, and a bottom-up pass (layers
-20--28) that re-aggregates all four levels. The head (layer~29) decodes boxes at
-the four scales, and the elements added or modified in this work are marked in the
-figure. The subsections that follow describe each modification.
+The workflow has three phases:
+\begin{itemize}
+  \item \textbf{Feature extraction and attention.} The backbone produces feature
+  maps at strides 2--32 (P1--P5). At the deepest level, CBAM applies channel
+  attention followed by spatial attention, re-weighting the 512-channel P5
+  features so that human-shaped responses are emphasised over debris, water, and
+  vegetation before any fusion happens.
+  \item \textbf{Multi-scale fusion with a P2 extension.} The neck runs the usual
+  top-down and bottom-up passes, but the top-down pass continues one level
+  further than the standard design: it upsamples to stride~4 and fuses the
+  high-resolution backbone P2 features, producing a $160 \times 160$ map whose
+  cells cover only $4 \times 4$ input pixels.
+  \item \textbf{Four-scale decoding.} The head predicts boxes at strides 4, 8,
+  16, and 32; NMS merges overlapping candidates so that clusters of nearby
+  people are kept as separate detections.
+\end{itemize}
 
-\begin{figure}[p]
+\section{Proposed System Architecture}
+The complete layer-level architecture is shown in Figure~\ref{fig:fullarch}, and
+Table~\ref{tab:layers} lists every layer with its output resolution. The design
+is the verbatim training configuration used in the experiments: CBAM sits at
+backbone layer~10 in place of the original C2PSA block, the added P2 branch
+occupies neck layers 17--19, and the head at layer~29 detects over the four
+fused scales.
+
+\begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_cbam_p2_architecture.png}{19cm}
-  \caption{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector.
-  The backbone (layers 0--9) extracts features at five resolutions; CBAM at
-  layer~10 replaces the original C2PSA block; the neck fuses four levels through a
-  top-down pass (11--19), whose new stride-4 branch (17--19) produces the
-  $160\times160\times128$ P2 feature, and a bottom-up pass (20--28); the head
-  detects at strides 4, 8, 16, and 32, and NMS produces the final boxes.
-  Red-dashed elements are the modifications introduced in this work.}
+  \figorplaceholder{figures/fig_cbam_p2_architecture.png}{10.5cm}
+  \caption{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector
+  on a real C2A scene. The backbone extracts the P2--P5 feature pyramid; CBAM
+  (red-dashed) replaces the C2PSA block at P5; the FPN and PAN passes fuse four
+  levels, with the new stride-4 branch marked in red; the four-scale head and NMS
+  produce the detections. The insets show the model's actual input, spatial
+  attention, P2 feature response, and output on this scene.}
   \label{fig:fullarch}
 \end{figure}
+
+\begin{table}[tbp]
+  \centering
+  \caption{Layer configuration of the proposed detector (640-px input). Channel
+  counts are the values realised at the YOLO11m scale (width 1.0, channel cap
+  512, depth 0.5). Bold rows are the elements added or modified in this work.}
+  \label{tab:layers}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}c l l l@{}}
+    \toprule
+    Layers & Module (arguments) & Output & Role \\
+    \midrule
+    0      & Conv(64, $3{\times}3$, s2)   & $320^2 \times 64$   & stem, P1/2 \\
+    1--2   & Conv(128, s2); C3k2(256)     & $160^2 \times 256$  & P2/4 (skip source) \\
+    3--4   & Conv(256, s2); C3k2(512)     & $80^2 \times 512$   & P3/8 (skip source) \\
+    5--6   & Conv(512, s2); C3k2(512)     & $40^2 \times 512$   & P4/16 (skip source) \\
+    7--9   & Conv(512, s2); C3k2; SPPF    & $20^2 \times 512$   & P5/32 \\
+    \textbf{10} & \textbf{CBAM ($r{=}16$, $k{=}7$)} & $20^2 \times 512$ & \textbf{replaces C2PSA} \\
+    \midrule
+    11--13 & Upsample; Concat(6); C3k2(512)  & $40^2 \times 512$  & top-down, P4 fused \\
+    14--16 & Upsample; Concat(4); C3k2(256)  & $80^2 \times 256$  & top-down, P3 fused \\
+    \textbf{17--19} & \textbf{Upsample; Concat(2); C3k2(128)} & $160^2 \times 128$ & \textbf{added P2 branch} \\
+    20--22 & Conv(s2); Concat(16); C3k2(256) & $80^2 \times 256$  & bottom-up, P3 out \\
+    23--25 & Conv(s2); Concat(13); C3k2(512) & $40^2 \times 512$  & bottom-up, P4 out \\
+    26--28 & Conv(s2); Concat(10); C3k2(512) & $20^2 \times 512$  & bottom-up, P5 out \\
+    \textbf{29} & \textbf{Detect[19, 22, 25, 28]} & strides 4--32 & \textbf{four-scale head} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Data Preprocessing}
 All images are letterbox-resized to $640 \times 640$ so that the original aspect
@@ -73,10 +114,10 @@ mixup, vertical flip) was tested and discarded as a negative result, as reported
 in Chapter~IV.
 
 \subsection{Attention Enhancement: CBAM}
-The baseline YOLO11m places two C2PSA self-attention blocks (1024 channels) after
-the SPPF stage. In the proposed model these are replaced by a single CBAM module,
-which applies channel attention followed by spatial attention in sequence. Given
-an intermediate feature map $\mathbf{F} \in \mathbb{R}^{C \times H \times W}$, CBAM
+The baseline YOLO11m places two C2PSA self-attention blocks after the SPPF stage.
+In the proposed model these are replaced by a single CBAM module, which applies
+channel attention followed by spatial attention in sequence. Given an
+intermediate feature map $\mathbf{F} \in \mathbb{R}^{C \times H \times W}$, CBAM
 computes a channel attention map $\mathbf{M}_c$ and a spatial attention map
 $\mathbf{M}_s$,
 \begin{align}
@@ -89,24 +130,26 @@ where $\sigma$ is the sigmoid function and $f^{7\times7}$ a convolution with a
 $7\times7$ kernel. The features are refined multiplicatively,
 $\mathbf{F}' = \mathbf{M}_c(\mathbf{F}) \otimes \mathbf{F}$ and
 $\mathbf{F}'' = \mathbf{M}_s(\mathbf{F}') \otimes \mathbf{F}'$, where $\otimes$
-denotes element-wise multiplication with broadcasting. Because CBAM is lighter
-than the two C2PSA blocks it replaces, this substitution slightly \emph{reduces}
-the parameter count relative to the baseline while adding both channel and spatial
-selectivity.
+denotes element-wise multiplication with broadcasting. The module uses a channel
+reduction ratio of 16 and a $7\times7$ spatial kernel, matching the original
+design of Woo et al. Because CBAM is lighter than the two C2PSA blocks it
+replaces, this substitution slightly \emph{reduces} the parameter count relative
+to the baseline while adding both channel and spatial selectivity.
 
 \subsection{Multi-Scale Detection: the P2 Head}
 The standard YOLO11 head detects at three scales: P3, P4 and P5 (strides 8, 16
 and 32). For $640 \times 640$ input, the finest of these (P3) operates on an
-$80 \times 80$ grid, so each cell already summarises an $8 \times 8$ pixel region;
-targets smaller than this are difficult to localise. The proposed model adds a
-fourth detection level, P2, at stride~4. This introduces a $160 \times 160$
-feature map in which each cell covers only a $4 \times 4$ pixel region, allowing
-the detector to resolve targets as small as approximately four pixels. The P2
-level is formed by up-sampling and fusing the corresponding high-resolution
-backbone features into the neck and attaching an additional detection branch, as
-summarised in Figure~\ref{fig:framework}. As shown in Chapter~IV, this
-high-resolution scale is the principal driver of the improvement in very-small-%
-target recall.
+$80 \times 80$ grid, so each cell already summarises an $8 \times 8$ pixel
+region; targets smaller than this are difficult to localise. The proposed model
+adds a fourth detection level, P2, at stride~4. The construction follows the
+neck's top-down pass one level further: the fused P3 neck feature
+($80^2 \times 256$) is upsampled to $160^2$, concatenated with the
+high-resolution backbone P2 feature ($160^2 \times 256$, the skip from
+layer~2), and fused by a C3k2 block into the $160^2 \times 128$ P2 feature that
+a stride-4 detection branch reads. Each P2 cell covers only a $4 \times 4$ pixel
+region, allowing the detector to resolve targets as small as approximately four
+pixels. As shown in Chapter~IV, this high-resolution scale is the principal
+driver of the improvement in very-small-target recall.
 
 \subsection{State-Space Neck Variant: C3k2Mamba}
 \label{sec:mamba}
@@ -121,36 +164,6 @@ This variant is included for completeness and evaluated under the same protocol;
 Chapter~IV reports that it does not improve accuracy while increasing both the
 parameter count and the inference latency, and it is therefore excluded from the
 recommended model.
-
-\subsection{The Additive Ablation Design}
-The four configurations evaluated in this thesis are summarised in
-Table~\ref{tab:variants}. Each row introduces exactly one change with respect to
-the preceding design, so that the effect of attention (CBAM), of the
-high-resolution detection scale (P2), of their combination, and of the
-state-space neck can each be isolated. All configurations are trained on the same
-frozen C2A split with identical optimisation settings (AdamW, $\text{lr}_0 = 0.001$,
-cosine schedule, up to 300 epochs with early stopping) and evaluated with the same
-protocol and thresholds, so that every reported difference is attributable to the
-architectural change alone. The experimental setup and these settings are detailed
-in Chapter~IV.
-
-\begin{table}[tbp]
-  \centering
-  \caption{The additive ablation. Each configuration differs from the previous one
-  by a single architectural change, isolating the contribution of attention,
-  multi-scale detection, and the state-space neck.}
-  \label{tab:variants}
-  \begin{tabular}{@{}l l l l@{}}
-    \toprule
-    Configuration & Backbone attention & Detection scales & Neck \\
-    \midrule
-    YOLO11m (baseline)   & C2PSA            & P3, P4, P5         & C3k2 \\
-    + CBAM               & CBAM             & P3, P4, P5         & C3k2 \\
-    + CBAM + P2          & CBAM             & P2, P3, P4, P5     & C3k2 \\
-    + Mamba + CBAM + P2  & CBAM             & P2, P3, P4, P5     & C3k2Mamba (6 layers) \\
-    \bottomrule
-  \end{tabular}
-\end{table}
 
 \subsection{Running Example}
 It helps to trace one image through the pipeline of Figure~\ref{fig:framework}.
@@ -200,11 +213,185 @@ figures, and the final detections recover the people the operator needs.
   \label{fig:explain}
 \end{figure}
 
+\section{Architecture Novelties}
+The design does not chase novelty for its own sake; each departure from the
+baseline answers a specific failure mode of small-target detection, and each is
+verified in isolation by the ablation of Chapter~IV. Three design decisions
+define the contribution.
+
+\subsection{Attention That Pays for Itself}
+Aerial disaster scenes are dominated by distractors: rubble textures, water
+glare, and vegetation produce strong generic feature responses that drown out
+faint human signatures. The first design decision replaces the baseline's two
+heavy C2PSA self-attention blocks with a single CBAM module. The intended effect
+is illustrated in Figure~\ref{fig:cbameffect} together with the model's real
+attention map: background clutter is down-weighted while the faint target
+response is amplified. Because the substitution removes more parameters than it
+adds, the attention improvement arrives at a negative parameter cost, about one
+million parameters below the baseline, with the lowest latency of all evaluated
+configurations.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_cbam_effect.png}{6.3cm}
+  \caption{Effect of the CBAM substitution. The schematic tiles (left) illustrate
+  the mechanism: channel and spatial attention suppress background clutter and
+  amplify the faint target response. The right panel shows the trained model's
+  actual spatial-attention map on a C2A scene, concentrated on the scattered
+  people rather than the rubble.}
+  \label{fig:cbameffect}
+\end{figure}
+
+\subsection{A Detection Scale Where the Targets Are}
+The second decision follows from the geometry in Figure~\ref{fig:strideprob}. A
+detection cell summarises a stride-sized pixel region, so a $\sim$12-px human
+occupies less than half of one P5 cell and under one P4 cell; even at P3 it spans
+only about 1.5 cells. The added stride-4 scale is the first level at which such a
+target covers about three cells, enough spatial support to be localised
+precisely. On the C2A test split, $99.6\%$ of the human instances are smaller
+than 32~px (Figure~\ref{fig:sizedist}), so the added level is not a marginal
+refinement: it is the scale at which almost the entire dataset lives. The
+branch is additive, and the existing P3--P5 pathway is left untouched, which is
+what allows the ablation to attribute the very-tiny-recall gain to this single
+change.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_stride_problem.png}{6cm}
+  \caption{The stride problem motivating the P2 head: the same $\sim$12-px human
+  under each scale's detection grid. All four panels show one $32\times32$-px
+  image patch (a single P5 cell); the target covers about 0.4 of a P5 cell, 0.75
+  of a P4 cell, and 1.5 P3 cells, but roughly three cells of the added stride-4
+  P2 grid (red), enough for precise localisation.}
+  \label{fig:strideprob}
+\end{figure}
+
+\subsection{Single-Variable Additive Design}
+The third decision is methodological. The four configurations evaluated in this
+thesis are summarised in Table~\ref{tab:variants}: each row introduces exactly
+one change with respect to the preceding design, so that the effect of attention
+(CBAM), of the high-resolution detection scale (P2), of their combination, and
+of the state-space neck can each be isolated. All configurations are trained on
+the same frozen C2A split with identical optimisation settings (AdamW,
+$\text{lr}_0 = 0.001$, cosine schedule, up to 300 epochs with early stopping)
+and evaluated with the same protocol and thresholds, so that every reported
+difference is attributable to the architectural change alone. This design is
+what makes the negative state-space result interpretable: the variant fails
+under conditions in which the P2 head demonstrably succeeds.
+
+\begin{table}[tbp]
+  \centering
+  \caption{The additive ablation. Each configuration differs from the previous one
+  by a single architectural change, isolating the contribution of attention,
+  multi-scale detection, and the state-space neck.}
+  \label{tab:variants}
+  \begin{tabular}{@{}l l l l@{}}
+    \toprule
+    Configuration & Backbone attention & Detection scales & Neck \\
+    \midrule
+    YOLO11m (baseline)   & C2PSA            & P3, P4, P5         & C3k2 \\
+    + CBAM               & CBAM             & P3, P4, P5         & C3k2 \\
+    + CBAM + P2          & CBAM             & P2, P3, P4, P5     & C3k2 \\
+    + Mamba + CBAM + P2  & CBAM             & P2, P3, P4, P5     & C3k2Mamba (6 layers) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Loss Function Design}
+Training uses the standard YOLO11 composite detection loss, unchanged across all
+four configurations so that the ablation compares architectures rather than
+objectives. Predictions are matched to ground truth by the task-aligned
+assigner, which scores each candidate cell by a product of its classification
+confidence and its localisation quality, so that the cells that are best able to
+both recognise and localise a target receive its supervision. Three terms are
+then optimised.
+
+Classification uses binary cross-entropy on the single \emph{person} class,
+\begin{equation}
+  \mathcal{L}_{\mathrm{cls}} = -\big[\, y \log \hat{p} + (1-y)\log(1-\hat{p}) \,\big],
+\end{equation}
+where $\hat{p}$ is the predicted objectness-class probability and $y$ the
+assigned label. Box regression uses the complete-IoU loss,
+\begin{equation}
+  \mathcal{L}_{\mathrm{CIoU}} = 1 - \mathrm{IoU}
+      + \frac{\rho^2(\mathbf{b}, \mathbf{b}^{gt})}{c^2} + \alpha v,
+  \qquad
+  v = \frac{4}{\pi^2}\Big(\arctan\tfrac{w^{gt}}{h^{gt}} - \arctan\tfrac{w}{h}\Big)^{\!2},
+\end{equation}
+where $\rho$ is the centre distance, $c$ the diagonal of the smallest enclosing
+box, and $\alpha = v / \big((1-\mathrm{IoU}) + v\big)$ balances the aspect-ratio
+term. The overlap, centre, and shape terms together matter for very small boxes,
+whose IoU alone is unstable under sub-pixel shifts. Finally, box edges are
+predicted as discrete distributions over binned offsets, trained with the
+distribution focal loss,
+\begin{equation}
+  \mathcal{L}_{\mathrm{DFL}} = -\big[(y_{i+1}-y)\log S_i + (y-y_i)\log S_{i+1}\big],
+\end{equation}
+which sharpens the predicted distribution around the continuous target offset
+$y$ that falls between bins $y_i$ and $y_{i+1}$. The total objective is the
+weighted sum
+\begin{equation}
+  \mathcal{L} = \lambda_{\mathrm{box}} \mathcal{L}_{\mathrm{CIoU}}
+              + \lambda_{\mathrm{dfl}} \mathcal{L}_{\mathrm{DFL}}
+              + \lambda_{\mathrm{cls}} \mathcal{L}_{\mathrm{cls}},
+\end{equation}
+with the framework defaults $\lambda_{\mathrm{box}} = 7.5$,
+$\lambda_{\mathrm{dfl}} = 1.5$, and $\lambda_{\mathrm{cls}} = 0.5$. The heavy
+box weighting suits this task: with a single class, the difficulty is not
+deciding \emph{what} an object is but \emph{where} a few-pixel target sits. The
+added P2 level contributes its own predictions to all three terms exactly as
+the standard levels do, so no loss re-balancing is needed when the scale is
+added.
+
+\section{Inference-Time Enhancement: SAHI and TTA}
+Beyond the trained architecture, two inference-time procedures are evaluated as
+optional operating modes; both leave the trained weights untouched and trade
+latency for recall on the smallest targets. Their quantitative effect is
+reported in Chapter~IV.
+
+Slicing-aided hyper inference (SAHI) runs the detector over overlapping tiles of
+the input so that very small targets occupy a larger fraction of each forward
+pass (Figure~\ref{fig:sahipipe}). The image is sliced into square tiles (256 to
+640~px, overlap 25--30\%) alongside one full-image pass; the detector runs on
+each tile at a low confidence floor, and the per-tile detections are merged by
+greedy non-maximum merging with an intersection-over-smaller matching metric at
+threshold 0.5, which suits partially-cut boxes at tile borders.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_sahi.png}{8.8cm}
+  \caption{The SAHI inference pipeline on a C2A scene: the input image is sliced
+  into overlapping tiles (plus one full-image pass), the CBAM~+~P2 detector runs
+  on each tile at a low confidence floor, and the per-tile detections are merged
+  by greedy non-maximum merging into the final output.}
+  \label{fig:sahipipe}
+\end{figure}
+
+Test-time augmentation (TTA) instead re-runs the detector on rescaled and
+flipped copies of the full image, at scale factors 1.0, 0.83, and 0.67, each
+with a horizontal flip, and merges the union of predictions with standard NMS
+(Figure~\ref{fig:ttapipe}). Because the model is fully convolutional, it can be
+evaluated at a higher input resolution than it was trained at; running TTA at
+1280~px doubles the effective resolution of the smallest targets. Chapter~IV
+shows this is the most effective single inference-time setting, though the gain
+collapses beyond twice the training resolution.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_tta.png}{7cm}
+  \caption{The test-time augmentation pipeline: the input image is evaluated at
+  three scales, each with a horizontal flip, by the same CBAM~+~P2 detector at
+  1280-px input, and the merged predictions are reduced by NMS to the final
+  detections.}
+  \label{fig:ttapipe}
+\end{figure}
+
 \section{Conclusion}
-This chapter presented the proposed detector as an additive refinement of YOLO11m:
-CBAM attention in place of C2PSA, a high-resolution P2 detection scale for very
-small targets, and an explored state-space neck variant. The overall framework
-anchors these modifications, and the additive ablation
-design ensures that each component's contribution can be measured independently.
-The next chapter reports the experimental setup and the quantitative and
-qualitative results of this ablation.
+This chapter presented the proposed detector as an additive refinement of
+YOLO11m: CBAM attention in place of C2PSA, a high-resolution P2 detection scale
+for very small targets, and an explored state-space neck variant. The
+architecture was specified to the layer level, the rationale for each novelty
+was tied to a measurable failure mode, the unchanged composite loss keeps the
+ablation interpretable, and two inference-time procedures extend the operating
+envelope without retraining. The next chapter reports the experimental setup and
+the quantitative and qualitative results of this design.

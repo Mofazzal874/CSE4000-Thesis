@@ -13,9 +13,9 @@
         <!-- ===================== dimension labels (on top of stacks) ===================== -->
         <mxCell id="lP3" value="80&#215;80&#215;256" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="15" y="112" width="90" height="18" as="geometry" /></mxCell>
         <mxCell id="lUP" value="160&#215;160&#215;256" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="185" y="84" width="120" height="18" as="geometry" /></mxCell>
-        <mxCell id="lCAT" value="160&#215;160&#215;384" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="372" y="76" width="120" height="18" as="geometry" /></mxCell>
+        <mxCell id="lCAT" value="160&#215;160&#215;512" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="372" y="76" width="120" height="18" as="geometry" /></mxCell>
         <mxCell id="lP2" value="160&#215;160&#215;128" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="552" y="84" width="120" height="18" as="geometry" /></mxCell>
-        <mxCell id="lBB" value="160&#215;160&#215;128  (skip)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="196" y="378" width="140" height="18" as="geometry" /></mxCell>
+        <mxCell id="lBB" value="160&#215;160&#215;256  (skip)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="196" y="378" width="140" height="18" as="geometry" /></mxCell>
 
         <!-- ===================== P3 neck feature: 80x80 (short) x256 (4 plates) ===================== -->
         <mxCell id="P3b" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="58" y="135" width="12" height="56" as="geometry" /></mxCell>
