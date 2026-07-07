@@ -18,11 +18,13 @@ half a million parameters and one millisecond of latency. CBAM is nearly free an
 lowers the parameter count below the baseline while holding accuracy. The
 state-space neck adds $2.4$~million parameters and roughly triples inference latency
 without improving any accuracy metric, and is therefore excluded from the
-recommended model. The recommended CBAM~+~P2 detector, at $19.6$~million parameters,
-is competitive with much larger published detectors on the same dataset, matching or
-exceeding all but one at about a third of its size, and it runs in real time on a
-single consumer GPU. Adapting it to an even smaller backbone for embedded, on-board
-use is set out as future work. The main contribution is a controlled, honest account of where
-a small-object detection gain comes from for aerial human detection, including a
-negative result for the state-space neck, together with a deployable model that
-follows from it.
+recommended model. At inference time, test-time augmentation at
+$1280$-px input lifts recall of the smallest targets from $0.758$ to $0.850$
+at $60$~ms per image, without retraining. The main contribution is a
+controlled account of where a small-object detection gain comes from for
+aerial human detection, including a negative result for the state-space neck,
+together with the deployable model that follows from it. The recommended
+CBAM~+~P2 detector achieves $\mathrm{AP}_{50}$ $0.853$ and an operational
+$F_2$ of $0.844$ on the C2A test set with $19.6$~million parameters and
+$14.6$~ms end-to-end latency on a single consumer GPU, matching or exceeding
+every published detector on this dataset except one three times its size.

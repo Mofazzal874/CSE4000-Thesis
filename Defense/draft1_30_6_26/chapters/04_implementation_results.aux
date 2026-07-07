@@ -1,60 +1,79 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{20}{chapter.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{23}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {4.1}Introduction}{20}{section.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.2}Experimental Setup}{20}{section.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 because the added stride-4 scale raises activation memory.}}{20}{table.caption.41}\protected@file@percent }
-\newlabel{tab:setup}{{4.1}{20}{Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 because the added stride-4 scale raises activation memory}{table.caption.41}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration.}}{21}{table.caption.42}\protected@file@percent }
-\newlabel{tab:split}{{4.2}{21}{C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration}{table.caption.42}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.3}Evaluation Metrics}{21}{section.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.4}Dataset}{21}{section.4.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type: (a)~collapsed building, (b)~fire, (c)~flood, and (d)~traffic incident. Human targets are small and numerous in every scene, which is the central difficulty of the dataset.}}{22}{figure.caption.43}\protected@file@percent }
-\newlabel{fig:dataset_samples}{{4.1}{22}{Representative C2A test samples, one per scene type: (a)~collapsed building, (b)~fire, (c)~flood, and (d)~traffic incident. Human targets are small and numerous in every scene, which is the central difficulty of the dataset}{figure.caption.43}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.5}Implementation and Results}{22}{section.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Detector Family Benchmark}{22}{subsection*.45}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Distribution of human-target sizes in the C2A test set ($\sqrt  {\text  {area}}$ bins, 2{,}043 images). Bars below $32$~px (blue) fall in the stride-4/8 (P2/P3) regime; the coarse P4/P5 heads serve only the $0.4\%$ of targets above $32$~px.}}{23}{figure.caption.44}\protected@file@percent }
-\newlabel{fig:sizedist}{{4.2}{23}{Distribution of human-target sizes in the C2A test set ($\sqrt {\text {area}}$ bins, 2{,}043 images). Bars below $32$~px (blue) fall in the stride-4/8 (P2/P3) regime; the coarse P4/P5 heads serve only the $0.4\%$ of targets above $32$~px}{figure.caption.44}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary detector-family benchmark on C2A (test set) used to select the baseline. YOLO11m was chosen for its accuracy-to-size balance.}}{23}{table.caption.46}\protected@file@percent }
-\newlabel{tab:detbench}{{4.3}{23}{Preliminary detector-family benchmark on C2A (test set) used to select the baseline. YOLO11m was chosen for its accuracy-to-size balance}{table.caption.46}{}}
-\@writefile{toc}{\contentsline {subsection}{Attention Module Selection}{23}{subsection*.47}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4.4}{\ignorespaces Preliminary attention-module comparison on C2A (earlier protocol). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}}{24}{table.caption.48}\protected@file@percent }
-\newlabel{tab:eca}{{4.4}{24}{Preliminary attention-module comparison on C2A (earlier protocol). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation}{table.caption.48}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4.5}{\ignorespaces Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}}{24}{table.caption.50}\protected@file@percent }
-\newlabel{tab:main}{{4.5}{24}{Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold}{table.caption.50}{}}
-\@writefile{toc}{\contentsline {subsection}{Quantitative Results}{24}{subsection*.49}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.3}{\ignorespaces Contribution of each component to $\mathrm {AP}_{50}$ on the C2A test set (additive ablation; the $y$-axis is zoomed to $0.838$--$0.856$). Each bar is the change from the previous model; parameters and end-to-end latency are listed beneath each configuration.}}{25}{figure.caption.51}\protected@file@percent }
-\newlabel{fig:waterfall}{{4.3}{25}{Contribution of each component to $\mathrm {AP}_{50}$ on the C2A test set (additive ablation; the $y$-axis is zoomed to $0.838$--$0.856$). Each bar is the change from the previous model; parameters and end-to-end latency are listed beneath each configuration}{figure.caption.51}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4.6}{\ignorespaces Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy.}}{25}{table.caption.52}\protected@file@percent }
-\newlabel{tab:persize}{{4.6}{25}{Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy}{table.caption.52}{}}
-\@writefile{toc}{\contentsline {subsection}{Qualitative Results and Error Analysis}{25}{subsection*.56}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.4}{\ignorespaces Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen.}}{26}{figure.caption.53}\protected@file@percent }
-\newlabel{fig:curves}{{4.4}{26}{Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen}{figure.caption.53}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.5}{\ignorespaces CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set.}}{26}{figure.caption.54}\protected@file@percent }
-\newlabel{fig:calib}{{4.5}{26}{CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set}{figure.caption.54}{}}
-\@writefile{toc}{\contentsline {subsection}{Comparison with State-of-the-Art}{26}{subsection*.58}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.6}{\ignorespaces Per-epoch training and validation dynamics for the CBAM~+~P2 model: box, classification, and distribution-focal losses together with precision, recall, and mAP over the course of training.}}{27}{figure.caption.55}\protected@file@percent }
-\newlabel{fig:training}{{4.6}{27}{Per-epoch training and validation dynamics for the CBAM~+~P2 model: box, classification, and distribution-focal losses together with precision, recall, and mAP over the course of training}{figure.caption.55}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop, with detected boxes overlaid: the stride-8 (P3) grid~(a) covers several neighbouring people per cell, whereas the stride-4 (P2) grid~(b) resolves them individually. This is the spatial reason the added P2 scale recovers more of the smallest targets.}}{27}{figure.caption.57}\protected@file@percent }
-\newlabel{fig:detgrid}{{4.7}{27}{Detection-cell granularity on a C2A cluster crop, with detected boxes overlaid: the stride-8 (P3) grid~(a) covers several neighbouring people per cell, whereas the stride-4 (P2) grid~(b) resolves them individually. This is the spatial reason the added P2 scale recovers more of the smallest targets}{figure.caption.57}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\blx@tocontentsinit {0}\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation.}}{28}{table.caption.59}\protected@file@percent }
-\newlabel{tab:sota}{{4.7}{28}{Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation}{table.caption.59}{}}
-\@writefile{toc}{\contentsline {subsection}{Inference-Time Enhancement: SAHI and TTA}{28}{subsection*.60}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation.}}{29}{table.caption.61}\protected@file@percent }
-\newlabel{tab:sahi}{{4.8}{29}{SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation}{table.caption.61}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.8}{\ignorespaces Per-size recall of the CBAM~+~P2 model under each inference-time setting (baseline, the SAHI slice sweep, and TTA at $1280$~px) on the C2A test set. The gains concentrate in the very-tiny and tiny bands, and TTA gives the largest very-tiny improvement.}}{29}{figure.caption.62}\protected@file@percent }
-\newlabel{fig:sahibars}{{4.8}{29}{Per-size recall of the CBAM~+~P2 model under each inference-time setting (baseline, the SAHI slice sweep, and TTA at $1280$~px) on the C2A test set. The gains concentrate in the very-tiny and tiny bands, and TTA gives the largest very-tiny improvement}{figure.caption.62}{}}
-\@writefile{toc}{\contentsline {subsection}{Lightweight Variant}{29}{subsection*.63}\protected@file@percent }
-\newlabel{sec:lightweight}{{4.5}{29}{Lightweight Variant}{subsection*.63}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.6}Objective Achieved}{30}{section.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.7}Financial Analyses and Budget}{30}{section.4.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.8}Conclusion}{30}{section.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}Introduction}{23}{section.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}Experimental Setup}{23}{section.4.2}\protected@file@percent }
+\newlabel{sec:setup}{{4.2}{23}{Experimental Setup}{section.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 with gradient accumulation keeping the effective batch at 16.}}{24}{table.caption.26}\protected@file@percent }
+\newlabel{tab:setup}{{4.1}{24}{Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 with gradient accumulation keeping the effective batch at 16}{table.caption.26}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.3}Evaluation Metrics}{24}{section.4.3}\protected@file@percent }
+\newlabel{sec:metrics}{{4.3}{24}{Evaluation Metrics}{section.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.1}Operational Scores: Why F2 Leads}{24}{subsection.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.2}Localisation Quality: AP at the Right Threshold}{24}{subsection.4.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.3}Per-Size Recall: the Hypothesis Test}{25}{subsection.4.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.4}Calibration and Efficiency}{25}{subsection.4.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.4}Dataset}{25}{section.4.4}\protected@file@percent }
+\newlabel{sec:dataset}{{4.4}{25}{Dataset}{section.4.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type: (a)~collapsed building, (b)~fire, (c)~flood, and (d)~traffic incident. Human targets are small and numerous in every scene, which is the central difficulty of the dataset.}}{26}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:dataset_samples}{{4.1}{26}{Representative C2A test samples, one per scene type: (a)~collapsed building, (b)~fire, (c)~flood, and (d)~traffic incident. Human targets are small and numerous in every scene, which is the central difficulty of the dataset}{figure.caption.28}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Distribution of human-target sizes in the C2A test set ($\sqrt  {\text  {area}}$ bins, 2{,}043 images). Bars below $32$~px (blue) fall in the stride-4/8 (P2/P3) regime; the coarse P4/P5 heads serve only the $0.4\%$ of targets above $32$~px.}}{26}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:sizedist}{{4.2}{26}{Distribution of human-target sizes in the C2A test set ($\sqrt {\text {area}}$ bins, 2{,}043 images). Bars below $32$~px (blue) fall in the stride-4/8 (P2/P3) regime; the coarse P4/P5 heads serve only the $0.4\%$ of targets above $32$~px}{figure.caption.29}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration.}}{27}{table.caption.27}\protected@file@percent }
+\newlabel{tab:split}{{4.2}{27}{C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration}{table.caption.27}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.5}Experimentation}{27}{section.4.5}\protected@file@percent }
+\newlabel{sec:protocol}{{4.5}{27}{Experimentation}{section.4.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.6}Quantitative Results}{27}{section.4.6}\protected@file@percent }
+\newlabel{sec:quant}{{4.6}{27}{Quantitative Results}{section.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{27}{subsection.4.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary attention-module comparison on C2A (earlier protocol; values are relative, not comparable to Table~\ref {tab:main}). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}}{28}{table.caption.30}\protected@file@percent }
+\newlabel{tab:eca}{{4.3}{28}{Preliminary attention-module comparison on C2A (earlier protocol; values are relative, not comparable to Table~\ref {tab:main}). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation}{table.caption.30}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.4}{\ignorespaces Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}}{28}{table.caption.31}\protected@file@percent }
+\newlabel{tab:main}{{4.4}{28}{Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold}{table.caption.31}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6.2}The Additive Ablation}{28}{subsection.4.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.3}{\ignorespaces Contribution of each component to $\mathrm {AP}_{50}$ on the C2A test set (additive ablation; the $y$-axis is zoomed to $0.838$--$0.856$). Each bar is the change from the previous model; parameters and end-to-end latency are listed beneath each configuration.}}{29}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:waterfall}{{4.3}{29}{Contribution of each component to $\mathrm {AP}_{50}$ on the C2A test set (additive ablation; the $y$-axis is zoomed to $0.838$--$0.856$). Each bar is the change from the previous model; parameters and end-to-end latency are listed beneath each configuration}{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{29}{subsection.4.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{29}{subsection.4.6.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4.5}{\ignorespaces Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy.}}{30}{table.caption.33}\protected@file@percent }
+\newlabel{tab:persize}{{4.5}{30}{Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy}{table.caption.33}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.6}{\ignorespaces Operating threshold and calibration per configuration on the C2A test set: the confidence that maximises $F_2$, the score at that threshold, and the expected calibration error.}}{30}{table.caption.34}\protected@file@percent }
+\newlabel{tab:thrcal}{{4.6}{30}{Operating threshold and calibration per configuration on the C2A test set: the confidence that maximises $F_2$, the score at that threshold, and the expected calibration error}{table.caption.34}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{30}{subsection.4.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{30}{section.4.7}\protected@file@percent }
+\newlabel{sec:qual}{{4.7}{30}{Qualitative Results and Error Analysis}{section.4.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant, the weakest configuration of the chain (the other three follow the same shape and are summarised in the text): box and classification losses (left) and validation mAP (right). The dashed line marks the best $F_2$ epoch (149); the run ended at epoch 154 with no late recovery.}}{31}{figure.caption.35}\protected@file@percent }
+\newlabel{fig:training}{{4.4}{31}{Training dynamics of the state-space variant, the weakest configuration of the chain (the other three follow the same shape and are summarised in the text): box and classification losses (left) and validation mAP (right). The dashed line marks the best $F_2$ epoch (149); the run ended at epoch 154 with no late recovery}{figure.caption.35}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.5}{\ignorespaces Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen.}}{31}{figure.caption.36}\protected@file@percent }
+\newlabel{fig:curves}{{4.5}{31}{Recommended CBAM~+~P2 model on the C2A test set: (a)~precision--recall curve and (b)~$F_1$ score against confidence threshold, from which the operating point is chosen}{figure.caption.36}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.6}{\ignorespaces CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set.}}{32}{figure.caption.37}\protected@file@percent }
+\newlabel{fig:calib}{{4.6}{32}{CBAM~+~P2 model: (a)~reliability diagram (expected calibration error $0.021$) and (b)~confusion matrix on the C2A test set}{figure.caption.37}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.7}{\ignorespaces The recommended detector on a dense collapsed-building scene from the C2A test set, shown as one unified comparison: (a)~ground-truth annotations, (b)~the standard 640-px pass, (c)~sliced inference, and (d)~sliced inference with test-time augmentation. Box counts are at the 0.25 review threshold. The sliced modes add detections along the rubble line where the smallest figures sit.}}{32}{figure.caption.38}\protected@file@percent }
+\newlabel{fig:qualgrid}{{4.7}{32}{The recommended detector on a dense collapsed-building scene from the C2A test set, shown as one unified comparison: (a)~ground-truth annotations, (b)~the standard 640-px pass, (c)~sliced inference, and (d)~sliced inference with test-time augmentation. Box counts are at the 0.25 review threshold. The sliced modes add detections along the rubble line where the smallest figures sit}{figure.caption.38}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.8}{\ignorespaces Detection-cell granularity on a C2A cluster crop, with detected boxes overlaid: the stride-8 (P3) grid~(a) covers several neighbouring people per cell, whereas the stride-4 (P2) grid~(b) resolves them individually. This is the spatial reason the added P2 scale recovers more of the smallest targets.}}{33}{figure.caption.39}\protected@file@percent }
+\newlabel{fig:detgrid}{{4.8}{33}{Detection-cell granularity on a C2A cluster crop, with detected boxes overlaid: the stride-8 (P3) grid~(a) covers several neighbouring people per cell, whereas the stride-4 (P2) grid~(b) resolves them individually. This is the spatial reason the added P2 scale recovers more of the smallest targets}{figure.caption.39}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{33}{section.4.8}\protected@file@percent }
+\newlabel{sec:sota}{{4.8}{33}{Comparison with State-of-the-Art}{section.4.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{33}{section.4.9}\protected@file@percent }
+\newlabel{sec:sahitta}{{4.9}{33}{Inference-Time Enhancement: SAHI and TTA}{section.4.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\blx@tocontentsinit {0}\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation.}}{34}{table.caption.40}\protected@file@percent }
+\newlabel{tab:sota}{{4.7}{34}{Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation}{table.caption.40}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation.}}{34}{table.caption.41}\protected@file@percent }
+\newlabel{tab:sahi}{{4.8}{34}{SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation}{table.caption.41}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.9}{\ignorespaces Per-size recall of the CBAM~+~P2 model under each inference-time setting (baseline, the SAHI slice sweep, and TTA at $1280$~px) on the C2A test set. The gains concentrate in the very-tiny and tiny bands, and TTA gives the largest very-tiny improvement.}}{35}{figure.caption.42}\protected@file@percent }
+\newlabel{fig:sahibars}{{4.9}{35}{Per-size recall of the CBAM~+~P2 model under each inference-time setting (baseline, the SAHI slice sweep, and TTA at $1280$~px) on the C2A test set. The gains concentrate in the very-tiny and tiny bands, and TTA gives the largest very-tiny improvement}{figure.caption.42}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.10}Objectives Achieved}{35}{section.4.10}\protected@file@percent }
+\newlabel{sec:objectives}{{4.10}{35}{Objectives Achieved}{section.4.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.9}{\ignorespaces Definitive cost estimate of the experimental workstation (Dhaka retail, mid-2026). The machine was already available; the estimate is what replication would cost.}}{36}{table.caption.43}\protected@file@percent }
+\newlabel{tab:budget}{{4.9}{36}{Definitive cost estimate of the experimental workstation (Dhaka retail, mid-2026). The machine was already available; the estimate is what replication would cost}{table.caption.43}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.11}Financial Analysis and Budget}{36}{section.4.11}\protected@file@percent }
+\newlabel{sec:budget}{{4.11}{36}{Financial Analysis and Budget}{section.4.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.12}Conclusion}{36}{section.4.12}\protected@file@percent }
 \@setckpt{chapters/04_implementation_results}{
-\setcounter{page}{31}
+\setcounter{page}{37}
 \setcounter{equation}{1}
-\setcounter{enumi}{0}
+\setcounter{enumi}{5}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
 \setcounter{enumiv}{0}
@@ -62,13 +81,13 @@
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{chapter}{4}
-\setcounter{section}{8}
+\setcounter{section}{12}
 \setcounter{subsection}{0}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{8}
-\setcounter{table}{8}
+\setcounter{figure}{9}
+\setcounter{table}{9}
 \setcounter{parentequation}{0}
 \setcounter{caption@flags}{2}
 \setcounter{continuedfloat}{0}
@@ -81,7 +100,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{51}
+\setcounter{instcount}{63}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{3}
 \setcounter{maxitems}{3}
@@ -187,12 +206,12 @@
 \setcounter{bbx:relatedcount}{0}
 \setcounter{bbx:relatedtotal}{0}
 \setcounter{cbx@tempcnta}{0}
-\setcounter{cbx@tempcntb}{23}
+\setcounter{cbx@tempcntb}{5}
 \setcounter{cbx@tempcntc}{0}
 \setcounter{cbx@tempcntd}{-1}
 \setcounter{section@level}{0}
-\setcounter{Item}{0}
+\setcounter{Item}{5}
 \setcounter{Hfootnote}{0}
 \setcounter{Hy@AnnotLevel}{0}
-\setcounter{bookmark@seq@number}{61}
+\setcounter{bookmark@seq@number}{68}
 }

@@ -55,4 +55,20 @@
 \vblank{2}
 \printbibliography[heading=none]
 
+% ---------- APPENDIX ----------
+\appendix
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Appendix: Model Selection History}
+\chapter*{Appendix: Model Selection History}
+This appendix consolidates every configuration explored during model
+selection, from the YOLOv8 through YOLO11 detector-family benchmark that
+fixed the YOLO11m baseline, to the attention (ECA, CBAM), detection-scale
+(P2), state-space (Mamba, atrous-SSM), and combined variants evaluated on
+C2A. The summary table records, for each attempt, its configuration, its
+headline scores under the protocol it was run with, and the decision it led
+to.
+
+% [Summary table of all tried models to be inserted here.]
+
 \end{document}

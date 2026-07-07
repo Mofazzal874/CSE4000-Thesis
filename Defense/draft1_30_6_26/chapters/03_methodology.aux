@@ -1,46 +1,46 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {III}Methodology}{10}{chapter.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {III}Methodology}{13}{chapter.3}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{10}{section.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}System Architecture Overview}{10}{section.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces High-level schematic of the proposed detection pipeline. An aerial image passes through the YOLO11m backbone, the CBAM attention block, and a PAN--FPN neck extended to stride~4; a four-scale head and NMS produce the final detections. Red-dashed elements mark the two proposed modifications.}}{11}{figure.caption.24}\protected@file@percent }
-\newlabel{fig:framework}{{3.1}{11}{High-level schematic of the proposed detection pipeline. An aerial image passes through the YOLO11m backbone, the CBAM attention block, and a PAN--FPN neck extended to stride~4; a four-scale head and NMS produce the final detections. Red-dashed elements mark the two proposed modifications}{figure.caption.24}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Proposed System Architecture}{11}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Data Preprocessing}{11}{subsection*.27}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector on a real C2A scene. The backbone extracts the P2--P5 feature pyramid; CBAM (red-dashed) replaces the C2PSA block at P5; the FPN and PAN passes fuse four levels, with the new stride-4 branch marked in red; the four-scale head and NMS produce the detections. The insets show the model's actual input, spatial attention, P2 feature response, and output on this scene.}}{12}{figure.caption.25}\protected@file@percent }
-\newlabel{fig:fullarch}{{3.2}{12}{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector on a real C2A scene. The backbone extracts the P2--P5 feature pyramid; CBAM (red-dashed) replaces the C2PSA block at P5; the FPN and PAN passes fuse four levels, with the new stride-4 branch marked in red; the four-scale head and NMS produce the detections. The insets show the model's actual input, spatial attention, P2 feature response, and output on this scene}{figure.caption.25}{}}
-\@writefile{toc}{\contentsline {subsection}{Attention Enhancement: CBAM}{12}{subsection*.28}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces Layer configuration of the proposed detector (640-px input). Channel counts are the values realised at the YOLO11m scale (width 1.0, channel cap 512, depth 0.5). Bold rows are the elements added or modified in this work.}}{13}{table.caption.26}\protected@file@percent }
-\newlabel{tab:layers}{{3.1}{13}{Layer configuration of the proposed detector (640-px input). Channel counts are the values realised at the YOLO11m scale (width 1.0, channel cap 512, depth 0.5). Bold rows are the elements added or modified in this work}{table.caption.26}{}}
-\@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{13}{subsection*.29}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{13}{subsection*.30}\protected@file@percent }
-\newlabel{sec:mamba}{{3.3}{13}{State-Space Neck Variant: C3k2Mamba}{subsection*.30}{}}
-\@writefile{toc}{\contentsline {subsection}{Running Example}{14}{subsection*.31}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}Architecture Novelties}{14}{section.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Attention That Pays for Itself}{14}{subsection*.33}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image.}}{15}{figure.caption.32}\protected@file@percent }
-\newlabel{fig:explain}{{3.3}{15}{The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image}{figure.caption.32}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution. The schematic tiles (left) illustrate the mechanism: channel and spatial attention suppress background clutter and amplify the faint target response. The right panel shows the trained model's actual spatial-attention map on a C2A scene, concentrated on the scattered people rather than the rubble.}}{15}{figure.caption.34}\protected@file@percent }
-\newlabel{fig:cbameffect}{{3.4}{15}{Effect of the CBAM substitution. The schematic tiles (left) illustrate the mechanism: channel and spatial attention suppress background clutter and amplify the faint target response. The right panel shows the trained model's actual spatial-attention map on a C2A scene, concentrated on the scattered people rather than the rubble}{figure.caption.34}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.5}{\ignorespaces The stride problem motivating the P2 head: the same $\sim $12-px human under each scale's detection grid. All four panels show one $32\times 32$-px image patch (a single P5 cell); the target covers about 0.4 of a P5 cell, 0.75 of a P4 cell, and 1.5 P3 cells, but roughly three cells of the added stride-4 P2 grid (red), enough for precise localisation.}}{16}{figure.caption.36}\protected@file@percent }
-\newlabel{fig:strideprob}{{3.5}{16}{The stride problem motivating the P2 head: the same $\sim $12-px human under each scale's detection grid. All four panels show one $32\times 32$-px image patch (a single P5 cell); the target covers about 0.4 of a P5 cell, 0.75 of a P4 cell, and 1.5 P3 cells, but roughly three cells of the added stride-4 P2 grid (red), enough for precise localisation}{figure.caption.36}{}}
-\@writefile{toc}{\contentsline {subsection}{A Detection Scale Where the Targets Are}{16}{subsection*.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Single-Variable Additive Design}{16}{subsection*.37}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{17}{table.caption.38}\protected@file@percent }
-\newlabel{tab:variants}{{3.2}{17}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.38}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.5}Loss Function Design}{17}{section.3.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.6}{\ignorespaces The SAHI inference pipeline on a C2A scene: the input image is sliced into overlapping tiles (plus one full-image pass), the CBAM~+~P2 detector runs on each tile at a low confidence floor, and the per-tile detections are merged by greedy non-maximum merging into the final output.}}{18}{figure.caption.39}\protected@file@percent }
-\newlabel{fig:sahipipe}{{3.6}{18}{The SAHI inference pipeline on a C2A scene: the input image is sliced into overlapping tiles (plus one full-image pass), the CBAM~+~P2 detector runs on each tile at a low confidence floor, and the per-tile detections are merged by greedy non-maximum merging into the final output}{figure.caption.39}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.6}Inference-Time Enhancement: SAHI and TTA}{18}{section.3.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.7}{\ignorespaces The test-time augmentation pipeline: the input image is evaluated at three scales, each with a horizontal flip, by the same CBAM~+~P2 detector at 1280-px input, and the merged predictions are reduced by NMS to the final detections.}}{19}{figure.caption.40}\protected@file@percent }
-\newlabel{fig:ttapipe}{{3.7}{19}{The test-time augmentation pipeline: the input image is evaluated at three scales, each with a horizontal flip, by the same CBAM~+~P2 detector at 1280-px input, and the merged predictions are reduced by NMS to the final detections}{figure.caption.40}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.7}Conclusion}{19}{section.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{13}{section.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}System Architecture Overview}{13}{section.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces High-level schematic of the proposed detection pipeline. An aerial image passes through the YOLO11m backbone, the CBAM attention block, and a PAN--FPN neck extended to stride~4; a four-scale head and NMS produce the final detections. Red-dashed elements mark the two proposed modifications.}}{14}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:framework}{{3.1}{14}{High-level schematic of the proposed detection pipeline. An aerial image passes through the YOLO11m backbone, the CBAM attention block, and a PAN--FPN neck extended to stride~4; a four-scale head and NMS produce the final detections. Red-dashed elements mark the two proposed modifications}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Proposed System Architecture}{14}{section.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Data Preprocessing}{14}{subsection.3.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector on a real C2A scene. The backbone extracts the P2--P5 feature pyramid; CBAM (red-dashed) replaces the C2PSA block at P5; the FPN and PAN passes fuse four levels, with the new stride-4 branch marked in red; the four-scale head and NMS produce the detections. The insets show the model's actual input, spatial attention, P2 feature response, and output on this scene.}}{15}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:fullarch}{{3.2}{15}{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector on a real C2A scene. The backbone extracts the P2--P5 feature pyramid; CBAM (red-dashed) replaces the C2PSA block at P5; the FPN and PAN passes fuse four levels, with the new stride-4 branch marked in red; the four-scale head and NMS produce the detections. The insets show the model's actual input, spatial attention, P2 feature response, and output on this scene}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Attention Enhancement: CBAM}{15}{subsection.3.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces Layer configuration of the proposed detector (640-px input). Channel counts are the values realised at the YOLO11m scale (width 1.0, channel cap 512, depth 0.5). Bold rows are the elements added or modified in this work.}}{16}{table.caption.19}\protected@file@percent }
+\newlabel{tab:layers}{{3.1}{16}{Layer configuration of the proposed detector (640-px input). Channel counts are the values realised at the YOLO11m scale (width 1.0, channel cap 512, depth 0.5). Bold rows are the elements added or modified in this work}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Multi-Scale Detection: the P2 Head}{16}{subsection.3.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}State-Space Neck Variant: C3k2Mamba}{16}{subsection.3.3.4}\protected@file@percent }
+\newlabel{sec:mamba}{{3.3.4}{16}{State-Space Neck Variant: C3k2Mamba}{subsection.3.3.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.5}Running Example}{17}{subsection.3.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}Architecture Novelties}{17}{section.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}Attention That Pays for Itself}{17}{subsection.3.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image.}}{18}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:explain}{{3.3}{18}{The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image}{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution. The schematic tiles (left) illustrate the mechanism: channel and spatial attention suppress background clutter and amplify the faint target response. The right panel shows the trained model's actual spatial-attention map on a C2A scene, concentrated on the scattered people rather than the rubble.}}{18}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:cbameffect}{{3.4}{18}{Effect of the CBAM substitution. The schematic tiles (left) illustrate the mechanism: channel and spatial attention suppress background clutter and amplify the faint target response. The right panel shows the trained model's actual spatial-attention map on a C2A scene, concentrated on the scattered people rather than the rubble}{figure.caption.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.5}{\ignorespaces The stride problem motivating the P2 head: the same $\sim $12-px human under each scale's detection grid. All four panels show one $32\times 32$-px image patch (a single P5 cell); the target covers about 0.4 of a P5 cell, 0.75 of a P4 cell, and 1.5 P3 cells, but roughly three cells of the added stride-4 P2 grid (red), enough for precise localisation.}}{19}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:strideprob}{{3.5}{19}{The stride problem motivating the P2 head: the same $\sim $12-px human under each scale's detection grid. All four panels show one $32\times 32$-px image patch (a single P5 cell); the target covers about 0.4 of a P5 cell, 0.75 of a P4 cell, and 1.5 P3 cells, but roughly three cells of the added stride-4 P2 grid (red), enough for precise localisation}{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.2}A Detection Scale Where the Targets Are}{19}{subsection.3.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.3}Single-Variable Additive Design}{19}{subsection.3.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{20}{table.caption.23}\protected@file@percent }
+\newlabel{tab:variants}{{3.2}{20}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.5}Loss Function Design}{20}{section.3.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.6}{\ignorespaces The SAHI inference pipeline on a C2A scene: the input image is sliced into overlapping tiles (plus one full-image pass), the CBAM~+~P2 detector runs on each tile at a low confidence floor, and the per-tile detections are merged by greedy non-maximum merging into the final output.}}{21}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:sahipipe}{{3.6}{21}{The SAHI inference pipeline on a C2A scene: the input image is sliced into overlapping tiles (plus one full-image pass), the CBAM~+~P2 detector runs on each tile at a low confidence floor, and the per-tile detections are merged by greedy non-maximum merging into the final output}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.6}Inference-Time Enhancement: SAHI and TTA}{21}{section.3.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.7}{\ignorespaces The test-time augmentation pipeline: the input image is evaluated at three scales, each with a horizontal flip, by the same CBAM~+~P2 detector at 1280-px input, and the merged predictions are reduced by NMS to the final detections.}}{22}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:ttapipe}{{3.7}{22}{The test-time augmentation pipeline: the input image is evaluated at three scales, each with a horizontal flip, by the same CBAM~+~P2 detector at 1280-px input, and the merged predictions are reduced by NMS to the final detections}{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.7}Conclusion}{22}{section.3.7}\protected@file@percent }
 \@setckpt{chapters/03_methodology}{
-\setcounter{page}{20}
+\setcounter{page}{23}
 \setcounter{equation}{6}
-\setcounter{enumi}{0}
+\setcounter{enumi}{5}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
 \setcounter{enumiv}{0}
@@ -67,7 +67,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{41}
+\setcounter{instcount}{55}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{3}
 \setcounter{maxitems}{3}
@@ -173,12 +173,12 @@
 \setcounter{bbx:relatedcount}{0}
 \setcounter{bbx:relatedtotal}{0}
 \setcounter{cbx@tempcnta}{0}
-\setcounter{cbx@tempcntb}{22}
+\setcounter{cbx@tempcntb}{26}
 \setcounter{cbx@tempcntc}{0}
 \setcounter{cbx@tempcntd}{-1}
 \setcounter{section@level}{0}
-\setcounter{Item}{0}
+\setcounter{Item}{5}
 \setcounter{Hfootnote}{0}
 \setcounter{Hy@AnnotLevel}{0}
-\setcounter{bookmark@seq@number}{45}
+\setcounter{bookmark@seq@number}{46}
 }
