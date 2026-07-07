@@ -119,9 +119,11 @@ standard P3--P5 scales.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_p2_head.png}{6.5cm}
-  \caption{The four-scale detection head. The P2 scale (stride~4, $160\times160$)
-  is added to the standard P3--P5 scales to resolve very small targets; each scale
-  feeds per-scale detections into non-maximum suppression.}
+  \caption{Construction of the added P2 branch. The P3 neck feature is upsampled
+  and concatenated with the high-resolution backbone P2 feature (a skip connection),
+  then fused by a C3k2 block into a $160\times160$ feature that a stride-4 detection
+  head reads. Each P2 grid cell covers about $4\times4$ input pixels, so the branch
+  resolves targets the coarser P3--P5 scales miss.}
   \label{fig:p2}
 \end{figure}
 

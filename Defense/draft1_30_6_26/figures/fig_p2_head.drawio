@@ -1,30 +1,88 @@
 <mxfile host="app.diagrams.net" type="device">
-  <diagram name="P2 head" id="p2head">
-    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" arrows="1" fold="1" page="1" pageWidth="1200" pageHeight="640" math="0">
+  <diagram name="P2 branch (zoom)" id="p2branch">
+    <mxGraphModel dx="1100" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="540" math="0" shadow="0">
       <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-        <mxCell id="t" value="Four-scale detection head: the added P2 level (stride 4) targets very small objects" style="text;html=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="180" y="16" width="840" height="24" as="geometry"/></mxCell>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
 
-        <mxCell id="neck" value="PAN&#8211;FPN neck features" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="60" y="270" width="150" height="90" as="geometry"/></mxCell>
+        <mxCell id="ttl" value="The added P2 branch (stride 4): building the high-resolution detection feature" style="text;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="30" y="8" width="820" height="24" as="geometry" /></mxCell>
 
-        <mxCell id="p2" value="P2  stride 4&#10;160&#215;160&#10;detects &#8776; 4 px targets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="320" y="70" width="200" height="70" as="geometry"/></mxCell>
-        <mxCell id="p3" value="P3  stride 8&#10;80&#215;80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="320" y="180" width="200" height="60" as="geometry"/></mxCell>
-        <mxCell id="p4" value="P4  stride 16&#10;40&#215;40" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="320" y="280" width="200" height="60" as="geometry"/></mxCell>
-        <mxCell id="p5" value="P5  stride 32&#10;20&#215;20" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="320" y="380" width="200" height="60" as="geometry"/></mxCell>
+        <!-- ===== red contribution container (drawn first, behind) ===== -->
+        <mxCell id="added" value="Added in this work: the P2 branch" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#FF0000;fontFamily=Times New Roman;fontSize=11;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;dashPattern=6 6;" vertex="1" parent="1"><mxGeometry x="100" y="62" width="745" height="188" as="geometry" /></mxCell>
 
-        <mxCell id="note" value="P2 branch = 3 extra layers&#10;(upsample + fuse high-res backbone&#10;features + detect). New in this work;&#10;P3&#8211;P5 are the standard YOLO11 head." style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#d79b00;align=left;spacingLeft=6;" vertex="1" parent="1"><mxGeometry x="320" y="470" width="360" height="90" as="geometry"/></mxCell>
+        <!-- ===================== dimension labels (on top of stacks) ===================== -->
+        <mxCell id="lP3" value="80&#215;80&#215;256" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="15" y="112" width="90" height="18" as="geometry" /></mxCell>
+        <mxCell id="lUP" value="160&#215;160&#215;256" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="185" y="84" width="120" height="18" as="geometry" /></mxCell>
+        <mxCell id="lCAT" value="160&#215;160&#215;384" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="372" y="76" width="120" height="18" as="geometry" /></mxCell>
+        <mxCell id="lP2" value="160&#215;160&#215;128" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="552" y="84" width="120" height="18" as="geometry" /></mxCell>
+        <mxCell id="lBB" value="160&#215;160&#215;128  (skip)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="196" y="378" width="140" height="18" as="geometry" /></mxCell>
 
-        <mxCell id="det" value="Per-scale detections&#10;&#8594; NMS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="640" y="230" width="150" height="90" as="geometry"/></mxCell>
+        <!-- ===================== P3 neck feature: 80x80 (short) x256 (4 plates) ===================== -->
+        <mxCell id="P3b" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="58" y="135" width="12" height="56" as="geometry" /></mxCell>
+        <mxCell id="P33" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="52" y="139" width="12" height="56" as="geometry" /></mxCell>
+        <mxCell id="P32" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="46" y="143" width="12" height="56" as="geometry" /></mxCell>
+        <mxCell id="P3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="40" y="147" width="12" height="56" as="geometry" /></mxCell>
 
-        <mxCell id="e1" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeColor=#d79b00;" edge="1" parent="1" source="neck" target="p2"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e2" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="neck" target="p3"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e3" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="neck" target="p4"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e4" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="neck" target="p5"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e5" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="p2" target="det"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e6" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="p3" target="det"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e7" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="p4" target="det"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e8" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="p5" target="det"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <!-- Upsample op -->
+        <mxCell id="upOp" value="Upsample&#10;&#215;2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="110" y="149" width="90" height="52" as="geometry" /></mxCell>
+
+        <!-- ===================== Upsampled feature: 160x160 (tall) x256 (4 plates) ===================== -->
+        <mxCell id="UPb" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="248" y="107" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="UP3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="242" y="111" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="UP2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="236" y="115" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="UP" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="230" y="119" width="12" height="112" as="geometry" /></mxCell>
+
+        <!-- concat glyph -->
+        <mxCell id="cc" value="c" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="322" y="159" width="32" height="32" as="geometry" /></mxCell>
+
+        <!-- ===================== concat feature: 160x160 (tall) x384 (6 plates) ===================== -->
+        <mxCell id="CATb" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="430" y="99" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="CAT5" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="424" y="103" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="CAT4" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="418" y="107" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="CAT3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="412" y="111" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="CAT2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="406" y="115" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="CAT" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="400" y="119" width="12" height="112" as="geometry" /></mxCell>
+
+        <!-- C3k2 op -->
+        <mxCell id="c3k2" value="C3k2&#10;(128)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="480" y="149" width="82" height="52" as="geometry" /></mxCell>
+
+        <!-- ===================== P2 feature: 160x160 (tall) x128 (2 plates), red ===================== -->
+        <mxCell id="P2b" value="" style="rounded=0;html=1;fillColor=#fbe0e0;strokeColor=#FF0000;" vertex="1" parent="1"><mxGeometry x="606" y="115" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="P2" value="" style="rounded=0;html=1;fillColor=#fbe0e0;strokeColor=#FF0000;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="600" y="119" width="12" height="112" as="geometry" /></mxCell>
+
+        <!-- Detect head op -->
+        <mxCell id="det" value="Detect head&#10;stride 4&#10;(160&#215;160 grid)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="690" y="143" width="145" height="64" as="geometry" /></mxCell>
+
+        <!-- ===================== backbone P2 feature: 160x160 (tall) x128 (2 plates), skip ===================== -->
+        <mxCell id="BBb" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="256" y="256" width="12" height="112" as="geometry" /></mxCell>
+        <mxCell id="BB" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="250" y="260" width="12" height="112" as="geometry" /></mxCell>
+
+        <mxCell id="note" value="Feature maps are plate stacks: plate height reflects spatial resolution (H&#215;W), the number of plates reflects channel count (C). Upsampling doubles the resolution (taller); concat stacks the channels (deeper, 6 plates); the C3k2 fusion returns to 128 channels. Each P2 grid cell covers ~4&#215;4 input px, so the branch resolves ~4 px targets the coarser P3&#8211;P5 scales miss." style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="20" y="402" width="820" height="46" as="geometry" /></mxCell>
+
+        <!-- ===================== edges ===================== -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="P3b" target="upOp"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="upOp" target="UP"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="UPb" target="cc"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="skip" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=9;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="BBb" target="cc"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="262" y="225" /><mxPoint x="338" y="225" /></Array></mxGeometry></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="cc" target="CAT"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="CATb" target="c3k2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#FF0000;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="c3k2" target="P2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" value="small-target&#10;detections" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=9;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="P2b" target="det"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===================== legend ===================== -->
+        <mxCell id="lgbox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;fontFamily=Times New Roman;fontSize=10;fontStyle=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=3;" vertex="1" parent="1"><mxGeometry x="20" y="464" width="860" height="60" as="geometry" /></mxCell>
+        <mxCell id="ls1" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="57" y="480" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="ls2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="51" y="484" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="ls3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="45" y="488" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="lt1" value="Feature map (height &#8733; H&#215;W, plates &#8733; C)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="86" y="486" width="240" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg2s" value="" style="rounded=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="330" y="484" width="30" height="22" as="geometry" /></mxCell>
+        <mxCell id="lg2t" value="Operation" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="366" y="486" width="80" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg3s" value="c" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=12;" vertex="1" parent="1"><mxGeometry x="450" y="482" width="26" height="26" as="geometry" /></mxCell>
+        <mxCell id="lg3t" value="Concatenate" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="482" y="486" width="90" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg4s" value="" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="580" y="484" width="30" height="22" as="geometry" /></mxCell>
+        <mxCell id="lg4t" value="Detection head" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="616" y="486" width="100" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg5s" value="" style="rounded=0;html=1;fillColor=#fbe0e0;strokeColor=#FF0000;dashed=1;dashPattern=6 6;" vertex="1" parent="1"><mxGeometry x="724" y="484" width="30" height="22" as="geometry" /></mxCell>
+        <mxCell id="lg5t" value="Added in this work" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="760" y="486" width="120" height="20" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

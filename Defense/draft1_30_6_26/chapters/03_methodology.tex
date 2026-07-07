@@ -40,6 +40,27 @@ separately.
 \end{figure}
 
 \section{Detailed Methodology}
+The complete layer-level architecture of the proposed detector is shown in
+Figure~\ref{fig:fullarch}. The backbone follows the YOLO11m layout (layers 0--9),
+with the CBAM block at layer~10 in place of the original C2PSA attention. The neck
+runs a top-down pass (layers 11--19) that now extends one level further than the
+standard design, up to the stride-4 P2 resolution, and a bottom-up pass (layers
+20--28) that re-aggregates all four levels. The head (layer~29) decodes boxes at
+the four scales, and the elements added or modified in this work are marked in the
+figure. The subsections that follow describe each modification.
+
+\begin{figure}[p]
+  \centering
+  \figorplaceholder{figures/fig_cbam_p2_architecture.png}{19cm}
+  \caption{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector.
+  The backbone (layers 0--9) extracts features at five resolutions; CBAM at
+  layer~10 replaces the original C2PSA block; the neck fuses four levels through a
+  top-down pass (11--19), whose new stride-4 branch (17--19) produces the
+  $160\times160\times128$ P2 feature, and a bottom-up pass (20--28); the head
+  detects at strides 4, 8, 16, and 32, and NMS produces the final boxes.
+  Red-dashed elements are the modifications introduced in this work.}
+  \label{fig:fullarch}
+\end{figure}
 
 \subsection{Data Preprocessing}
 All images are letterbox-resized to $640 \times 640$ so that the original aspect
@@ -146,6 +167,38 @@ P3 level would summarise into a single cell. Non-maximum suppression then remove
 overlapping boxes, so that a cluster of nearby people is kept as separate detections
 rather than merged. The output is one bounding box per recovered person, which is
 what an operator reviews.
+
+The internal behaviour of the trained model on this image is shown in
+Figure~\ref{fig:explain}: the CBAM attention concentrates on human-shaped regions
+over the debris, the P2 feature responds most strongly at the smallest scattered
+figures, and the final detections recover the people the operator needs.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{minipage}{0.44\linewidth}\centering
+    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
+    {\small (a) input ($640\times640$)}
+  \end{minipage}\hfill
+  \begin{minipage}{0.44\linewidth}\centering
+    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/cbam_overlay.png}\\[2pt]
+    {\small (b) CBAM spatial attention}
+  \end{minipage}\\[8pt]
+  \begin{minipage}{0.44\linewidth}\centering
+    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/p2_featuremap.png}\\[2pt]
+    {\small (c) P2 feature response (stride 4)}
+  \end{minipage}\hfill
+  \begin{minipage}{0.44\linewidth}\centering
+    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/arch_detections.png}\\[2pt]
+    {\small (d) detections}
+  \end{minipage}
+  \caption{The trained CBAM~+~P2 detector on the running-example collapsed-building
+  scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map
+  (warm~=~high attention), concentrated on human-shaped regions rather than the
+  surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest
+  scattered figures; and (d)~the final human detections. The attention map and the P2
+  feature are read directly from the model's activations on this image.}
+  \label{fig:explain}
+\end{figure}
 
 \section{Conclusion}
 This chapter presented the proposed detector as an additive refinement of YOLO11m:

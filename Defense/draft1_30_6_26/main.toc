@@ -28,48 +28,48 @@
 \contentsline {subsection}{State-Space Models and the C3k2Mamba Block}{7}{subsection*.19}%
 \contentsline {section}{\numberline {2.4}Discussion}{7}{section.2.4}%
 \contentsline {subsection}{Research Gap and Proposed Solution}{7}{subsection*.21}%
-\contentsline {chapter}{\numberline {III}Methodology}{9}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Introduction}{9}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Overall Framework}{9}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Detailed Methodology}{9}{section.3.3}%
-\contentsline {subsection}{Data Preprocessing}{9}{subsection*.25}%
-\contentsline {subsection}{Attention Enhancement: CBAM}{10}{subsection*.26}%
-\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{11}{subsection*.27}%
-\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{11}{subsection*.28}%
-\contentsline {subsection}{The Additive Ablation Design}{11}{subsection*.29}%
-\contentsline {subsection}{Running Example}{11}{subsection*.31}%
-\contentsline {section}{\numberline {3.4}Conclusion}{12}{section.3.4}%
-\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{13}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{13}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Experimental Setup}{13}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Evaluation Metrics}{14}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Dataset}{14}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Implementation and Results}{15}{section.4.5}%
-\contentsline {subsection}{Detector Family Benchmark}{15}{subsection*.35}%
-\contentsline {subsection}{Attention Module Selection}{15}{subsection*.37}%
-\contentsline {subsection}{Quantitative Results}{16}{subsection*.39}%
-\contentsline {subsection}{Qualitative Results and Error Analysis}{17}{subsection*.45}%
-\contentsline {subsection}{Comparison with State-of-the-Art}{18}{subsection*.46}%
-\contentsline {subsection}{Inference-Time Enhancement: SAHI and TTA}{19}{subsection*.48}%
-\contentsline {subsection}{Lightweight Variant}{20}{subsection*.50}%
-\contentsline {section}{\numberline {4.6}Objective Achieved}{20}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Financial Analyses and Budget}{21}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Conclusion}{21}{section.4.8}%
-\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{22}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{22}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{22}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Ethical Considerations}{22}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Safety Considerations}{22}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Legal Considerations}{23}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{23}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{23}{section.5.7}%
-\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{24}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Introduction}{24}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{24}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{24}{section.6.3}%
-\contentsline {chapter}{\numberline {VII}Conclusions}{25}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Summary}{25}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Limitations}{25}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Recommendations and Future Works}{25}{section.7.3}%
-\contentsline {chapter}{References}{27}{section*.51}%
+\contentsline {chapter}{\numberline {III}Methodology}{10}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{10}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Overall Framework}{10}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Detailed Methodology}{10}{section.3.3}%
+\contentsline {subsection}{Data Preprocessing}{11}{subsection*.26}%
+\contentsline {subsection}{Attention Enhancement: CBAM}{11}{subsection*.27}%
+\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{13}{subsection*.28}%
+\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{13}{subsection*.29}%
+\contentsline {subsection}{The Additive Ablation Design}{13}{subsection*.30}%
+\contentsline {subsection}{Running Example}{14}{subsection*.32}%
+\contentsline {section}{\numberline {3.4}Conclusion}{14}{section.3.4}%
+\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{16}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Experimental Setup}{16}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Evaluation Metrics}{17}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Dataset}{17}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Implementation and Results}{18}{section.4.5}%
+\contentsline {subsection}{Detector Family Benchmark}{18}{subsection*.38}%
+\contentsline {subsection}{Attention Module Selection}{19}{subsection*.40}%
+\contentsline {subsection}{Quantitative Results}{20}{subsection*.42}%
+\contentsline {subsection}{Qualitative Results and Error Analysis}{21}{subsection*.49}%
+\contentsline {subsection}{Comparison with State-of-the-Art}{22}{subsection*.51}%
+\contentsline {subsection}{Inference-Time Enhancement: SAHI and TTA}{24}{subsection*.53}%
+\contentsline {subsection}{Lightweight Variant}{25}{subsection*.56}%
+\contentsline {section}{\numberline {4.6}Objective Achieved}{26}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Financial Analyses and Budget}{26}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Conclusion}{26}{section.4.8}%
+\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{27}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{27}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{27}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Ethical Considerations}{27}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Safety Considerations}{27}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Legal Considerations}{28}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{28}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{28}{section.5.7}%
+\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{29}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{29}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{29}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{29}{section.6.3}%
+\contentsline {chapter}{\numberline {VII}Conclusions}{30}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary}{30}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitations}{30}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Recommendations and Future Works}{30}{section.7.3}%
+\contentsline {chapter}{References}{32}{section*.57}%
 \contentsfinish 

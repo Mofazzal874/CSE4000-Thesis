@@ -1,0 +1,87 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="YOLO11m + CBAM + P2 (middle ground)" id="cbam-p2-mid">
+    <mxGraphModel dx="900" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="780" pageHeight="960" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===================== MAIN VERTICAL CHAIN ===================== -->
+        <mxCell id="inImg" value="PASTE IMAGE: input aerial image (640&#215;640)" style="rounded=0;dashed=1;fillColor=#f5f5f5;strokeColor=#999999;fontFamily=Times New Roman;fontSize=13;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="20" width="360" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="BB" value="YOLO11m Backbone&#10;Conv stem + C3k2 stages  &#8594;  P2, P3, P4, P5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="150" width="400" height="62" as="geometry" />
+        </mxCell>
+
+        <mxCell id="CBAM" value="CBAM attention (channel + spatial)&#10;replaces the C2PSA block at P5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#FF0000;dashed=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="250" width="400" height="62" as="geometry" />
+        </mxCell>
+
+        <mxCell id="FPN" value="FPN &#8212; top-down fusion&#10;(upsample + concat + C3k2, all scales)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="350" width="400" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="PAN" value="PAN &#8212; bottom-up fusion&#10;(downsample + concat + C3k2); extended to the P2 level" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="446" width="400" height="58" as="geometry" />
+        </mxCell>
+
+        <!-- Head with four scale sub-boxes -->
+        <mxCell id="HEAD" value="Four-scale Detection Head" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2ecf7;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="130" y="542" width="400" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="hP2" value="P2&#10;stride 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbe0e0;strokeColor=#FF0000;fontFamily=Times New Roman;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="146" y="578" width="86" height="48" as="geometry" /></mxCell>
+        <mxCell id="hP3" value="P3&#10;stride 8" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe6f5;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=12;" vertex="1" parent="1"><mxGeometry x="242" y="578" width="86" height="48" as="geometry" /></mxCell>
+        <mxCell id="hP4" value="P4&#10;stride 16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe6f5;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=12;" vertex="1" parent="1"><mxGeometry x="338" y="578" width="86" height="48" as="geometry" /></mxCell>
+        <mxCell id="hP5" value="P5&#10;stride 32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe6f5;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=12;" vertex="1" parent="1"><mxGeometry x="434" y="578" width="86" height="48" as="geometry" /></mxCell>
+
+        <mxCell id="NMS" value="NMS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="672" width="160" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="outImg" value="PASTE IMAGE: detections on the same image" style="rounded=0;dashed=1;fillColor=#f5f5f5;strokeColor=#999999;fontFamily=Times New Roman;fontSize=13;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="752" width="360" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== SIDE: feature pyramid (right of backbone) ===================== -->
+        <mxCell id="fmP2" value="P2 160&#178;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#bcdcf2;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;size=0.18;" vertex="1" parent="1"><mxGeometry x="560" y="140" width="110" height="26" as="geometry" /></mxCell>
+        <mxCell id="fmP3" value="P3 80&#178;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#bcdcf2;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;size=0.2;" vertex="1" parent="1"><mxGeometry x="568" y="168" width="94" height="24" as="geometry" /></mxCell>
+        <mxCell id="fmP4" value="P4 40&#178;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#bcdcf2;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;size=0.24;" vertex="1" parent="1"><mxGeometry x="576" y="194" width="78" height="22" as="geometry" /></mxCell>
+        <mxCell id="fmP5" value="P5 20&#178;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#bcdcf2;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;size=0.28;" vertex="1" parent="1"><mxGeometry x="584" y="218" width="62" height="20" as="geometry" /></mxCell>
+        <mxCell id="fmLbl" value="feature pyramid" style="text;html=1;fontFamily=Times New Roman;fontSize=10;fontStyle=2;align=center;" vertex="1" parent="1"><mxGeometry x="560" y="240" width="120" height="16" as="geometry" /></mxCell>
+
+        <!-- ===================== SIDE: explainable images ===================== -->
+        <mxCell id="imgAttn" value="PASTE: CBAM spatial-attention overlay" style="rounded=0;dashed=1;fillColor=#f5f5f5;strokeColor=#999999;fontFamily=Times New Roman;fontSize=10;fontStyle=2;" vertex="1" parent="1"><mxGeometry x="560" y="278" width="150" height="90" as="geometry" /></mxCell>
+        <mxCell id="imgFeat" value="PASTE: P2 feature map (160&#215;160)" style="rounded=0;dashed=1;fillColor=#f5f5f5;strokeColor=#999999;fontFamily=Times New Roman;fontSize=10;fontStyle=2;" vertex="1" parent="1"><mxGeometry x="560" y="410" width="150" height="90" as="geometry" /></mxCell>
+
+        <!-- ===================== LEGEND ===================== -->
+        <mxCell id="lgAdd" value="Added / modified in this work" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbe0e0;strokeColor=#FF0000;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="40" y="770" width="150" height="34" as="geometry" /></mxCell>
+        <mxCell id="lgTxt" value="CBAM attention and the&#10;P2 (stride-4) scale are the&#10;contributions of this work." style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="40" y="808" width="150" height="50" as="geometry" /></mxCell>
+
+        <!-- ===================== EDGES: single clean vertical chain ===================== -->
+        <mxCell id="e0" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="inImg" target="BB"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="BB" target="CBAM"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="CBAM" target="FPN"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="FPN" target="PAN"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="PAN" target="HEAD"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="HEAD" target="NMS"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="NMS" target="outImg"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- skip connections (left, dashed) + the P2-branch contribution (red) -->
+        <mxCell id="skPAN" value="skip (P5, P3)" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=10;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="BB" target="PAN">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="52" y="181" /><mxPoint x="52" y="475" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="skFPN" value="skip (P3, P4)" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=10;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="BB" target="FPN">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="82" y="181" /><mxPoint x="82" y="379" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="p2branch" value="P2 branch&#10;(stride 4)" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#FF0000;fontFamily=Times New Roman;fontSize=10;fontStyle=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="FPN" target="hP2">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="112" y="379" /><mxPoint x="112" y="562" /></Array></mxGeometry>
+        </mxCell>
+
+        <!-- dotted annotation leaders (all go right; no crossings) -->
+        <mxCell id="d1" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.9;" edge="1" parent="1" source="BB" target="fmP2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d2" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="CBAM" target="imgAttn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d3" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="PAN" target="imgFeat"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

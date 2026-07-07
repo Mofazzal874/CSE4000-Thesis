@@ -1,0 +1,8 @@
+{
+  "run_tag": "sahi_tta_cbam_p2",
+  "model_tag": "yolo11m_cbam_p2head",
+  "weights": "E:\\Thesis_mofazzal_2007074\\Benchmarking YOLOs\\CBAM_P2Head\\runs\\20260602_063759_yolo11m_cbam_p2head_s0_nogit\\weights\\best.pt",
+  "summary": "metrics/grand_summary.json",
+  "table": "metrics/grand_summary.xlsx",
+  "completed": "2026-07-07T06:59:08"
+}

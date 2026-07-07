@@ -1,25 +1,29 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {III}Methodology}{9}{chapter.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {III}Methodology}{10}{chapter.3}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{9}{section.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}Overall Framework}{9}{section.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Detailed Methodology}{9}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Data Preprocessing}{9}{subsection*.25}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{10}{figure.caption.24}\protected@file@percent }
-\newlabel{fig:framework}{{3.1}{10}{Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections}{figure.caption.24}{}}
-\@writefile{toc}{\contentsline {subsection}{Attention Enhancement: CBAM}{10}{subsection*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{11}{subsection*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{11}{subsection*.28}\protected@file@percent }
-\newlabel{sec:mamba}{{3.3}{11}{State-Space Neck Variant: C3k2Mamba}{subsection*.28}{}}
-\@writefile{toc}{\contentsline {subsection}{The Additive Ablation Design}{11}{subsection*.29}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Running Example}{11}{subsection*.31}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{12}{table.caption.30}\protected@file@percent }
-\newlabel{tab:variants}{{3.1}{12}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.30}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}Conclusion}{12}{section.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{10}{section.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Overall Framework}{10}{section.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Detailed Methodology}{10}{section.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections.}}{11}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:framework}{{3.1}{11}{Overall framework of the proposed detector. An aerial image is preprocessed and passed through the YOLO11m backbone (with CBAM replacing the C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection head; the added P2 level at stride~4 targets very small targets, and NMS yields the final human detections}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {subsection}{Data Preprocessing}{11}{subsection*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Attention Enhancement: CBAM}{11}{subsection*.27}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector. The backbone (layers 0--9) extracts features at five resolutions; CBAM at layer~10 replaces the original C2PSA block; the neck fuses four levels through a top-down pass (11--19), whose new stride-4 branch (17--19) produces the $160\times 160\times 128$ P2 feature, and a bottom-up pass (20--28); the head detects at strides 4, 8, 16, and 32, and NMS produces the final boxes. Red-dashed elements are the modifications introduced in this work.}}{12}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:fullarch}{{3.2}{12}{Layer-level architecture of the proposed YOLO11m~+~CBAM~+~P2 detector. The backbone (layers 0--9) extracts features at five resolutions; CBAM at layer~10 replaces the original C2PSA block; the neck fuses four levels through a top-down pass (11--19), whose new stride-4 branch (17--19) produces the $160\times 160\times 128$ P2 feature, and a bottom-up pass (20--28); the head detects at strides 4, 8, 16, and 32, and NMS produces the final boxes. Red-dashed elements are the modifications introduced in this work}{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection: the P2 Head}{13}{subsection*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{State-Space Neck Variant: C3k2Mamba}{13}{subsection*.29}\protected@file@percent }
+\newlabel{sec:mamba}{{3.3}{13}{State-Space Neck Variant: C3k2Mamba}{subsection*.29}{}}
+\@writefile{toc}{\contentsline {subsection}{The Additive Ablation Design}{13}{subsection*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{14}{table.caption.31}\protected@file@percent }
+\newlabel{tab:variants}{{3.1}{14}{The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck}{table.caption.31}{}}
+\@writefile{toc}{\contentsline {subsection}{Running Example}{14}{subsection*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}Conclusion}{14}{section.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image.}}{15}{figure.caption.33}\protected@file@percent }
+\newlabel{fig:explain}{{3.3}{15}{The trained CBAM~+~P2 detector on the running-example collapsed-building scene: (a)~the letterbox-resized input; (b)~the CBAM spatial-attention map (warm~=~high attention), concentrated on human-shaped regions rather than the surrounding debris; (c)~the P2 stride-4 feature response, strongest at the smallest scattered figures; and (d)~the final human detections. The attention map and the P2 feature are read directly from the model's activations on this image}{figure.caption.33}{}}
 \@setckpt{chapters/03_methodology}{
-\setcounter{page}{13}
+\setcounter{page}{16}
 \setcounter{equation}{2}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}
@@ -34,7 +38,7 @@
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{1}
+\setcounter{figure}{3}
 \setcounter{table}{1}
 \setcounter{parentequation}{0}
 \setcounter{caption@flags}{2}

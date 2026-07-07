@@ -16,8 +16,8 @@
 \@writefile{toc}{\contentsline {subsection}{The YOLO11 Baseline}{6}{subsection*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Attention: CBAM and ECA}{6}{subsection*.15}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Multi-Scale Detection and the P2 Scale}{6}{subsection*.17}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression.}}{7}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:p2}{{2.2}{7}{The four-scale detection head. The P2 scale (stride~4, $160\times 160$) is added to the standard P3--P5 scales to resolve very small targets; each scale feeds per-scale detections into non-maximum suppression}{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces Construction of the added P2 branch. The P3 neck feature is upsampled and concatenated with the high-resolution backbone P2 feature (a skip connection), then fused by a C3k2 block into a $160\times 160$ feature that a stride-4 detection head reads. Each P2 grid cell covers about $4\times 4$ input pixels, so the branch resolves targets the coarser P3--P5 scales miss.}}{7}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:p2}{{2.2}{7}{Construction of the added P2 branch. The P3 neck feature is upsampled and concatenated with the high-resolution backbone P2 feature (a skip connection), then fused by a C3k2 block into a $160\times 160$ feature that a stride-4 detection head reads. Each P2 grid cell covers about $4\times 4$ input pixels, so the branch resolves targets the coarser P3--P5 scales miss}{figure.caption.18}{}}
 \@writefile{toc}{\contentsline {subsection}{State-Space Models and the C3k2Mamba Block}{7}{subsection*.19}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.4}Discussion}{7}{section.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Research Gap and Proposed Solution}{7}{subsection*.21}\protected@file@percent }
@@ -25,10 +25,10 @@
 \newlabel{fig:mamba}{{2.3}{8}{The explored C3k2Mamba block: forward and reverse selective scans over a local window are fused and projected, replacing the C3k2 bottleneck at selected neck layers while leaving the backbone and head unchanged}{figure.caption.20}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck.}}{8}{figure.caption.22}\protected@file@percent }
 \newlabel{fig:chain}{{2.4}{8}{The additive ablation studied in this thesis: each step changes one component of the YOLO11m baseline, isolating the effect of attention, the P2 detection scale, and the state-space neck}{figure.caption.22}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{8}{table.caption.23}\protected@file@percent }
-\newlabel{tab:gap}{{2.1}{8}{Position of this thesis relative to prior work on small-object aerial human detection}{table.caption.23}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{9}{table.caption.23}\protected@file@percent }
+\newlabel{tab:gap}{{2.1}{9}{Position of this thesis relative to prior work on small-object aerial human detection}{table.caption.23}{}}
 \@setckpt{chapters/02_literature_review}{
-\setcounter{page}{9}
+\setcounter{page}{10}
 \setcounter{equation}{0}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}

@@ -1,0 +1,62 @@
+{
+  "config": "baseline_640",
+  "n_images": 2043,
+  "precision": 0.8566,
+  "recall": 0.8345,
+  "F1": 0.8454,
+  "F2": 0.8388,
+  "F1_mean_per_image": 0.8436,
+  "F2_mean_per_image": 0.8389,
+  "confusion_TP_FP_FN": [
+    60522,
+    10132,
+    12001
+  ],
+  "per_size_recall": {
+    "very_tiny": 0.7576,
+    "tiny": 0.8644,
+    "small": 0.8844,
+    "medium": 0.7981,
+    "large": null
+  },
+  "per_size_gt_count": {
+    "very_tiny": 25072,
+    "tiny": 20520,
+    "small": 26614,
+    "medium": 317,
+    "large": 0
+  },
+  "latency_ms": {
+    "mean": 15.4,
+    "p50": 12.5,
+    "p95": 21.9
+  },
+  "opt_thresholds": {
+    "OptThr_F1": 0.31,
+    "Best_F1": 0.8479,
+    "OptThr_F2": 0.16,
+    "Best_F2": 0.8442
+  },
+  "calibration": {
+    "ECE": 0.1411,
+    "MCE": 0.2212,
+    "Brier": 0.1272
+  },
+  "coco": {
+    "AP": 0.5966,
+    "AP50": 0.8271,
+    "AP75": 0.6376,
+    "AP_small": 0.5968,
+    "AP_medium": 0.5365,
+    "AP_large": -1.0,
+    "AR@1": 0.0264,
+    "AR@10": 0.2422,
+    "AR@100": 0.6638
+  },
+  "official_val": {
+    "mAP50": 0.868,
+    "mAP50-95": 0.6317,
+    "precision": 0.8802,
+    "recall": 0.8209
+  }
+}

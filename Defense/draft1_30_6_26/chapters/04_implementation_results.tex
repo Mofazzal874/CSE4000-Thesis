@@ -122,6 +122,20 @@ scales are shown in Figure~\ref{fig:dataset_samples}.
   \label{fig:dataset_samples}
 \end{figure}
 
+The severity of that difficulty is quantified in Figure~\ref{fig:sizedist}: on the
+test split, $99.6\%$ of the human instances are smaller than $32$~px and about a
+third are below $8$~px, so the two coarsest detection scales (P4 and P5) cover almost
+no targets and the small-object scales dominate.
+
+\begin{figure}[tbp]
+  \centering
+  \input{tikz/fig_size_distribution}
+  \caption{Distribution of human-target sizes in the C2A test set ($\sqrt{\text{area}}$
+  bins, 2{,}043 images). Bars below $32$~px (blue) fall in the stride-4/8 (P2/P3)
+  regime; the coarse P4/P5 heads serve only the $0.4\%$ of targets above $32$~px.}
+  \label{fig:sizedist}
+\end{figure}
+
 \section{Implementation and Results}
 
 \subsection{Detector Family Benchmark}
@@ -220,6 +234,16 @@ state-space neck is not carried forward.
   \end{tabular}
 \end{table}
 
+\begin{figure}[tbp]
+  \centering
+  \input{tikz/fig_ablation_waterfall}
+  \caption{Contribution of each component to $\mathrm{AP}_{50}$ on the C2A test set
+  (additive ablation; the $y$-axis is zoomed to $0.838$--$0.856$). Each bar is the
+  change from the previous model; parameters and end-to-end latency are listed
+  beneath each configuration.}
+  \label{fig:waterfall}
+\end{figure}
+
 The per-size recall in Table~\ref{tab:persize} explains the aggregate flatness. The
 P2 head raises very-tiny ($<8$~px) recall from $0.743$ to $0.757$ ($+1.5$~points),
 the band that matters most for spotting distant victims, but it slightly lowers
@@ -305,7 +329,26 @@ match the numbers. The very-tiny band holds the largest share of the residual
 error, while the medium band, which contains few instances and larger targets, is
 almost saturated. The trade the model makes is therefore the intended one for this
 task: it recovers more of the smallest targets, where a missed detection is a missed
-person, at a small cost on the easier size bands.
+person, at a small cost on the easier size bands. Figure~\ref{fig:detgrid} makes the
+scale argument concrete on a real cluster: the stride-8 (P3) grid assigns several
+neighbouring people to a single cell, whereas the stride-4 (P2) grid separates them.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{minipage}{0.46\linewidth}\centering
+    \includegraphics[width=\linewidth,height=5cm,keepaspectratio]{figures/detgrid_c2a_s8.png}\\[2pt]
+    {\small (a) stride-8 (P3) grid}
+  \end{minipage}\hfill
+  \begin{minipage}{0.46\linewidth}\centering
+    \includegraphics[width=\linewidth,height=5cm,keepaspectratio]{figures/detgrid_c2a_s4.png}\\[2pt]
+    {\small (b) stride-4 (P2) grid}
+  \end{minipage}
+  \caption{Detection-cell granularity on a C2A cluster crop, with detected boxes
+  overlaid: the stride-8 (P3) grid~(a) covers several neighbouring people per cell,
+  whereas the stride-4 (P2) grid~(b) resolves them individually. This is the spatial
+  reason the added P2 scale recovers more of the smallest targets.}
+  \label{fig:detgrid}
+\end{figure}
 
 \subsection{Comparison with State-of-the-Art}
 Table~\ref{tab:sota} places the recommended model against the published results of
@@ -344,35 +387,53 @@ Section~\ref{sec:lightweight}.
 Slicing-aided hyper inference (SAHI)~\cite{akyon2022sahi} runs the trained detector
 over overlapping crops so that very small targets occupy a larger fraction of each
 input tile; test-time augmentation (TTA) instead runs the detector at several
-resolutions and merges the results. Both are applied as separate, clearly-labelled
-inference-time settings, not folded into the primary table, because the sliced
-protocol uses per-image box matching for which the standard mAP is not directly
-comparable. Table~\ref{tab:sahi} reports the SAHI sweep. A $256$-px slice gives the
-highest very-tiny recall, $0.829$ (up from $0.767$, $+6.2$ points), but at a heavy
-cost of $534$~ms per image; a $512$-px slice is the best balance, reaching $F_1$
-$0.866$ and very-tiny recall $0.808$ at $187$~ms. TTA at $1280$~px raised mAP50 by
-$1.6$ points and mAP50-95 by $5.4$ points with no retraining and cut the person
-miss-rate from $14\%$ to $10\%$; beyond $1280$~px it degraded, as a model trained at
-$640$~px cannot extrapolate to three times the resolution. These inference-time
-results were measured on the state-space variant; the same procedures are being
-re-run on the recommended CBAM~+~P2 model and the table will be updated accordingly.
+resolutions and merges the results. Both are applied to the recommended CBAM~+~P2
+model as separate, clearly-labelled inference-time settings, not folded into the
+primary table, because the sliced protocol uses per-image box matching for which the
+standard mAP is not directly comparable. Table~\ref{tab:sahi} reports the sweep and
+Figure~\ref{fig:sahibars} the resulting per-size recall. Among the SAHI settings, a
+$256$-px slice gives the highest very-tiny recall, $0.788$ (up from $0.758$,
+$+3.0$~points), but at $162$~ms per image; larger slices run faster
+($54$--$113$~ms) and recover slightly less. Test-time augmentation at $1280$~px is
+the most effective single setting: it raises very-tiny recall to $0.850$
+($+9.2$~points) and the operational $F_2$ to $0.854$, and lifts mAP50 from $0.868$
+to $0.878$ and mAP50-95 from $0.632$ to $0.677$, all at $60$~ms, cheaper than any
+SAHI configuration. Beyond $1280$~px it degrades, as a model trained at $640$~px
+cannot extrapolate to several times the resolution. Both remain optional
+inference-time settings that trade latency for recall on the smallest targets;
+neither is part of the primary model.
 
 \begin{table}[tbp]
   \centering
-  \caption{SAHI slice-size sweep on the C2A test set (per-image box matching at
-  IoU~0.5), reported as a separate inference-time setting. Baseline row is the
-  same model without slicing.}
+  \caption{SAHI slice-size sweep and TTA on the C2A test set for the recommended
+  CBAM~+~P2 model, reported as separate inference-time settings (per-image box
+  matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The
+  baseline row is the same model at $640$~px without slicing or augmentation.}
   \label{tab:sahi}
-  \begin{tabular}{@{}l r r r r r r@{}}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}l r r r r r r r@{}}
     \toprule
-    Setting & Slice & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny recall \\
+    Setting & Size & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny R & Lat.\ (ms) \\
     \midrule
-    no SAHI  & ---  & 0.855 & 0.845 & 0.850 & 0.847 & 0.767 \\
-    + SAHI   & 512  & 0.867 & 0.865 & \textbf{0.866} & 0.865 & 0.808 \\
-    + SAHI   & 256  & 0.790 & 0.872 & 0.829 & 0.854 & \textbf{0.829} \\
+    no SAHI (baseline) & 640  & 0.857 & 0.835 & 0.845 & 0.839 & 0.758 & 15 \\
+    + SAHI             & 256  & 0.853 & 0.846 & 0.850 & 0.848 & 0.788 & 162 \\
+    + SAHI             & 320  & 0.861 & 0.844 & \textbf{0.852} & 0.847 & 0.782 & 113 \\
+    + SAHI             & 512  & 0.864 & 0.837 & 0.850 & 0.842 & 0.763 & 66 \\
+    + SAHI             & 640  & 0.864 & 0.833 & 0.848 & 0.839 & 0.756 & 54 \\
+    + TTA              & 1280 & 0.774 & 0.877 & 0.822 & \textbf{0.854} & \textbf{0.850} & 60 \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/per_size_recall_all_configs.png}{7cm}
+  \caption{Per-size recall of the CBAM~+~P2 model under each inference-time setting
+  (baseline, the SAHI slice sweep, and TTA at $1280$~px) on the C2A test set. The
+  gains concentrate in the very-tiny and tiny bands, and TTA gives the largest
+  very-tiny improvement.}
+  \label{fig:sahibars}
+\end{figure}
 
 \subsection{Lightweight Variant}
 \label{sec:lightweight}

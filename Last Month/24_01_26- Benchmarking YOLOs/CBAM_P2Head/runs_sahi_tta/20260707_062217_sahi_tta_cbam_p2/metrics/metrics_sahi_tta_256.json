@@ -1,0 +1,67 @@
+{
+  "config": "sahi_tta_256",
+  "n_images": 2043,
+  "precision": 0.8528,
+  "recall": 0.8463,
+  "F1": 0.8495,
+  "F2": 0.8476,
+  "F1_mean_per_image": 0.8536,
+  "F2_mean_per_image": 0.851,
+  "confusion_TP_FP_FN": [
+    61374,
+    10594,
+    11149
+  ],
+  "per_size_recall": {
+    "very_tiny": 0.7884,
+    "tiny": 0.834,
+    "small": 0.9109,
+    "medium": 0.795,
+    "large": null
+  },
+  "per_size_gt_count": {
+    "very_tiny": 25072,
+    "tiny": 20520,
+    "small": 26614,
+    "medium": 317,
+    "large": 0
+  },
+  "latency_ms": {
+    "mean": 162.6,
+    "p50": 83.1,
+    "p95": 328.6
+  },
+  "opt_thresholds": {
+    "OptThr_F1": 0.39,
+    "Best_F1": 0.8543,
+    "OptThr_F2": 0.23,
+    "Best_F2": 0.8476
+  },
+  "calibration": {
+    "ECE": 0.0848,
+    "MCE": 0.0992,
+    "Brier": 0.1065
+  },
+  "coco": {
+    "AP": 0.5951,
+    "AP50": 0.8097,
+    "AP75": 0.625,
+    "AP_small": 0.5961,
+    "AP_medium": 0.405,
+    "AP_large": -1.0,
+    "AR@1": 0.0269,
+    "AR@10": 0.2491,
+    "AR@100": 0.666
+  },
+  "sahi_config": {
+    "name": "sahi_slice256_ov30",
+    "slice": 256,
+    "overlap": 0.3,
+    "perform_standard_pred": true,
+    "postprocess_type": "GREEDYNMM",
+    "postprocess_match_metric": "IOS",
+    "postprocess_match_threshold": 0.5,
+    "tta": true,
+    "floor_conf": 0.1
+  }
+}

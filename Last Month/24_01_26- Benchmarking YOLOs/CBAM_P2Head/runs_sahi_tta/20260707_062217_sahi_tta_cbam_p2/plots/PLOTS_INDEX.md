@@ -1,0 +1,15 @@
+pr_curve_baseline_640.png <- metrics/pr_f1_conf_baseline_640.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_baseline_640.png <- metrics/pr_f1_conf_baseline_640.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_sahi_slice256_ov30.png <- metrics/pr_f1_conf_sahi_slice256_ov30.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_sahi_slice256_ov30.png <- metrics/pr_f1_conf_sahi_slice256_ov30.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_sahi_slice320_ov25.png <- metrics/pr_f1_conf_sahi_slice320_ov25.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_sahi_slice320_ov25.png <- metrics/pr_f1_conf_sahi_slice320_ov25.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_sahi_slice512_ov25.png <- metrics/pr_f1_conf_sahi_slice512_ov25.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_sahi_slice512_ov25.png <- metrics/pr_f1_conf_sahi_slice512_ov25.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_sahi_slice640_ov30.png <- metrics/pr_f1_conf_sahi_slice640_ov30.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_sahi_slice640_ov30.png <- metrics/pr_f1_conf_sahi_slice640_ov30.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_tta_1280_custom.png <- metrics/pr_f1_conf_tta_1280_custom.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_tta_1280_custom.png <- metrics/pr_f1_conf_tta_1280_custom.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+pr_curve_sahi_tta_256.png <- metrics/pr_f1_conf_sahi_tta_256.csv (precision,recall) -- sahi_tta_cbam_p2_thesis.py
+f1f2_vs_conf_sahi_tta_256.png <- metrics/pr_f1_conf_sahi_tta_256.csv (F1,F2) -- sahi_tta_cbam_p2_thesis.py
+per_size_recall_all_configs.png <- metrics/metrics_*.json (per_size_recall) -- sahi_tta_cbam_p2_thesis.py

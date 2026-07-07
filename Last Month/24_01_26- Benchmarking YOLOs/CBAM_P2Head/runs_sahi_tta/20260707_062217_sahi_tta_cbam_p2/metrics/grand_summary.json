@@ -1,0 +1,483 @@
+{
+  "baseline_640": {
+    "config": "baseline_640",
+    "n_images": 2043,
+    "precision": 0.8566,
+    "recall": 0.8345,
+    "F1": 0.8454,
+    "F2": 0.8388,
+    "F1_mean_per_image": 0.8436,
+    "F2_mean_per_image": 0.8389,
+    "confusion_TP_FP_FN": [
+      60522,
+      10132,
+      12001
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7576,
+      "tiny": 0.8644,
+      "small": 0.8844,
+      "medium": 0.7981,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 15.4,
+      "p50": 12.5,
+      "p95": 21.9
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.31,
+      "Best_F1": 0.8479,
+      "OptThr_F2": 0.16,
+      "Best_F2": 0.8442
+    },
+    "calibration": {
+      "ECE": 0.1411,
+      "MCE": 0.2212,
+      "Brier": 0.1272
+    },
+    "coco": {
+      "AP": 0.5966,
+      "AP50": 0.8271,
+      "AP75": 0.6376,
+      "AP_small": 0.5968,
+      "AP_medium": 0.5365,
+      "AP_large": -1.0,
+      "AR@1": 0.0264,
+      "AR@10": 0.2422,
+      "AR@100": 0.6638
+    },
+    "official_val": {
+      "mAP50": 0.868,
+      "mAP50-95": 0.6317,
+      "precision": 0.8802,
+      "recall": 0.8209
+    }
+  },
+  "sahi_slice256_ov30": {
+    "config": "sahi_slice256_ov30",
+    "n_images": 2043,
+    "precision": 0.8528,
+    "recall": 0.8463,
+    "F1": 0.8495,
+    "F2": 0.8476,
+    "F1_mean_per_image": 0.8536,
+    "F2_mean_per_image": 0.851,
+    "confusion_TP_FP_FN": [
+      61374,
+      10594,
+      11149
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7884,
+      "tiny": 0.834,
+      "small": 0.9109,
+      "medium": 0.795,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 161.5,
+      "p50": 80.7,
+      "p95": 320.8
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.39,
+      "Best_F1": 0.8543,
+      "OptThr_F2": 0.23,
+      "Best_F2": 0.8476
+    },
+    "calibration": {
+      "ECE": 0.0848,
+      "MCE": 0.0992,
+      "Brier": 0.1065
+    },
+    "coco": {
+      "AP": 0.5951,
+      "AP50": 0.8097,
+      "AP75": 0.625,
+      "AP_small": 0.5961,
+      "AP_medium": 0.405,
+      "AP_large": -1.0,
+      "AR@1": 0.0269,
+      "AR@10": 0.2491,
+      "AR@100": 0.666
+    },
+    "sahi_config": {
+      "name": "sahi_slice256_ov30",
+      "slice": 256,
+      "overlap": 0.3,
+      "perform_standard_pred": true,
+      "postprocess_type": "GREEDYNMM",
+      "postprocess_match_metric": "IOS",
+      "postprocess_match_threshold": 0.5,
+      "floor_conf": 0.1
+    }
+  },
+  "sahi_slice320_ov25": {
+    "config": "sahi_slice320_ov25",
+    "n_images": 2043,
+    "precision": 0.8607,
+    "recall": 0.8438,
+    "F1": 0.8522,
+    "F2": 0.8471,
+    "F1_mean_per_image": 0.8554,
+    "F2_mean_per_image": 0.85,
+    "confusion_TP_FP_FN": [
+      61192,
+      9901,
+      11331
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7823,
+      "tiny": 0.8342,
+      "small": 0.9096,
+      "medium": 0.795,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 113.3,
+      "p50": 77.5,
+      "p95": 213.9
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.36,
+      "Best_F1": 0.8546,
+      "OptThr_F2": 0.19,
+      "Best_F2": 0.8479
+    },
+    "calibration": {
+      "ECE": 0.103,
+      "MCE": 0.124,
+      "Brier": 0.1093
+    },
+    "coco": {
+      "AP": 0.5923,
+      "AP50": 0.8111,
+      "AP75": 0.6271,
+      "AP_small": 0.5929,
+      "AP_medium": 0.392,
+      "AP_large": -1.0,
+      "AR@1": 0.027,
+      "AR@10": 0.2486,
+      "AR@100": 0.658
+    },
+    "sahi_config": {
+      "name": "sahi_slice320_ov25",
+      "slice": 320,
+      "overlap": 0.25,
+      "perform_standard_pred": true,
+      "postprocess_type": "GREEDYNMM",
+      "postprocess_match_metric": "IOS",
+      "postprocess_match_threshold": 0.5,
+      "floor_conf": 0.1
+    }
+  },
+  "sahi_slice512_ov25": {
+    "config": "sahi_slice512_ov25",
+    "n_images": 2043,
+    "precision": 0.8639,
+    "recall": 0.8368,
+    "F1": 0.8501,
+    "F2": 0.8421,
+    "F1_mean_per_image": 0.8526,
+    "F2_mean_per_image": 0.844,
+    "confusion_TP_FP_FN": [
+      60686,
+      9562,
+      11837
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7629,
+      "tiny": 0.8369,
+      "small": 0.9068,
+      "medium": 0.795,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 65.9,
+      "p50": 20.6,
+      "p95": 149.4
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.35,
+      "Best_F1": 0.8519,
+      "OptThr_F2": 0.16,
+      "Best_F2": 0.8438
+    },
+    "calibration": {
+      "ECE": 0.133,
+      "MCE": 0.1701,
+      "Brier": 0.1173
+    },
+    "coco": {
+      "AP": 0.5811,
+      "AP50": 0.8111,
+      "AP75": 0.6193,
+      "AP_small": 0.5819,
+      "AP_medium": 0.3881,
+      "AP_large": -1.0,
+      "AR@1": 0.0268,
+      "AR@10": 0.2459,
+      "AR@100": 0.6446
+    },
+    "sahi_config": {
+      "name": "sahi_slice512_ov25",
+      "slice": 512,
+      "overlap": 0.25,
+      "perform_standard_pred": true,
+      "postprocess_type": "GREEDYNMM",
+      "postprocess_match_metric": "IOS",
+      "postprocess_match_threshold": 0.5,
+      "floor_conf": 0.1
+    }
+  },
+  "sahi_slice640_ov30": {
+    "config": "sahi_slice640_ov30",
+    "n_images": 2043,
+    "precision": 0.864,
+    "recall": 0.833,
+    "F1": 0.8482,
+    "F2": 0.839,
+    "F1_mean_per_image": 0.8511,
+    "F2_mean_per_image": 0.8412,
+    "confusion_TP_FP_FN": [
+      60411,
+      9509,
+      12112
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7561,
+      "tiny": 0.8365,
+      "small": 0.9033,
+      "medium": 0.7855,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 53.9,
+      "p50": 21.4,
+      "p95": 139.9
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.3,
+      "Best_F1": 0.8495,
+      "OptThr_F2": 0.15,
+      "Best_F2": 0.8414
+    },
+    "calibration": {
+      "ECE": 0.1425,
+      "MCE": 0.1814,
+      "Brier": 0.1214
+    },
+    "coco": {
+      "AP": 0.5748,
+      "AP50": 0.8017,
+      "AP75": 0.6106,
+      "AP_small": 0.5752,
+      "AP_medium": 0.3885,
+      "AP_large": -1.0,
+      "AR@1": 0.0266,
+      "AR@10": 0.2442,
+      "AR@100": 0.6398
+    },
+    "sahi_config": {
+      "name": "sahi_slice640_ov30",
+      "slice": 640,
+      "overlap": 0.3,
+      "perform_standard_pred": true,
+      "postprocess_type": "GREEDYNMM",
+      "postprocess_match_metric": "IOS",
+      "postprocess_match_threshold": 0.5,
+      "floor_conf": 0.1
+    }
+  },
+  "_tta_official": {
+    "tta_640": {
+      "mAP50": 0.8407,
+      "mAP50-95": 0.605,
+      "precision": 0.8229,
+      "recall": 0.7851
+    },
+    "tta_832": {
+      "mAP50": 0.8732,
+      "mAP50-95": 0.6608,
+      "precision": 0.8633,
+      "recall": 0.8166
+    },
+    "tta_1280": {
+      "mAP50": 0.8783,
+      "mAP50-95": 0.6765,
+      "precision": 0.8515,
+      "recall": 0.8277
+    },
+    "tta_1920": {
+      "mAP50": 0.8507,
+      "mAP50-95": 0.6579,
+      "precision": 0.8324,
+      "recall": 0.8012
+    }
+  },
+  "tta_1280_custom": {
+    "config": "tta_1280_custom",
+    "n_images": 2043,
+    "precision": 0.7743,
+    "recall": 0.8765,
+    "F1": 0.8222,
+    "F2": 0.854,
+    "F1_mean_per_image": 0.8272,
+    "F2_mean_per_image": 0.8584,
+    "confusion_TP_FP_FN": [
+      63568,
+      18530,
+      8955
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.8496,
+      "tiny": 0.8849,
+      "small": 0.8975,
+      "medium": 0.6972,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 59.9,
+      "p50": 60.2,
+      "p95": 66.7
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.51,
+      "Best_F1": 0.8486,
+      "OptThr_F2": 0.28,
+      "Best_F2": 0.8544
+    },
+    "calibration": {
+      "ECE": 0.0899,
+      "MCE": 0.1176,
+      "Brier": 0.1123
+    },
+    "coco": {
+      "AP": 0.6597,
+      "AP50": 0.8509,
+      "AP75": 0.7034,
+      "AP_small": 0.6607,
+      "AP_medium": 0.4094,
+      "AP_large": -1.0,
+      "AR@1": 0.0271,
+      "AR@10": 0.2529,
+      "AR@100": 0.7345
+    },
+    "official_val": {
+      "mAP50": 0.8783,
+      "mAP50-95": 0.6765,
+      "precision": 0.8515,
+      "recall": 0.8277
+    }
+  },
+  "sahi_tta_256": {
+    "config": "sahi_tta_256",
+    "n_images": 2043,
+    "precision": 0.8528,
+    "recall": 0.8463,
+    "F1": 0.8495,
+    "F2": 0.8476,
+    "F1_mean_per_image": 0.8536,
+    "F2_mean_per_image": 0.851,
+    "confusion_TP_FP_FN": [
+      61374,
+      10594,
+      11149
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7884,
+      "tiny": 0.834,
+      "small": 0.9109,
+      "medium": 0.795,
+      "large": null
+    },
+    "per_size_gt_count": {
+      "very_tiny": 25072,
+      "tiny": 20520,
+      "small": 26614,
+      "medium": 317,
+      "large": 0
+    },
+    "latency_ms": {
+      "mean": 162.6,
+      "p50": 83.1,
+      "p95": 328.6
+    },
+    "opt_thresholds": {
+      "OptThr_F1": 0.39,
+      "Best_F1": 0.8543,
+      "OptThr_F2": 0.23,
+      "Best_F2": 0.8476
+    },
+    "calibration": {
+      "ECE": 0.0848,
+      "MCE": 0.0992,
+      "Brier": 0.1065
+    },
+    "coco": {
+      "AP": 0.5951,
+      "AP50": 0.8097,
+      "AP75": 0.625,
+      "AP_small": 0.5961,
+      "AP_medium": 0.405,
+      "AP_large": -1.0,
+      "AR@1": 0.0269,
+      "AR@10": 0.2491,
+      "AR@100": 0.666
+    },
+    "sahi_config": {
+      "name": "sahi_slice256_ov30",
+      "slice": 256,
+      "overlap": 0.3,
+      "perform_standard_pred": true,
+      "postprocess_type": "GREEDYNMM",
+      "postprocess_match_metric": "IOS",
+      "postprocess_match_threshold": 0.5,
+      "tta": true,
+      "floor_conf": 0.1
+    }
+  }
+}

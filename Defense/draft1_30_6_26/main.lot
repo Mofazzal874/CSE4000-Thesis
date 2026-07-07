@@ -1,18 +1,18 @@
 \lotlofhead {Table}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{8}{table.caption.23}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work on small-object aerial human detection.}}{9}{table.caption.23}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{12}{table.caption.30}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces The additive ablation. Each configuration differs from the previous one by a single architectural change, isolating the contribution of attention, multi-scale detection, and the state-space neck.}}{14}{table.caption.31}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 because the added stride-4 scale raises activation memory.}}{13}{table.caption.32}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration.}}{14}{table.caption.33}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary detector-family benchmark on C2A (test set) used to select the baseline. YOLO11m was chosen for its accuracy-to-size balance.}}{16}{table.caption.36}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Preliminary attention-module comparison on C2A (earlier protocol). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}}{16}{table.caption.38}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}}{17}{table.caption.40}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy.}}{17}{table.caption.41}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\blx@tocontentsinit {0}\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation.}}{19}{table.caption.47}%
-\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep on the C2A test set (per-image box matching at IoU~0.5), reported as a separate inference-time setting. Baseline row is the same model without slicing.}}{20}{table.caption.49}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration, held identical across all four configurations. Batch size was set to 16 with an out-of-memory retry ladder; the P2-head models settled at 8 because the added stride-4 scale raises activation memory.}}{16}{table.caption.34}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces C2A split used for all experiments. The same frozen split (verified by MD5) is used by every configuration.}}{17}{table.caption.35}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary detector-family benchmark on C2A (test set) used to select the baseline. YOLO11m was chosen for its accuracy-to-size balance.}}{19}{table.caption.39}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Preliminary attention-module comparison on C2A (earlier protocol). CBAM gives the best $F_2$ and small-object recall, so it is used in the ablation.}}{20}{table.caption.41}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Additive ablation on the C2A test set (COCO protocol). AP is averaged over IoU 0.5--0.95; $F_1$ and $F_2$ are at their optimal confidence thresholds; latency is end-to-end on the RTX 4070 Ti SUPER. Best value in each column in bold.}}{20}{table.caption.43}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Per-size recall on the C2A test set, by target pixel area. Ground-truth counts per band are shown; the medium band is small (317 instances) and its recall estimate is correspondingly noisy.}}{21}{table.caption.45}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set. Baseline numbers are from Nihal et al.~\blx@tocontentsinit {0}\cite {nihal2024c2a}, which use standard training without slicing or test-time augmentation.}}{24}{table.caption.52}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA on the C2A test set for the recommended CBAM~+~P2 model, reported as separate inference-time settings (per-image box matching at IoU~0.5; latency is the mean per-image time on the 4070 Ti SUPER). The baseline row is the same model at $640$~px without slicing or augmentation.}}{25}{table.caption.54}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
