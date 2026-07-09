@@ -9,6 +9,11 @@
 marked with `**…**` — only those words are bold, the rest regular. Speaker notes go in
 PowerPoint's notes pane, never on the slide.
 
+**Gemini prompts:** every slide below ends with a `> Gemini prompt:` block. Paste it into
+Gemini to get a MOCKUP of that slide's layout. The mockup is for arrangement reference
+only — Gemini invents placeholder photos/numbers/diagrams; build the real slide from the
+spec and NEVER paste a generated image into the deck.
+
 ---
 
 ## ONE-TIME SLIDE MASTER SETUP (do this before slide 1, then never think about it again)
@@ -86,6 +91,8 @@ below — renumber only if you merge/reorder slides.
 - Bottom line: `CSE 4000: Project/Thesis` `[16 · regular · #595959]`
 - Note: one-breath version to memorize: "a compact detector for people only a few pixels wide in disaster drone imagery, built by measuring one change at a time."
 
+> **Gemini prompt:** 16:9 academic PowerPoint title-slide mockup, flat clean vector style, pure white background, sans-serif fonts. Top-center: a small circular university crest placeholder. Below it, centered over three lines in dark navy #1F4E79 bold ~30pt: "MSA-YOLO: A Multi-Scale Attention Enhancement of YOLO for Tiny-Human Detection in Aerial Search-and-Rescue Imagery". Lower half: two columns — left column "Presented By" in small bold, then "Md Mofazzal Hosen" and "Roll: 2007074"; right column "Supervised By" in small bold, then "Dr. Sk. Md. Masudul Ahsan", "Professor", "Department of Computer Science and Engineering", "Khulna University of Engineering & Technology". Bottom center in small grey: "CSE 4000: Project/Thesis". No footer, no decorations, no gradients.
+
 ### Slide 2 · "Outline"
 - Title `Outline` `[30 · bold · #1F4E79]`.
 - Numbered list, two columns if needed `[22 · regular · #1F2933, 1.15 line spacing]`:
@@ -94,9 +101,13 @@ below — renumber only if you merge/reorder slides.
 - Page number per section, right-aligned `[22 · regular · #7F7F7F]` — **fill in LAST**.
 - Optional: tiny pipeline-diagram thumbnails beside "Methodology" to preview the step-by-step format.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat clean vector style, white background, sans-serif fonts, title "Outline" top-left in dark navy #1F4E79 bold ~30pt, thin grey footer "MSA-YOLO — Md Mofazzal Hosen (2007074)" bottom-left and page number bottom-right. Body: a numbered list of eleven sections in dark grey ~22pt — Introduction, Applications, Related Works, Problem Statement, Objectives, Methodology, Implementation & Results, Thesis Timeline, Future Work, Conclusion, References — each row with a small grey page number right-aligned at the far right edge, like a table of contents. Generous line spacing, no decorations.
+
 ---
 
 ## DIVIDER — `Introduction` [44 · bold · white on Navy band]
+
+> **Gemini prompt (all dividers):** 16:9 PowerPoint section-divider slide mockup, flat minimal style, pure white background. A solid dark navy #1F4E79 horizontal band stretches the full width across the vertical middle of the slide, about 1.8 inches tall. Centered on the band in white bold sans-serif ~44pt: "Introduction". A small semi-transparent white "01" sits just above the band. Nothing else on the slide — no footer, no images. *(Reuse for the other dividers with the text/number swapped: "Related Works" 02, "Methodology" 03, "Implementation & Results" 04.)*
 
 ### Slide 3 · "Introduction" (motivation)
 - Title `Introduction` `[30 · bold · #1F4E79]`.
@@ -109,6 +120,8 @@ below — renumber only if you merge/reorder slides.
   - Automating the search is a **practical need** — this thesis addresses it.
 - Note: this is the emotional hook; speak the last bullet slowly. The catchy line "the first hours decide who is found alive" is your SPOKEN opening — not on the slide.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat clean style, white background, title "Introduction" top-left in dark navy #1F4E79 bold ~30pt, thin grey footer bottom. Left 55%: four black sans-serif bullet points ~20pt about drones in disaster response, with a few phrases in bold (e.g. "fewer than 10 pixels", "thousands of frames"). Right 40%: a photograph of an aerial drone view of a flooded residential area with tiny people visible, thin grey border, and below it a small grey centered caption "Fig. - 01 : Aerial drone footage of a flood-affected region [4]".
+
 ### Slide 4 · "Introduction (Cont'd…)" (why it's hard)
 - Title `Introduction (Cont'd…)` `[30 · bold · #1F4E79]`.
 - Images: 2×2 grid, all four same rendered height (~2.2″), 1 pt #BFBFBF borders:
@@ -120,19 +133,23 @@ below — renumber only if you merge/reorder slides.
   - **20–40 people per scene**, many partially buried or occluded.
   - Detection maturity (R-CNN → YOLO → DETR) does **not transfer**: targets are an order of magnitude smaller than these detectors were tuned for.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Introduction (Cont'd…)" top-left dark navy #1F4E79 bold ~30pt, grey footer. Left/center: a 2×2 grid of four aerial disaster photographs of equal size with thin grey borders — a collapsed building, a fire, a flood, a traffic accident — each with a small bold label under it: "(a) collapsed building", "(b) fire", "(c) flood", "(d) traffic incident", and one grey caption line under the grid "Fig. - 02 : Representative C2A scenes". Right or below: three short fact lines ~18pt with bold numbers: "47% of people are < 10 px", "20–40 people per scene", "standard detectors do not transfer".
+
 ### Slide 5 · "Applications" **[mergeable → keep items 1, 2, 5 on Slide 3]**
 - Title `Applications` `[30 · bold · #1F4E79]`.
 - Five numbered items, one small icon each `[20 · regular; lead phrase bold]`:
   1. **Search-and-rescue triage** — drone/laptop flags likely victims live; operators review candidates, not raw frames.
   2. **Disaster damage assessment** — detections aggregated over a flight show planners where people are concentrated.
   3. **Crowd monitoring** — counting tiny people from altitude is the same technical problem.
-  4. **Wide-area security** — border/coastline patrol = low-density variant of the task.
+  4. **Wide-area security** — border/coastline patrol = low-density variant of the same task.
   5. **Embedded deployment** — 19.6 M params fits edge GPUs; recipe transfers to smaller YOLO11 backbones.
 - Optional corner image: `arch_detections.png` small, caption `[14 · #595959]`: "what the operator sees".
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Applications" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: five numbered rows, each with a small flat line-icon on the left (a drone, a map with pins, a crowd, a coastline with a radar sweep, a microchip) and one line of text ~20pt where the first phrase is bold: "Search-and-rescue triage", "Disaster damage assessment", "Crowd monitoring", "Wide-area security", "Embedded deployment", each followed by a short dash explanation in regular weight. Even vertical spacing, no decorations.
+
 ---
 
-## DIVIDER — `Related Works` [44 · bold · white on Navy band]
+## DIVIDER — `Related Works` [44 · bold · white on Navy band] *(reuse divider prompt, text "Related Works", number 02)*
 
 ### Slide 6 · "Related Works" (detector families)
 - Title `Related Works` `[30 · bold · #1F4E79]`.
@@ -146,6 +163,8 @@ below — renumber only if you merge/reorder slides.
 | Transformer | DETR (2020), RT-DETR (2024) | set prediction, no NMS/anchors | competitive speed only recently; heavier |
 
 - Takeaway box `[20 · bold italic on 10 % Navy tint]`: *We work in the YOLO family because speed and model size decide airborne deployability.*
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Related Works" top-left dark navy #1F4E79 bold ~30pt, grey footer. Centered small-caps caption above a table: "TABLE I — DETECTOR FAMILIES AND THEIR TRADE-OFFS". The table has a dark navy header row with white bold text and columns "Family | Representative works | Key idea | Trade-off"; three body rows (Two-stage, One-stage, Transformer); the middle row (One-stage / YOLO) has a light navy tint and bold text; no vertical gridlines, only thin horizontal rules top, under header, and bottom. At the slide bottom, a light-navy tinted rounded box with bold italic text: "We work in the YOLO family because speed and model size decide airborne deployability."
 
 ### Slide 7 · "Related Works (Cont'd…)" (small-object & aerial methods)
 - Title `Related Works (Cont'd…)` `[30 · bold · #1F4E79]`.
@@ -161,6 +180,8 @@ below — renumber only if you merge/reorder slides.
 
 - Takeaway box `[20 · bold italic]`: *All three technique lines are relevant — nobody had compared them under ONE protocol on disaster imagery.*
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Related Works (Cont'd…)" top-left dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption above the table: "TABLE II — TECHNIQUES FOR SMALL/AERIAL TARGETS". A four-row table with navy header row (white bold text), columns "Approach | Representative works | How it helps tiny targets | Limitation in prior work", rows: Higher-resolution scales, Feature attention, Inference-time slicing, Benchmarks. No vertical gridlines, thin horizontal rules only. Bottom: light-navy tinted box with bold italic takeaway sentence "All three technique lines are relevant — nobody had compared them under one protocol on disaster imagery."
+
 ### Slide 8 · "Related Works (Cont'd…)" (SAR datasets & state-space models)
 - Title `Related Works (Cont'd…)` `[30 · bold · #1F4E79]`.
 - Caption `[14 · bold · Small Caps]`: `TABLE III — SAR HUMAN DETECTION AND STATE-SPACE MODELS`
@@ -173,6 +194,8 @@ below — renumber only if you merge/reorder slides.
 | State-space models (SSM) | S4 (2022) → Mamba (2023) → Vision Mamba / VMamba (2024) → Mamba-YOLO (2025) | linear-time alternative to attention | applied as backbone replacement; never a controlled test on tiny humans |
 
 - Takeaway box `[20 · bold italic]`: *C2A is our benchmark and Nihal et al. our direct comparison; the SSM claim is untested at this scale — we test it.*
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Related Works (Cont'd…)" top-left dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption "TABLE III — SAR HUMAN DETECTION AND STATE-SPACE MODELS" above a three-row table with navy header (white bold), columns "Theme | Representative works | Status | Gap"; rows: Real SAR datasets, Synthetic-composite benchmark (with "C2A" in bold), State-space models. No vertical gridlines. Bottom: light-navy tinted box with bold italic sentence "C2A is our benchmark; the SSM claim is untested at this scale — we test it."
 
 ### Slide 9 · "Research Gap"
 - Title `Research Gap` `[30 · bold · #1F4E79]`.
@@ -187,6 +210,8 @@ below — renumber only if you merge/reorder slides.
 | Target domain | mostly generic aerial imagery | disaster/SAR imagery (C2A), very small humans |
 
 - Note: read the right column aloud — this slide IS the transition into objectives.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Research Gap" top-left dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption "TABLE IV — POSITION OF THIS THESIS RELATIVE TO PRIOR WORK" above a four-row, three-column table with navy header (white bold): "Aspect | Prior work | This thesis". The rightmost "This thesis" column is visually dominant: light navy tint over the whole column and key phrases in bold ("one controlled ablation", "measured on the task", "in the neck"). No vertical gridlines, thin horizontal rules only.
 
 ---
 
@@ -204,6 +229,8 @@ below — renumber only if you merge/reorder slides.
   **F₂ = 5PR / (4P + R)** — label under it `[16 · regular]`: recall weighted 4× over precision — our operational metric.
 - Note: close with "which architectural changes raise recall on sub-ten-pixel people, within an airborne parameter/latency budget?"
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat clean style, white background, title "Problem Statement" top-left dark navy #1F4E79 bold ~30pt, grey footer. Right 40%: a photograph of an aerial view of a collapsed building covered in many tiny green bounding boxes over people, thin grey border, small grey caption "Fig. - 03 : One C2A test scene — 156 annotated people". Left 55%: three bullet points ~20pt about the detection task ("one box per visible person", "correct when IoU ≥ 0.5", "a miss may never get a second chance"). Below the bullets, two stacked rounded rectangles: the first with a thin light-blue border containing the stacked-fraction formula "IoU(B̂,B) = area(B̂∩B) / area(B̂∪B) ≥ 0.5"; the second with a thicker dark-navy border containing a larger formula "F₂ = 5PR / (4P + R)" and a small grey label "recall weighted 4× over precision — our operational metric".
+
 ### Slide 11 · "Objectives"
 - Title `Objectives` `[30 · bold · #1F4E79]`.
 - Image right 35 %: `fig_ablation_chain.png` (borderless — schematic).
@@ -218,6 +245,8 @@ below — renumber only if you merge/reorder slides.
   - **P2 quantified, not assumed** — additive; P3–P5 untouched ⇒ gain attributable.
   - **Single-variable ablation on C2A** — first of its kind; negative results are first-class.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Objectives" top-left dark navy #1F4E79 bold ~30pt, grey footer. Left 60%: four numbered objectives ~20pt with bold key phrases ("additive ablation", "very-tiny recall", "honestly test", "without retraining"). Right 35%: a simple vertical flow diagram of four stacked light-blue rounded boxes connected by downward arrows, labeled "YOLO11m baseline", "+ CBAM", "+ CBAM + P2", "+ Mamba", with a small grey caption "Fig. - 04 : The additive ablation chain". Across the bottom: three small rounded chips with pale red fill #F8CECC and thin dark-red border, labeled in small text "CBAM as substitution", "P2 quantified, not assumed", "Single-variable ablation on C2A".
+
 ### Slide 12 · "Hypothesis"
 - Title `Hypothesis` `[30 · bold · #1F4E79]`.
 - Image left 45 %: `fig_stride_problem.png` (borderless).
@@ -230,6 +259,8 @@ below — renumber only if you merge/reorder slides.
   *If a stride-4 scale helps, the gain MUST appear in the very-tiny (< 8 px) band — nowhere else can compensate.*
 - Note: this equation returns on the per-size results slide — the hypothesis is falsifiable, and Slide 33 shows the test.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Hypothesis" top-left dark navy #1F4E79 bold ~30pt, grey footer. Left 45%: a schematic showing the same tiny human figure icon under four different grid overlays of decreasing cell size (labeled P5 stride 32, P4 stride 16, P3 stride 8, P2 stride 4 with the P2 grid drawn in red), grey caption "Fig. - 05" below. Right 45%: a bar chart of object-size distribution heavily skewed to the left with small bars labeled "<8px, 8–16, 16–32, >32px", grey caption "Fig. - 06" below. Center bottom: a white rounded box with light-blue border containing the formula "c_d(s) = s/d" plus the text "12 px → 0.4 cell @P5 · 1.5 @P3 · 3 cells @P2". Very bottom: a light-navy tinted band with bold italic text "If a stride-4 scale helps, the gain MUST appear in the very-tiny (<8 px) band."
+
 ### Slide 12-B · "From the Pre-Defense Proposal to MSA-YOLO" (BRIDGE — pivot insurance)
 - Title `[28 · bold · #1F4E79]` (28 pt — it's long).
 - Left 40 %: screenshot of pre-defense slide 18 (HBPA block diagram), greyed 60 % opacity,
@@ -241,9 +272,11 @@ below — renumber only if you merge/reorder slides.
   - **Tiny-object focus** → survived, sharpened: **stride-4 P2 scale**, quantified in a single-variable ablation + honest SSM test.
 - Takeaway box `[20 · bold italic]`: *The goal — recall on tiny, occluded humans — is unchanged; the route became controlled measurement instead of an unverifiable decomposition.*
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "From the Pre-Defense Proposal to MSA-YOLO" top-left dark navy #1F4E79 bold ~28pt, grey footer. Left 40%: a faded, semi-transparent grey block diagram of a neural network with branching paths, labeled above in grey bold caps "PRE-DEFENSE PROPOSAL". Right 40%: a crisp full-color vertical chain of four light-blue boxes with arrows, labeled above in red bold caps "FINAL DESIGN". Between them: three horizontal arrows pointing left-to-right, each with one line of small text ("Body-part decomposition → measurement-first design", "Attention → CBAM as substitution", "Tiny-object focus → stride-4 P2 scale"). Bottom: light-navy tinted band with bold italic sentence "The goal is unchanged; the route became controlled measurement."
+
 ---
 
-## DIVIDER — `Methodology` [44 · bold · white on Navy band]
+## DIVIDER — `Methodology` [44 · bold · white on Navy band] *(reuse divider prompt, text "Methodology", number 03)*
 
 **All step slides (14–22) use the T6 layout:** same pipeline diagram, same coordinates,
 current stage full color + 2.5 pt Red outline, rest 40 % greyscale. Kicker top-left
@@ -257,6 +290,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - One line under caption `[20 · regular]`: *Everything not red is the YOLO11m baseline — deliberately.*
 - Spoken (not written): the 3 phases — ① feature extraction + attention ② multi-scale fusion extended to stride 4 ③ four-scale decoding + NMS. Then announce: "I will now walk one image through this pipeline, stage by stage."
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, small red bold caps kicker "SYSTEM OVERVIEW" above the title "Methodology" in dark navy #1F4E79 bold ~30pt, grey footer. Body: one full-width horizontal neural-network pipeline diagram in light-blue rounded blocks with black arrows: an aerial photo thumbnail "Input 640×640" → a block "YOLO11m Backbone" → a block "CBAM" drawn with a RED DASHED outline → a block "PAN-FPN Neck + P2 branch" where the extra P2 branch is drawn with a red dashed outline → a block "4-scale Detect Head" → a block "NMS" → an output photo thumbnail with small green boxes. Below: grey caption "Fig. - 07 : The proposed detection pipeline — red-dashed elements are the two proposed modifications" and one plain sentence "Everything not red is the YOLO11m baseline — deliberately."
+
 ### Slide 14 · "Methodology (Cont'd…)" — kicker `STEP 1 / 7 · INPUT & PREPROCESSING`
 - T6 diagram: INPUT block highlighted.
 - Image right: `arch_input.png`, 1 pt border.
@@ -267,6 +302,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Integrate:** default YOLO augmentations; mosaic off for final 10 epochs.
   - **Find:** a stretched 8-px person is a destroyed 8-px person — letterboxing matters at this scale.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 1 / 7 · INPUT & PREPROCESSING" above the title "Methodology (Cont'd…)" dark navy bold ~30pt, grey footer. Top half: a small horizontal pipeline diagram (Input → Backbone → CBAM → Neck+P2 → Detect → NMS) where every block is greyed out at 40% opacity EXCEPT the "Input" block, which is full-color light blue with a thick red outline. Right side: an aerial photograph of a collapsed building, thin grey border, grey caption "Fig. - 08 : Running example". Bottom-left: a white rounded box with light-blue border containing "letterbox 640×640 · x′ = x/255 ∈ [0,1]". Bottom-right: three short lines, each starting with a bold colored word — "Break:" in red, "Integrate:" in navy, "Find:" in green — followed by regular black text.
+
 ### Slide 15 · "Methodology (Cont'd…)" — kicker `STEP 2 / 7 · BACKBONE`
 - T6 diagram: BACKBONE highlighted.
 - Image right: crop of the backbone column from `fig_cbam_p2_architecture.png`.
@@ -276,6 +313,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - C3k2 stages extract features at strides 2–32; **layers 2/4/6 kept as skip sources**.
   - Layer 2 (160²×256) becomes the **P2 skip** later.
 - **Find:** `[20 · Find: in green bold]` backbone untouched — that is what keeps the ablation clean.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 2 / 7 · BACKBONE" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: the same small pipeline diagram greyed at 40% except the "Backbone" block in full-color light blue with a thick red outline. Right: a vertical stack of five feature-map tiles shrinking in size from bottom to top, labeled P1 320², P2 160², P3 80², P4 40², P5 20², grey caption "Fig. - 09 : Backbone feature pyramid". Bottom-left: white rounded equation box with "P_k = (640/2^k)²". Left-center: two bullets about skip sources, and one line starting with a bold green "Find:" saying the backbone is untouched.
 
 ### Slide 16 · "Methodology (Cont'd…)" — kicker `STEP 3 / 7 · CBAM ATTENTION`
 - T6 diagram: CBAM block (backbone layer 10) highlighted.
@@ -290,6 +329,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Integrate:** ONE CBAM (r=16, 7×7 kernel) at layer 10 — re-weights the 512-ch P5 features.
   - **Find:** ≈ **1 M fewer parameters than baseline**, lowest latency of all four configs (**13.5 ms**), F₂ held/improved — attention at *negative* cost.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 3 / 7 · CBAM ATTENTION" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except a "CBAM" block in full color with thick red outline. Right 40%: a block diagram of the CBAM module — a feature-map tile entering a "Channel Attention" block (avg-pool and max-pool arrows into a shared MLP, then a sigmoid), then a "Spatial Attention" block (channel pooling into a 7×7 conv, sigmoid), then the refined tile — grey caption "Fig. - 10 : The CBAM module". Bottom-left: white rounded box with three stacked formulas using σ and ⊗ symbols. Bottom-right: three lines starting with bold colored words "Break:" red, "Integrate:" navy, "Find:" green.
+
 ### Slide 17 · "Methodology (Cont'd…)" — kicker `CBAM IN ACTION` (BIG IMAGE — no equation)
 - Two images side by side, same height:
   - `fig_cbam_effect.png` — label under it `[14 · bold]`: (a) mechanism — *illustrative* (italic!)
@@ -297,6 +338,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - Caption `[14 · #595959]`: `Fig. - 11 : Clutter suppressed, target amplified — the real attention concentrates on human-shaped regions, not rubble`
 - One honesty line `[18 · regular · #595959]`: *Map is 20×20 upscaled — blocky is correct; CBAM sits at stride 32.*
 - Note: say "blocky is correct" before they ask.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "CBAM IN ACTION" above title "Methodology (Cont'd…)" navy bold, grey footer. Two equal panels side by side: left panel a schematic pair of feature-map tiles labeled "before" (several orange background blobs, one faint grey blob) and "after" (background blobs faded, center blob bright red) with a small green box between them labeled "CBAM"; right panel an aerial photograph of rubble overlaid with a blocky orange-red heatmap concentrated on small human figures, thin grey border. Bold labels "(a) mechanism — illustrative" and "(b) real spatial attention" under the panels, one grey caption line "Fig. - 11" below, and a small grey note "Map is 20×20 upscaled — blocky is correct."
 
 ### Slide 18 · "Methodology (Cont'd…)" — kicker `STEP 4 / 7 · P2 DETECTION SCALE`
 - T6 diagram: NECK highlighted, new stride-4 branch in Red.
@@ -308,11 +351,15 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Break: nothing** — P3–P5 untouched; the branch is purely additive.
   - **Find:** the principal driver: very-tiny recall **0.743 → 0.757**, AP₅₀ **0.843 → 0.853** — for ~0.5 M params, +1 ms.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 4 / 7 · P2 DETECTION SCALE" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except the "Neck" block, full color with a NEW branch drawn in red. Right 40%: a diagram showing a feature tile "P3 80×80" going through an "Upsample" block, merging in a "Concat" block with a skip-connection tile "backbone P2 160×160", then a "C3k2" block producing a large tile "P2 160×160", ending at a small red "Detect stride-4" block; grey caption "Fig. - 12 : Construction of the P2 branch". Bottom-left: white rounded equation box "c_d(s) = s/d → 12-px person = 3 cells at stride 4". Bottom-right: three lines with bold colored lead words "Integrate:" navy, "Break: nothing" red, "Find:" green with bold numbers 0.743→0.757.
+
 ### Slide 19 · "Methodology (Cont'd…)" — kicker `P2 IN ACTION` (BIG IMAGE — no equation)
 - Images: `detgrid_c2a_s8.png` + `detgrid_c2a_s4.png` side by side (same crop!), 1 pt borders;
   panel labels `[14 · bold]`: (a) stride-8 (P3) grid · (b) stride-4 (P2) grid.
   Below or right: `p2_featuremap.png` — label `[14 · bold]`: (c) P2 feature response.
   Caption `[14 · #595959]`: `Fig. - 13 : Stride 8 assigns several neighbours to one cell; stride 4 separates them — the spatial mechanism behind the very-tiny-recall gain`
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "P2 IN ACTION" above title "Methodology (Cont'd…)" navy bold, grey footer. Three panels: left and center are the SAME aerial photo crop of scattered tiny people with green detection boxes, the left one overlaid with a coarse grey grid (large cells) labeled "(a) stride-8 (P3) grid", the center one overlaid with a much finer grey grid labeled "(b) stride-4 (P2) grid"; right panel a purple-and-green heatmap (viridis colors) where bright spots align with the people, labeled "(c) P2 feature response". Thin grey borders on all three, one grey caption line "Fig. - 13" underneath.
 
 ### Slide 20 · "Methodology (Cont'd…)" — kicker `STEP 5 / 7 · STATE-SPACE VARIANT`
 - T6 diagram: six neck C3k2 blocks highlighted in **Grey** (#9E9E9E — exploration, NOT Red: red = adopted changes).
@@ -324,6 +371,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Integrate:** C3k2Mamba replaces the C3k2 bottleneck at 6 neck layers (13, 16, 19, 22, 25, 28); backbone + head untouched.
   - **Why test it** `[Navy bold]`**:** literature promotes SSMs for detection — but always as backbone swaps, never controlled.
   - **Find (preview):** +2.4 M params, **2.8× latency, no accuracy change** — a genuine, verified null (details in Results).
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 5 / 7 · STATE-SPACE VARIANT" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram where six small blocks inside the "Neck" are highlighted in solid GREY (not red) while everything else is faded. Right 40%: a diagram of a feature map being scanned by a serpentine arrow path going left-to-right and a second reversed serpentine path right-to-left, both merging into a "fuse + project" block; grey caption "Fig. - 14 : The explored C3k2Mamba block". Bottom-left: white rounded equation box with "h_t = Ā h_(t−1) + B̄ x_t , y_t = C h_t" and a small italic label "generic selective-SSM recurrence". Bottom-right: three lines with bold lead words "Integrate:" navy, "Why test it:" navy, "Find (preview):" green with "2.8× latency, no accuracy change" in bold.
 
 ### Slide 21 · "Methodology (Cont'd…)" — kicker `STEP 6 / 7 · LOSS DESIGN` **[mergeable: show only CIoU + total]**
 - T6 diagram: HEAD highlighted with "training signal" arrows.
@@ -337,12 +386,16 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - Heavy box weighting suits the task: with one class the problem is not *what* but **where** — IoU alone is unstable for few-px boxes under sub-pixel shifts.
   - The P2 level joins all three terms exactly like the standard levels — **no re-balancing needed**.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "STEP 6 / 7 · LOSS DESIGN" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except the "Detect Head" block, full color with red outline and small arrows labeled "training signal". Left 55%: one large white rounded box with light-blue border containing four stacked mathematical formulas (a binary cross-entropy loss, a CIoU loss with a fraction ρ²/c², a DFL line, and a bold total "L = 7.5·L_CIoU + 1.5·L_DFL + 0.5·L_cls" slightly larger). Right 40%: three bullet points ~20pt with bold phrases "Kept identical across all four configurations", "where not what", "no re-balancing needed".
+
 ### Slide 22 · "Methodology (Cont'd…)" — kicker `STEP 7 / 7 · DECODING + NMS`
 - T6 diagram: full pipeline lit, DETECT + NMS highlighted.
 - Image right: `arch_detections.png`, 1 pt border.
   Caption `[14 · #595959]`: `Fig. - 15 : Running-example output — one box + confidence per recovered person`
 - Equation box: head predicts at strides {4, 8, 16, 32} → grids 160² · 80² · 40² · 20²; NMS merges overlaps
 - **Find:** `[Find: green bold]` clusters of nearby people kept as **separate detections** — what the operator reviews.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "STEP 7 / 7 · DECODING + NMS" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram fully in color with the final "Detect Head" and "NMS" blocks outlined in thick red. Right 40%: an aerial photograph of a collapsed building covered in many small green detection boxes, thin grey border, grey caption "Fig. - 15 : Running-example output". Bottom-left: white rounded equation box "strides {4, 8, 16, 32} → grids 160² · 80² · 40² · 20²". Bottom-right: one line starting with a bold green "Find:" about clusters kept as separate detections.
 
 ### Slide 23 · "Proposed MSA-YOLO Architecture" (BIG IMAGE — the money slide, no equation)
 - Title `[28 · bold · #1F4E79]`.
@@ -351,10 +404,14 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - One line `[20 · regular]`: *This exact configuration is the verbatim training configuration.*
 - Note: pause here. Hidden slide H4 has the full layer table if asked.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, title "Proposed MSA-YOLO Architecture" top-left dark navy #1F4E79 bold ~28pt, grey footer. The whole body is one large, detailed neural-network architecture diagram: a left column of stacked backbone blocks going down (Conv and C3k2 blocks with decreasing feature-map sizes 320→20), a red-dashed "CBAM" block at the bottom of the column, then arrows fanning right into a feature-pyramid neck with upsample/concat nodes across four levels, one level drawn in red as the added P2 branch, converging into four small "Detect" heads and an "NMS" block; four tiny photo insets in the corners showing an input image, an attention heatmap, a feature map, and a detection output. Grey caption below "Fig. - 16 : Layer-level MSA-YOLO" and one plain line "This exact configuration is the verbatim training configuration."
+
 ### Slide 24 · "Methodology (Cont'd…)" — kicker `END-TO-END TRACE` **[mergeable → into Slide 23]**
 - Images 2×2, same size, 1 pt borders: `arch_input.png` · `cbam_overlay.png` · `p2_featuremap.png` · `arch_detections.png`
   Panel labels `[14 · bold]`: (a) input (b) CBAM spatial attention (c) P2 stride-4 response (d) detections.
   Caption `[14 · #595959]`: `Fig. - 17 : Every intermediate read from the trained model's activations — the pipeline does what the diagrams claim`
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "END-TO-END TRACE" above title "Methodology (Cont'd…)" navy bold, grey footer. A centered 2×2 grid of four equal panels with thin grey borders: (a) an aerial photo of a collapsed building, (b) the same photo overlaid with a blocky orange attention heatmap, (c) a purple-green feature-map visualization with bright dots, (d) the same photo covered in small green detection boxes. Bold labels "(a) input", "(b) CBAM spatial attention", "(c) P2 stride-4 response", "(d) detections" under the panels and one grey caption line "Fig. - 17" at the bottom.
 
 ### Slide 25 · "The Additive Ablation Design"
 - Title `[30 · bold · #1F4E79]`.
@@ -372,6 +429,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - Takeaway box `[20 · bold italic]`: *Every reported difference is attributable to the architecture alone.*
 - Note: "This is why the negative Mamba result is interpretable: it fails where P2 demonstrably succeeds."
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "The Additive Ablation Design" top-left dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption "TABLE V — THE ADDITIVE ABLATION" above a four-row table with navy header row (white bold text), columns "Configuration | Backbone attention | Detection scales | Neck"; rows "YOLO11m (baseline)", "+ CBAM", "+ CBAM + P2", "+ Mamba + CBAM + P2"; in each row exactly ONE cell is bold (the single change), and the third row has a light navy tint. No vertical gridlines. Below: one line of small text about identical training settings, then a light-navy tinted band with bold italic sentence "Every reported difference is attributable to the architecture alone."
+
 ### Slide 26 · "Inference-Time Enhancement: SAHI"
 - Title `[30 · bold · #1F4E79]`.
 - Image top 60 %: `fig_sahi.png` (borderless).
@@ -382,6 +441,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Integrate at inference only:** tiles 256–640 px, 25–30 % overlap + one full-image pass; **weights untouched**.
   - **Find (preview):** 256-px slices → very-tiny recall 0.758 → **0.788** (+3.0 pt) — but **162 ms**/image.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, title "Inference-Time Enhancement: SAHI" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top 60%: a pipeline diagram — an aerial photo on the left, an arrow to the same photo divided by a grid into overlapping tiles, arrows from the tiles into a light-blue "Detector" block, then an arrow to a "Greedy merge" block, ending at the photo covered in green detection boxes. Below it: two small real-photo thumbnails with thin grey borders (a tiled grid image and a merged detection image) and a grey caption "Fig. - 18 : SAHI — slice, detect per tile, merge". Bottom-left: white rounded equation box "IOS(a,b) = area(a∩b) / min(area(a), area(b)) ≥ 0.5". Bottom-right: two lines with bold lead words "Integrate at inference only:" navy and "Find (preview):" green with "0.758 → 0.788" and "162 ms" in bold.
+
 ### Slide 27 · "Inference-Time Enhancement: TTA"
 - Title `[30 · bold · #1F4E79]`.
 - Image top: `fig_tta.png` (borderless); side inset: `tta_detections_zoom.png` (1 pt border).
@@ -390,9 +451,11 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - B/I/F strip:
   - **Find (preview):** very-tiny recall 0.758 → **0.850** (+9.2 pt), F₂ → **0.854**, at only **60 ms** — beats every SAHI setting. Collapses beyond 2× training resolution.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, title "Inference-Time Enhancement: TTA" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top: a pipeline diagram — one aerial photo fanning out into six small thumbnails arranged in two rows (three sizes labeled 1.0, 0.83, 0.67; second row the same three mirrored horizontally), all six feeding into a light-blue "Detector @ 1280 px" block, then an "NMS merge" block, ending at one output photo with green boxes; a zoomed inset photo with a thin grey border on the right side. Grey caption "Fig. - 19 : TTA — three scales × horizontal flip, merged by NMS". Bottom-left: white rounded equation box "{1.0, 0.83, 0.67} × {id, hflip} at 1280 px → NMS". Bottom-right: one line with bold green "Find (preview):" and "0.758 → 0.850", "60 ms" in bold.
+
 ---
 
-## DIVIDER — `Implementation & Results` [44 · bold · white on Navy band]
+## DIVIDER — `Implementation & Results` [44 · bold · white on Navy band] *(reuse divider prompt, text "Implementation & Results", number 04)*
 
 ### Slide 28 · "Experimental Setup"
 - Title `[30 · bold · #1F4E79]`. Two-column layout.
@@ -403,6 +466,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - Honesty bullet `[18 · regular]`: *AdamW pinned because the framework's default SGD diverged on the P2 architecture (~epoch 50); AdamW trained all four stably.*
 - Protocol chip strip, bottom `[16 · regular · #595959]`: smoke test before every run · per-epoch safety checkpoints · OOM retry ladder · full GPU telemetry · env manifest per run ⇒ **every number traceable**.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Experimental Setup" top-left dark navy #1F4E79 bold ~30pt, grey footer. Two columns: left column headed "Hardware / Software" in navy bold ~18pt with a plain list (GPU, CPU, RAM, OS, Python, PyTorch, Ultralytics); right column a small two-column settings table with navy header and small-caps caption "TABLE VI — TRAINING CONFIGURATION" (rows for resolution, optimizer, epochs, batch, AMP, seed). Below both columns: one italic sentence about AdamW being pinned, and at the very bottom a row of five small grey rounded chips reading "smoke test", "safety checkpoints", "OOM retry ladder", "GPU telemetry", "env manifest".
+
 ### Slide 29 · "Dataset: C2A"
 - Title `[30 · bold · #1F4E79]`.
 - Images: scene grid (small, reuse — cite as Fig. - 02, do NOT renumber) + size-distribution PNG (reuse — Fig. - 06).
@@ -411,6 +476,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - Frozen split (MD5-verified): **6,129 train / 2,043 val / 2,043 test** — identical for every configuration.
   - Test geometry: **99.6 % < 32 px; > ⅓ below 8 px**.
   - Stated limitation, stated early `[italic]`: *composited origin ⇒ transfer to fully real imagery is future work.*
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Dataset: C2A" top-left dark navy #1F4E79 bold ~30pt, grey footer. Left 45%: a small 2×2 grid of aerial disaster photos with thin grey borders (collapsed building, fire, flood, traffic) above a small left-skewed bar chart of object sizes. Right 55%: four bullet points ~20pt with bold numbers "10,215 images, ~360k instances", "6,129 / 2,043 / 2,043 split", "99.6% < 32 px", and one italic line "composited origin ⇒ transfer to fully real imagery is future work."
 
 ### Slide 30 · "Evaluation Metrics"
 - Title `[30 · bold · #1F4E79]`.
@@ -421,6 +488,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Per-size recall** (very-tiny < 8 / tiny 8–16 / small 16–32 / medium 32–96 px) — the direct hypothesis test.
   - **AR₁₀₀** — scenes carry 20–40 people; a 100-detection budget is the realistic regime.
   - **ECE** + params / GFLOPs / end-to-end latency — the deployment claim is stated in those units.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Evaluation Metrics" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top: one wide white rounded box with light-blue border containing three formulas side by side: "P = TP/(TP+FP)", "R = TP/(TP+FN)", "F_β = (1+β²)PR/(β²P+R)" with a bold note "β = 2 → F₂ leads". Below: five bullet rows ~18pt, each starting with a bold metric name — F₂, AP₅₀, Per-size recall, AR₁₀₀, ECE — followed by a one-line justification in regular weight. Clean, generous spacing, no images.
 
 ### Slide 31 · "Results & Findings" — kicker `THE ADDITIVE ABLATION`
 - Title `Results & Findings` `[30 · bold · #1F4E79]`; kicker `[16 · bold caps · #C0392B]`.
@@ -437,10 +506,14 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - Three findings strip `[18 · regular; numbers bold]`: ① P2 is the effective change (**+1.0** AP₅₀ pt, **+1.2** AR pt for 0.5 M / 1 ms) ② CBAM near-free (**−1 M** params, fastest) ③ Mamba: **+2.4 M, 2.8× latency, nothing**.
 - Note: AP column is flat by design — predicted on Slide 30; say so.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "THE ADDITIVE ABLATION" above title "Results & Findings" dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption "TABLE VII — ADDITIVE ABLATION ON THE C2A TEST SET" above a wide nine-column results table with navy header (white bold): "Model | Params | GFLOPs | AP | AP50 | AR100 | F1 | F2 | Lat. (ms)"; four data rows; the THIRD row ("+ CBAM + P2 (MSA-YOLO)") has a light navy tint and bold text; in the fourth row the last cell "41.1 ⚠" is colored red; scattered best values in bold. No vertical gridlines. Below the table: one line with three numbered findings "① P2 is the effective change ② CBAM near-free ③ Mamba: +2.4 M, 2.8× latency, nothing" with the numbers bold.
+
 ### Slide 32 · "Results & Findings (Cont'd…)" — kicker `COMPONENT ATTRIBUTION` **[mergeable → right half of Slide 31]**
 - Image: waterfall PNG (**export needed**), centered, max height.
   Caption `[14 · #595959]`: `Fig. - 20 : Per-component contribution to AP₅₀ (y-axis zoomed 0.838–0.856); params · latency under each column`
 - One line `[20 · regular]`: *Every gain attributed to one change; the Mamba null is displayed, not hidden.*
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "COMPONENT ATTRIBUTION" above title "Results & Findings (Cont'd…)" navy bold, grey footer. Center: a waterfall bar chart with four columns labeled "Baseline", "+CBAM", "+CBAM+P2", "+Mamba" — y-axis labeled AP50 zoomed to range 0.838–0.856; two small green floating bars rising between the first three columns (labeled +0.004 and +0.006), one small red bar falling at the fourth column (labeled −0.001), dashed connector lines between steps, the third column outlined in red as "recommended", and under each column small grey text with its parameters and latency ("20.0 M · 13.7 ms" etc., the last one "41.1 ms" in red). Grey caption "Fig. - 20" below and one sentence "Every gain attributed to one change; the Mamba null is displayed, not hidden."
 
 ### Slide 33 · "Results & Findings (Cont'd…)" — kicker `HYPOTHESIS TEST: PER-SIZE RECALL`
 - Caption `[14 · bold · Small Caps]`: `TABLE VIII — PER-SIZE RECALL ON THE C2A TEST SET`
@@ -460,6 +533,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - Medium-band drop is noisy: only **317 of ~72,500** instances.
   - Mamba tracks CBAM+P2; scan diagnostics prove the blocks ran (fwd/rev cosine distance **0.836**) — the null is architectural, not a wiring fault.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "HYPOTHESIS TEST: PER-SIZE RECALL" above title "Results & Findings (Cont'd…)" navy bold, grey footer. Left 60%: small-caps caption "TABLE VIII — PER-SIZE RECALL ON THE C2A TEST SET" above a five-column table with navy header "Model | very-tiny (<8 px) | tiny (8–16) | small (16–32) | medium (32–96)", four model rows plus a grey "GT instances" row; in the "+ CBAM + P2" row the very-tiny cell "0.757" is bold and green. Right 40%: a small grouped bar chart of recall by size band, grey caption "Fig. - 21". Bottom: a light-navy tinted band with bold italic "Hypothesis CONFIRMED — the gain lands exactly in the very-tiny band (+1.5 pt)" and two tiny grey footnote lines.
+
 ### Slide 34 · "Results & Findings (Cont'd…)" — kicker `OPERATING POINT & CALIBRATION` **[mergeable]**
 - Images 3-up, same height, 1 pt borders: `cbam_p2_pr_curve.png` · `cbam_p2_f1_conf.png` · `cbam_p2_calibration.png`
   Panel labels `[14 · bold]`: (a) precision–recall (b) F₁/F₂ vs confidence — dashed line at 0.16 (c) reliability diagram.
@@ -468,11 +543,15 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - F₂-optimal threshold **0.16–0.20 across all configs** ⇒ no per-model tuning; MSA-YOLO deploys at **0.16**.
   - **ECE ≈ 0.021** ⇒ reported 0.8 confidence ≈ 0.8 empirical precision — operators can trust the scores for triage.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "OPERATING POINT & CALIBRATION" above title "Results & Findings (Cont'd…)" navy bold, grey footer. Three equal chart panels side by side with thin grey borders: (a) a precision–recall curve hugging the top-right corner, (b) two overlapping curves of F1 and F2 against confidence with a vertical dashed line at 0.16, (c) a reliability diagram with a diagonal reference line and blue bars close to it. Bold labels "(a)", "(b)", "(c)" under the panels, grey caption "Fig. - 22 : MSA-YOLO operating behaviour". Below: two bullets ~18pt with bold "0.16" and "ECE ≈ 0.021".
+
 ### Slide 35 · "Results & Findings (Cont'd…)" — kicker `QUALITATIVE ANALYSIS`
 - Images 2×2, same size, 1 pt borders: `qual_gt.png` · `qual_baseline.png` · `qual_sahi256.png` · `qual_sahitta256.png`
   Panel labels `[14 · bold]`: (a) ground truth — 156 people (b) MSA-YOLO @640 px — 209 boxes (c) + SAHI 256 — 217 (d) + SAHI+TTA — 217.
   Caption `[14 · #595959]`: `Fig. - 23 : Dense collapsed-building scene — sliced/augmented modes add detections along the rubble line`
 - Failure-modes line `[18 · regular; lead words bold]`: residual errors = **heavy occlusion** · **extreme scale** (few px, no texture) · **crowding** (merged boxes) — concentrated in the very-tiny band.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "QUALITATIVE ANALYSIS" above title "Results & Findings (Cont'd…)" navy bold, grey footer. A centered 2×2 grid of four identical aerial photographs of a densely crowded collapsed building, each covered in dozens of small green bounding boxes, with thin grey borders; bold labels under each: "(a) ground truth — 156 people", "(b) MSA-YOLO @640 px — 209 boxes", "(c) + SAHI 256 — 217", "(d) + SAHI+TTA — 217". Grey caption "Fig. - 23" below, then one line with three bold phrases: "heavy occlusion · extreme scale · crowding".
 
 ### Slide 36 · "Comparison with State of the Art"
 - Title `[30 · bold · #1F4E79]`.
@@ -493,6 +572,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 - Takeaway box `[20 · bold italic]`: *Second among ALL published detectors on this benchmark — one AP₅₀ point behind a model THREE TIMES our size. For airborne hardware, that is the right trade.*
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Comparison with State of the Art" top-left dark navy #1F4E79 bold ~30pt, grey footer. Small-caps caption "TABLE IX — PUBLISHED DETECTORS ON THE C2A TEST SET" above a nine-row, four-column table with navy header "Model | AP50 | AP | Params"; seven rows of published detectors (Faster R-CNN through YOLOv9-e) in plain style, then a thin separator rule, then two final rows tinted light navy: "YOLO11m baseline (ours)" and "MSA-YOLO (ours)" with the last row fully bold and "19.6 M" in bold. No vertical gridlines. Bottom: light-navy tinted band with bold italic sentence "Second among ALL published detectors — one AP50 point behind a model three times our size."
+
 ### Slide 37 · "Inference-Time Study: SAHI vs TTA"
 - Title `[28 · bold · #1F4E79]`.
 - Caption `[14 · bold · Small Caps]`: `TABLE X — SAHI SWEEP AND TTA (MSA-YOLO, PER-IMAGE MATCHING @ IoU 0.5)` — condensed:
@@ -510,6 +591,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **TTA@1280 is the single best setting** — +9.2 pt very-tiny recall, cheaper than any SAHI config; degrades beyond 2× training resolution.
   - Both are **optional modes** — neither touches the trained weights.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Inference-Time Study: SAHI vs TTA" top-left dark navy #1F4E79 bold ~28pt, grey footer. Left 55%: small-caps caption "TABLE X — SAHI SWEEP AND TTA" above a four-row table with navy header "Setting | Size | R | F2 | very-tiny R | Lat. (ms)"; rows "none (baseline)", "+ SAHI 256", "+ SAHI 512", "+ TTA 1280" — the last row tinted light GREEN with bold values. Right 45%: a grouped bar chart of recall across four size bands with several colored series, where the tallest bars are in the leftmost "very-tiny" group; grey caption "Fig. - 24". Below: two bullets with bold "TTA@1280 is the single best setting" and "optional modes".
+
 ### Slide 38 · "Objectives Achieved"
 - Title `[30 · bold · #1F4E79]`.
 - Four rows: objective `[20 · regular]` → ✔ `[24 · Green #82B366]` → evidence `[18 · regular; refs bold]`:
@@ -517,6 +600,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   2. Best config within deployable budget, near SOTA → ✔ **TABLE VIII** (best very-tiny recall) + **TABLE IX** (2nd of all published, ⅓ size).
   3. Honest state-space test → ✔ +2.4 M, 2.8× latency, no gain; module verified active.
   4. Inference-time recall without retraining → ✔ TTA **0.758 → 0.850** very-tiny @ 60 ms.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Objectives Achieved" top-left dark navy #1F4E79 bold ~30pt, grey footer. Four horizontal rows with generous spacing, each row: an objective statement ~20pt on the left, a large green checkmark ✔ in the middle, and the supporting evidence in smaller text on the right with bold references like "TABLE VII", "TABLE VIII + TABLE IX", "module verified active", "0.758 → 0.850 @ 60 ms". Thin light grey horizontal separators between rows. No images.
 
 ---
 
@@ -530,6 +615,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   T1 — topic selection (w1–3) · literature review (w2–9) · C2A preparation (w6–9) · detector-family benchmark (w9–13) · pre-defense (w11–13).
   T2 — additive ablation CBAM/P2 (w1–5) · state-space exploration (w3–9) · SAHI & TTA (w7–11) · analysis & comparison (w8–12) · documentation & defense (w9–13).
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Thesis Timeline" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: a full-width Gantt chart with a header split into "First term (weeks 1–13)" and "Second term (weeks 1–13)"; ten horizontal bars — the first five in light blue (#DAE8FC with darker blue outline) labeled "Topic selection", "Literature review", "Dataset preparation (C2A)", "Detector family benchmark", "Pre-defense preparation"; the next five in light green (#D5E8D4 with darker green outline) labeled "Additive ablation (CBAM, P2)", "State-space exploration", "SAHI and TTA evaluation", "Result analysis", "Documentation and defense". Thin week gridlines, grey caption "Fig. - 25 : Project timeline across two 13-week terms".
+
 ### Slide 40 · "Limitations"
 - Title `[30 · bold · #1F4E79]`.
 - Four bullets `[20 · regular; lead phrase bold]` — state them before they're asked:
@@ -537,6 +624,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Single seed per configuration** — small deltas sit within run noise.
   - **Sparse medium band** — only 317 instances; its estimates are noisy.
   - **Desktop-GPU latency** — no on-drone measurement or field trial.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Limitations" top-left dark navy #1F4E79 bold ~30pt, grey footer. Four bullet rows ~20pt with generous spacing, each starting with a bold lead phrase followed by a regular-weight explanation: "Single, semi-synthetic dataset", "Single seed per configuration", "Sparse medium band", "Desktop-GPU latency". Minimal, text-only, no images or decorations.
 
 ### Slide 41 · "Future Work"
 - Title `[30 · bold · #1F4E79]`.
@@ -547,6 +636,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   4. Multi-seed significance testing with paired statistics for publication.
   5. A purpose-built state-space design — the null doesn't close the direction; we now have a validated protocol to test it against.
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Future Work" top-left dark navy #1F4E79 bold ~30pt, grey footer. Five numbered bullet rows ~20pt; the FIRST TWO rows each end with a small rounded green pill badge reading "IN PROGRESS" in tiny white bold caps; bold lead phrases "Server-side deployment" and "Enhanced dataset with own drone imagery" on those rows, the remaining three rows plain. Clean text-only layout.
+
 ### Slide 42 · "Conclusion"
 - Title `[30 · bold · #1F4E79]`.
 - Four lines, large type `[24 · bold · #1F2933]` — the ONE slide where full-sentence bold is allowed; generous line spacing (1.3):
@@ -554,6 +645,8 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **CBAM** contributes efficiency: attention at negative parameter cost.
   - The **state-space neck contributes nothing** at 2.8× latency — an honest, verified null.
   - **MSA-YOLO: AP₅₀ 0.853 · F₂ 0.844 · 19.6 M params · 14.6 ms** — 2nd of all published C2A detectors at ⅓ the leader's size; +9 pt very-tiny recall via TTA when latency permits.
+
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Conclusion" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: four bold statement lines in dark grey ~24pt with wide line spacing, centered vertically: one about the P2 detection scale, one about CBAM efficiency, one about the state-space neck contributing nothing, and a final line with the key metrics "MSA-YOLO: AP50 0.853 · F2 0.844 · 19.6 M params · 14.6 ms" slightly larger and in navy. No images, no decorations.
 
 ### Slides 43–44 · "References" / "References (Cont'd…)"
 - Title `[30 · bold · #1F4E79]`.
@@ -566,14 +659,19 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   Kyrkou 2020 (AIDER) · Qin 2020 (U²-Net) · Hu 2018 (SE) · Cheng 2023 (survey).
 - Keep pre-defense numbering stable where possible ([1] Nihal, [3] TPH-YOLOv5, [4] AGIIndia).
 
+> **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "References" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: a numbered IEEE-style reference list, entries [1] through [10], in small ~13pt dark grey text with hanging indents — each entry a realistic-looking citation with authors, quoted paper title, venue abbreviation, year, and DOI. Dense but tidy, single column, no images.
+
 ### Slide 45 · "THANK YOU"
 - `THANK YOU` centered `[44 · bold · #1F4E79]`; `arch_detections.png` faded (30 % opacity) as background; no footer.
+
+> **Gemini prompt:** 16:9 PowerPoint closing-slide mockup: a full-bleed aerial photograph of a disaster scene with small green detection boxes, faded to 30% opacity under a white overlay, with "THANK YOU" centered in dark navy #1F4E79 bold sans-serif ~44pt. Nothing else on the slide.
 
 ---
 
 ## HIDDEN SLIDES (after the thank-you slide — Q&A jump targets)
 Design: plain title `[28 · bold · #1F4E79]`, body `[18 · regular]`, same table style; no
-kickers, no slide numbers.
+kickers, no slide numbers. *(No Gemini prompts needed — these reuse the plain text/table
+layouts of Slides 30/31; mock up Slide 31's prompt if you want a visual reference.)*
 
 **H1 — "Why YOLO11m?"** Detector-family benchmark (report appendix Tab. A.1): YOLOv9-s/m/e,
 v10-s/m/l, 11-s/m/l — YOLO11m best accuracy-to-size balance (0.841 mAP50 @ 38.6 MB; v9-e
