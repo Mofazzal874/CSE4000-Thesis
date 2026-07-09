@@ -10,8 +10,11 @@ kill-safe checkpoint files after a quota incident killed their first spawns:
 - **Lane 4 — top-conference mining (CVPR/ICLR/WACV/AAAI 2026, NeurIPS 2025, ICML fit)** ✅ →
   `2026-07-10_lane4_top_conferences.md` (key: AERO-HPR CVPRW 2026 venue; SAFE-Net = closest 2026
   neighbor; RealDroneVision WACV-main pattern; CD-FSOD framing; ICML no-fit)
-- **Lane 5 — top-journal methods + evidence-bar/positioning analysis** → 
-  `2026-07-10_lane5_top_journals_positioning.md` (running)
+- **Lane 5 — top-journal methods + evidence-bar/positioning analysis** ✅ →
+  `2026-07-10_lane5_top_journals_positioning.md` (key: JSTARS bar = 2 modules, already cleared;
+  PR door open via formal-problem framing; TGRS bar = FFCA-YOLO template; frequency-neck crowding
+  confirmed in journals too — AFGLFF/WE-YOLO/SRTSOD-YOLO/MicroDETR/FANet; DN-TOD = label-noise
+  component candidate with code; ceiling-raiser #1 = YOLOv9-e repro on both splits)
 
 ---
 

@@ -30,9 +30,15 @@ reason integrations kept failing. Lap-3's job:
 - [x] Branch + folder + protocol scaffolding (2026-07-10)
 - [x] Lanes 1–3 (YOLO lineage / tiny-occluded SOTA / sim-to-real) verified & logged (2026-07-10)
 - [x] Idea catalog §A–G written — 58 items audited (2026-07-10)
-- [ ] Lanes 4–5 (top-conference + top-journal mining, user task 2) → catalog §H
-- [ ] Ranking + venue targets written
-- [ ] User picks direction → gated plan update (S-plan in lap-2 proposal amended here)
+- [x] Lanes 4–5 (top-conference + top-journal mining, user task 2) → catalog §H + lane files
+      (first spawns quota-killed; respawns ran kill-safe with file checkpoints) (2026-07-10)
+- [x] Ranking + venue targets written: top-3 = D3 sim-to-real / D2 TAL-assignment / D1 FCCG core;
+      venue ladder JSTARS → PR(reframed) → TGRS stretch; WACV 2027 + AERO-HPR CVPRW 2027;
+      CVPR-main/ICML ruled out with receipts (2026-07-10)
+- [ ] **USER DECISION PENDING** → Option A (composite, recommended) / B (architecture-only) /
+      C (data-first) + annotation budget + baseline set — see ranking doc §6
+- [ ] After decision: amend S-plan, start P0/P0.5/P1 (reading notes, pose-label audit, frame
+      extraction, seam probe)
 
 ## Headline audit results (details in docs/)
 - FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &

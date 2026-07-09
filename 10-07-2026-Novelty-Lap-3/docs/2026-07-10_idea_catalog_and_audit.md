@@ -264,7 +264,34 @@ pitched 2021-era adversarial GRL as novel instead.
     workshops (AERO-HPR, NTIRE) / AAAI + journals for depth. **CVPR/ICML main formally ruled out
     with receipts.**
 
-*(Lane 5 — journal evidence-bar analysis + quartile map — pending; checkpoint file will hold it.)*
+66. **DN-TOD (Pattern Recognition 2026, DOI 10.1016/j.patcog.2026.113448, code
+    ZhuHaoranEIS/DN-TOD — from the NWD/AI-TOD group)** — ✅ label-noise-robust tiny detection:
+    Class-aware Label Correction + Trend-guided Learning reweighting; +4.9 AP50 under 40% noise;
+    plugs into one-stage detectors. → **ADOPT-COMP CANDIDATE: directly targets C2A's paste-label
+    noise (our measured ~0.615 AP ceiling) — training-time, orthogonal to FCCG modules.** Also a
+    PR-novelty-pattern template: formalize an ignored data pathology, fix with training strategy.
+67. **Frequency-neck crowding — journal wave (Lane 5 side-finding, hardens catalog #56):**
+    ✅ AFGLFF-YOLO (JSTARS 2026, 10.1109/JSTARS.2025.3649074, adaptive frequency global-local
+    fusion) · WE-YOLO (JSTARS 2026, wavelet+Mamba) · MicroDETR (PR 2026, frequency-spatial DETR)
+    · FANet (RS 17(24):4066) · **SRTSOD-YOLO (RS 2025, 17(20):3414 — GATED-activation fusion neck
+    ON YOLO11, +7.9 mAP50 vs own baseline)** → all CITE+DIFFERENTIATE; SRTSOD-YOLO added to the
+    P0 must-read list (closest neck-mechanism neighbor on our exact base model).
+68. **FFCA-YOLO (IEEE TGRS 2024, 10.1109/TGRS.2024.3363057)** — ✅ the TGRS evidence-bar
+    exemplar: 3 modules + lite variant, 3 datasets, ~10+ baselines, efficiency analysis → CITE +
+    use as the structural template if we aim at the TGRS tier.
+69. **PR 2025-26 tiny-object cluster** — ✅ AMSF-YOLO (113303), domain-consistency optimization
+    (113463 — protocol-first precedent for our sim-to-real lane), dynamic scale-aware label
+    assignment + context (112449 — **competitor to our D2; must be in related work**), SADet,
+    FSENet → CITE. Pattern: PR accepts UAV tiny composites ONLY when welded to a formal problem
+    (label noise / assignment / domain consistency) — our leakage+paste-noise+occlusion story
+    fits that mold.
+70. **Journal evidence bars + quartile map (Lane 5 Parts A/B/D)** — ✅ TGRS: ≥3 components /
+    3+ datasets / ~10 methods / efficiency+deployment framing. **JSTARS: 2 modules on a YOLO base
+    suffices (WE-YOLO bar) — our package already exceeds it.** PR: reachable via formal-problem
+    reframe. MDPI (Drones IF 4.8 / RS 4.3, 2025 JCR): fast floor. GRSL (Q1, IF 4.4): compact
+    letter spin-off option (context gate alone, or the leakage audit). MVA dropped to Q3 —
+    remove from list. **Verdict: JSTARS > PR(reframed) > Drones/RS floor; ceiling-raiser #1 =
+    YOLOv9-e reproduction on BOTH splits (already P0/S4 in our plan).**
 
 ---
 

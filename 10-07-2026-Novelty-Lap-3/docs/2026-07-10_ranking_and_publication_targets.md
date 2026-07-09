@@ -91,26 +91,39 @@ FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a 
 - **ICML / NeurIPS / ICLR:** formally ruled out with receipts — ICML 2025/26 accepted lists show
   zero applied small-object/aerial detection (Lane 4 queries logged); ICLR 2026 main had nothing
   beyond RF-DETR; ML4RS workshop is the ICLR-adjacent home if ever needed.
-- **Realistic ceiling — Q1 remote-sensing/vision-applications journals:** IEEE TGRS or ISPRS JPRS
-  IF the full grid in §3 lands with honest positive deltas (their 2024-26 acceptances in our scope
-  routinely show 3+ datasets, 8+ baselines, ablations ≥6 rows, latency analysis — Lane 5
-  extracting exact bar). **IEEE JSTARS** (Q1/Q2) is the natural primary target: scope-perfect
-  (UAV + protocol + application rigor), receptive to composite architectures with strong
-  real-world validation. **IEEE GRSL** if we need a fast, shorter variant.
-- **Strong CV-conference alternative:** **WACV** (applications track) fits the sim-to-real + own-
-  footage story unusually well; BMVC/ICIP as backups.
-- **Fast fallbacks:** MDPI Drones / Remote Sensing (weeks-scale reviews, weaker signal — keep as
-  plan C, consistent with the existing publication roadmap doc).
+- **Journal ladder (Lane-5 evidence bars, all DOI-verified exemplars):**
+  1. **IEEE JSTARS — PRIMARY.** Demonstrated bar = 2 novel modules on a YOLO base (WE-YOLO,
+     JSTARS 2026); our package (3 datasets incl. real SARD + own footage, latency, leakage audit)
+     already EXCEEDS typical JSTARS rigor.
+  2. **Pattern Recognition (Q1) — reachable REFRAME target.** PR's 2025-26 acceptances (AMSF-YOLO,
+     DN-TOD, domain-consistency, dynamic scale-aware assignment) all weld architecture to a
+     FORMAL problem. Our formal problems already exist: paste-label noise + benchmark leakage +
+     occlusion evidence. If S1-S3 deltas land, a PR-shaped write-up ("tiny-object evidence under
+     synthetic label noise and benchmark leakage") is genuinely in reach.
+  3. **IEEE TGRS — stretch.** Bar = FFCA-YOLO template: ≥3 components, 3+ datasets, ~10 baselines,
+     lite/efficiency variant. Attempt only if we beat/reframe the C2A bar cleanly.
+  4. **IEEE GRSL (Q1, IF 4.4)** — compact letter SPIN-OFF option (the context gate alone, or the
+     leakage audit as a short protocol paper).
+  5. **MDPI Drones (IF 4.8) / Remote Sensing (IF 4.3)** — fast floor, use only against deadlines.
+  (ISPRS JPRS: only if the PROTOCOL becomes the headline; IEEE TIP/IJCV: no for this package;
+  MVA dropped to Q3 in 2025 JCR — removed.)
+- **Conference ladder:** **WACV 2027 main** — pattern-proven by RealDroneVision (own dataset +
+  architecture = accepted); **AERO-HPR @ CVPR 2027 workshop** — CFP matches us verbatim;
+  BMVC/ICIP backups. Frame the C2A→own-drone lane in **CD-FSOD vocabulary** (NTIRE 2026).
 - Sober probability read (single student, 16 GB fleet, niche benchmark, but: unchallenged C2A bar
   + unique real-footage benchmark + leakage audit): JSTARS/WACV = solid shot if §3 executes;
-  TGRS/ISPRS = stretch, attempt first only if S1–S3 deltas are strong; CVPR-main = lottery — not
-  planned for.
+  PR = real if the formal-problem reframe is taken seriously; TGRS/ISPRS = stretch; CVPR-main =
+  ruled out with receipts (Lane 4). **Both lanes independently converge on the same #1 missing
+  experiment: reproduce YOLOv9-e on C2A under BOTH splits (official + scene-disjoint) — it tests
+  whether the printed 0.8927/0.6883 bar survives a clean protocol, upgrades the leakage audit to
+  a headline if it doesn't, and defines the honest number FCCG must beat. Already P0/S4.**
 
 ## 5. Amended gated plan (delta to lap-2 S0–S5; costs respect PC fleet)
 
 | Gate | What | Where | Cost | Pass criterion |
 |---|---|---|---|---|
-| **P0 (this week, NEW)** | (a) read DERNet 2606.23825 **+ SAFE-Net (CVPRW 2026, AERO-HPR — closest 2026 neighbor)** fully → 1-page differentiation note; (b) pose-label audit on ~100 C2A images (#37); (c) extract unlabeled drone train-pool frames, dedup, altitude-stratified (script 05; 60 test frames untouchable) | laptop | 0 GPU | note exists; pose labels usable y/n; ≥500 clean unlabeled frames |
+| **P0 (this week, NEW)** | (a) read DERNet 2606.23825 **+ SAFE-Net (CVPRW 2026, AERO-HPR) + SRTSOD-YOLO (RS 17(20):3414 — gated fusion neck ON YOLO11) + AFGLFF-YOLO abstract (JSTARS 2026)** → 1-page differentiation note; (b) pose-label audit on ~100 C2A images (#37); (c) extract unlabeled drone train-pool frames, dedup, altitude-stratified (script 05; 60 test frames untouchable) | laptop | 0 GPU | note exists; pose labels usable y/n; ≥500 clean unlabeled frames |
+| **P0.5 (NEW, optional but cheap)** | DN-TOD (PR 2026, code ZhuHaoranEIS/DN-TOD) feasibility skim: can CLC/TLS bolt onto Ultralytics trainer? If yes → queue as S2 row (targets our paste-label-noise ceiling directly) | laptop | 0 GPU | go/no-go note |
 | **P1 seam probe (NEW)** | low-pass/re-JPEG C2A test images → eval CBAM+P2 (script 04); compare degradation slope vs SARD | PC-4 | ~2 h eval | ANY outcome reportable; if AP collapses ≫ SARD ⇒ seam reliance QUANTIFIED (feeds paper §, motivates C2A-H) |
 | S0 | FCCG modules + YAML + selftests (shape/grad/pickle/param) + 2-ep smoke — unchanged from lap-2, now with DERNet-differentiation checklist | laptop + PC-4 | 1–2 d | modules ACTIVE, ≤22.5M params |
 | S1 | paired 50-ep pilots scene-split: control vs +FCCG | PC-4/PC-2 | ~5 h each | +1.5 AP_small or +2 VT-recall |
