@@ -1,0 +1,59 @@
+# Novelty Lap 3 — verified-idea triage & direction lock (started 2026-07-10)
+
+Branch: `novelty-lap-3` (cut from `novelty-lap-2`). Folder keeps the repo's dated-prefix convention
+(user asked for "novelty-lap-3"; this is it).
+
+## Why this lap exists
+The user brought a long Google/Gemini conversation containing 50+ 2025/26 ideas (YOLO26 / YOLOv12 /
+YOLOv13 components, custom C2A modules like "CG-DSA"/"BP-FFP"/"DAMA", sim-to-real fixes). Some of it
+is real, some is garbled, and some is suspected AI fabrication — and blindly pasting its code is one
+reason integrations kept failing. Lap-3's job:
+1. **Audit** every idea from that conversation against primary sources (3 web-search agents:
+   YOLO-lineage / tiny-occluded SOTA / sim-to-real).
+2. **Catalog** them: verdict, canonical paper, fetch-verified code link, fit to our measured needs
+   (N1–N8, lap-2 doc A).
+3. **Rank** by implementability × novelty defensibility × publishability; honest venue targets.
+4. **Lock the direction**: lap-2's FCCG-YOLO core (independently re-validated by the convergent
+   "Fourier boundary" suggestion in the Gemini convo) + a possible **sim-to-real pillar** exploiting
+   our own unlabeled drone footage — the one genuinely new axis the Gemini convo surfaced.
+
+## Contents
+| File | What |
+|---|---|
+| `RESEARCH_PROTOCOL.md` | Standing verify-before-propose procedure (user rule, 2026-07-10) |
+| `PC_RUN_CONFIG.md` | PC fleet, venvs, kill-safe rules, what runs where in lap 3 |
+| `docs/2026-07-10_idea_catalog_and_audit.md` | Every idea from the Gemini convo: verdict + papers + code + fit |
+| `docs/2026-07-10_ranking_and_publication_targets.md` | Scored ranking, tiers, top picks, venue reality check, first experiments |
+| `docs/2026-07-10_web_verification_log.md` | Raw agent verification reports (traceability for every claim) |
+
+## Status
+- [x] Branch + folder + protocol scaffolding (2026-07-10)
+- [x] Lanes 1–3 (YOLO lineage / tiny-occluded SOTA / sim-to-real) verified & logged (2026-07-10)
+- [x] Idea catalog §A–G written — 58 items audited (2026-07-10)
+- [ ] Lanes 4–5 (top-conference + top-journal mining, user task 2) → catalog §H
+- [ ] Ranking + venue targets written
+- [ ] User picks direction → gated plan update (S-plan in lap-2 proposal amended here)
+
+## Headline audit results (details in docs/)
+- FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &
+  "Dynamic Task Routing" · "EFEM-YOLO" · "July 2026 photogrammetry 88→95% study" · "YOLOE-26"
+  (official). VE-DINO suspicion REFUTED — it is real (Smart Cities 2025, ground-level, no code).
+- C2A bar CONFIRMED: YOLOv9-e 0.8927/0.6883, official (leaky) split, ICPR 2024 — UNCHALLENGED in
+  print; only other number = LightSeek AP_small 0.478 (we're at 0.6156).
+- C2A ships UNUSED official pose labels (5 classes) — pose-prior aux supervision feasible.
+- Closest rival to FCCG idea: DERNet arXiv 2606.23825 (2026-06-22, no code) — read before S0.
+- Sim-to-real consensus 2025/26 = harmonization (CFHA +14.1 mAP50) + SF-UT self-training ladder,
+  NOT 2021-era GRL; label budget evidence → 50–150 drone frames.
+
+## Pointers (don't duplicate, reference)
+- Lap-2 architecture proposal: `..\08-07-2026-Novelty-Lap-2\ARCHITECTURE_PROPOSAL.md` (FCCG-YOLO, gates S0–S5)
+- Measured needs N1–N8: `..\08-07-2026-Novelty-Lap-2\docs\2026-07-08_A_image_needs_analysis.md`
+- Lap-2 verified SOTA/mechanisms: `..\08-07-2026-Novelty-Lap-2\docs\2026-07-08_B_sota_research.md`
+- RESULTS INBOX stays single: `..\05-07-2026-Novelty-Lap\results\` + `MANIFEST.md` (every remote-PC result lands there)
+- Metric contract: `..\Last Month\system_spec*.md` §6/§11 · Eval harness: lap-1 script 04
+
+## Local ground truth to keep in mind (verified this session)
+- Our C2A label space is **single class `person`** (`new_dataset3_scenesplit_v1\data.yaml`: nc=1) —
+  any "5 pose classes" idea needs label re-derivation first.
+- MuSGD already **diverged** on our P2 config (that's why final runs are pinned AdamW lr0=0.001) —
+  do not re-adopt because a search AI hyped it.
