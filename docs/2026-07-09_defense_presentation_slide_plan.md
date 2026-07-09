@@ -624,6 +624,35 @@ term?"
 
 ---
 
+## PASTE-READY EQUATION CODES (PowerPoint UnicodeMath)
+
+Workflow: **Alt + =** → paste code (right-click → Keep Text Only) → **Ctrl+A** inside the
+box → Equation ribbon → **Convert ▾ → Current – Professional**. Trailing spaces in the
+codes matter — paste exactly. If a `\word` stays literal, click after it and press space.
+Italic function names (`area`, `IoU`, `log`): select → Equation tab → Normal Text, or leave
+them. Do NOT use LaTeX syntax — that mode is Word-only.
+
+| Slide | Code |
+|---|---|
+| 10 (IoU) | `IoU(B\hat ,B)=(area(B\hat \cap B))/(area(B\hat \cup B))\ge 0.5` |
+| 10 (F₂) | `F_2 =(5PR)/(4P+R)` |
+| 12, 18 (coverage) | `c_d (s)=s/d` |
+| 14 (normalize) | `x'=x/255\in [0,1]` |
+| 15 (pyramid) | `P_k =(640/2^k )^2` |
+| 16 (CBAM channel) | `M_c (F)=\sigma (MLP(AvgPool(F))+MLP(MaxPool(F)))` |
+| 16 (CBAM spatial) | `M_s (F')=\sigma (f^(7\times 7) [AvgPool(F');MaxPool(F')])` |
+| 16 (refinement) | `F'=M_c \otimes F,   F''=M_s \otimes F'` |
+| 20 (SSM) | `h_t =A\bar h_(t-1) +B\bar x_t ,   y_t =Ch_t` |
+| 21 (BCE) | `L_(cls) =-[y log p\hat +(1-y) log(1-p\hat )]` |
+| 21 (CIoU) | `L_(CIoU) =1-IoU+(\rho ^2 (b,b^(gt) ))/c^2 +\alpha v` |
+| 21 (total) | `L=7.5L_(CIoU) +1.5L_(DFL) +0.5L_(cls)` |
+| 26 (IOS merge) | `IOS(a,b)=(area(a\cap b))/(min(area(a),area(b)))\ge 0.5` |
+| 30 (precision) | `P=TP/(TP+FP)` |
+| 30 (recall) | `R=TP/(TP+FN)` |
+| 30 (F_β) | `F_\beta =((1+\beta ^2 )PR)/(\beta ^2 P+R)` |
+
+---
+
 ## BUILD ORDER (practical)
 
 1. Slide Master setup (top of this file) — fonts, colors, layouts, the 3 reusable boxes, table style.
