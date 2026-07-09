@@ -4,18 +4,31 @@
 (drone/UAV). Base model YOLO11m (Ultralytics). Datasets: C2A (synthetic composite), SARD (real),
 own 3-altitude drone footage (10/30/50 m, 4K).
 
-**CURRENT GOAL (lap 2, branch `novelty-lap-2`, since 2026-07-08):** design a NOVEL ARCHITECTURE
-(composite, not a single plug-and-play swap) on the YOLO11m base that credibly outranks 2025/26
-published results for tiny/occluded aerial humans. Protocol/eval work from lap 1 (scene split,
-fusion, NWD) is SUPPORTING material, not the headline.
+**CURRENT GOAL (lap 3, branch `novelty-lap-3`, since 2026-07-10):** same target as lap 2 (novel
+COMPOSITE architecture on YOLO11m credibly outranking 2025/26 results for tiny/occluded aerial
+humans) but now grounded in a WEB-VERIFIED idea catalog + a second pillar: sim-to-real protocol
+using our own drone footage (seam probe → C2A-H harmonization → SF-UT self-training ladder →
+joint 3-set training). STANDING RULE since 2026-07-10: web-verify (search agents, primary
+sources) every external method/paper BEFORE proposing — no memory-only citations post-2024.
 
 ## Branch map
 - `main` — defense-report era state.
 - `novelty-direction` — lap 1: leakage audit, scene-disjoint split, C-WBF fusion, NWD pilots.
-- `novelty-lap-2` — lap 2 (CURRENT): architecture novelty. Folder `08-07-2026-Novelty-Lap-2/`.
+- `novelty-lap-2` — lap 2: FCCG-YOLO architecture proposal. Folder `08-07-2026-Novelty-Lap-2/`.
+- `novelty-lap-3` — lap 3 (CURRENT): verified-idea triage + direction lock + sim-to-real pillar.
+  Folder `10-07-2026-Novelty-Lap-3/`.
 
 ## Folder map (top level of `d:\Academics\thesis folder\`)
-- `08-07-2026-Novelty-Lap-2/` — CURRENT lap: `ARCHITECTURE_PROPOSAL.md` (FCCG-YOLO: high-freq
+- `10-07-2026-Novelty-Lap-3/` — CURRENT lap: `README.md` (status + headline audit results),
+  `RESEARCH_PROTOCOL.md` (verify-before-propose procedure), `PC_RUN_CONFIG.md`, `docs/`:
+  idea catalog (58 audited ideas from the user's Gemini convo — fabrications flagged: YOLO-TCM,
+  DTR, EFEM-YOLO, "July-2026 photogrammetry study"; VE-DINO is REAL), web-verification log
+  (5 lanes, all primary-source URLs), ranking + venue targets. KEY VERIFIED FACTS: C2A bar
+  YOLOv9-e 0.8927/0.6883 UNCHALLENGED in print; C2A ships unused official POSE labels (5 classes);
+  DERNet arXiv 2606.23825 = closest FCCG rival (2026-06-22, no code) — read before S0;
+  assignment>loss consensus for <16px (RFLA/SimD line); CFHA (2512.13869) + SF-UT (2407.07586)
+  = the sim-to-real recipe; label budget 50–150 drone frames.
+- `08-07-2026-Novelty-Lap-2/` — lap 2: `ARCHITECTURE_PROPOSAL.md` (FCCG-YOLO: high-freq
   evidence branch × large-kernel context gate + FreqFusion-lite + tiny/occlusion loss stack; gated
   plan S0-S5) + `docs/2026-07-08_A_image_needs_analysis.md` (8 measured needs N1-N8) +
   `docs/2026-07-08_B_sota_research.md` (verified 2025/26 SOTA + mechanism catalog; SOTA bar on C2A
