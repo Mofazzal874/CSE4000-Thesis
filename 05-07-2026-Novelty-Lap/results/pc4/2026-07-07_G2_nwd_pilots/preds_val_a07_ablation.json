@@ -1,0 +1,65 @@
+[
+  {
+    "mode": "nms",
+    "n_images": 2043,
+    "n_gt": 72123,
+    "AP50_allpoint": 0.8751,
+    "OptThr_F1": 0.31,
+    "Best_F1": 0.8601,
+    "OptThr_F2": 0.12,
+    "Best_F2": 0.8569,
+    "precision_conf25": 0.8713,
+    "recall_conf25": 0.8454,
+    "F1_conf25": 0.8582,
+    "F2_conf25": 0.8505,
+    "confusion_TP_FP_FN_conf25": [
+      60975,
+      9008,
+      11148
+    ],
+    "confusion_TP_FP_FN_optF1": [
+      60218,
+      7684,
+      11905
+    ],
+    "meanIoU_TP": 0.8495,
+    "per_size_recall": {
+      "very_tiny": 0.7514,
+      "tiny": 0.8668,
+      "small": 0.8895,
+      "medium": 0.7917,
+      "large": null
+    },
+    "per_size_n": {
+      "very_tiny": 24778,
+      "tiny": 20369,
+      "small": 26472,
+      "medium": 504,
+      "large": 0
+    },
+    "calibration": {
+      "ECE": 0.0327,
+      "MCE": 0.2058,
+      "Brier": 0.04
+    },
+    "latency_ms": {
+      "mean": 255.18,
+      "p50": 214.86,
+      "p95": 443.27,
+      "fusion_only_mean": 4.273
+    },
+    "FPS": 3.92,
+    "coco_AP": 0.6284,
+    "coco_AP50": 0.8626,
+    "coco_AP75": 0.6716,
+    "coco_AP_small": 0.6292,
+    "coco_AP_medium": 0.5555,
+    "coco_AP_large": -1.0,
+    "coco_AR_1": 0.0269,
+    "coco_AR_10": 0.2477,
+    "coco_AR_100": 0.7005,
+    "coco_AR_small": 0.701,
+    "coco_AR_medium": 0.622,
+    "coco_AR_large": -1.0
+  }
+]
