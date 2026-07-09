@@ -183,6 +183,131 @@ that *red = what we changed*. Never use red decoratively.
 
 ---
 
+## 0.9 On-slide titles, kickers & numbering map — WRITE THESE EXACTLY
+
+The "Slide N — X" headers in the deck plan below are **working labels for you**, not slide
+titles. The table below is what actually goes in the title box, following the pre-defense
+conventions: short formal titles, "(Cont'd…)" only when a slide continues the same topic,
+distinct sub-topics get their own name. Catchy phrases from the plan ("the first hours
+decide who is found alive") are **spoken lines or 16 pt kickers**, never titles.
+
+| Plan slide | On-slide title | Kicker (16 pt, red, above title) |
+|---|---|---|
+| 1 | *(thesis title block — no title bar)* | — |
+| 2 | Outline | — |
+| — | **DIVIDER: Introduction** | — |
+| 3 | Introduction | — |
+| 4 | Introduction (Cont'd…) | — |
+| 5 | Applications | — |
+| — | **DIVIDER: Related Works** | — |
+| 6 | Related Works | — |
+| 7 | Related Works (Cont'd…) | — |
+| 8 | Related Works (Cont'd…) | — |
+| 9 | Research Gap | — |
+| 10 | Problem Statement | — |
+| 11 | Objectives | — |
+| 12 | Hypothesis | — |
+| bridge | From the Pre-Defense Proposal to MSA-YOLO | — |
+| — | **DIVIDER: Methodology** | — |
+| 13 | Methodology | SYSTEM OVERVIEW |
+| 14 | Methodology (Cont'd…) | STEP 1 / 7 · INPUT & PREPROCESSING |
+| 15 | Methodology (Cont'd…) | STEP 2 / 7 · BACKBONE |
+| 16 | Methodology (Cont'd…) | STEP 3 / 7 · CBAM ATTENTION |
+| 17 | Methodology (Cont'd…) | CBAM IN ACTION |
+| 18 | Methodology (Cont'd…) | STEP 4 / 7 · P2 DETECTION SCALE |
+| 19 | Methodology (Cont'd…) | P2 IN ACTION |
+| 20 | Methodology (Cont'd…) | STEP 5 / 7 · STATE-SPACE VARIANT |
+| 21 | Methodology (Cont'd…) | STEP 6 / 7 · LOSS DESIGN |
+| 22 | Methodology (Cont'd…) | STEP 7 / 7 · DECODING + NMS |
+| 23 | Proposed MSA-YOLO Architecture | — |
+| 24 | Methodology (Cont'd…) | END-TO-END TRACE |
+| 25 | The Additive Ablation Design | — |
+| 26 | Inference-Time Enhancement: SAHI | — |
+| 27 | Inference-Time Enhancement: TTA | — |
+| — | **DIVIDER: Implementation & Results** | — |
+| 28 | Experimental Setup | — |
+| 29 | Dataset: C2A | — |
+| 30 | Evaluation Metrics | — |
+| 31 | Results & Findings | THE ADDITIVE ABLATION |
+| 32 | Results & Findings (Cont'd…) | COMPONENT ATTRIBUTION |
+| 33 | Results & Findings (Cont'd…) | HYPOTHESIS TEST: PER-SIZE RECALL |
+| 34 | Results & Findings (Cont'd…) | OPERATING POINT & CALIBRATION |
+| 35 | Results & Findings (Cont'd…) | QUALITATIVE ANALYSIS |
+| 36 | Comparison with State of the Art | — |
+| 37 | Inference-Time Study: SAHI vs TTA | — |
+| 38 | Objectives Achieved | — |
+| 39 | Thesis Timeline | — |
+| 40 | Limitations | — |
+| 41 | Future Work | — |
+| 42 | Conclusion | — |
+| 43 | References | — |
+| 44 | References (Cont'd…) | — |
+| 45 | THANK YOU | — |
+
+Notes on the choices:
+- "Research Gap", "Hypothesis", "Proposed MSA-YOLO Architecture", "Comparison with State of
+  the Art" get their own titles because they are distinct sub-topics the committee should
+  see named (rule: name it if it's worth finding again while flipping back during Q&A).
+- 7 numbered steps (in-action and trace slides are unnumbered interludes — the kicker says
+  where you are, so "(Cont'd…)" never gets confusing).
+- **Outline slide (2):** pre-defense listed a page number per section — fill those in LAST,
+  after the deck is frozen.
+- Hidden slides get no numbers and plain titles (e.g., "Why YOLO11m?", "Layer
+  Configuration", "Progress Since Pre-Defense").
+
+### Figure numbering map (`Fig. - 0X :` caption under each; sequential in deck order)
+| # | Slide | Content |
+|---|---|---|
+| Fig. - 01 | 3 | aerial flood scene (`fig_intro_scene.png`) [4] |
+| Fig. - 02 | 4 | C2A scene-type grid (4 panels = one figure) [1] |
+| Fig. - 03 | 10 | dense scene ground truth (`qual_gt.png`) |
+| Fig. - 04 | 11 | additive ablation chain |
+| Fig. - 05 | 12 | stride problem |
+| Fig. - 06 | 12 | C2A size distribution |
+| Fig. - 07 | 13 | system overview pipeline |
+| Fig. - 08 | 14 | running-example input |
+| Fig. - 09 | 15 | backbone feature pyramid |
+| Fig. - 10 | 16 | CBAM module |
+| Fig. - 11 | 17 | CBAM effect + real attention overlay |
+| Fig. - 12 | 18 | P2 branch construction |
+| Fig. - 13 | 19 | stride-8 vs stride-4 grids + P2 feature |
+| Fig. - 14 | 20 | C3k2Mamba block |
+| Fig. - 15 | 22 | running-example detections |
+| Fig. - 16 | 23 | full MSA-YOLO layer-level architecture |
+| Fig. - 17 | 24 | end-to-end 4-panel trace |
+| Fig. - 18 | 26 | SAHI pipeline + real slices |
+| Fig. - 19 | 27 | TTA pipeline + zoom |
+| Fig. - 20 | 32 | ablation waterfall |
+| Fig. - 21 | 33 | per-size recall chart |
+| Fig. - 22 | 34 | PR / F-vs-conf / reliability (3 panels) |
+| Fig. - 23 | 35 | qualitative 4-panel dense scene |
+| Fig. - 24 | 37 | per-size recall under inference settings |
+| Fig. - 25 | 39 | Gantt timeline |
+
+Reused images (scene grid + size distribution reappear on slide 29) keep their original
+figure number — do not renumber a repeat. Renumber the whole map once the final slide
+order is frozen (mergers shift everything).
+
+### Table numbering map (caption ABOVE table)
+User asked IEEE style → roman numerals (`TABLE I`); pre-defense used `Table-01`. **Pick one
+and use it everywhere** — recommendation: keep IEEE roman since related-works formatting
+was the explicit requirement.
+
+| # | Slide | Content |
+|---|---|---|
+| TABLE I | 6 | detector families |
+| TABLE II | 7 | small-object / aerial techniques |
+| TABLE III | 8 | SAR datasets + state-space models |
+| TABLE IV | 9 | research gap (prior work vs this thesis) |
+| TABLE V | 25 | the four ablation configurations |
+| TABLE VI | 28 | training configuration |
+| TABLE VII | 31 | additive ablation results (MAIN) |
+| TABLE VIII | 33 | per-size recall |
+| TABLE IX | 36 | comparison with published detectors |
+| TABLE X | 37 | SAHI sweep + TTA |
+
+---
+
 ## MAIN DECK (36 slides + 9 hidden)
 
 If the committee caps you at ~20 min, merge the slides marked **[mergeable]** — the deck
