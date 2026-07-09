@@ -226,8 +226,45 @@ pitched 2021-era adversarial GRL as novel instead.
 
 ---
 
-## H. Top-venue additions (Lanes 4–5, appended when agents report)
-*(pending)*
+## H. Top-venue additions (Lanes 4–5; full checkpoint files: `2026-07-10_lane4_top_conferences.md`, `2026-07-10_lane5_top_journals_positioning.md`)
+
+59. **AERO-HPR — 1st CVPR 2026 Workshop on Human Perception & Recognition in Aerial Surveillance**
+    — ✅ (official page aero-hpr.github.io, held 2026-06-03, Denver; organizers QUT/MSU). CFP
+    explicitly covers small-object detection, multi-scale, SYNTHETIC imagery, aerial person
+    pipeline. → **VENUE TARGET: our story matches the CFP nearly verbatim; 2nd edition (CVPR 2027
+    workshop) is a calendar-realistic home.** Field signal: top venues take aerial-human work via
+    WORKSHOPS, not main conference.
+60. **SAFE-Net (CVPRW 2026, AERO-HPR track)** — ✅ "Scale-Aware Feature Enhancement for Aerial
+    Person Detection in Flood Disaster Imagery" (IIT Tirupati) — **the closest published 2026
+    neighbor to our exact problem.** PDF not yet fetched (agent budget). → **CITE+BEAT +
+    must-read at P0** (add to DERNet reading task); possible comparator row.
+61. **High-Res P2 in YOLOv12 for aerial pedestrians (CVPRW 2026, AERO-HPR track)** — ✅ →
+    evidence that P2-alone is STILL workshop-publishable in 2026 — i.e., our CBAM+P2 base was the
+    right instinct AND our composite must out-claim exactly this (frequency gate + assignment +
+    protocol) to be more than parity. CITE.
+62. **NTIRE 2026 CD-FSOD challenge (CVPRW 2026, arXiv 2604.11998)** — ✅ cross-domain few-shot
+    detection (source → unseen shifted target, k-shot labels; 31 active teams). → **ADOPT-FRAMING:
+    cast our C2A(synthetic)→own-drone(real) lane in CD-FSOD vocabulary — turns our eval from
+    "extra experiment" into a recognized problem setting**; winners' write-ups = transfer-trick
+    mining list.
+63. **RealDroneVision (WACV 2026 main, verified wacv.thecvf.com/virtual/2026/poster/670)** — ✅
+    173k-image real drone-detection dataset (semi-automatic labeling) + architecture mods — same
+    IIT Tirupati lab as SAFE-Net. → **PATTERN-PROOF: [own dataset + tuned detector] clears WACV
+    MAIN. Our own-footage benchmark + FCCG composite replicates the recipe → WACV 2027 primary
+    conference target.**
+64. **ScaleBridge-Det (arXiv 2512.01665, venue unconfirmed)** — ✅ preprint: Routing-Enhanced
+    Mixture attention (scale-expert routing) + density-guided queries; SOTA claims AI-TOD-v2. →
+    CITE; conceptual support: **a gate IS a 2-expert router** — adopt their claim axis "lift tiny
+    WITHOUT hurting medium/large" as an FCCG evaluation criterion (our N2 need, OOD-large).
+65. **ICML venue-fit — ❌ NO-FIT confirmed** (2025/2026 accepted lists: zero applied small-object
+    /aerial detection for our keywords; ICML detection wants learning-paradigm claims). ICLR 2026
+    main: nothing beyond RF-DETR; ML4RS workshop = the ICLR-adjacent home. AAAI 2026/NeurIPS 2025:
+    no confirmed hits beyond the known AAAI 2025 trio; nearest-shaped: EV-UAV event-camera tiny
+    benchmark (arXiv 2506.23575, venue unverified). → Venue ladder for us: WACV main / CVPR-ICCV
+    workshops (AERO-HPR, NTIRE) / AAAI + journals for depth. **CVPR/ICML main formally ruled out
+    with receipts.**
+
+*(Lane 5 — journal evidence-bar analysis + quartile map — pending; checkpoint file will hold it.)*
 
 ---
 

@@ -72,13 +72,25 @@ as a bolt-on — that coupling is the answer to "why is this one paper".
 own-drone 3-altitude) + anchors (YOLOv9-e repro, YOLO26m-AdamW, optional YOLOv12m/D-FINE-M/
 FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a PC slot.
 
-## 4. Venue reality check (honest; Lane 5 will refine the exact evidence bars)
+## 4. Venue reality check (honest; Lane-4 evidence now in; Lane 5 refines journal bars)
 
-- **CVPR / ICCV / ECCV main:** not a realistic target for this work — contributions are
-  domain-composite (aerial persons, one niche benchmark family), not a new general mechanism at
-  scale. CVPR-workshop (VisDrone/UG2/Perception-for-UAS class) IS realistic for early exposure.
-- **ICML / NeurIPS / ICLR:** wrong venue class — applied small-object detection essentially does
-  not appear there (Lane 4 is confirming counts). Do not spend a cycle on it.
+- **CVPR / ICCV / ECCV main:** confirmed not a realistic target — Lane 4 found ZERO CVPR 2026
+  main-conference papers on tiny/aerial-human detection (the one UAV-detection main-conf datapoint
+  demanded a new sensing modality). The subfield lives in workshops/WACV/AAAI.
+- **★ NEW (Lane 4): AERO-HPR — 1st CVPR 2026 workshop on aerial human perception** — CFP matches
+  our story nearly verbatim (small objects, synthetic imagery, aerial person pipeline); its
+  proceedings include **SAFE-Net (flood aerial person detection — our closest 2026 neighbor,
+  must-read/cite/beat)** and a P2-in-YOLOv12 aerial-pedestrian paper (proof P2-alone still clears
+  a workshop in 2026 — our composite must out-claim it). **2nd edition at CVPR 2027 = realistic
+  workshop target.**
+- **★ NEW (Lane 4): WACV-main pattern-proof — RealDroneVision (WACV 2026)**: [own real dataset +
+  architecture mods] in one paper clears WACV MAIN. Our own-footage 3-altitude benchmark + FCCG
+  composite replicates that recipe → **WACV 2027 = primary conference target.** Bonus framing:
+  cast the C2A→own-drone lane in **CD-FSOD vocabulary** (NTIRE 2026 challenge, CVPRW) so reviewers
+  recognize the protocol as a first-class problem setting.
+- **ICML / NeurIPS / ICLR:** formally ruled out with receipts — ICML 2025/26 accepted lists show
+  zero applied small-object/aerial detection (Lane 4 queries logged); ICLR 2026 main had nothing
+  beyond RF-DETR; ML4RS workshop is the ICLR-adjacent home if ever needed.
 - **Realistic ceiling — Q1 remote-sensing/vision-applications journals:** IEEE TGRS or ISPRS JPRS
   IF the full grid in §3 lands with honest positive deltas (their 2024-26 acceptances in our scope
   routinely show 3+ datasets, 8+ baselines, ablations ≥6 rows, latency analysis — Lane 5
@@ -98,7 +110,7 @@ FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a 
 
 | Gate | What | Where | Cost | Pass criterion |
 |---|---|---|---|---|
-| **P0 (this week, NEW)** | (a) read DERNet 2606.23825 fully → 1-page differentiation note; (b) pose-label audit on ~100 C2A images (#37); (c) extract unlabeled drone train-pool frames, dedup, altitude-stratified (script 05; 60 test frames untouchable) | laptop | 0 GPU | note exists; pose labels usable y/n; ≥500 clean unlabeled frames |
+| **P0 (this week, NEW)** | (a) read DERNet 2606.23825 **+ SAFE-Net (CVPRW 2026, AERO-HPR — closest 2026 neighbor)** fully → 1-page differentiation note; (b) pose-label audit on ~100 C2A images (#37); (c) extract unlabeled drone train-pool frames, dedup, altitude-stratified (script 05; 60 test frames untouchable) | laptop | 0 GPU | note exists; pose labels usable y/n; ≥500 clean unlabeled frames |
 | **P1 seam probe (NEW)** | low-pass/re-JPEG C2A test images → eval CBAM+P2 (script 04); compare degradation slope vs SARD | PC-4 | ~2 h eval | ANY outcome reportable; if AP collapses ≫ SARD ⇒ seam reliance QUANTIFIED (feeds paper §, motivates C2A-H) |
 | S0 | FCCG modules + YAML + selftests (shape/grad/pickle/param) + 2-ep smoke — unchanged from lap-2, now with DERNet-differentiation checklist | laptop + PC-4 | 1–2 d | modules ACTIVE, ≤22.5M params |
 | S1 | paired 50-ep pilots scene-split: control vs +FCCG | PC-4/PC-2 | ~5 h each | +1.5 AP_small or +2 VT-recall |
