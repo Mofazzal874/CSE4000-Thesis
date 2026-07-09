@@ -55,20 +55,21 @@ Canvas: **16:9** (same as pre-defense). Design → Slide Size → Widescreen.
 6. Embed fonts on save (File → Options → Save → Embed fonts) — the defense PC won't have Open Sauce.
 
 ### Figure staging folder (added 2026-07-09)
-All deck images are pre-copied with clean slide-ordered names into
-**`Defense/Presentation/slide_figures/`** — `sNN_figXX_description.png` = slide NN, figure
-XX. Sort by name = build order; grab everything starting with `sNN_` for slide N. See its
-`README.md` for the 4 still-missing items and notes. Originals in the report's `figures/`
-folder are untouched (LaTeX references them — never rename). The original paths in the
-slide entries below remain valid; the staged copies are just easier to work with.
+All deck images are pre-copied into **`Defense/Presentation/slide_figures/`**, named by
+their on-slide figure number: `Fig01_Flood_Scene.png` … `Fig24_Inference_Mode_Recall.png`
+(+ `Hidden_H*` for hidden slides). Figure numbers run in deck order, so sorting by name =
+build order. Its `README.md` has the full slide → file map and the 4 still-missing items.
+Originals in the report's `figures/` folder are untouched (LaTeX references them — never
+rename). The original paths in the slide entries below remain valid; the staged copies are
+just easier to work with.
 
 ### Export checklist (3 figures have no PNG yet)
 | Figure | Source | Action |
 |---|---|---|
-| C2A size distribution | `fig_size_distribution.drawio` | draw.io → export PNG 300 dpi (or crop report PDF) → save as `slide_figures/s12_fig06_size_distribution.png` |
-| Ablation waterfall | `fig_ablation_waterfall.drawio` | draw.io → export PNG → save as `slide_figures/s32_fig20_waterfall.png` |
-| Gantt timeline | `tikz/fig_gantt.tex` only | crop from compiled report PDF (Ch. I) → save as `slide_figures/s39_fig25_gantt.png` |
-| ⚠ Overview stride typo | `fig_overall_framework.drawio` | P5 head tile says "stride 16" → fix to **"stride 32"**, re-export PNG, replace original + `s13` copy |
+| C2A size distribution | `fig_size_distribution.drawio` | draw.io → export PNG 300 dpi (or crop report PDF) → save as `slide_figures/Fig06_Size_Distribution.png` |
+| Ablation waterfall | `fig_ablation_waterfall.drawio` | draw.io → export PNG → save as `slide_figures/Fig20_Ablation_Waterfall.png` |
+| Gantt timeline | `tikz/fig_gantt.tex` only | crop from compiled report PDF (Ch. I) → save as `slide_figures/Fig25_Gantt_Timeline.png` |
+| ⚠ Overview stride typo | `fig_overall_framework.drawio` | P5 head tile says "stride 16" → fix to **"stride 32"**, re-export PNG, replace original + `Fig07_System_Overview.png` copy |
 
 ### Continuity with the pre-defense deck (34 slides, HBPA-YOLO proposal — read 2026-07-09)
 Port verbatim: title-slide layout (Presented By | Supervised By | `CSE 4000: Project/Thesis`),
@@ -240,6 +241,10 @@ below — renumber only if you merge/reorder slides.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat clean style, white background, title "Problem Statement" top-left dark navy #1F4E79 bold ~30pt, grey footer. Right 40%: a photograph of an aerial view of a collapsed building covered in many tiny green bounding boxes over people, thin grey border, small grey caption "Fig. - 03 : One C2A test scene — 156 annotated people". Left 55%: three bullet points ~20pt about the detection task ("one box per visible person", "correct when IoU ≥ 0.5", "a miss may never get a second chance"). Below the bullets, two stacked rounded rectangles: the first with a thin light-blue border containing the stacked-fraction formula "IoU(B̂,B) = area(B̂∩B) / area(B̂∪B) ≥ 0.5"; the second with a thicker dark-navy border containing a larger formula "F₂ = 5PR / (4P + R)" and a small grey label "recall weighted 4× over precision — our operational metric".
 
+> **Explain the formulas (Slide 10):**
+> - **IoU** — B̂ is the model's predicted box, B the human-annotated box. Numerator = the area where they overlap; denominator = the total area they cover together. 1.0 = perfect match, 0 = no overlap. The ≥ 0.5 threshold means: a prediction counts as correct only if at least half of its combined footprint with the truth is shared. **Say:** *"IoU simply measures how well my predicted box overlaps the true box — we accept a detection when the overlap is at least fifty percent."*
+> - **F₂** — P is precision (of the boxes I output, how many were real people), R is recall (of the real people, how many I found). The 5-and-4 coefficients come from the general F_β formula with β = 2, which makes recall count **four times** as much as precision. **Say:** *"F₂ weights recall four times more than precision, because in rescue a missed person may cost a life while a false alarm costs an operator a few seconds."*
+
 ### Slide 11 · "Objectives"
 - Title `Objectives` `[30 · bold · #1F4E79]`.
 - Image right 35 %: `fig_ablation_chain.png` (borderless — schematic).
@@ -269,6 +274,9 @@ below — renumber only if you merge/reorder slides.
 - Note: this equation returns on the per-size results slide — the hypothesis is falsifiable, and Slide 33 shows the test.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Hypothesis" top-left dark navy #1F4E79 bold ~30pt, grey footer. Left 45%: a schematic showing the same tiny human figure icon under four different grid overlays of decreasing cell size (labeled P5 stride 32, P4 stride 16, P3 stride 8, P2 stride 4 with the P2 grid drawn in red), grey caption "Fig. - 05" below. Right 45%: a bar chart of object-size distribution heavily skewed to the left with small bars labeled "<8px, 8–16, 16–32, >32px", grey caption "Fig. - 06" below. Center bottom: a white rounded box with light-blue border containing the formula "c_d(s) = s/d" plus the text "12 px → 0.4 cell @P5 · 1.5 @P3 · 3 cells @P2". Very bottom: a light-navy tinted band with bold italic text "If a stride-4 scale helps, the gain MUST appear in the very-tiny (<8 px) band."
+
+> **Explain the formula (Slide 12):**
+> - **c_d(s) = s/d** — s is the target's side in pixels, d is the detection stride (how many input pixels one grid cell covers). The ratio = how many grid cells the target spans. A detector needs a target to span *multiple* cells to localize it; inside a fraction of one cell it is invisible to that scale. Worked: a 12-px person spans 12/32 ≈ 0.4 of a P5 cell (lost), 12/8 = 1.5 P3 cells (marginal), 12/4 = 3 P2 cells (localizable). **Say:** *"This one ratio is the whole hypothesis: divide the person's size by the grid stride — if the answer is below one, that scale cannot see them. Only stride four gives a 12-pixel person three cells of evidence."*
 
 ### Slide 12-B · "From the Pre-Defense Proposal to MSA-YOLO" (BRIDGE — pivot insurance)
 - Title `[28 · bold · #1F4E79]` (28 pt — it's long).
@@ -313,6 +321,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 1 / 7 · INPUT & PREPROCESSING" above the title "Methodology (Cont'd…)" dark navy bold ~30pt, grey footer. Top half: a small horizontal pipeline diagram (Input → Backbone → CBAM → Neck+P2 → Detect → NMS) where every block is greyed out at 40% opacity EXCEPT the "Input" block, which is full-color light blue with a thick red outline. Right side: an aerial photograph of a collapsed building, thin grey border, grey caption "Fig. - 08 : Running example". Bottom-left: a white rounded box with light-blue border containing "letterbox 640×640 · x′ = x/255 ∈ [0,1]". Bottom-right: three short lines, each starting with a bold colored word — "Break:" in red, "Integrate:" in navy, "Find:" in green — followed by regular black text.
 
+> **Explain the formula (Slide 14):**
+> - **x′ = x/255 ∈ [0,1]** — raw pixels are integers 0–255; dividing by 255 rescales them to 0–1, the range neural-network training is numerically stable in. **Letterbox** = resize keeping the aspect ratio and pad the leftover border, instead of stretching. **Say:** *"Two preprocessing rules: pixels are normalized to zero-one, and the image is letterboxed, never stretched — a stretched eight-pixel person is a destroyed eight-pixel person."*
+
 ### Slide 15 · "Methodology (Cont'd…)" — kicker `STEP 2 / 7 · BACKBONE`
 - T6 diagram: BACKBONE highlighted.
 - Image right: crop of the backbone column from `fig_cbam_p2_architecture.png`.
@@ -324,6 +335,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - **Find:** `[20 · Find: in green bold]` backbone untouched — that is what keeps the ablation clean.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 2 / 7 · BACKBONE" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: the same small pipeline diagram greyed at 40% except the "Backbone" block in full-color light blue with a thick red outline. Right: a vertical stack of five feature-map tiles shrinking in size from bottom to top, labeled P1 320², P2 160², P3 80², P4 40², P5 20², grey caption "Fig. - 09 : Backbone feature pyramid". Bottom-left: white rounded equation box with "P_k = (640/2^k)²". Left-center: two bullets about skip sources, and one line starting with a bold green "Find:" saying the backbone is untouched.
+
+> **Explain the formula (Slide 15):**
+> - **P_k = (640/2^k)²** — each backbone stage halves the spatial resolution, so pyramid level k has been halved k times: P2 = 640/4 = 160×160, P3 = 80×80, P4 = 40×40, P5 = 20×20. Deeper levels are coarser but semantically richer. **Say:** *"Every stage halves the map — by level five, one cell summarizes thirty-two pixels. That coarseness is exactly the enemy for ten-pixel people, which is why we keep the high-resolution level-two map as a skip connection."*
 
 ### Slide 16 · "Methodology (Cont'd…)" — kicker `STEP 3 / 7 · CBAM ATTENTION`
 - T6 diagram: CBAM block (backbone layer 10) highlighted.
@@ -339,6 +353,12 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **Find:** ≈ **1 M fewer parameters than baseline**, lowest latency of all four configs (**13.5 ms**), F₂ held/improved — attention at *negative* cost.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 3 / 7 · CBAM ATTENTION" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except a "CBAM" block in full color with thick red outline. Right 40%: a block diagram of the CBAM module — a feature-map tile entering a "Channel Attention" block (avg-pool and max-pool arrows into a shared MLP, then a sigmoid), then a "Spatial Attention" block (channel pooling into a 7×7 conv, sigmoid), then the refined tile — grey caption "Fig. - 10 : The CBAM module". Bottom-left: white rounded box with three stacked formulas using σ and ⊗ symbols. Bottom-right: three lines starting with bold colored words "Break:" red, "Integrate:" navy, "Find:" green.
+
+> **Explain the formulas (Slide 16):**
+> - **M_c (channel attention)** — "WHICH features matter?" AvgPool and MaxPool squeeze each of the 512 channels down to one summary number; a small shared MLP scores which channels look informative; σ (sigmoid) squashes the scores into 0–1 weights.
+> - **M_s (spatial attention)** — "WHERE to look?" Pool *across* channels to get two 2-D maps, stack them, and a 7×7 convolution decides which locations matter; σ again gives 0–1 weights per pixel.
+> - **F′ = M_c ⊗ F, F″ = M_s ⊗ F′** — ⊗ is element-wise multiplication: the feature map is literally reweighted, informative parts amplified toward 1, clutter suppressed toward 0. Channel first, then spatial.
+> - **Say:** *"CBAM asks two questions in sequence — which feature channels matter, then where in the image to look — and multiplies the features by both answers. Rubble gets weights near zero, faint human shapes near one."*
 
 ### Slide 17 · "Methodology (Cont'd…)" — kicker `CBAM IN ACTION` (BIG IMAGE — no equation)
 - Two images side by side, same height:
@@ -362,6 +382,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 4 / 7 · P2 DETECTION SCALE" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except the "Neck" block, full color with a NEW branch drawn in red. Right 40%: a diagram showing a feature tile "P3 80×80" going through an "Upsample" block, merging in a "Concat" block with a skip-connection tile "backbone P2 160×160", then a "C3k2" block producing a large tile "P2 160×160", ending at a small red "Detect stride-4" block; grey caption "Fig. - 12 : Construction of the P2 branch". Bottom-left: white rounded equation box "c_d(s) = s/d → 12-px person = 3 cells at stride 4". Bottom-right: three lines with bold colored lead words "Integrate:" navy, "Break: nothing" red, "Find:" green with bold numbers 0.743→0.757.
 
+> **Explain the formula (Slide 18):**
+> - Same coverage ratio as the hypothesis, now instantiated at d = 4: each P2 cell covers only 4×4 input pixels, so a 12-px person spans 3 cells and even a ~4-px person still fills one full cell — the scale finally matches the targets. **Say:** *"This is the hypothesis equation coming back with d equals four: the new grid is fine enough that a twelve-pixel person spans three cells — enough spatial evidence to localize, which the coarser scales simply don't have."*
+
 ### Slide 19 · "Methodology (Cont'd…)" — kicker `P2 IN ACTION` (BIG IMAGE — no equation)
 - Images: `detgrid_c2a_s8.png` + `detgrid_c2a_s4.png` side by side (same crop!), 1 pt borders;
   panel labels `[14 · bold]`: (a) stride-8 (P3) grid · (b) stride-4 (P2) grid.
@@ -383,6 +406,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, red bold caps kicker "STEP 5 / 7 · STATE-SPACE VARIANT" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram where six small blocks inside the "Neck" are highlighted in solid GREY (not red) while everything else is faded. Right 40%: a diagram of a feature map being scanned by a serpentine arrow path going left-to-right and a second reversed serpentine path right-to-left, both merging into a "fuse + project" block; grey caption "Fig. - 14 : The explored C3k2Mamba block". Bottom-left: white rounded equation box with "h_t = Ā h_(t−1) + B̄ x_t , y_t = C h_t" and a small italic label "generic selective-SSM recurrence". Bottom-right: three lines with bold lead words "Integrate:" navy, "Why test it:" navy, "Find (preview):" green with "2.8× latency, no accuracy change" in bold.
 
+> **Explain the formula (Slide 20):**
+> - **h_t = Ā h_(t−1) + B̄ x_t, y_t = C h_t** — the feature map is scanned as a sequence. h_t is a hidden state: a compressed memory of everything scanned so far. Ā controls how much old memory is kept, B̄ how much of the new input x_t is written in, C how the memory is read out as output. "Selective" (the Mamba idea) means Ā and B̄ are computed *from the input* — the scan decides per position what to remember and what to forget. Our block runs the scan forward AND reverse over a local window so every position gets context from both sides. **Say:** *"A state-space model reads the feature map like a sentence, carrying a running memory; Mamba lets the input itself decide what gets remembered. We tested whether that memory helps fuse features for tiny targets — the answer, as you'll see, is no."*
+
 ### Slide 21 · "Methodology (Cont'd…)" — kicker `STEP 6 / 7 · LOSS DESIGN` **[mergeable: show only CIoU + total]**
 - T6 diagram: HEAD highlighted with "training signal" arrows.
 - Equation box (four lines, ≈ 20–22 pt to fit; this slide is equation-led, no photo):
@@ -397,6 +423,12 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "STEP 6 / 7 · LOSS DESIGN" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram greyed except the "Detect Head" block, full color with red outline and small arrows labeled "training signal". Left 55%: one large white rounded box with light-blue border containing four stacked mathematical formulas (a binary cross-entropy loss, a CIoU loss with a fraction ρ²/c², a DFL line, and a bold total "L = 7.5·L_CIoU + 1.5·L_DFL + 0.5·L_cls" slightly larger). Right 40%: three bullet points ~20pt with bold phrases "Kept identical across all four configurations", "where not what", "no re-balancing needed".
 
+> **Explain the formulas (Slide 21):**
+> - **L_cls (BCE)** — y is the true label (person or not), p̂ the predicted probability. The log terms explode when the model is confidently wrong, so it punishes miscalibrated confidence, not just wrong answers.
+> - **L_CIoU** — three penalties in one: (1 − IoU) punishes poor overlap; ρ²/c² punishes centre misplacement (ρ = distance between the two box centres, c = diagonal of the smallest box enclosing both — the division makes it scale-invariant); αv punishes aspect-ratio mismatch. Why all three: for an 8-px box a one-pixel shift crashes IoU, so overlap alone gives an unstable training signal — centre and shape terms keep gradients meaningful.
+> - **L_DFL** — instead of predicting each box edge as one number, predict a probability distribution over binned offsets and sharpen it around the true offset (which falls between bins y_i and y_i+1) — this is what gives sub-pixel localization precision.
+> - **Total** — weights 7.5 : 1.5 : 0.5. Box localization dominates classification 15-to-1. **Say:** *"With a single class, the hard question is never WHAT the object is — it's WHERE a few-pixel target sits. The loss weighting encodes exactly that. And we keep it identical across all four models, so the ablation compares architectures, not objectives."*
+
 ### Slide 22 · "Methodology (Cont'd…)" — kicker `STEP 7 / 7 · DECODING + NMS`
 - T6 diagram: full pipeline lit, DETECT + NMS highlighted.
 - Image right: `arch_detections.png`, 1 pt border.
@@ -405,6 +437,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 - **Find:** `[Find: green bold]` clusters of nearby people kept as **separate detections** — what the operator reviews.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, red bold caps kicker "STEP 7 / 7 · DECODING + NMS" above title "Methodology (Cont'd…)" navy bold, grey footer. Top: small pipeline diagram fully in color with the final "Detect Head" and "NMS" blocks outlined in thick red. Right 40%: an aerial photograph of a collapsed building covered in many small green detection boxes, thin grey border, grey caption "Fig. - 15 : Running-example output". Bottom-left: white rounded equation box "strides {4, 8, 16, 32} → grids 160² · 80² · 40² · 20²". Bottom-right: one line starting with a bold green "Find:" about clusters kept as separate detections.
+
+> **Explain the formula (Slide 22):**
+> - **Strides {4, 8, 16, 32} → grids 160², 80², 40², 20²** — the head predicts boxes independently at four resolutions (grid = 640 divided by the stride); fine grids catch tiny people, coarse grids the rare large ones. **NMS** = when several predicted boxes overlap the same person, keep the highest-confidence one and drop the rest. **Say:** *"Four grids vote, then non-maximum suppression cleans up: overlapping duplicates are removed but nearby DIFFERENT people are kept as separate boxes — that distinction matters in a crowd on rubble."*
 
 ### Slide 23 · "Proposed MSA-YOLO Architecture" (BIG IMAGE — the money slide, no equation)
 - Title `[28 · bold · #1F4E79]`.
@@ -452,6 +487,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, title "Inference-Time Enhancement: SAHI" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top 60%: a pipeline diagram — an aerial photo on the left, an arrow to the same photo divided by a grid into overlapping tiles, arrows from the tiles into a light-blue "Detector" block, then an arrow to a "Greedy merge" block, ending at the photo covered in green detection boxes. Below it: two small real-photo thumbnails with thin grey borders (a tiled grid image and a merged detection image) and a grey caption "Fig. - 18 : SAHI — slice, detect per tile, merge". Bottom-left: white rounded equation box "IOS(a,b) = area(a∩b) / min(area(a), area(b)) ≥ 0.5". Bottom-right: two lines with bold lead words "Integrate at inference only:" navy and "Find (preview):" green with "0.758 → 0.788" and "162 ms" in bold.
 
+> **Explain the formula (Slide 26):**
+> - **IOS = area(a∩b) / min(area(a), area(b))** — like IoU, but divided by the SMALLER box's area instead of the union. Why: a person cut in half at a tile border produces a half-size box; against the full box from the neighbouring tile, IoU looks low (~0.5) and would fail to merge them, but IOS is high (~1.0) because the small box is almost entirely inside the big one. **Say:** *"Slicing cuts people in half at tile borders — intersection-over-smaller is the matching rule that recognizes a half-box and a full box as the same person and merges them."*
+
 ### Slide 27 · "Inference-Time Enhancement: TTA"
 - Title `[30 · bold · #1F4E79]`.
 - Image top: `fig_tta.png` (borderless); side inset: `tta_detections_zoom.png` (1 pt border).
@@ -463,6 +501,9 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat vector style, white background, title "Inference-Time Enhancement: TTA" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top: a pipeline diagram — one aerial photo fanning out into six small thumbnails arranged in two rows (three sizes labeled 1.0, 0.83, 0.67; second row the same three mirrored horizontally), all six feeding into a light-blue "Detector @ 1280 px" block, then an "NMS merge" block, ending at one output photo with green boxes; a zoomed inset photo with a thin grey border on the right side. Grey caption "Fig. - 19 : TTA — three scales × horizontal flip, merged by NMS". Bottom-left: white rounded equation box "{1.0, 0.83, 0.67} × {id, hflip} at 1280 px → NMS". Bottom-right: one line with bold green "Find (preview):" and "0.758 → 0.850", "60 ms" in bold.
 
 ---
+
+> **Explain the formula (Slide 27):**
+> - **{1.0, 0.83, 0.67} × {id, hflip} at 1280 px** — the same image is evaluated six times: at three scales, each also horizontally flipped, all at 1280-px input; the union of all predictions is then reduced by standard NMS. Works because the network is fully convolutional — no fixed input size — so it CAN run at twice its 640-px training resolution, which doubles the pixels on every tiny person. **Say:** *"TTA shows the model six views of the same scene at double resolution and merges the votes — nine points of very-tiny recall for sixty milliseconds, no retraining. Past twice the training resolution it breaks down, so 1280 is the sweet spot."*
 
 ## DIVIDER — `Implementation & Results` [44 · bold · white on Navy band] *(reuse divider prompt, text "Implementation & Results", number 04)*
 
@@ -499,6 +540,12 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
   - **ECE** + params / GFLOPs / end-to-end latency — the deployment claim is stated in those units.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Evaluation Metrics" top-left dark navy #1F4E79 bold ~30pt, grey footer. Top: one wide white rounded box with light-blue border containing three formulas side by side: "P = TP/(TP+FP)", "R = TP/(TP+FN)", "F_β = (1+β²)PR/(β²P+R)" with a bold note "β = 2 → F₂ leads". Below: five bullet rows ~18pt, each starting with a bold metric name — F₂, AP₅₀, Per-size recall, AR₁₀₀, ECE — followed by a one-line justification in regular weight. Clean, generous spacing, no images.
+
+> **Explain the formulas (Slide 30):**
+> - **P = TP/(TP+FP)** — of all boxes the model output, the fraction that were real people. Low precision = operator wastes time on false alarms.
+> - **R = TP/(TP+FN)** — of all real people in the scene, the fraction the model found. Low recall = people left undiscovered.
+> - **F_β** — combines both into one score; β² is the weight on recall. β = 1 treats them equally (F₁); β = 2 makes recall worth 4× precision (F₂ — ours). A detection counts as TP when IoU ≥ 0.5 with a ground-truth box.
+> - **Say:** *"Precision asks 'when I point, am I right?', recall asks 'did I find everyone?'. F-beta blends them, and beta two tilts the blend hard toward finding everyone — that is the correct tilt for search and rescue, and every threshold we report is chosen to maximize it."*
 
 ### Slide 31 · "Results & Findings" — kicker `THE ADDITIVE ABLATION`
 - Title `Results & Findings` `[30 · bold · #1F4E79]`; kicker `[16 · bold caps · #C0392B]`.
