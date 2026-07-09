@@ -54,12 +54,21 @@ Canvas: **16:9** (same as pre-defense). Design → Slide Size → Widescreen.
    Caps), centered. Decimals: 3 for metrics (0.853), 1 for ms/points (14.6 ms, +1.5 pt).
 6. Embed fonts on save (File → Options → Save → Embed fonts) — the defense PC won't have Open Sauce.
 
+### Figure staging folder (added 2026-07-09)
+All deck images are pre-copied with clean slide-ordered names into
+**`Defense/Presentation/slide_figures/`** — `sNN_figXX_description.png` = slide NN, figure
+XX. Sort by name = build order; grab everything starting with `sNN_` for slide N. See its
+`README.md` for the 4 still-missing items and notes. Originals in the report's `figures/`
+folder are untouched (LaTeX references them — never rename). The original paths in the
+slide entries below remain valid; the staged copies are just easier to work with.
+
 ### Export checklist (3 figures have no PNG yet)
 | Figure | Source | Action |
 |---|---|---|
-| C2A size distribution | `fig_size_distribution.drawio` | draw.io → export PNG 300 dpi (or crop report PDF) |
-| Ablation waterfall | `fig_ablation_waterfall.drawio` | draw.io → export PNG |
-| Gantt timeline | `tikz/fig_gantt.tex` only | crop from compiled report PDF (Ch. I) |
+| C2A size distribution | `fig_size_distribution.drawio` | draw.io → export PNG 300 dpi (or crop report PDF) → save as `slide_figures/s12_fig06_size_distribution.png` |
+| Ablation waterfall | `fig_ablation_waterfall.drawio` | draw.io → export PNG → save as `slide_figures/s32_fig20_waterfall.png` |
+| Gantt timeline | `tikz/fig_gantt.tex` only | crop from compiled report PDF (Ch. I) → save as `slide_figures/s39_fig25_gantt.png` |
+| ⚠ Overview stride typo | `fig_overall_framework.drawio` | P5 head tile says "stride 16" → fix to **"stride 32"**, re-export PNG, replace original + `s13` copy |
 
 ### Continuity with the pre-defense deck (34 slides, HBPA-YOLO proposal — read 2026-07-09)
 Port verbatim: title-slide layout (Presented By | Supervised By | `CSE 4000: Project/Thesis`),
