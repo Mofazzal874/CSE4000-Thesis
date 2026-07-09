@@ -1,11 +1,17 @@
 # Web-verification log — 2026-07-10 (raw agent reports, traceability layer)
 
-Three parallel web-search agents (WebSearch + WebFetch, primary sources only, repo URLs
-fetch-verified). This file preserves their reports nearly verbatim so every verdict in the
-idea catalog and ranking traces to a source. Agent lanes:
-- **Lane 1 — YOLO lineage & official components** (report below) ✅
-- **Lane 2 — tiny/occluded aerial-human SOTA + mechanism prior art** (pending)
-- **Lane 3 — sim-to-real / domain adaptation / data strategy** (pending)
+Five web-search agent lanes (WebSearch + WebFetch, primary sources only, repo URLs
+fetch-verified). This file preserves Lanes 1–3 nearly verbatim so every verdict in the idea
+catalog and ranking traces to a source. Lanes 4–5 (user task 2: top-venue mining) write their own
+kill-safe checkpoint files after a quota incident killed their first spawns:
+- **Lane 1 — YOLO lineage & official components** ✅ (below)
+- **Lane 2 — tiny/occluded aerial-human SOTA + mechanism prior art** ✅ (below)
+- **Lane 3 — sim-to-real / domain adaptation / data strategy** ✅ (below)
+- **Lane 4 — top-conference mining (CVPR/ICLR/WACV/AAAI 2026, NeurIPS 2025, ICML fit)** ✅ →
+  `2026-07-10_lane4_top_conferences.md` (key: AERO-HPR CVPRW 2026 venue; SAFE-Net = closest 2026
+  neighbor; RealDroneVision WACV-main pattern; CD-FSOD framing; ICML no-fit)
+- **Lane 5 — top-journal methods + evidence-bar/positioning analysis** → 
+  `2026-07-10_lane5_top_journals_positioning.md` (running)
 
 ---
 
