@@ -233,6 +233,61 @@ def make_live_fn(engine):
     return run
 
 
+def make_video_fn(engine, out_dir):
+    """Annotate an uploaded video with the ONNX engine on CPU, writing
+    browser-ready H.264 via the bundled ffmpeg. Bounded by max_seconds."""
+    def run(video_path, conf_thr, stride, max_seconds,
+            progress=gr.Progress()):
+        if not video_path:
+            return None, "*upload a video first*"
+        import imageio_ffmpeg
+        cap = cv2.VideoCapture(str(video_path))
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        limit = min(total, int(max_seconds * fps))
+        stride = max(1, int(stride))
+        n_proc = (limit + stride - 1) // stride
+        w0 = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h0 = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        sc = min(1.0, 1280 / max(w0, h0))
+        w, h = int(w0 * sc) // 2 * 2, int(h0 * sc) // 2 * 2
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / (Path(video_path).stem + "_cpu_annotated.mp4")
+        writer = imageio_ffmpeg.write_frames(
+            str(out_path), size=(w, h), fps=max(fps / stride, 4),
+            codec="libx264", output_params=["-crf", "23", "-preset",
+                                            "veryfast", "-movflags",
+                                            "+faststart"])
+        writer.send(None)
+        t0 = time.perf_counter()
+        done = fi = 0
+        while fi < limit:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            for _ in range(stride - 1):
+                cap.grab()
+            fi += stride
+            frame = cv2.resize(frame, (w, h))
+            xyxy, scores, _ = engine.infer_bgr(frame, conf_thr)
+            th = max(2, round(min(w, h) / 350))
+            for x1, y1, x2, y2 in xyxy.astype(int):
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (40, 220, 0), th)
+            writer.send(np.ascontiguousarray(frame[:, :, ::-1]))
+            done += 1
+            progress(done / max(n_proc, 1),
+                     desc=f"frame {done}/{n_proc} (CPU)")
+        writer.close()
+        cap.release()
+        el = time.perf_counter() - t0
+        cap_txt = (f"**{done} frames in {el:.0f}s "
+                   f"({el / max(done, 1):.1f} s/frame) — YOLO11m+CBAM+P2 "
+                   f"@640, LIVE on this laptop's CPU** (plain inference, "
+                   f"no SAHI: smallest people may be missed)")
+        return str(out_path), cap_txt
+    return run
+
+
 def step_fn(options):
     """prev/next over a dropdown's value list."""
     def step(cur, delta):
@@ -420,6 +475,33 @@ def build(store, engine=None):
                 run_b.click(live_fn, [lin, lconf], [lout, lcapt])
                 lin.upload(live_fn, [lin, lconf], [lout, lcapt])
                 rand_b.click(rand_and_run, [lconf], [lin, lout, lcapt])
+
+        # ------------------------------------------------ TAB: video check
+        with gr.Tab("Video check (upload, CPU)"):
+            if engine is None:
+                gr.Markdown("*(disabled: `models/cbam_p2head.onnx` not found)*")
+            else:
+                gr.Markdown(
+                    "**Upload any video — the model annotates it live on this "
+                    "laptop's CPU.** Plain 640-px inference (no SAHI), so very "
+                    "tiny people may be missed; expect ~1 s per processed "
+                    "frame. Use the duration cap to keep runs short.")
+                vin = gr.Video(sources=["upload"], label="Input video",
+                               height=320)
+                with gr.Row():
+                    vconf = gr.Slider(0.10, 0.90, value=0.35, step=0.01,
+                                      label="Confidence", scale=2)
+                    vstride = gr.Slider(1, 10, value=5, step=1,
+                                        label="Frame stride", scale=1)
+                    vmax = gr.Slider(5, 120, value=30, step=5,
+                                     label="Max seconds to process", scale=1)
+                vrun = gr.Button("▶ Annotate on CPU", variant="primary")
+                vcapt = gr.Markdown()
+                vout = gr.Video(label="Annotated result", height=520)
+                video_fn = make_video_fn(engine,
+                                         store.results / "live_renders")
+                vrun.click(video_fn, [vin, vconf, vstride, vmax],
+                           [vout, vcapt])
 
         # ------------------------------------------------ TAB 4: results
         with gr.Tab("Results (from the report)"):

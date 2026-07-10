@@ -704,16 +704,54 @@ B/I/F strip bottom-right: lead words `[20 · bold]` — `Break:` #C0392B, `Integ
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "Conclusion" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: four bold statement lines in dark grey ~24pt with wide line spacing, centered vertically: one about the P2 detection scale, one about CBAM efficiency, one about the state-space neck contributing nothing, and a final line with the key metrics "MSA-YOLO: AP50 0.853 · F2 0.844 · 19.6 M params · 14.6 ms" slightly larger and in navy. No images, no decorations.
 
-### Slides 43–44 · "References" / "References (Cont'd…)"
-- Title `[30 · bold · #1F4E79]`.
-- IEEE numbered entries `[13–14 · regular, hanging indent 0.3″, 9–10 per slide]` — pull exact
-  entries from `Defense/draft1_30_6_26/references.bib`. Must include: Nihal 2024 (C2A) ·
-  Jocher 2024 (YOLO11) · Woo 2018 (CBAM) · Wang 2020 (ECA) · Akyon 2022 (SAHI) · Gu & Dao
-  2023 (Mamba) · Wang 2025 (Mamba-YOLO) · Lin 2017 (FPN, focal) · Zhu 2021 (TPH-YOLOv5,
-  VisDrone) · Ren 2015 (Faster R-CNN) · Redmon 2016 (YOLO) · Zhao 2024 (RT-DETR) · Carion
-  2020 (DETR) · Lin 2014 (COCO) · Sambolek 2021 (SARD) · Božić-Štulić 2019 (HERIDAL) ·
-  Kyrkou 2020 (AIDER) · Qin 2020 (U²-Net) · Hu 2018 (SE) · Cheng 2023 (survey).
-- Keep pre-defense numbering stable where possible ([1] Nihal, [3] TPH-YOLOv5, [4] AGIIndia).
+### Slides 43, 44, 44-B · "References" / "References (Cont'd…)" × 2 (3 slides, 10 entries each)
+- Title `[30 · bold · #1F4E79]`; entries `[12–13 · regular, hanging indent 0.3″]`.
+- Numbering = order of first appearance in the deck, with pre-defense pins kept:
+  **[1] Nihal · [2] YOLO11 · [3] TPH-YOLOv5 · [4] AGIIndia.** Copy-paste the list below verbatim.
+
+**Where each number is cited on the slides (add these bracket numbers to the table cells):**
+- Slide 3 caption → [4] · Slide 4 caption → [1]
+- Slide 6, TABLE I: Two-stage [5]–[7] · One-stage [8]–[10], YOLO11 [2] · Transformer [11], [12]
+- Slide 7, TABLE II: scales [13], [3] · attention [14]–[16] · slicing [17] · benchmarks [18] · (survey [30] optional)
+- Slide 8, TABLE III: SARD [19] · HERIDAL [20] · C2A [1] (+ AIDER [21], U²-Net [22]) · SSM line [23]–[27]
+- Slides 16/26: CBAM [16] · SAHI [17] · Slide 20: Mamba [24], Mamba-YOLO [27]
+- Slide 30: COCO protocol [28] · Slide 36: published baselines [1] · Slide 41: [19], [20], [18], [29]
+
+**Slide 43 — References**
+- [1] R. A. Nihal, B. Yen, K. Itoyama, and K. Nakadai, "UAV-enhanced combination to application: Comprehensive analysis and benchmarking of a human detection dataset for disaster scenarios," in *Proc. Int. Conf. Pattern Recognit. (ICPR)*, 2024, doi: 10.48550/arXiv.2408.04922.
+- [2] G. Jocher and J. Qiu, "Ultralytics YOLO11," 2024. [Online]. Available: https://github.com/ultralytics/ultralytics
+- [3] X. Zhu, S. Lyu, X. Wang, and Q. Zhao, "TPH-YOLOv5: Improved YOLOv5 based on transformer prediction head for object detection on drone-captured scenarios," in *Proc. IEEE/CVF Int. Conf. Comput. Vis. Workshops (ICCVW)*, 2021, pp. 2778–2788.
+- [4] AGIIndia, "Life-saving insights in disaster zones with drones," Apr. 2024. [Online]. Available: https://agiindia.com/life-saving-insights-in-disaster-zones-with-drones/ [Accessed: Dec. 14, 2025].
+- [5] R. Girshick, J. Donahue, T. Darrell, and J. Malik, "Rich feature hierarchies for accurate object detection and semantic segmentation," in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2014, pp. 580–587.
+- [6] S. Ren, K. He, R. Girshick, and J. Sun, "Faster R-CNN: Towards real-time object detection with region proposal networks," *IEEE Trans. Pattern Anal. Mach. Intell.*, vol. 39, no. 6, pp. 1137–1149, 2017.
+- [7] Z. Cai and N. Vasconcelos, "Cascade R-CNN: Delving into high quality object detection," in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2018, pp. 6154–6162.
+- [8] W. Liu et al., "SSD: Single shot multibox detector," in *Proc. Eur. Conf. Comput. Vis. (ECCV)*, 2016, pp. 21–37.
+- [9] T.-Y. Lin, P. Goyal, R. Girshick, K. He, and P. Dollár, "Focal loss for dense object detection," in *Proc. IEEE Int. Conf. Comput. Vis. (ICCV)*, 2017, pp. 2980–2988.
+- [10] J. Redmon, S. Divvala, R. Girshick, and A. Farhadi, "You only look once: Unified, real-time object detection," in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2016, pp. 779–788.
+
+**Slide 44 — References (Cont'd…)**
+- [11] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and S. Zagoruyko, "End-to-end object detection with transformers," in *Proc. Eur. Conf. Comput. Vis. (ECCV)*, 2020, pp. 213–229.
+- [12] Y. Zhao et al., "DETRs beat YOLOs on real-time object detection," in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2024.
+- [13] T.-Y. Lin, P. Dollár, R. Girshick, K. He, B. Hariharan, and S. Belongie, "Feature pyramid networks for object detection," in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2017, pp. 2117–2125.
+- [14] J. Hu, L. Shen, and G. Sun, "Squeeze-and-excitation networks," in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2018, pp. 7132–7141.
+- [15] Q. Wang, B. Wu, P. Zhu, P. Li, W. Zuo, and Q. Hu, "ECA-Net: Efficient channel attention for deep convolutional neural networks," in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2020, pp. 11534–11542.
+- [16] S. Woo, J. Park, J.-Y. Lee, and I. S. Kweon, "CBAM: Convolutional block attention module," in *Proc. Eur. Conf. Comput. Vis. (ECCV)*, 2018, pp. 3–19.
+- [17] F. C. Akyon, S. O. Altinuc, and A. Temizel, "Slicing aided hyper inference and fine-tuning for small object detection," in *Proc. IEEE Int. Conf. Image Process. (ICIP)*, 2022, pp. 966–970.
+- [18] P. Zhu et al., "Detection and tracking meet drones challenge," *IEEE Trans. Pattern Anal. Mach. Intell.*, vol. 44, no. 11, pp. 7380–7399, 2022.
+- [19] S. Sambolek and M. Ivasic-Kos, "Automatic person detection in search and rescue operations using deep CNN detectors," *IEEE Access*, vol. 9, pp. 37905–37922, 2021.
+- [20] D. Božić-Štulić, Ž. Marušić, and S. Gotovac, "Deep learning approach in aerial imagery for supporting land search and rescue missions," *Int. J. Comput. Vis.*, vol. 127, pp. 1256–1278, 2019.
+
+**Slide 44-B — References (Cont'd…)**
+- [21] C. Kyrkou and T. Theocharides, "EmergencyNet: Efficient aerial image classification for drone-based emergency monitoring using atrous convolutional feature fusion," *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 13, pp. 1687–1699, 2020.
+- [22] X. Qin, Z. Zhang, C. Huang, M. Dehghan, O. R. Zaiane, and M. Jagersand, "U²-Net: Going deeper with nested U-structure for salient object detection," *Pattern Recognit.*, vol. 106, p. 107404, 2020.
+- [23] A. Gu, K. Goel, and C. Ré, "Efficiently modeling long sequences with structured state spaces," in *Proc. Int. Conf. Learn. Represent. (ICLR)*, 2022.
+- [24] A. Gu and T. Dao, "Mamba: Linear-time sequence modeling with selective state spaces," *arXiv preprint arXiv:2312.00752*, 2023.
+- [25] L. Zhu, B. Liao, Q. Zhang, X. Wang, W. Liu, and X. Wang, "Vision Mamba: Efficient visual representation learning with bidirectional state space model," in *Proc. Int. Conf. Mach. Learn. (ICML)*, 2024.
+- [26] Y. Liu et al., "VMamba: Visual state space model," *arXiv preprint arXiv:2401.10166*, 2024.
+- [27] Z. Wang, C. Li, H. Xu, and X. Zhu, "Mamba YOLO: SSMs-based object detection model," in *Proc. AAAI Conf. Artif. Intell.*, 2025.
+- [28] T.-Y. Lin et al., "Microsoft COCO: Common objects in context," in *Proc. Eur. Conf. Comput. Vis. (ECCV)*, 2014, pp. 740–755.
+- [29] M. Barekatain et al., "Okutama-Action: An aerial view video dataset for concurrent human action detection," in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. Workshops (CVPRW)*, 2017, pp. 28–35.
+- [30] G. Cheng et al., "Towards large-scale small object detection: Survey and benchmarks," *IEEE Trans. Pattern Anal. Mach. Intell.*, vol. 45, no. 11, pp. 13467–13488, 2023.
 
 > **Gemini prompt:** 16:9 academic PowerPoint slide mockup, flat style, white background, title "References" top-left dark navy #1F4E79 bold ~30pt, grey footer. Body: a numbered IEEE-style reference list, entries [1] through [10], in small ~13pt dark grey text with hanging indents — each entry a realistic-looking citation with authors, quoted paper title, venue abbreviation, year, and DOI. Dense but tidy, single column, no images.
 
