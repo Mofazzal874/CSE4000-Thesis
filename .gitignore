@@ -94,3 +94,8 @@ drone_inference_out/
 *.MOV
 *.avi
 *.mkv
+
+# Defense demo -- heavy / regenerable assets (app code, guides, run_metadata stay tracked)
+Defense/demo/.venv/
+Defense/demo/data/
+Defense/demo/results/
