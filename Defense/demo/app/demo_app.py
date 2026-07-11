@@ -540,8 +540,11 @@ def main():
         except Exception as e:
             print(f"live engine unavailable: {e}")
     demo = build(store, engine)
-    demo.launch(server_name="127.0.0.1", server_port=args.port,
-                inbrowser=not args.no_browser, theme=gr.themes.Soft())
+    on_spaces = bool(os.getenv("SPACE_ID"))  # set inside Hugging Face Spaces
+    demo.launch(server_name="0.0.0.0" if on_spaces else "127.0.0.1",
+                server_port=args.port, share=not on_spaces,
+                inbrowser=(not args.no_browser) and not on_spaces,
+                theme=gr.themes.Soft())
 
 
 if __name__ == "__main__":
