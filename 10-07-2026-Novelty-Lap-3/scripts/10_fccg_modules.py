@@ -20,6 +20,12 @@ House rules baked in (Mamba/CBAM/pickle lessons):
     parse_model `else: c2 = ch[f]` branch stays correct -> NO monkeypatching
   * register_fccg() injects classes into ultralytics namespaces (YAML parse +
     checkpoint reload), mirroring register_cbam() in the thesis script
+  * CBAM + ChannelAttention + SpatialAttention are EMBEDDED here verbatim from
+    the thesis script (yolo11m_cbam_p2head_thesis.py §2.5): the lineage YAML's
+    layer 10 is CBAM, and ultralytics 8.4.x resolves YAML names via the tasks
+    globals -> without registering CBAM the build dies with KeyError 'CBAM'
+    (hit on PC-4, 2026-07-12). One import of THIS module now registers
+    everything a FCCG checkpoint needs.
   * selftests runnable on CPU torch WITHOUT ultralytics (laptop-safe);
     --check-load additionally builds the YAML (needs modern ultralytics -> PC)
 
@@ -209,10 +215,98 @@ class FCCGActiveCheck:
 
 
 # --------------------------------------------------------------------------
+# CBAM lineage classes — verbatim semantics from the thesis script
+# (yolo11m_cbam_p2head_thesis.py §2.5; lazy channel init, YAML args [16, 7])
+# --------------------------------------------------------------------------
+class ChannelAttention(nn.Module):
+    """Channel Attention Module (shared-MLP over avg- and max-pooled descriptors)."""
+
+    def __init__(self, channels, reduction=16):
+        super().__init__()
+        reduced_channels = max(channels // reduction, 1)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.max_pool = nn.AdaptiveMaxPool2d(1)
+        self.fc1 = nn.Conv2d(channels, reduced_channels, 1, bias=False)
+        self.relu = nn.ReLU(inplace=True)
+        self.fc2 = nn.Conv2d(reduced_channels, channels, 1, bias=False)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = self.fc2(self.relu(self.fc1(self.avg_pool(x))))
+        max_out = self.fc2(self.relu(self.fc1(self.max_pool(x))))
+        return x * self.sigmoid(avg_out + max_out)
+
+
+class SpatialAttention(nn.Module):
+    """Spatial Attention Module (conv over channel-avg + channel-max maps)."""
+
+    def __init__(self, kernel_size=7):
+        super().__init__()
+        assert kernel_size in (3, 7), "kernel_size must be 3 or 7"
+        padding = 3 if kernel_size == 7 else 1
+        self.conv = nn.Conv2d(2, 1, kernel_size, padding=padding, bias=False)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = torch.mean(x, dim=1, keepdim=True)
+        max_out, _ = torch.max(x, dim=1, keepdim=True)
+        concat = torch.cat([avg_out, max_out], dim=1)
+        return x * self.sigmoid(self.conv(concat))
+
+
+class CBAM(nn.Module):
+    """CBAM with LAZY channel init — auto-detects input channels on the first
+    forward pass, bypassing Ultralytics parse_model channel bookkeeping.
+    Accepts the YAML arg form [reduction, kernel_size] (e.g. [16, 7]) and also
+    the (c1, c2, ...) forms Ultralytics may pass (channels are ignored and
+    detected from the input tensor)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.reduction = 16
+        self.kernel_size = 7
+        if len(args) == 1:
+            if isinstance(args[0], int) and args[0] <= 32:
+                self.reduction = args[0]
+        elif len(args) == 2:
+            if isinstance(args[0], int) and args[0] <= 32:
+                self.reduction = args[0]
+                self.kernel_size = args[1] if isinstance(args[1], int) else 7
+        elif len(args) >= 4:
+            self.reduction = args[2] if isinstance(args[2], int) else 16
+            self.kernel_size = args[3] if isinstance(args[3], int) else 7
+        self.reduction = kwargs.get("reduction", self.reduction)
+        self.kernel_size = kwargs.get("kernel_size", self.kernel_size)
+        if self.kernel_size not in (3, 7):
+            self.kernel_size = 7
+        self._initialized = False
+        self.channel_attention = None
+        self.spatial_attention = None
+        self._channels = None
+
+    def _lazy_init(self, channels, device, dtype):
+        self._channels = channels
+        self.channel_attention = ChannelAttention(channels, self.reduction).to(
+            device=device, dtype=dtype)
+        self.spatial_attention = SpatialAttention(self.kernel_size).to(
+            device=device, dtype=dtype)
+        self._initialized = True
+
+    def forward(self, x):
+        if not self._initialized:
+            self._lazy_init(x.size(1), x.device, x.dtype)
+        x = self.channel_attention(x)
+        x = self.spatial_attention(x)
+        return x
+
+
+# --------------------------------------------------------------------------
 # registration (mirrors register_cbam in the thesis training script)
 # --------------------------------------------------------------------------
 _FCCG_CLASSES = {"FCCGFuse": FCCGFuse, "FFLUp": FFLUp,
-                 "HFEvidence": HFEvidence, "LKContextGate": LKContextGate}
+                 "HFEvidence": HFEvidence, "LKContextGate": LKContextGate,
+                 "CBAM": CBAM, "ChannelAttention": ChannelAttention,
+                 "SpatialAttention": SpatialAttention}
 
 
 def register_fccg() -> bool:
@@ -388,6 +482,15 @@ def selftest() -> int:
     except ValueError:
         ok8 = True
     check("t8 split>input raises ValueError", ok8)
+
+    # t10 CBAM lineage class embedded here (PC-4 KeyError 'CBAM' regression guard)
+    cb = CBAM(16, 7)
+    xcb = torch.randn(1, 512, 16, 16)
+    ycb = cb(xcb)
+    ok10 = ycb.shape == xcb.shape and cb._initialized and cb._channels == 512
+    cb2 = pickle.loads(pickle.dumps(cb))
+    ok10 = ok10 and isinstance(cb2, CBAM) and cb2(xcb).shape == xcb.shape
+    check("t10 CBAM lazy build + pickle", ok10)
 
     # t9 parameter budget report
     p3, p2 = _count_params(f3), _count_params(f2)

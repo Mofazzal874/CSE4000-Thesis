@@ -92,3 +92,8 @@ CANNOT load YOLO11 ckpts)
   dated md files in docs/ (or the current lap folder); PowerShell syntax; check files exist on the
   target PC before giving run commands; every figure/number traceable; don't inflate findings —
   state effect sizes honestly.
+- **NO self-initiated git commits (since 2026-07-12):** finish changes, present a review summary
+  (files + what/why + suggested commit message), then WAIT — the user reviews and commits/approves.
+- Metric contract for every eval: `Last Month\system_spec_thesis.md` §6 (must-have set) +
+  `Last Month\system_spec.md` §11 (full catalog); lap-3 stage mapping + FCCG-specific metrics in
+  `10-07-2026-Novelty-Lap-3\docs\2026-07-12_metric_contract_reference.md`.
