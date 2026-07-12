@@ -41,7 +41,7 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 | `05-07-2026-Novelty-Lap\` | ACTIVE as infrastructure | Lap 1: the reusable scripts 00–07 (split builder, eval harness, frame extractor…) and **`results\` = THE RESULTS INBOX** (every remote-PC result + `MANIFEST.md` index) |
 | `c2a\C2A_Dataset\` | ACTIVE as data | `new_dataset3` (official C2A, leaky split) + `new_dataset3_scenesplit_v1` (our clean re-split) + `All labels with Pose information` (bonus pose labels, audited OK) |
 | `08-07-2026-Novelty-Lap-2\` | Reference | Lap 2: the FCCG architecture proposal + needs analysis N1–N8 + SOTA research |
-| `Last Month\` | Reference | Thesis-era results: ablation runs, the joint C2A+SARD model (epoch125.pt), **`system_spec*.md` = the METRIC CONTRACT every eval must follow** |
+| `Last Month\` | Reference | Thesis-era results: ablation runs, the joint C2A+SARD model (epoch125.pt), **`system_spec_thesis.md` §6 + `system_spec.md` §11 = the METRIC CONTRACT every eval must follow** (lap-3 mapping: `10-07-2026-Novelty-Lap-3\docs\2026-07-12_metric_contract_reference.md`) |
 | `Defense\` | FROZEN | Defense report (XeLaTeX) + `demo\` (gitignored demo bundle). Don't touch. |
 | `01-02-2026…`, `01-03-2026…`, `31-03-26…` | History | Early ablations/Mamba era. Ignore. |
 | `docs\` | Reference | Older dated research/decision docs (pre-lap-3) |

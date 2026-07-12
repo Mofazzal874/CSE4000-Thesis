@@ -20,8 +20,12 @@ YOLO11 checkpoints — never eval on laptop).
    gets a `MANIFEST.md` entry — single inbox across laps, no exceptions.
 5. Ablation defaults: PATIENCE=50, F2_PATIENCE=40, SEEDS=[0..4] (user override of spec 30/20/1);
    optimizer pinned AdamW lr0=0.001 (MuSGD falsified locally).
-6. Metric contract: `Last Month\system_spec*.md` §6/§11 via lap-1 script 04 (`--save-preds` =
-   resumable; fusion is CPU-heavy at conf 0.001).
+6. Metric contract: **`Last Month\system_spec_thesis.md` §6 (thesis MUST-have set, F2 primary,
+   per-size recall bins) + `Last Month\system_spec.md` §11 (full catalog: dynamics, efficiency,
+   calibration, arch-specific, env.json, §16 run-IDs)** via lap-1 script 04 (`--save-preds` =
+   resumable; fusion is CPU-heavy at conf 0.001). Lap-3 stage→contract mapping + the NEW
+   FCCG-specific metric subset (gate maps, gate-GT contrast, gate-off delta):
+   `docs\2026-07-12_metric_contract_reference.md`.
 7. GPU flush only with lap-1 script 07, dry-run first (shared boxes).
 
 ## Lap-3 specific placement (planned, amend as gates fire)

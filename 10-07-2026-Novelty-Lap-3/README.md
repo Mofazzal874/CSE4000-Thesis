@@ -76,7 +76,9 @@ reason integrations kept failing. Lap-3's job:
 - Measured needs N1–N8: `..\08-07-2026-Novelty-Lap-2\docs\2026-07-08_A_image_needs_analysis.md`
 - Lap-2 verified SOTA/mechanisms: `..\08-07-2026-Novelty-Lap-2\docs\2026-07-08_B_sota_research.md`
 - RESULTS INBOX stays single: `..\05-07-2026-Novelty-Lap\results\` + `MANIFEST.md` (every remote-PC result lands there)
-- Metric contract: `..\Last Month\system_spec*.md` §6/§11 · Eval harness: lap-1 script 04
+- Metric contract: `..\Last Month\system_spec_thesis.md` §6 (must-have set) +
+  `..\Last Month\system_spec.md` §11 (full catalog) · Eval harness: lap-1 script 04 ·
+  Lap-3 stage mapping + FCCG-specific metrics: `docs\2026-07-12_metric_contract_reference.md`
 
 ## Local ground truth to keep in mind (verified this session)
 - Our C2A label space is **single class `person`** (`new_dataset3_scenesplit_v1\data.yaml`: nc=1) —

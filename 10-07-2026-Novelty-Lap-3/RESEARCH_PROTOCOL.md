@@ -18,7 +18,9 @@ Claude's own cutoff (Jan 2026) misses the newest results.
    answers · honest expected effect size (with the ~50% stacking discount) · cost on our PC fleet ·
    prior-art distance (why it is not plug-and-play).
 5. **Outputs are dated md files** in the current lap folder's `docs/`; raw agent reports go to a
-   `*_web_verification_log.md` for traceability; everything committed on the lap branch.
+   `*_web_verification_log.md` for traceability. Committing: Claude presents a review summary
+   (changed files + suggested message) and the USER commits/approves — no self-initiated commits
+   (user rule 2026-07-12).
 6. **Falsified-locally list** (do not re-propose without NEW evidence):
    - MuSGD → diverged on our P2 config (2026-06; AdamW lr0=0.001 pinned)
    - NWD as IoU-replacement loss → gate G2 CLOSED (+0.73 VT-recall @α=.5, does not scale)
