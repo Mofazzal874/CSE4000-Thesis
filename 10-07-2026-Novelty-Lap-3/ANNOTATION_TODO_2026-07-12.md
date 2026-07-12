@@ -1,34 +1,65 @@
-# Annotation TODO — 2026-07-12 (user labels TODAY; agreed under Option A)
+# Annotation TODO — 2026-07-12 (beginner-proof Roboflow walkthrough)
 
-## Priority 0 — finish the 60 frozen TEST frames (if not already done)
-`Drone Shoot\extracted_v1\test_frames\{10m,30m,50m}` (20 each), already in Roboflow.
-These gate the paper's real-world benchmark (S5). Export: COCO JSON. These frames are NEVER
-trained on — keep them in their own split/tag.
+**Zero dependency note:** Claude's next coding step (S0) does NOT wait on this — annotate in
+parallel, take your time, accuracy > speed.
 
-## Priority 1 — NEW today: the self-training/few-shot pool
-Source images (already extracted, test-guard verified via manifest.json):
-`Drone Shoot\extracted_v1\selftrain_frames\10m` (80) · `...\30m` (80) · `...\50m` (80)
+## What you are labeling, in one line
+120 real drone frames (40 per altitude) that will teach the model what REAL people look like
+(few-shot arm of the sim-to-real pillar), plus finishing the 60 frozen TEST frames that are the
+paper's final exam.
 
-**Target today: EVERY OTHER frame per folder (sorted by filename) = 40 per altitude = 120 frames.
-Stretch goal if energy remains: all 240.** Even 30/altitude helps (few-shot DA evidence:
-single-digit→150 labeled target images move the needle; our evidence-backed budget is 50–150+).
+## STEP 0 — finish the 60 test frames first (existing Roboflow project)
+The 60 frames in `Drone Shoot\extracted_v1\test_frames\` are already in your existing Roboflow
+project. Finish boxing every person in them (rules in Step 3) and export (Step 4). Do NOT add any
+new images to that project — it must stay test-only forever.
 
-**Order: 50 m first → 30 m → 10 m.** (50 m people are ~13–16 px — hardest to label but worth the
-most: it's the exact C2A tiny band and the pseudo-label recall danger zone.)
+## STEP 1 — which frames? Already picked for you.
+I copied your exact batch to:
+`Drone Shoot\extracted_v1\annotate_batch_v1\`  → subfolders `10m\` `30m\` `50m\` (40 frames each;
+every-other frame of the selftrain pool, selection recorded in `selection_manifest.json`).
+**Just upload everything in this folder. No choosing needed.**
+(Stretch goal later = the remaining 40/altitude still in `selftrain_frames\` — a second batch
+another day, NOT today.)
 
-## Labeling rules (same contract as the test frames)
-1. Single class: `person`.
-2. Box EVERY visible human, including partially visible/occluded — box the VISIBLE extent, tight.
-3. Zoom to ≥100% when labeling 50 m frames; sweep the frame systematically (grid pattern) so
-   tiny bodies aren't missed.
-4. Dark clothing in shade = our known miss class — look twice there.
-5. Frames with ZERO people: mark as null/empty and KEEP them (they are valuable negatives against
-   our grass/texture false-positive problem — do not delete).
-6. Keep this batch in a separate Roboflow tag/split named `selftrain_v1` — never mixed with the
-   60 test frames. Export: COCO JSON (same as test).
+## STEP 2 — Roboflow setup (one-time, ~3 minutes)
+1. roboflow.com → sign in → **Create New Project**.
+2. Project type: **Object Detection**. Project name: `drone-selftrain-v1`.
+   Annotation group / class: `person` (single class — must match the test project spelling).
+3. **Why a separate project:** so these training frames can NEVER get mixed into the frozen test
+   set. One project = test only; this new project = selftrain only.
+4. Click **Upload Data** → drag the three folders (`10m`, `30m`, `50m`) from
+   `annotate_batch_v1\` into the upload box → wait for 120 images → **Save and Continue**.
+   If it asks about splits, put EVERYTHING in **Train** (we control splits ourselves later;
+   0% valid / 0% test in Roboflow).
 
-## What these labels buy (so the effort has a purpose)
-- 120–240 labeled real frames = the FEW-SHOT arm of the sim-to-real pillar (S2.5/S5): joint
-  training C2A(+H) + SARD + these frames, per-dataset balanced sampling.
-- The remaining unlabeled frames stay as self-training fuel (SF-UT ladder).
-- The 60 test frames stay untouched as the final 3-altitude real-world benchmark.
+## STEP 3 — annotating (the actual work; do 50m folder images first — hardest, most valuable)
+Open **Annotate** → click the first image. Controls you need:
+- Press **B** (or pick the bounding-box tool) → drag a box around a person → it auto-assigns the
+  only class `person` → **Enter/confirm**.
+- **Zoom: scroll wheel** (or +/−). For 50 m images work at ≥100% zoom and sweep the image in a
+  grid pattern (left→right, top→bottom) — people are ~13–16 px, easy to miss.
+- Rules per box:
+  1. Box every visible human, including partially hidden ones — box only the VISIBLE part, tight.
+  2. Dark clothing in shadow is our known blind spot — look twice at shaded areas.
+  3. Do NOT box statues/posters/reflections (only real people).
+- Image with NO people at all: click **Mark Null** (in the toolbar) — do NOT skip/delete it.
+  Empty frames are valuable "nothing here" evidence against false alarms on grass.
+- Navigation: arrow keys / Next. Progress bar shows N/120. It autosaves.
+Rough time budget: 10 m ≈ 20–30 s/frame, 30 m ≈ 1 min, 50 m ≈ 2–3 min. Total ≈ 2.5–4 h.
+If energy runs out: 50m + 30m complete beats everything half-done.
+
+## STEP 4 — export (both projects, same recipe)
+1. Project → **Versions** (left sidebar) → **Create New Version / Generate**.
+2. Preprocessing: **remove/disable EVERYTHING** except Auto-Orient (Resize must be OFF — we need
+   native 3840×2160 pixels).
+3. Augmentations: **NONE** (augmentation happens in training, never in the dataset).
+4. **Generate** → then **Export Dataset** → format: **COCO** (a.k.a. "COCO JSON") → download zip.
+5. Unzip into: `Drone Shoot\extracted_v1\annotations\selftrain_v1\` (new batch) and
+   `Drone Shoot\extracted_v1\annotations\test_v1\` (the 60 test frames). Tell Claude when done —
+   filenames must match the originals (they will, if Resize stayed OFF).
+
+## Sanity checklist before you stop
+- [ ] 60 test frames fully boxed + exported (COCO) to `annotations\test_v1\`
+- [ ] 120 batch frames boxed or marked Null + exported (COCO) to `annotations\selftrain_v1\`
+- [ ] Nothing was resized/augmented in either export
+- [ ] The two Roboflow projects were never mixed

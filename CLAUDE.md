@@ -1,5 +1,10 @@
 # CLAUDE.md — thesis project map (read this first, every session)
 
+**ORIENTATION LAYER (since 2026-07-12):** `START_HERE.md` at repo root = human+agent master map
+with a "RIGHT NOW" status block. RULE: refresh START_HERE's RIGHT NOW block + the active lap
+README checklist at the END of every session, then commit. At session start: read START_HERE's
+RIGHT NOW → active lap README → continue from the first unchecked box.
+
 **Project:** Undergrad thesis → paper. Tiny/occluded HUMAN detection in aerial DISASTER imagery
 (drone/UAV). Base model YOLO11m (Ultralytics). Datasets: C2A (synthetic composite), SARD (real),
 own 3-altitude drone footage (10/30/50 m, 4K).
