@@ -138,7 +138,13 @@ FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a 
 Failure floors unchanged from lap-2 (protocol + ablation corpus + real-footage benchmark survive
 any gate failure; Direction A sparse-P2 remains the efficiency fallback).
 
-## 6. Decision menu (user picks; nothing below starts without it)
+## 6. Decision menu — ★RESOLVED 2026-07-12: user chose **Option A**.
+Baselines locked: YOLOv9-e repro + YOLO26m + YOLOv12m (all native/verified); D-FINE-M optional
+after anchors on the A6000. Annotation approved and started same-day (see
+`..\ANNOTATION_TODO_2026-07-12.md`): 60 test frames finish first, then 120-target/240-stretch
+selftrain pool. Pose-label audit PASSED (P0b) → pose-aux promoted to optional S2 row.
+User note: PC resources not a constraint (16 GB + 12 GB + 12 GB + A6000 48 GB).
+*(original menu kept below for the record)*
 
 - **Option A (recommended): the composite of §3** — FCCG architecture axis + FreqDA sim-to-real
   axis, target JSTARS/WACV (stretch TGRS/ISPRS). Most work, highest ceiling, both axes reuse
