@@ -43,9 +43,14 @@ reason integrations kept failing. Lap-3's job:
       identical to standard labels, poses balanced → pose-aux viable as optional S2 row.
 - [x] Git hygiene: `Defense/demo/` (4k+ files, defense-day bundle) gitignored — kept on disk,
       out of novelty branches.
-- [ ] P0(a) rival differentiation notes (DERNet/SAFE-Net/SRTSOD/AFGLFF) — agent running →
-      `docs/2026-07-12_P0_rival_differentiation.md`
-- [ ] S0: FCCG module code + selftests + smoke → then gates per ranking doc §5
+- [x] P0(a) rival differentiation COMPLETE (2026-07-12) → `docs/2026-07-12_P0_rival_differentiation.md`.
+      Verdict: none of the 4 rivals does cross-scale context→evidence gating; all leave assignment
+      untouched; none does occlusion or sim-to-real. Positioning locked: lead with
+      **"context-gated evidence"** (not "frequency"); forbidden claims recorded per rival.
+      OPEN ITEM: SAFE-Net PDF still "coming soon" on CVF — re-poll before paper writing.
+- [ ] S0 (NEXT SESSION): FCCG module code + selftests + 2-ep smoke → gates per ranking doc §5.
+      Read `docs/2026-07-12_P0_rival_differentiation.md` FIRST — module design must respect the
+      recorded deltas (learnable evidence bank vs fixed bases; coarse→fine gate direction).
 
 ## Headline audit results (details in docs/)
 - FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &
