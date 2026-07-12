@@ -541,7 +541,7 @@ def main():
             print(f"live engine unavailable: {e}")
     demo = build(store, engine)
     on_spaces = bool(os.getenv("SPACE_ID"))  # set inside Hugging Face Spaces
-    demo.launch(server_name="0.0.0.0" if on_spaces else "127.0.0.1",
+    demo.launch(server_name="0.0.0.0",  # reachable via localhost AND LAN IP
                 server_port=args.port, share=not on_spaces,
                 inbrowser=(not args.no_browser) and not on_spaces,
                 theme=gr.themes.Soft())

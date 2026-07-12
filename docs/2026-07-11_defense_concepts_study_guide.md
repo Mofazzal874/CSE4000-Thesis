@@ -39,6 +39,14 @@ NMS → final boxes
 - **Why a neck at all?** Deep features (P5) know *what* things are but are spatially
   coarse; shallow features (P2/P3) know *where* edges are but not what they belong to.
   The neck fuses both so every detection scale gets meaning AND precision.
+- **"Skip source"** = a backbone layer whose output is SAVED and wired directly into a
+  later neck `Concat`, skipping everything in between (a skip connection). Downsampling
+  destroys fine spatial detail; it can't be recreated by upsampling, only preserved by
+  skipping it forward. Layers 2/4/6 are the skip sources (see `Concat(2/4/6)` in the
+  layer table). **Layer 2 (160²×256) is the P2 skip** — the finest detail the backbone
+  ever computes, unused by standard YOLO11; our P2 branch is mechanically just one more
+  skip fusion: upsample fused-P3 + concat layer-2 → the tiny people's edges come from
+  the skip, the "this is a person" semantics from the deep path.
 - **C3k2** — YOLO11's basic building block: a CSP ("split-transform-merge") residual
   block. It splits channels, passes part through small bottleneck convolutions, and
   concatenates back. Cheap, gradient-friendly feature refinement. It appears in both
@@ -87,8 +95,8 @@ P4 (s16) → 40×40, P5 (s32) → 20×20.
 | 24 px (small) | 0.75 | 1.5 | 3.0 | 6.0 |
 
 A detector cannot localize what lives inside a *fraction* of one cell — the cell's
-features are a summary of the whole patch, and one 6-px person is 1% of a P5 cell's
-area. Since **99.6 % of C2A instances are < 32 px**, the standard P3–P5 head is
+features are a summary of the whole patch, and a 6-px person is 36 of a P5 cell's
+1024 pixels (≈ 3.5 % of the patch): noise inside the summary. Since **99.6 % of C2A instances are < 32 px**, the standard P3–P5 head is
 structurally mismatched to this dataset; stride 4 is the first scale where the bulk of
 the targets span ≥ 1 full cell. That's the entire P2 hypothesis in one table.
 
@@ -100,7 +108,16 @@ larger targets, and stability of multi-scale training.
 ## 4. Every formula, with numbers
 
 ### 4.1 IoU — and why tiny boxes make it twitchy
-IoU(B̂,B) = area(B̂∩B) / area(B̂∪B). 1 = perfect, 0 = disjoint; ≥ 0.5 counts as correct.
+**Symbols first:**
+- **B** = the ground-truth box (the rectangle the annotator drew around the real person).
+- **B̂** ("B-hat") = the predicted box (the rectangle the model output). The hat ˆ is the
+  standard convention for "the model's estimate of" — same reason the loss uses p̂
+  (predicted probability) vs y (true label).
+- **∩** = intersection (area covered by BOTH boxes) · **∪** = union (area covered by
+  EITHER box).
+
+IoU(B̂,B) = area(B̂∩B) / area(B̂∪B). 1 = perfect agreement, 0 = disjoint; ≥ 0.5 counts
+as a correct detection throughout the thesis.
 
 **Worked example (10×10-px person, prediction shifted right by k px):**
 | shift k | intersection | union | IoU | verdict @0.5 |
@@ -116,6 +133,11 @@ noise; (b) we lead with AP50 and recall instead; (c) the CIoU loss adds centre/s
 terms — pure IoU gradients are unstable for few-px boxes.
 
 ### 4.2 Precision, Recall, F1, F2
+**Symbols first:**
+- **TP** (true positive) = a predicted box that matches a real person (IoU ≥ 0.5).
+- **FP** (false positive) = a predicted box with no matching person (false alarm).
+- **FN** (false negative) = a real person with no matching box (a miss).
+
 - P = TP/(TP+FP): *of the boxes I output, what fraction were real people?*
 - R = TP/(TP+FN): *of the real people, what fraction did I find?*
 
@@ -130,6 +152,14 @@ F_β = (1+β²)PR/(β²P+R) puts β² = 4× weight on recall. Domain justificati
 person may die; a false alarm costs an operator seconds.
 
 ### 4.3 CBAM — the two attention equations, walked through
+**Symbols first:**
+- **F** = the input feature map, shape C×H×W (for us: 512 channels × 20 × 20 at P5).
+- **F′** = F after channel re-weighting; **F″** = F′ after spatial re-weighting (final).
+- **M_c** = channel-attention weights (one number per channel, C×1×1).
+- **M_s** = spatial-attention weights (one number per location, 1×H×W).
+- **σ** = sigmoid (squashes any number into 0–1, so outputs act as weights).
+- **f⁷ˣ⁷** = a convolution with a 7×7 kernel · **⊗** = element-wise multiply (broadcast).
+
 **Channel attention ("WHICH features matter?"):**
 M_c(F) = σ( MLP(AvgPool(F)) + MLP(MaxPool(F)) )
 
@@ -178,7 +208,11 @@ Numbers: true person (y=1) predicted at p̂=0.9 → loss 0.105. Same person at p
 loss 2.30 — **22× more**. The log punishes *confident wrongness*, which is what trains
 calibrated confidence scores (your ECE 0.021 later).
 
-**CIoU (box regression):** L_CIoU = 1 − IoU + ρ²(b,b^gt)/c² + αv — three penalties:
+**CIoU (box regression):** L_CIoU = 1 − IoU + ρ²(b,b^gt)/c² + αv
+**Symbols first:** **b** = centre point of the predicted box · **b^gt** = centre of the
+ground-truth box · **ρ** = straight-line distance between those two centres · **c** =
+diagonal of the smallest rectangle enclosing both boxes · **v** = aspect-ratio mismatch
+term · **α** = automatic balance weight for v. Three penalties:
 1. `1 − IoU` — overlap quality.
 2. `ρ²/c²` — centre misplacement: ρ = distance between the two box centres, c = diagonal
    of the smallest box enclosing both. Dividing by c² makes it scale-invariant.
