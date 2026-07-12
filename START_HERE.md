@@ -11,13 +11,19 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 (FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
 `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
 
-## RIGHT NOW (2026-07-12)
+## RIGHT NOW (2026-07-12, evening)
 - **Decision locked: Option A** (composite architecture + sim-to-real pillar). Branch: `novelty-lap-3`.
 - **User is annotating** per `10-07-2026-Novelty-Lap-3\ANNOTATION_TODO_2026-07-12.md`
   (60 test frames finish first, then the staged 120-frame batch in
-  `Drone Shoot\extracted_v1\annotate_batch_v1\`).
-- **Claude's next step: S0** — write the FCCG modules + selftests + smoke run
-  (design constraints in `10-07-2026-Novelty-Lap-3\docs\2026-07-12_P0_rival_differentiation.md`).
+  `Drone Shoot\extracted_v1\annotate_batch_v1\`). Exports land in
+  `Drone Shoot\extracted_v1\annotations\{test_v1,selftrain_v1}\`.
+- **S0 code is WRITTEN and locally green:** `10-07-2026-Novelty-Lap-3\scripts\`
+  `10_fccg_modules.py` (FCCGFuse context-gated evidence @P2/P3 seams + FFLUp adaptive
+  upsampler; 15/15 CPU selftests PASS; +0.52M params) + `yolo11m_fccg_p2.yaml` +
+  `11_fccg_smoke.py` + `SMOKE_CHECKLIST_PC4.md`.
+- **NEXT ACTION: run the S0 smoke on PC-4** (checklist above: selftest → --check-load →
+  2-epoch smoke, --no-amp, batch 4). Pass ⇒ S1 paired pilots (ranking doc §5).
+- Then P1 seam probe (PC-4, eval-only ~2h) can run in the same PC-4 session.
 - Still running remotely: PC-1 G1 baseline retrain (do not disturb PC-1 until it finishes).
 
 ## If you are lost, read in this order

@@ -48,9 +48,17 @@ reason integrations kept failing. Lap-3's job:
       untouched; none does occlusion or sim-to-real. Positioning locked: lead with
       **"context-gated evidence"** (not "frequency"); forbidden claims recorded per rival.
       OPEN ITEM: SAFE-Net PDF still "coming soon" on CVF — re-poll before paper writing.
-- [ ] S0 (NEXT SESSION): FCCG module code + selftests + 2-ep smoke → gates per ranking doc §5.
-      Read `docs/2026-07-12_P0_rival_differentiation.md` FIRST — module design must respect the
-      recorded deltas (learnable evidence bank vs fixed bases; coarse→fine gate direction).
+- [x] S0 CODE DONE (2026-07-12): `scripts/10_fccg_modules.py` — FCCGFuse (context-gated
+      evidence at P2/P3 Concat seams; gate = decomposed large-kernel DW from the top-down
+      semantic half; evidence = learnable X−AvgPool DW bank on the lateral half; shape-
+      preserving + lazy-init + top-level classes = the proven CBAM house pattern, NO
+      ultralytics monkeypatch) + FFLUp (FreqFusion-lite adaptive ×2 upsampler, exact box-blur
+      at init) + `yolo11m_fccg_p2.yaml` (Detect taps [21,24,27,30] keep base channel layout)
+      + `11_fccg_smoke.py` + `SMOKE_CHECKLIST_PC4.md`. **15/15 CPU selftests PASS; +0.52M
+      params.** Design respects all recorded rival deltas.
+- [ ] S0 EXIT GATE: run `SMOKE_CHECKLIST_PC4.md` on PC-4 (selftest → --check-load → 2-ep
+      smoke --no-amp batch 4). Pass ⇒ S1 paired 50-ep pilots (ranking doc §5).
+- [ ] P1 seam probe (PC-4, eval-only ~2h) — can share the same PC-4 session.
 
 ## Headline audit results (details in docs/)
 - FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &
