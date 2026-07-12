@@ -94,3 +94,6 @@ drone_inference_out/
 *.MOV
 *.avi
 *.mkv
+
+# Defense demo bundle (kept on disk, excluded from novelty branches - 4k+ files)
+Defense/demo/

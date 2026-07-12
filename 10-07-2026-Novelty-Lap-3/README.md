@@ -35,10 +35,17 @@ reason integrations kept failing. Lap-3's job:
 - [x] Ranking + venue targets written: top-3 = D3 sim-to-real / D2 TAL-assignment / D1 FCCG core;
       venue ladder JSTARS → PR(reframed) → TGRS stretch; WACV 2027 + AERO-HPR CVPRW 2027;
       CVPR-main/ICML ruled out with receipts (2026-07-10)
-- [ ] **USER DECISION PENDING** → Option A (composite, recommended) / B (architecture-only) /
-      C (data-first) + annotation budget + baseline set — see ranking doc §6
-- [ ] After decision: amend S-plan, start P0/P0.5/P1 (reading notes, pose-label audit, frame
-      extraction, seam probe)
+- [x] **DECISION LOCKED (2026-07-12): Option A** — composite FCCG + FreqDA. Baselines:
+      YOLOv9-e repro + YOLO26m + YOLOv12m mandatory; D-FINE-M optional (A6000). Annotation
+      approved: today's batch per `ANNOTATION_TODO_2026-07-12.md` (120 target / 240 stretch;
+      60 test frames finish first). Plain-language plan: `PLAN_IN_PLAIN_WORDS.md`.
+- [x] P0(b) pose-label audit PASSED (2026-07-12): 10,215 files, 0 malformed in sample, boxes
+      identical to standard labels, poses balanced → pose-aux viable as optional S2 row.
+- [x] Git hygiene: `Defense/demo/` (4k+ files, defense-day bundle) gitignored — kept on disk,
+      out of novelty branches.
+- [ ] P0(a) rival differentiation notes (DERNet/SAFE-Net/SRTSOD/AFGLFF) — agent running →
+      `docs/2026-07-12_P0_rival_differentiation.md`
+- [ ] S0: FCCG module code + selftests + smoke → then gates per ranking doc §5
 
 ## Headline audit results (details in docs/)
 - FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &
