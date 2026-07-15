@@ -44,7 +44,7 @@
 \newcommand{\sizeChapNum}{\fontsize{14}{21}\selectfont}   % CHAPTER I  -> 14pt
 \newcommand{\sizeChapTtl}{\fontsize{16}{24}\selectfont}   % chapter title -> 16pt
 \newcommand{\sizeFrontHd}{\fontsize{16}{24}\selectfont}   % Abstract/LoT/LoF -> 16pt
-\newcommand{\sizeTitle}{\fontsize{18}{27}\selectfont}     % thesis title -> 18pt
+\newcommand{\sizeTitle}{\fontsize{18}{32}\selectfont}     % thesis title -> 18pt, 1.5 line space (Word-style)
 
 % Chapter heading prints "CHAPTER <Roman>" (14pt) then title (16pt), both centered.
 % NOTE: \thechapter stays ARABIC so sections/figures/tables number as 3.1, Figure 3.2
@@ -56,8 +56,9 @@
   {\sizeChapTtl}
 \titlespacing*{\chapter}{0pt}{0pt}{24pt}% + section's 12pt-before = ~2 blank lines
 
-% Sections / subsections: 12pt bold, left, space before 12pt after 6pt.
-\titleformat{\section}{\bfseries\normalsize}{\thesection}{0.6em}{}
+% Sections: 14pt bold (template page-10 callout); subsections: 12pt bold.
+% Both left-aligned, space before 12pt after 6pt.
+\titleformat{\section}{\bfseries\fontsize{14}{21}\selectfont}{\thesection}{0.6em}{}
 \titlespacing*{\section}{0pt}{12pt}{6pt}
 \titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
 \titlespacing*{\subsection}{0pt}{12pt}{6pt}

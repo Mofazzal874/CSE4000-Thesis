@@ -285,6 +285,19 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
+- 2026-07-15 (template-compliance session): user gave corrections + Template
+  Images/ audit. Fixed: (1) cover "Project/Thesis No.:" now BOLD (per page(1).png,
+  overrides spec's "Normal"); (2) title block leading 18/27 → 18/32 (Word-style
+  1.5 spacing — this was the "title doesn't follow template" issue); (3) title
+  page supervisor row rebuilt: details 0.60\tw no bad wraps, signature rule
+  BESIDE details on the right (template layout), both [t]-aligned; (4)
+  acknowledgment supervisor name UNBOLDED; (5) SECTIONS now 14pt bold per
+  template page(10).png callout (was 12pt; subsections stay 12pt bold); (6)
+  title changed earlier to "MSA-YOLO: A Multi-Scale Attention Enhancement of
+  YOLO for Tiny-Human Detection in Aerial Search-and-Rescue Imagery".
+  Audited against template images 1,2,3,8,10: LoT/LoF format ✓, chapter
+  opening ✓, acknowledgment ✓, abstract ✓. Compile: 0 errors, 0 overfull.
+  NOTE: main.pdf had been deleted by user; full chain rebuilt.
 - 2026-07-07 (polish session): (1) fig_size_distribution y-axis label moved to
   x=-0.85 — no longer overlaps tick numbers (render-verified p.27 printed);
   (2) acknowledgment expanded: thesis-group students (valuable help) +

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  7 JUL 2026 14:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  15 JUL 2026 13:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1596,41 +1596,41 @@ File: figures/detgrid_c2a_s8.png Graphic file (type bmp)
 <figures/detgrid_c2a_s8.png>
 File: figures/detgrid_c2a_s4.png Graphic file (type bmp)
 <figures/detgrid_c2a_s4.png>
- [33] [34]
+ [33] [34] [35]
 File: figures/per_size_recall_all_configs.png Graphic file (type bmp)
 <figures/per_size_recall_all_configs.png>
- [35] [36])
-[37]
+ [36])
+[37] [38]
 \openout2 = `chapters/05_societal_issues.aux'.
 
  (./chapters/05_societal_issues.tex
 Chapter V.
-[38
+[39
 
 
 
 
-] [39]) [40] [41]
+] [40]) [41] [42]
 \openout2 = `chapters/06_complex_engineering.aux'.
 
  (./chapters/06_complex_engineering.tex
 Chapter VI.
-[42
+[43
 
 
 
 
-] [43]) [44]
+] [44]) [45]
 \openout2 = `chapters/07_conclusions.aux'.
 
  (./chapters/07_conclusions.tex
 Chapter VII.
-[45
+[46
 
 
 
 
-]) [46] [47
+]) [47] [48
 
 
 
@@ -1641,13 +1641,13 @@ it/12 et al.\TU/TimesNewRoman(0)/m/n/12 , “YOLOv10: Real-time end-to-end objec
 
  []
 
-[48] [49]
+[49] [50]
 Underfull \hbox (badness 7133) in paragraph at lines 58--58
 \TU/TimesNewRoman(0)/m/n/12 petencies, version 4.” (2021), [Online]. Available:
  []$[] [] [] [] []  [] [] [] [] [] []  []
  []
 
-[50]
+[51]
 Underfull \hbox (badness 1755) in paragraph at lines 120--120
 []|$[][]$ \TU/TimesNewRoman(0)/m/n/10.95 0.849, small-object re-
  []
@@ -1727,10 +1727,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 124--125
 \TU/TimesNewRoman(0)/m/n/10.95 recommenda-
  []
 
-[51
+[52
 
 
-] [52] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
+] [53] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
 (./frontmatter/acknowledgment.aux) (./frontmatter/abstract.aux)
 (./frontmatter/abbreviations.aux) (./chapters/01_introduction.aux)
 (./chapters/02_literature_review.aux) (./chapters/03_methodology.aux)
@@ -1749,10 +1749,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 Here is how much of TeX's memory you used:
  38730 strings out of 476846
  793201 string characters out of 5803825
- 1947627 words of memory out of 5000000
+ 1946627 words of memory out of 5000000
  59960 multiletter control sequences out of 15000+600000
  563627 words of font info for 120 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  99i,12n,128p,1058b,5062s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (63 pages).
+Output written on main.pdf (64 pages).
