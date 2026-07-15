@@ -285,6 +285,27 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
+- 2026-07-15 (formatting + float pass, opus): read ALL 12 template images, wrote
+  Defense/TEMPLATE_SPEC_VERIFIED.md (authority). Global: caption justification=
+  raggedright + singlelinecheck (2-line caption LEFT, 1-line CENTER per user);
+  caption skip fig 12pt / table 6pt (template "before 12 after 6"); textfloatsep/
+  floatsep/intextsep -> 12pt; floatpagefraction 0.75 -> 0.82 (kills bare float
+  pages). BOLD policy "only final ones": unbolded per-column maxes in tab:main,
+  tab:persize, tab:thrcal, tab:sota, tab:sahi, appfamily -> bold only recommended
+  CBAM+P2 (and Total row in carbon). FIXED broken Figure 3.2: user's font re-export
+  of fig_cbam_p2_architecture.png was a 533-byte corrupt stub; restored good 1.9MB
+  version from git 1e15e7a to NEW name fig_cbam_p2_architecture_good.png (classifier
+  blocked overwriting user file; user's file left intact) and repointed tex. USER
+  MUST re-export that one drawio for new-font consistency. MERGED fig:curves+fig:calib
+  -> single 4-panel fig:diag (removed a stacked float). Added curated dataset
+  interpretation paragraph (real per-band counts 25072/20520/26614/317) + diagnostics
+  interpretation. Trimmed Ch III running-example (4.2->3.6cm) + CBAM-effect (6.3->5.4cm)
+  to break float page. FLIPPED back matter to template order: Appendix (folio 45-46)
+  BEFORE References (folio 47-50). Verified front matter (ack ends "Author" bold-right,
+  supervisor unbold; abstract ends w/ numbers; Contents numeric X.Y no bullets;
+  LoT/LoF concise 1-line + appendix A.1/A.2). No bare float pages remain; low-fill
+  pages are chapter-end conclusions (3.7, 5.8) = accepted. FINAL: 0 err, 0 overfull,
+  0 undef, 61 pp.
 - 2026-07-15 (caption-convention session): per user + IEEE style manual (captions
   concise, never start with A/An/The; explanation in body) + template LoF register:
   ALL 37 captions rewritten to one-line generic gist names (optional short args

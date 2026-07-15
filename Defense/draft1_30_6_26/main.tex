@@ -49,17 +49,9 @@
 \include{chapters/07_conclusions}
 
 
-% ---------- REFERENCES (IEEE) ----------
+% ---------- APPENDIX (template page 7: appendices precede references) ------
 \clearpage
-\phantomsection
-\addcontentsline{toc}{chapter}{References}
-\begin{center}{\fontsize{14}{21}\selectfont\bfseries REFERENCES}\end{center}
-\vblank{2}
-\printbibliography[heading=none]
-
-% ---------- APPENDIX ----------
 \appendix
-\clearpage
 \phantomsection
 \addcontentsline{toc}{chapter}{Appendix: Model Selection History}
 \chapter*{Appendix: Model Selection History}
@@ -89,7 +81,7 @@ the one whose first results were invalidated by an implementation fault.
     \midrule
     YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\
     YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\
-    YOLOv9-e   & \textbf{0.855} & \textbf{0.619} & \textbf{0.884} & \textbf{0.805} & \textbf{0.843} & 111.8 \\
+    YOLOv9-e   & 0.855 & 0.619 & 0.884 & 0.805 & 0.843 & 111.8 \\
     YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\
     YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\
     YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\
@@ -119,5 +111,13 @@ the one whose first results were invalidated by an implementation fault.
     \bottomrule
   \end{tabular}
 \end{table}
+
+% ---------- REFERENCES (IEEE) : template places references last ------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\begin{center}{\fontsize{14}{21}\selectfont\bfseries REFERENCES}\end{center}
+\vblank{2}
+\printbibliography[heading=none]
 
 \end{document}

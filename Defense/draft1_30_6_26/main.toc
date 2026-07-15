@@ -39,12 +39,12 @@
 \contentsline {subsection}{\numberline {3.3.3}Multi-Scale Detection: the P2 Head}{15}{subsection.3.3.3}%
 \contentsline {subsection}{\numberline {3.3.4}State-Space Neck Variant: C3k2Mamba}{15}{subsection.3.3.4}%
 \contentsline {subsection}{\numberline {3.3.5}Running Example}{16}{subsection.3.3.5}%
-\contentsline {section}{\numberline {3.4}Architecture Novelties}{16}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Attention That Pays for Itself}{16}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}A Detection Scale Where the Targets Are}{18}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.4}Architecture Novelties}{17}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Attention That Pays for Itself}{17}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}A Detection Scale Where the Targets Are}{17}{subsection.3.4.2}%
 \contentsline {subsection}{\numberline {3.4.3}Single-Variable Additive Design}{18}{subsection.3.4.3}%
-\contentsline {section}{\numberline {3.5}Loss Function Design}{19}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Inference-Time Enhancement: SAHI and TTA}{20}{section.3.6}%
+\contentsline {section}{\numberline {3.5}Loss Function Design}{18}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Inference-Time Enhancement: SAHI and TTA}{19}{section.3.6}%
 \contentsline {section}{\numberline {3.7}Conclusion}{21}{section.3.7}%
 \contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{22}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Introduction}{22}{section.4.1}%
@@ -55,37 +55,37 @@
 \contentsline {subsection}{\numberline {4.3.3}Per-Size Recall: the Hypothesis Test}{24}{subsection.4.3.3}%
 \contentsline {subsection}{\numberline {4.3.4}Calibration and Efficiency}{24}{subsection.4.3.4}%
 \contentsline {section}{\numberline {4.4}Dataset}{24}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Experimentation}{26}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Quantitative Results}{26}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{26}{subsection.4.6.1}%
+\contentsline {section}{\numberline {4.5}Experimentation}{25}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Quantitative Results}{27}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{27}{subsection.4.6.1}%
 \contentsline {subsection}{\numberline {4.6.2}The Additive Ablation}{27}{subsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{27}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{28}{subsection.4.6.3}%
 \contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{28}{subsection.4.6.4}%
 \contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{29}{subsection.4.6.5}%
 \contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{30}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{31}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{32}{section.4.9}%
-\contentsline {section}{\numberline {4.10}Objectives Achieved}{33}{section.4.10}%
-\contentsline {section}{\numberline {4.11}Financial Analysis and Budget}{34}{section.4.11}%
-\contentsline {section}{\numberline {4.12}Conclusion}{34}{section.4.12}%
-\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{36}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{36}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{36}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Ethical Considerations}{36}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Safety Considerations}{37}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Legal Considerations}{37}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{38}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{38}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{38}{section.5.8}%
-\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{40}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Introduction}{40}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{40}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{41}{section.6.3}%
-\contentsline {section}{\numberline {6.4}Conclusion}{42}{section.6.4}%
-\contentsline {chapter}{\numberline {VII}Conclusions}{43}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Summary}{43}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Limitations}{43}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{44}{section.7.3}%
-\contentsline {chapter}{References}{45}{section*.46}%
-\contentsline {chapter}{Appendix: Model Selection History}{49}{section*.47}%
+\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{33}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{33}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Objectives Achieved}{35}{section.4.10}%
+\contentsline {section}{\numberline {4.11}Financial Analysis and Budget}{36}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Conclusion}{36}{section.4.12}%
+\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{37}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{37}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{37}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Ethical Considerations}{37}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Safety Considerations}{38}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Legal Considerations}{38}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{39}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{39}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{40}{section.5.8}%
+\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{41}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{41}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{41}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{42}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conclusion}{43}{section.6.4}%
+\contentsline {chapter}{\numberline {VII}Conclusions}{44}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary}{44}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitations}{44}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{45}{section.7.3}%
+\contentsline {chapter}{Appendix: Model Selection History}{46}{section*.45}%
+\contentsline {chapter}{References}{48}{section*.49}%
 \contentsfinish 

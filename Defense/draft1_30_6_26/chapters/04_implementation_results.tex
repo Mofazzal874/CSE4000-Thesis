@@ -134,6 +134,21 @@ test split in Figure~\ref{fig:sizedist}, whose blue bars mark the sizes
 only the stride-4 and stride-8 scales can resolve: $99.6\%$ of instances
 are smaller than 32~px, and more than a third are below 8~px.
 
+The two views make the difficulty concrete. The four scene types in
+Figure~\ref{fig:dataset_samples} differ mainly in their background: collapsed
+buildings add rubble texture, fire adds smoke and glare, flood adds water
+reflections, and traffic scenes add vehicles and road markings. Across all
+four the people are alike, a few pixels tall, scattered, and often part
+hidden by the very clutter that defines the scene. The size histogram in
+Figure~\ref{fig:sizedist} puts numbers on that impression. Of the roughly
+$72{,}500$ annotated people in the test split, $25{,}072$ are under $8$~px,
+$20{,}520$ fall in the $8$--$16$~px band, and $26{,}614$ in the $16$--$32$~px
+band; only $317$ reach the $32$--$96$~px range and none exceed $96$~px. Three
+bands hold $99.6\%$ of the targets, every one of them below the size a
+stride-8 head resolves cleanly. That single measurement is what motivates the
+stride-4 scale and frames the per-size recall reported later in
+Table~\ref{tab:persize}.
+
 \begin{table}[tbp]
   \centering
   \caption{C2A dataset split used for all experiments.}
@@ -242,8 +257,8 @@ full history.
 Table~\ref{tab:main} reports the four configurations on the C2A test set
 under the COCO protocol; AP is averaged over IoU 0.5--0.95, $F_1$ and $F_2$
 are reported at their optimal confidence thresholds, latency is measured
-end-to-end on the RTX 4070 Ti SUPER, and the best value in each column is
-set in bold. Figure~\ref{fig:waterfall} shows the same story as a
+end-to-end on the RTX 4070 Ti SUPER, and the recommended model's headline
+results ($\mathrm{AP}_{50}$ and $F_2$) are set in bold. Figure~\ref{fig:waterfall} shows the same story as a
 per-component waterfall, with the $y$-axis zoomed to $0.838$--$0.856$ and
 the parameter and latency cost listed beneath each bar. Aggregate average precision is saturated: all
 four models sit within $0.002$ AP of one another, exactly the behaviour
@@ -271,10 +286,10 @@ CBAM~+~P2, and the state-space neck is not carried forward.
     Model & Params & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\
     & (M) & & & & & & & & \\
     \midrule
-    YOLO11m baseline    & 20.03 & 67.7 & \textbf{0.615} & 0.843 & 0.655 & 0.691 & \textbf{0.850} & 0.840 & 13.7 \\
-    + CBAM              & 19.08 & 66.9 & \textbf{0.616} & 0.847 & 0.656 & 0.692 & \textbf{0.850} & 0.841 & \textbf{13.5} \\
+    YOLO11m baseline    & 20.03 & 67.7 & 0.615 & 0.843 & 0.655 & 0.691 & 0.850 & 0.840 & 13.7 \\
+    + CBAM              & 19.08 & 66.9 & 0.616 & 0.847 & 0.656 & 0.692 & 0.850 & 0.841 & 13.5 \\
     + CBAM + P2         & 19.57 & 86.7 & 0.615 & \textbf{0.853} & 0.660 & 0.703 & 0.848 & \textbf{0.844} & 14.6 \\
-    + Mamba + CBAM + P2 & 22.01 & 98.4 & 0.614 & 0.852 & \textbf{0.662} & \textbf{0.704} & 0.846 & \textbf{0.844} & 41.1 \\
+    + Mamba + CBAM + P2 & 22.01 & 98.4 & 0.614 & 0.852 & 0.662 & 0.704 & 0.846 & 0.844 & 41.1 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -314,7 +329,7 @@ result reflects the architecture, not a wiring fault.
     YOLO11m baseline    & 0.743 & 0.869 & 0.894 & 0.909 \\
     + CBAM              & 0.746 & 0.873 & 0.895 & 0.912 \\
     + CBAM + P2         & \textbf{0.757} & 0.865 & 0.886 & 0.808 \\
-    + Mamba + CBAM + P2 & \textbf{0.757} & 0.870 & 0.887 & 0.811 \\
+    + Mamba + CBAM + P2 & 0.757 & 0.870 & 0.887 & 0.811 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -339,7 +354,7 @@ an operator trust the scores when triaging detections.
     YOLO11m baseline    & 0.19 & 0.840 & 0.023 \\
     + CBAM              & 0.20 & 0.841 & 0.021 \\
     + CBAM + P2         & 0.16 & \textbf{0.844} & 0.021 \\
-    + Mamba + CBAM + P2 & 0.17 & \textbf{0.844} & \textbf{0.020} \\
+    + Mamba + CBAM + P2 & 0.17 & 0.844 & 0.020 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -360,10 +375,6 @@ schedule. After recovery, the variant's validation mAP50 plateaus by epoch
 149 despite the run continuing to epoch 154, and no late improvement appears. The other three runs follow the same
 shape with the endpoints already reported in Table~\ref{tab:main}; their
 stopping epochs (270, 239, and 218) are given in Section~\ref{sec:protocol}.
-The precision--recall and score-threshold curves of the recommended model
-appear in Figure~\ref{fig:curves}, where the dashed line marks the
-$F_2$-optimal threshold of Table~\ref{tab:thrcal}; the reliability diagram
-and confusion counts are in Figure~\ref{fig:calib}.
 
 \begin{figure}[tbp]
   \centering
@@ -371,29 +382,40 @@ and confusion counts are in Figure~\ref{fig:calib}.
   \caption{Training dynamics of the state-space variant.}
   \label{fig:training}
 \end{figure}
+\FloatBarrier
+
+Four diagnostics of the recommended model are collected in
+Figure~\ref{fig:diag}. The precision--recall curve (a) stays high until
+recall passes $0.8$ and then falls, the shape expected when the remaining
+misses are the sub-eight-pixel targets. The score-against-confidence curve
+(b) is broad and flat near its peak, so the exact operating threshold is not
+delicate; the dashed line marks the $F_2$-optimal value of
+Table~\ref{tab:thrcal}. The reliability diagram (c) tracks the diagonal,
+which is why a reported confidence can be read as an empirical precision, and
+the confusion counts (d) show the errors are almost all missed people rather
+than false alarms on background, the failure mode that matters least in a
+recall-first task.
 
 \begin{figure}[tbp]
   \centering
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_pr_curve.png}{6.0cm}
+    \figorplaceholder{figures/cbam_p2_pr_curve.png}{5.1cm}\\[2pt]
+    {\small (a) precision--recall}
   \end{minipage}\hfill
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_f1_conf.png}{6.0cm}
-  \end{minipage}
-  \caption{Precision--recall and score-threshold curves of the recommended model.}
-  \label{fig:curves}
-\end{figure}
-
-\begin{figure}[tbp]
-  \centering
+    \figorplaceholder{figures/cbam_p2_f1_conf.png}{5.1cm}\\[2pt]
+    {\small (b) score against confidence}
+  \end{minipage}\\[6pt]
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_calibration.png}{6.0cm}
+    \figorplaceholder{figures/cbam_p2_calibration.png}{5.1cm}\\[2pt]
+    {\small (c) reliability diagram}
   \end{minipage}\hfill
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_confusion.png}{6.0cm}
+    \figorplaceholder{figures/cbam_p2_confusion.png}{5.1cm}\\[2pt]
+    {\small (d) confusion matrix}
   \end{minipage}
-  \caption{Reliability diagram and confusion matrix of the recommended model.}
-  \label{fig:calib}
+  \caption{Diagnostic curves and confusion matrix of the recommended model.}
+  \label{fig:diag}
 \end{figure}
 
 \section{Qualitative Results and Error Analysis}
@@ -429,6 +451,7 @@ operator reviews candidates rather than trusting raw counts.
   \caption{Dense-scene comparison of ground truth and three operating modes.}
   \label{fig:qualgrid}
 \end{figure}
+\FloatBarrier
 
 The per-size results locate where the model still fails, and inspection of
 the missed detections groups the failures into three recurring types. The
@@ -485,7 +508,7 @@ model three times larger, is the right one.
     Cascade R-CNN           & 0.735 & 0.486 & $\sim$69M \\
     DINO                    & 0.789 & 0.471 & $\sim$47M \\
     YOLOv5                  & 0.808 & 0.492 & --- \\
-    YOLOv9-e                & \textbf{0.893} & \textbf{0.688} & 57.3M \\
+    YOLOv9-e                & 0.893 & 0.688 & 57.3M \\
     \midrule
     YOLO11m baseline (ours) & 0.843 & 0.615 & 20.1M \\
     CBAM + P2 (ours)        & 0.853 & 0.615 & \textbf{19.6M} \\
@@ -528,7 +551,7 @@ neither is part of the primary model.
     \midrule
     no SAHI (baseline) & 640  & 0.857 & 0.835 & 0.845 & 0.839 & 0.758 & 15 \\
     + SAHI             & 256  & 0.853 & 0.846 & 0.850 & 0.848 & 0.788 & 162 \\
-    + SAHI             & 320  & 0.861 & 0.844 & \textbf{0.852} & 0.847 & 0.782 & 113 \\
+    + SAHI             & 320  & 0.861 & 0.844 & 0.852 & 0.847 & 0.782 & 113 \\
     + SAHI             & 512  & 0.864 & 0.837 & 0.850 & 0.842 & 0.763 & 66 \\
     + SAHI             & 640  & 0.864 & 0.833 & 0.848 & 0.839 & 0.756 & 54 \\
     + TTA              & 1280 & 0.774 & 0.877 & 0.822 & \textbf{0.854} & \textbf{0.850} & 60 \\

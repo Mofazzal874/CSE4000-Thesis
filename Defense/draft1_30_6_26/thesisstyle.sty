@@ -87,16 +87,22 @@
 % ---- "n blank lines of size 12" vertical spacer (1.5-spaced 12pt = 18pt) ----
 \newcommand{\vblank}[1]{\vspace{\dimexpr 18pt*#1\relax}}
 
-% ---- Captions: 11pt, centered, "Figure 1.1: ..." (spec 7) ------------------
+% ---- Captions (template page 11): 11pt, "Figure 1.1: ..." ------------------
+% Template: caption 11pt, 1.5 line space, space before 12pt / after 6pt.
+% singlelinecheck=true + justification=raggedright  =>  a caption that fits on
+% ONE line is centered; a caption spilling to TWO+ lines is left-aligned
+% (per user rule). Figure caption sits BELOW (skip = fig->caption gap = 12pt);
+% table caption sits ABOVE (skip = caption->table gap = 6pt).
 \RequirePackage{caption}
 \captionsetup{
   font={stretch=1.5},
   labelsep=colon,
-  justification=centering,
-  singlelinecheck=true,
-  skip=10pt
+  justification=raggedright,
+  singlelinecheck=true
 }
-\captionsetup{font+={small}}  % ~11pt at a 12pt base
+\captionsetup{font+={small}}          % ~11pt at a 12pt base
+\captionsetup[figure]{skip=12pt}      % 12pt between figure and caption below
+\captionsetup[table]{skip=6pt}        % 6pt between caption above and table
 
 % ---- Tables ---------------------------------------------------------------
 \RequirePackage{booktabs}
@@ -113,9 +119,15 @@
 \renewcommand{\topfraction}{0.92}
 \renewcommand{\bottomfraction}{0.9}
 \renewcommand{\textfraction}{0.06}
-\renewcommand{\floatpagefraction}{0.75}
-\setlength{\textfloatsep}{18pt plus 2pt minus 2pt}
-\setlength{\floatsep}{14pt plus 2pt minus 2pt}
+\renewcommand{\floatpagefraction}{0.82}
+% Template "space before 12pt / after 6pt" around floats: keep separations near
+% one 12pt line so floats read as one block with text, without loose gaps.
+\setlength{\textfloatsep}{12pt plus 3pt minus 2pt}
+\setlength{\floatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+% \FloatBarrier keeps a figure with its own paragraph so two figures never stack
+% on one page without text between them (used at a few figure-dense boundaries).
+\RequirePackage{placeins}
 
 % ---- IEEE references via biblatex (spec 9) ---------------------------------
 \RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}

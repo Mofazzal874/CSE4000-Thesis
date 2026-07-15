@@ -64,7 +64,7 @@ added or modified in this work.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_cbam_p2_architecture.png}{10.5cm}
+  \figorplaceholder{figures/figures_png_format/cbam_p2_architecture.png}{10.5cm}
   \caption{Layer-level architecture of the proposed detector on a real C2A scene.}
   \label{fig:fullarch}
 \end{figure}
@@ -185,19 +185,19 @@ figures, and the final detections recover the people the operator needs.
 \begin{figure}[tbp]
   \centering
   \begin{minipage}{0.44\linewidth}\centering
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
     {\small (a) input ($640\times640$)}
   \end{minipage}\hfill
   \begin{minipage}{0.44\linewidth}\centering
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/cbam_overlay.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/cbam_overlay.png}\\[2pt]
     {\small (b) CBAM spatial attention}
   \end{minipage}\\[8pt]
   \begin{minipage}{0.44\linewidth}\centering
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/p2_featuremap.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/p2_featuremap.png}\\[2pt]
     {\small (c) P2 feature response (stride 4)}
   \end{minipage}\hfill
   \begin{minipage}{0.44\linewidth}\centering
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{figures/arch_detections.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_detections.png}\\[2pt]
     {\small (d) detections}
   \end{minipage}
   \caption{Trained detector on the running-example scene.}
@@ -224,7 +224,7 @@ configurations.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_cbam_effect.png}{6.3cm}
+  \figorplaceholder{figures/figures_png_format/cbam_effect.png}{5.4cm}
   \caption{Effect of the CBAM substitution on clutter and target response.}
   \label{fig:cbameffect}
 \end{figure}
@@ -245,7 +245,7 @@ change.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_stride_problem.png}{6cm}
+  \figorplaceholder{figures/figures_png_format/stride_problem.png}{6cm}
   \caption{Stride problem motivating the P2 head.}
   \label{fig:strideprob}
 \end{figure}
@@ -342,10 +342,11 @@ threshold 0.5, which suits partially-cut boxes at tile borders.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_sahi.png}{8.8cm}
+  \figorplaceholder{figures/figures_png_format/sahi.png}{8.8cm}
   \caption{SAHI inference pipeline.}
   \label{fig:sahipipe}
 \end{figure}
+\FloatBarrier
 
 Test-time augmentation (TTA) instead re-runs the detector on rescaled and
 flipped copies of the full image, at scale factors 1.0, 0.83, and 0.67, each
@@ -358,7 +359,7 @@ collapses beyond twice the training resolution.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/fig_tta.png}{7cm}
+  \figorplaceholder{figures/figures_png_format/tta.png}{7cm}
   \caption{Test-time augmentation pipeline.}
   \label{fig:ttapipe}
 \end{figure}
