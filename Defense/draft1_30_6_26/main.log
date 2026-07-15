@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  15 JUL 2026 13:51
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  15 JUL 2026 14:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1476,37 +1476,25 @@ Chapter II.
 ] [8]
 File: figures/fig_cbam_module.png Graphic file (type bmp)
 <figures/fig_cbam_module.png>
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
-(Font)              scaled to size 10.95116pt on input line 107.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
-(Font)              scaled to size 8.00085pt on input line 107.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
-(Font)              scaled to size 6.00064pt on input line 107.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
-(Font)              scaled to size 10.94882pt on input line 107.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
-(Font)              scaled to size 7.99915pt on input line 107.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
-(Font)              scaled to size 5.99936pt on input line 107.
- [9]
 File: figures/fig_p2_head.png Graphic file (type bmp)
 <figures/fig_p2_head.png>
+ [9]
 File: figures/fig_c3k2mamba.png Graphic file (type bmp)
 <figures/fig_c3k2mamba.png>
  [10]
 File: figures/fig_ablation_chain.png Graphic file (type bmp)
 <figures/fig_ablation_chain.png>
 
-Underfull \hbox (badness 1320) in paragraph at lines 181--182
+Underfull \hbox (badness 1320) in paragraph at lines 169--170
 []|\TU/TimesNewRoman(0)/m/n/12 compared in one controlled
  []
 
 
-Underfull \hbox (badness 3536) in paragraph at lines 183--184
+Underfull \hbox (badness 3536) in paragraph at lines 171--172
 \TU/TimesNewRoman(0)/m/n/12 identical baseline; reported
  []
 
-) [11] [12]
+) [11]
 \openout2 = `chapters/03_methodology.aux'.
 
  (./chapters/03_methodology.tex
@@ -1524,7 +1512,7 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
 (Font)              scaled to size 6.99925pt on input line 26.
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
 (Font)              scaled to size 4.99947pt on input line 26.
-) [13
+) [12
 
 
 
@@ -1532,7 +1520,19 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
 ]
 File: figures/fig_cbam_p2_architecture.png Graphic file (type bmp)
 <figures/fig_cbam_p2_architecture.png>
- [14] [15] [16]
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
+(Font)              scaled to size 10.95116pt on input line 79.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
+(Font)              scaled to size 8.00085pt on input line 79.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(2)/m/n' will be
+(Font)              scaled to size 6.00064pt on input line 79.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
+(Font)              scaled to size 10.94882pt on input line 79.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
+(Font)              scaled to size 7.99915pt on input line 79.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
+(Font)              scaled to size 5.99936pt on input line 79.
+ [13] [14] [15]
 File: figures/arch_input.png Graphic file (type bmp)
 <figures/arch_input.png>
 File: figures/cbam_overlay.png Graphic file (type bmp)
@@ -1541,28 +1541,28 @@ File: figures/p2_featuremap.png Graphic file (type bmp)
 <figures/p2_featuremap.png>
 File: figures/arch_detections.png Graphic file (type bmp)
 <figures/arch_detections.png>
- [17]
 File: figures/fig_cbam_effect.png Graphic file (type bmp)
 <figures/fig_cbam_effect.png>
+ [16] [17]
 File: figures/fig_stride_problem.png Graphic file (type bmp)
 <figures/fig_stride_problem.png>
- [18] [19] [20]
+ [18] [19]
 File: figures/fig_sahi.png Graphic file (type bmp)
 <figures/fig_sahi.png>
 File: figures/fig_tta.png Graphic file (type bmp)
 <figures/fig_tta.png>
 )
-[21] [22] [23]
+[20] [21]
 \openout2 = `chapters/04_implementation_results.aux'.
 
  (./chapters/04_implementation_results.tex
 Chapter IV.
-[24
+[22
 
 
 
 
-] [25]
+] [23]
 File: figures/c2a_collapsed.png Graphic file (type bmp)
 <figures/c2a_collapsed.png>
 File: figures/c2a_fire.png Graphic file (type bmp)
@@ -1571,8 +1571,8 @@ File: figures/c2a_flood.png Graphic file (type bmp)
 <figures/c2a_flood.png>
 File: figures/c2a_traffic.png Graphic file (type bmp)
 <figures/c2a_traffic.png>
- (./tikz/fig_size_distribution.tex) [26] [27] [28]
-(./tikz/fig_ablation_waterfall.tex) [29] [30]
+ (./tikz/fig_size_distribution.tex) [24] [25] [26]
+(./tikz/fig_ablation_waterfall.tex) [27] [28]
 File: figures/fig_training_worst.png Graphic file (type bmp)
 <figures/fig_training_worst.png>
 File: figures/cbam_p2_pr_curve.png Graphic file (type bmp)
@@ -1583,7 +1583,7 @@ File: figures/cbam_p2_calibration.png Graphic file (type bmp)
 <figures/cbam_p2_calibration.png>
 File: figures/cbam_p2_confusion.png Graphic file (type bmp)
 <figures/cbam_p2_confusion.png>
- [31] [32]
+ [29]
 File: figures/qual_gt.png Graphic file (type bmp)
 <figures/qual_gt.png>
 File: figures/qual_baseline.png Graphic file (type bmp)
@@ -1592,45 +1592,46 @@ File: figures/qual_sahi256.png Graphic file (type bmp)
 <figures/qual_sahi256.png>
 File: figures/qual_sahitta256.png Graphic file (type bmp)
 <figures/qual_sahitta256.png>
+ [30]
 File: figures/detgrid_c2a_s8.png Graphic file (type bmp)
 <figures/detgrid_c2a_s8.png>
 File: figures/detgrid_c2a_s4.png Graphic file (type bmp)
 <figures/detgrid_c2a_s4.png>
- [33] [34] [35]
+ [31] [32]
 File: figures/per_size_recall_all_configs.png Graphic file (type bmp)
 <figures/per_size_recall_all_configs.png>
- [36])
-[37] [38]
+ [33])
+[34] [35]
 \openout2 = `chapters/05_societal_issues.aux'.
 
  (./chapters/05_societal_issues.tex
 Chapter V.
-[39
+[36
 
 
 
 
-] [40]) [41] [42]
+] [37]) [38] [39]
 \openout2 = `chapters/06_complex_engineering.aux'.
 
  (./chapters/06_complex_engineering.tex
 Chapter VI.
+[40
+
+
+
+
+] [41]) [42]
+\openout2 = `chapters/07_conclusions.aux'.
+
+ (./chapters/07_conclusions.tex
+Chapter VII.
 [43
 
 
 
 
-] [44]) [45]
-\openout2 = `chapters/07_conclusions.aux'.
-
- (./chapters/07_conclusions.tex
-Chapter VII.
-[46
-
-
-
-
-]) [47] [48
+]) [44] [45
 
 
 
@@ -1641,96 +1642,96 @@ it/12 et al.\TU/TimesNewRoman(0)/m/n/12 , “YOLOv10: Real-time end-to-end objec
 
  []
 
-[49] [50]
+[46] [47]
 Underfull \hbox (badness 7133) in paragraph at lines 58--58
 \TU/TimesNewRoman(0)/m/n/12 petencies, version 4.” (2021), [Online]. Available:
  []$[] [] [] [] []  [] [] [] [] [] []  []
  []
 
-[51]
-Underfull \hbox (badness 1755) in paragraph at lines 120--120
+[48]
+Underfull \hbox (badness 1755) in paragraph at lines 114--114
 []|$[][]$ \TU/TimesNewRoman(0)/m/n/10.95 0.849, small-object re-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 121--122
+Underfull \hbox (badness 10000) in paragraph at lines 115--116
 []|\TU/TimesNewRoman(0)/m/n/10.95 adopted; core
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 121--122
+Underfull \hbox (badness 10000) in paragraph at lines 115--116
 \TU/TimesNewRoman(0)/m/n/10.95 of recom-
  []
 
 
-Underfull \hbox (badness 1132) in paragraph at lines 122--122
+Underfull \hbox (badness 1132) in paragraph at lines 116--116
 []|\TU/TimesNewRoman(0)/m/n/10.95 post-initialisation SSM in-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
 \TU/TimesNewRoman(0)/m/n/10.95 work’s training rebuild
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
 \TU/TimesNewRoman(0)/m/n/10.95 silently removed the in-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 []|\TU/TimesNewRoman(0)/m/n/10.95 discarded;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 \TU/TimesNewRoman(0)/m/n/10.95 protocol
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 \TU/TimesNewRoman(0)/m/n/10.95 presence
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--123
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
 []|\TU/TimesNewRoman(0)/m/n/10.95 multi-scale dilated SSM
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--123
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
 \TU/TimesNewRoman(0)/m/n/10.95 gain and no protocol-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--123
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
 \TU/TimesNewRoman(0)/m/n/10.95 compliant full run was
  []
 
 
-Underfull \hbox (badness 1655) in paragraph at lines 124--124
+Underfull \hbox (badness 1655) in paragraph at lines 118--118
 \TU/TimesNewRoman(0)/m/n/10.95 rameters, $[][][][]$ latency, no
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 124--124
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
 \TU/TimesNewRoman(0)/m/n/10.95 scan-activity diagnostics
  []
 
 
-Underfull \hbox (badness 4144) in paragraph at lines 124--125
+Underfull \hbox (badness 4144) in paragraph at lines 118--119
 []|\TU/TimesNewRoman(0)/m/n/10.95 excluded from
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 124--125
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
 \TU/TimesNewRoman(0)/m/n/10.95 recommenda-
  []
 
-[52
+[49
 
 
-] [53] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
+] [50] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
 (./frontmatter/acknowledgment.aux) (./frontmatter/abstract.aux)
 (./frontmatter/abbreviations.aux) (./chapters/01_introduction.aux)
 (./chapters/02_literature_review.aux) (./chapters/03_methodology.aux)
@@ -1755,4 +1756,4 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  99i,12n,128p,1058b,5062s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (64 pages).
+Output written on main.pdf (61 pages).

@@ -285,6 +285,18 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
+- 2026-07-15 (caption-convention session): per user + IEEE style manual (captions
+  concise, never start with A/An/The; explanation in body) + template LoF register:
+  ALL 37 captions rewritten to one-line generic gist names (optional short args
+  removed — caption now serves LoT/LoF directly). Displaced caption info MERGED
+  into body prose: fullarch insets + tab:layers scale note (Ch III §3.3), warm-
+  colour note (running example), tab:main protocol sentence + waterfall zoom note
+  (§4.6), sizedist blue-bars note + dataset-samples difficulty note (§4.4),
+  curves dashed-threshold note, tab:sahi latency/baseline note (§4.9), appendix
+  P/R/F1 definition pointer. Float rules: appendix tables htbp→tbp (all floats
+  now top/bottom/page only); \textfloatsep 12→18pt, \floatsep 10→14pt (template
+  gap). Verified: LoF all single-line aligned; tab:main page clean. 0 errors,
+  0 overfull, 0 undefined.
 - 2026-07-15 (template-compliance session): user gave corrections + Template
   Images/ audit. Fixed: (1) cover "Project/Thesis No.:" now BOLD (per page(1).png,
   overrides spec's "Normal"); (2) title block leading 18/27 → 18/32 (Word-style

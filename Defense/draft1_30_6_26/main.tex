@@ -71,18 +71,16 @@ to the attempt that motivated it. Two records are given. Table~\ref{tab:appfamil
 is the detector-family benchmark that fixed the YOLO11m baseline; it was run
 under an earlier protocol (different hardware and schedule), so its absolute
 values are not comparable to the final ablation of Table~\ref{tab:main} and
-it serves only to justify the backbone choice. Table~\ref{tab:apphistory}
+it serves only to justify the backbone choice; $P$, $R$, and $F_1$ follow
+the definitions of Section~\ref{sec:metrics}, and Size is the weight-file
+size. Table~\ref{tab:apphistory}
 then lists every architectural variant attempted across the project with its
 outcome and the decision it produced, including the attempts that failed and
 the one whose first results were invalidated by an implementation fault.
 
-\begin{table}[htbp]
+\begin{table}[tbp]
   \centering
-  \caption[Detector-family benchmark used to select the baseline.]{Detector-family benchmark on the C2A test set used to select the
-  baseline (earlier protocol; values are internally comparable only). $P$,
-  $R$, and $F_1$ are precision, recall, and their harmonic mean as defined in
-  Section~\ref{sec:metrics}; Size is the weight-file size. YOLO11m offers the
-  best accuracy-to-size balance and was selected.}
+  \caption{Detector-family benchmark used to select the baseline.}
   \label{tab:appfamily}
   \setlength{\tabcolsep}{5pt}
   \begin{tabular}{@{}l r r r r r r@{}}
@@ -102,13 +100,9 @@ the one whose first results were invalidated by an implementation fault.
   \end{tabular}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[tbp]
   \centering
-  \caption[Every architectural variant attempted, with outcome and decision.]{Every architectural variant attempted during the project, with its
-  outcome and the decision it led to. Final-protocol numbers refer to the
-  tables of Chapter~IV; earlier-protocol numbers are internally comparable
-  only. The invalidated first state-space attempt is listed because the fault
-  it exposed shaped the verification steps of the final protocol.}
+  \caption{Architectural variants attempted during the project, with outcome and decision.}
   \label{tab:apphistory}
   \small
   \setlength{\tabcolsep}{4pt}
