@@ -132,7 +132,7 @@ FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a 
 | **S2.6 C2A-H pilot (NEW, D3)** | CFHA-lite harmonization of a C2A subset (blend-diversity re-paste first — cheap; diffusion pass only if justified) → 50-ep pilot | PC-2 | 1–2 d | transfer delta on SARD/drone > control |
 | S3 | full 300-ep protocol runs (winning config), scene-split + official | PC-1 (after G1 baseline finishes) | ~1.5 d each | beats CBAM+P2 full runs; SARD zero-shot no collapse |
 | S4 | anchors: YOLOv9-e repro + YOLO26m (AdamW pinned) | PC-1 queue | ~3 d total | table completeness |
-| S5 | final: joint 3-set model (C2A[-H]+SARD+labeled drone frames, balanced sampling), 3 seeds, drone-bench eval (60 labels), optional NOMAD transfer | PC-1/PC-4 | — | paper numbers |
+| S5 | final: joint 3-set model (C2A[-H]+SARD+labeled drone frames, balanced sampling), 3 seeds, drone-bench eval (60 labels), optional NOMAD transfer, **+ RealDisaster-mini R-set row (eval-only; user's real Venezuela-earthquake/Bangladesh-flood videos; pipeline + provenance rules in `RealDisaster\README_PROVENANCE.md`, extractor = scripts/12_rset_extract.py)** | PC-1/PC-4 | — | paper numbers |
 | **Annotation gate** | ONLY after S2.5 shows lift: label 50–150 stratified non-test frames (user approves budget) | Roboflow | user time | few-shot-DAOD evidence says this is enough to matter |
 
 Failure floors unchanged from lap-2 (protocol + ablation corpus + real-footage benchmark survive

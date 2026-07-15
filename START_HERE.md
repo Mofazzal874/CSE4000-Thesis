@@ -38,6 +38,7 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 |---|---|---|
 | `10-07-2026-Novelty-Lap-3\` | **ACTIVE — the current lap** | Verified idea catalog, ranking, protocols, annotation guide, plain-words plan |
 | `Drone Shoot\` | **ACTIVE — our own data** | 3 videos (10/30/50m) + `extracted_v1\`: `test_frames` (60, FROZEN — never train), `selftrain_frames` (240 pool), `annotate_batch_v1` (120 staged for labeling), `annotations\` (exports land here) |
+| `RealDisaster\` | ACTIVE — R-set (S5, EVAL-ONLY) | Real-event benchmark: drop disaster videos in `raw_videos\`, fill the PROVENANCE table in `README_PROVENANCE.md` (mandatory), extract with lap-3 script 12, hand-curate `frames_v1\`, annotate in a third Roboflow project. NEVER trained on. |
 | `05-07-2026-Novelty-Lap\` | ACTIVE as infrastructure | Lap 1: the reusable scripts 00–07 (split builder, eval harness, frame extractor…) and **`results\` = THE RESULTS INBOX** (every remote-PC result + `MANIFEST.md` index) |
 | `c2a\C2A_Dataset\` | ACTIVE as data | `new_dataset3` (official C2A, leaky split) + `new_dataset3_scenesplit_v1` (our clean re-split) + `All labels with Pose information` (bonus pose labels, audited OK) |
 | `08-07-2026-Novelty-Lap-2\` | Reference | Lap 2: the FCCG architecture proposal + needs analysis N1–N8 + SOTA research |
