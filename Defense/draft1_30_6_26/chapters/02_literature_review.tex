@@ -155,10 +155,21 @@ can be read from the difference it makes.
 
 \begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{2.8cm}
+  \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{6cm}
   \caption{Additive ablation chain studied in this thesis.}
   \label{fig:chain}
 \end{figure}
+
+The chain is deliberately linear rather than a full factorial sweep. A
+factorial design over three components would need eight models and eight
+training runs; the additive order used here needs only four, and it answers the
+practical question directly, because each step asks whether the next component
+earns its place on top of the best design so far. The order also matches the
+engineering priority: attention is tried first because it is nearly free, the
+high-resolution P2 scale next because it targets the dominant failure mode, and
+the state-space neck last because it is the most expensive addition to justify.
+Read from left to right, the chain therefore doubles as a cost-ordered decision
+procedure, and Chapter~IV reports the measured gain or loss at each step.
 
 The same standpoint, expressed as a direct contrast with prior work along four
 axes, is set out in Table~\ref{tab:gap}.

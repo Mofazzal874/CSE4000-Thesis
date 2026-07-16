@@ -96,13 +96,11 @@ YOLO11m width of 1.0, channel cap of 512, and depth of 0.5.
   Layers & Module (arguments) & Output & Role \\
   \midrule
   \endfirsthead
-  \multicolumn{4}{@{}l}{\itshape Table~\ref{tab:layers} (continued from previous page)}\\[2pt]
+  \multicolumn{4}{@{}l}{\itshape Table~\ref{tab:layers} (Continued)}\\[2pt]
   \toprule
   Layers & Module (arguments) & Output & Role \\
   \midrule
   \endhead
-  \midrule
-  \multicolumn{4}{r@{}}{\itshape continued on next page}\\
   \endfoot
   \bottomrule
   \endlastfoot
@@ -379,6 +377,21 @@ evaluated at a higher input resolution than it was trained at; running TTA at
 1280~px doubles the effective resolution of the smallest targets. Chapter~IV
 shows this is the most effective single inference-time setting, though the gain
 collapses beyond twice the training resolution.
+
+The two procedures buy recall in different ways and at different costs. SAHI
+multiplies the number of forward passes by the tile count, so its latency grows
+with the slicing density; its strength is that each tile is processed at close
+to the training resolution, which is what lets it recover the smallest and most
+occluded targets along cluttered edges. Test-time augmentation instead runs a
+fixed handful of passes at a few scales, so its cost is bounded and predictable,
+and its gain comes mainly from the single high-resolution pass rather than from
+tiling. Because neither procedure alters the trained weights, both can be
+switched on or off at deployment time according to the latency budget an
+operator can afford: a ground station reviewing footage after a sortie can pay
+for SAHI, while a live on-board feed may allow only the cheaper augmentation
+pass or none at all. Chapter~IV quantifies the recall each setting adds and the
+latency each costs, so the operating point can be chosen against a concrete
+budget rather than by rule of thumb.
 
 \begin{figure}[H]
   \centering

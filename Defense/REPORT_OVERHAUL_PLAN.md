@@ -285,7 +285,20 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
-- 2026-07-16 (gap-fix + font + deterministic-placement pass, opus): user reported
+- 2026-07-16 (spacing/Fig2.4/table-continuation/gap pass, opus): web-verified IEEE
+  conventions: (a) split-table = full caption on 1st page, "Table X (Continued)" +
+  repeated header on next page; "continued on next page" FOOTER is longtable default
+  NOT IEEE -> removed it, changed continuation label to "Table 3.1 (Continued)".
+  (b) IEEE does NOT require bold column headers; data tables already regular weight
+  (only LoT/LoF header row bold) -> no change. FIG 2.4 (ablation chain) enlarged
+  2.8cm -> 6cm box = full column width (readable); added genuine "chain is linear
+  not factorial" para after it to fill f11 so no mid-chapter gap; Table 2.1 sits on
+  f12 with bridge sentence before + discussion after (not lone). PAGE 22->23 gap:
+  added SAHI-vs-TTA comparison paragraph (real content) after TTA para -> page 22
+  now full, Fig 3.7 on p23. SPACING above/below floats = \intextsep 12pt (matches
+  template "space before 12pt"), consistent for all [H] floats. Final scan: NO
+  mid-body gaps (only front-matter ack/toc short); chapter-end pages (f12,f23,f42)
+  have inherent whitespace. 64 pp, 0 err/overfull/undef. user reported
   my \FloatBarrier pass INTRODUCED mid-page gaps (p30-38) + fonts too small + p12
   lone table + p15 gap. ROOT CAUSE of gaps = barriers forcing premature breaks.
   FIX: removed all 21 \FloatBarriers; enlarged matplotlib figs (training 6->9.5cm,
