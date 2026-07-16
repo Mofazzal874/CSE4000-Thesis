@@ -285,7 +285,23 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
-- 2026-07-16 (spacing/Fig2.4/table-continuation/gap pass, opus): web-verified IEEE
+- 2026-07-16 (appendix graph + gap + cross-ref pass, opus): appendix Table A.1/A.2
+  were [tbp] -> floated away leaving big gap; set both to [H] (inline). Added
+  performance-vs-size scatter Figure A.1 (pgfplots, added \RequirePackage{pgfplots}
+  compat=1.17) plotting mAP@50-95 vs weight-file-size(MB) for the 9 benchmarked
+  detectors from Table A.1 data (VERIFIED tab:appfamily matches Benchmarking-YOLOs
+  metrics.json e.g. yolo11m 0.841 mAP50 38.6MB); YOLO11m red star on efficient
+  frontier. NOTE: metrics.json Parameters_M/GFLOPs were 0 (not recorded) so used
+  Size(MB) as param proxy, stated in caption. Onward-Model agent hit session limit
+  (didn't finish) but Table A.1 was sufficient. Fixed appendix figure numbering
+  0.1 -> A.1 (added \renewcommand{\thefigure}{A.\arabic{figure}}+reset). Added
+  useful appendix info: benchmark protocol detail (25 epochs, 50% sample, batch 10)
+  in intro; model-selection lessons paragraph; reproducibility paragraph (seed 0,
+  split hashes, env manifests). Cross-referenced appendix from body: ch02 YOLO11m
+  baseline intro + ch04 attention-module-selection now cite Table A.1, Figure A.1,
+  Table A.2. Adding Fig A.1 spilled LoF onto a near-empty 2nd page -> tightened
+  LoT/LoF entry spacing (\parskip 1pt during \listof*) so LoF fits one page again.
+  65 pp, 0 err/overfull/undef, no body low-fill regressions. web-verified IEEE
   conventions: (a) split-table = full caption on 1st page, "Table X (Continued)" +
   repeated header on next page; "continued on next page" FOOTER is longtable default
   NOT IEEE -> removed it, changed continuation label to "Table 3.1 (Continued)".

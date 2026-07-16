@@ -232,10 +232,12 @@ CBAM and ECA were each swapped into the baseline under an earlier protocol
 to the tables below). Table~\ref{tab:eca} summarises the outcome: ECA was
 faster but bought no recall, while CBAM improved $F_2$ and small-object
 recall at similar cost. CBAM was therefore carried into the ablation. A
-consolidated record of every configuration tried during model selection,
-from the YOLOv8 through YOLO11 family sweep to the attention, P2, state-space,
-and atrous variants, is provided in the appendix for the reader who wants the
-full history.
+consolidated record of every configuration tried during model selection is
+provided in the appendix for the reader who wants the full history: the
+detector-family benchmark that fixed the YOLO11m baseline
+(Table~\ref{tab:appfamily}) and its accuracy-against-size trade-off
+(Figure~\ref{fig:appfrontier}), together with every architectural variant
+attempted and its outcome (Table~\ref{tab:apphistory}).
 
 \begin{table}[H]
   \centering

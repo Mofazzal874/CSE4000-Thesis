@@ -85,7 +85,10 @@ through C3k2 stages, a path-aggregation neck (PAN--FPN) that fuses features acro
 scales, and a decoupled detection head that predicts boxes at three strides (P3,
 P4, P5). The backbone ends with a spatial-pyramid-pooling (SPPF) stage and a
 C2PSA self-attention block. Its medium variant, YOLO11m, is the baseline used
-throughout this thesis.
+throughout this thesis; it was chosen from a nine-model comparison of the
+YOLOv9, YOLOv10, and YOLO11 families reported in the appendix
+(Table~\ref{tab:appfamily} and Figure~\ref{fig:appfrontier}), where it sits on
+the best accuracy-to-size trade-off.
 
 \subsection{Attention: CBAM and ECA}
 Attention modules re-weight feature maps so that informative channels and spatial

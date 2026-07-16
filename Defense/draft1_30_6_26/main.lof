@@ -27,4 +27,5 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Detection accuracy against model size for the nine benchmarked detectors of Table~\ref {tab:appfamily}; size stands in for parameter count. YOLO11m (star) lies on the efficient frontier.}}{49}{figure.caption.47}%
 \contentsfinish 
