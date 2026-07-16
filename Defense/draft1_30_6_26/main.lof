@@ -8,22 +8,22 @@
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Explored C3k2Mamba block with bidirectional local-window scans.}}{10}{figure.caption.15}%
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Additive ablation chain studied in this thesis.}}{11}{figure.caption.16}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces High-level schematic of the proposed detection pipeline.}}{13}{figure.caption.18}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed detector on a real C2A scene.}}{14}{figure.caption.19}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Trained detector on the running-example scene.}}{16}{figure.caption.21}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution on clutter and target response.}}{17}{figure.caption.22}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Stride problem motivating the P2 head.}}{18}{figure.caption.23}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces SAHI inference pipeline.}}{20}{figure.caption.25}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Test-time augmentation pipeline.}}{20}{figure.caption.26}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces High-level schematic of the proposed detection pipeline.}}{14}{figure.caption.18}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed detector on a real C2A scene.}}{15}{figure.caption.19}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Trained detector on the running-example scene.}}{18}{figure.caption.20}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution on clutter and target response.}}{19}{figure.caption.21}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Stride problem motivating the P2 head.}}{20}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces SAHI inference pipeline.}}{22}{figure.caption.24}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Test-time augmentation pipeline.}}{23}{figure.caption.25}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{25}{figure.caption.29}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Measured size distribution of C2A test-set human targets.}}{26}{figure.caption.30}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ on the C2A test set.}}{28}{figure.caption.33}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant.}}{30}{figure.caption.36}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Diagnostic curves and confusion matrix of the recommended model.}}{31}{figure.caption.37}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Dense-scene comparison of ground truth and three operating modes.}}{32}{figure.caption.38}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}}{33}{figure.caption.39}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Per-size recall under each inference-time setting.}}{35}{figure.caption.42}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{27}{figure.caption.28}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Measured size distribution of C2A test-set human targets.}}{28}{figure.caption.29}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ on the C2A test set.}}{30}{figure.caption.32}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant.}}{32}{figure.caption.35}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Diagnostic curves and confusion matrix of the recommended model.}}{33}{figure.caption.36}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Dense-scene comparison of ground truth and three operating modes.}}{34}{figure.caption.37}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}}{35}{figure.caption.38}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Per-size recall under each inference-time setting.}}{37}{figure.caption.41}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

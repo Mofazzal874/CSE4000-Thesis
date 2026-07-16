@@ -73,6 +73,7 @@
 \renewcommand{\thechapter}{\Roman{chapter}}
 \setcounter{secnumdepth}{2}% number chapter + section (X.Y) + subsection (X.Y.Z)
 \RequirePackage{graphicx}
+\RequirePackage{float}             % [H] exact placement to avoid stacking/gaps
 \RequirePackage{tikz}              % native vector figures (e.g. the ablation waterfall)
 \RequirePackage{pgfgantt}          % project-planning Gantt chart (Chapter I)
 \numberwithin{equation}{chapter}   % resets per chapter
@@ -108,6 +109,7 @@
 \RequirePackage{booktabs}
 \RequirePackage{array}
 \RequirePackage{multirow}
+\RequirePackage{longtable}   % tables that split across pages with a repeated header
 
 % ---- Float placement / whitespace control ----------------------------------
 % Let pages end naturally (slack at the bottom) instead of stretching interior

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "academic-research-suite": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@imbad0202/academic-research-skills"
+      ],
+      "env": {}
+    }
+  }
+}

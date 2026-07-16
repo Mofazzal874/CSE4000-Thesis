@@ -33,7 +33,7 @@ convention of published small-object work rather than the framework default:
 cosine-schedule training on noisy small-target data improves late, and a short
 patience cuts runs before that late gain arrives.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Training configuration shared by all four models.}
   \label{tab:setup}
@@ -125,31 +125,12 @@ image. The composited origin is a stated limitation: results on C2A measure
 detection of very small human shapes in disaster clutter, and transfer to
 fully real imagery is future work.
 
-The frozen split used throughout is given in Table~\ref{tab:split}; split
-hashes are recorded so every model sees exactly the same images.
-Representative samples covering the four scene types appear in
-Figure~\ref{fig:dataset_samples}, where human targets are small and
-numerous in every scene, and the measured size distribution of the
-test split in Figure~\ref{fig:sizedist}, whose blue bars mark the sizes
-only the stride-4 and stride-8 scales can resolve: $99.6\%$ of instances
-are smaller than 32~px, and more than a third are below 8~px.
+The frozen split used throughout is given in Table~\ref{tab:split}. Split
+hashes are recorded so that the baseline and the three variants all see
+exactly the same training, validation, and test images, which is what makes
+the single-seed comparison between configurations fair.
 
-The two views make the difficulty concrete. The four scene types in
-Figure~\ref{fig:dataset_samples} differ mainly in their background: collapsed
-buildings add rubble texture, fire adds smoke and glare, flood adds water
-reflections, and traffic scenes add vehicles and road markings. Across all
-four the people are alike, a few pixels tall, scattered, and often part
-hidden by the very clutter that defines the scene. The size histogram in
-Figure~\ref{fig:sizedist} puts numbers on that impression. Of the roughly
-$72{,}500$ annotated people in the test split, $25{,}072$ are under $8$~px,
-$20{,}520$ fall in the $8$--$16$~px band, and $26{,}614$ in the $16$--$32$~px
-band; only $317$ reach the $32$--$96$~px range and none exceed $96$~px. Three
-bands hold $99.6\%$ of the targets, every one of them below the size a
-stride-8 head resolves cleanly. That single measurement is what motivates the
-stride-4 scale and frames the per-size recall reported later in
-Table~\ref{tab:persize}.
-
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{C2A dataset split used for all experiments.}
   \label{tab:split}
@@ -162,7 +143,15 @@ Table~\ref{tab:persize}.
   \end{tabular}
 \end{table}
 
-\begin{figure}[tbp]
+Representative samples of the four scene types are shown in
+Figure~\ref{fig:dataset_samples}. The scenes differ mainly in their
+background: collapsed buildings add rubble texture, fire adds smoke and glare,
+flood adds water reflections, and traffic scenes add vehicles and road
+markings. Across all four the people are alike, only a few pixels tall,
+scattered, and often part hidden by the very clutter that defines the scene,
+which is what makes the detection problem hard even for a human reader.
+
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_collapsed.png}\\[2pt]
@@ -184,7 +173,17 @@ Table~\ref{tab:persize}.
   \label{fig:dataset_samples}
 \end{figure}
 
-\begin{figure}[tbp]
+Figure~\ref{fig:sizedist} measures how small those people actually are; its
+blue bars mark the size bands that only the stride-4 and stride-8 scales can
+resolve. Of the roughly $72{,}500$ annotated people in the test split,
+$25{,}072$ are under $8$~px, $20{,}520$ fall in the $8$--$16$~px band, and
+$26{,}614$ in the $16$--$32$~px band; only $317$ reach the $32$--$96$~px range
+and none exceed $96$~px. Three bands therefore hold $99.6\%$ of the targets,
+every one below the size a stride-8 head resolves cleanly. That single
+measurement is what motivates the stride-4 scale and frames the per-size
+recall reported later in Table~\ref{tab:persize}.
+
+\begin{figure}[H]
   \centering
   \input{tikz/fig_size_distribution}
   \caption{Measured size distribution of C2A test-set human targets.}
@@ -238,7 +237,7 @@ from the YOLOv8 through YOLO11 family sweep to the attention, P2, state-space,
 and atrous variants, is provided in the appendix for the reader who wants the
 full history.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Preliminary attention-module comparison on C2A.}
   \label{tab:eca}
@@ -258,9 +257,8 @@ Table~\ref{tab:main} reports the four configurations on the C2A test set
 under the COCO protocol; AP is averaged over IoU 0.5--0.95, $F_1$ and $F_2$
 are reported at their optimal confidence thresholds, latency is measured
 end-to-end on the RTX 4070 Ti SUPER, and the recommended model's headline
-results ($\mathrm{AP}_{50}$ and $F_2$) are set in bold. Figure~\ref{fig:waterfall} shows the same story as a
-per-component waterfall, with the $y$-axis zoomed to $0.838$--$0.856$ and
-the parameter and latency cost listed beneath each bar. Aggregate average precision is saturated: all
+results ($\mathrm{AP}_{50}$ and $F_2$) are set in bold. Aggregate average
+precision is saturated: all
 four models sit within $0.002$ AP of one another, exactly the behaviour
 Section~\ref{sec:metrics} anticipated for boxes this small. The differences
 appear in the metrics that matter for the task. Adding the P2 head raises
@@ -275,7 +273,7 @@ roughly triples end-to-end latency ($14.6 \to 41.1$~ms) without improving
 any accuracy metric. On this evidence the recommended configuration is
 CBAM~+~P2, and the state-space neck is not carried forward.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Additive ablation results on the C2A test set (COCO protocol).}
   \label{tab:main}
@@ -294,7 +292,17 @@ CBAM~+~P2, and the state-space neck is not carried forward.
   \end{tabular}
 \end{table}
 
-\begin{figure}[tbp]
+Figure~\ref{fig:waterfall} shows the same story as a per-component waterfall.
+The $y$-axis is zoomed to the $0.838$--$0.856$ range so the small differences
+are visible; each bar's height is the change in $\mathrm{AP}_{50}$ from the
+configuration to its left, and the parameter count and latency are printed
+beneath each step. The green bars mark the two genuine gains, CBAM
+($+0.0041$) and the P2 head ($+0.0060$), while the red bar shows the
+state-space neck removing $0.0012$ at almost triple the latency. Read left to
+right, the figure is the visual argument for stopping the chain at
+CBAM~+~P2.
+
+\begin{figure}[H]
   \centering
   \input{tikz/fig_ablation_waterfall}
   \caption{Per-component contribution to $\mathrm{AP}_{50}$ on the C2A test set.}
@@ -316,7 +324,7 @@ scan diagnostics show the module was genuinely active (the forward and
 reverse scans disagree with a mean cosine distance of $0.836$), so the null
 result reflects the architecture, not a wiring fault.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Per-size recall on the C2A test set with ground-truth counts.}
   \label{tab:persize}
@@ -343,7 +351,7 @@ chain: expected calibration errors of about $0.02$ mean a reported confidence
 of $0.8$ corresponds to roughly $0.8$ empirical precision, which is what lets
 an operator trust the scores when triaging detections.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Operating threshold and calibration per configuration.}
   \label{tab:thrcal}
@@ -376,13 +384,12 @@ schedule. After recovery, the variant's validation mAP50 plateaus by epoch
 shape with the endpoints already reported in Table~\ref{tab:main}; their
 stopping epochs (270, 239, and 218) are given in Section~\ref{sec:protocol}.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/fig_training_worst.png}{6cm}
+  \figorplaceholder{figures/fig_training_worst.png}{9.5cm}
   \caption{Training dynamics of the state-space variant.}
   \label{fig:training}
 \end{figure}
-\FloatBarrier
 
 Four diagnostics of the recommended model are collected in
 Figure~\ref{fig:diag}. The precision--recall curve (a) stays high until
@@ -396,22 +403,22 @@ the confusion counts (d) show the errors are almost all missed people rather
 than false alarms on background, the failure mode that matters least in a
 recall-first task.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_pr_curve.png}{5.1cm}\\[2pt]
+    \figorplaceholder{figures/cbam_p2_pr_curve.png}{6.6cm}\\[2pt]
     {\small (a) precision--recall}
   \end{minipage}\hfill
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_f1_conf.png}{5.1cm}\\[2pt]
+    \figorplaceholder{figures/cbam_p2_f1_conf.png}{6.6cm}\\[2pt]
     {\small (b) score against confidence}
   \end{minipage}\\[6pt]
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_calibration.png}{5.1cm}\\[2pt]
+    \figorplaceholder{figures/cbam_p2_calibration.png}{6.6cm}\\[2pt]
     {\small (c) reliability diagram}
   \end{minipage}\hfill
   \begin{minipage}{0.49\linewidth}\centering
-    \figorplaceholder{figures/cbam_p2_confusion.png}{5.1cm}\\[2pt]
+    \figorplaceholder{figures/cbam_p2_confusion.png}{6.6cm}\\[2pt]
     {\small (d) confusion matrix}
   \end{minipage}
   \caption{Diagnostic curves and confusion matrix of the recommended model.}
@@ -430,7 +437,7 @@ ground-truth count in all three modes (209 to 217 boxes against 156
 annotations at the 0.25 review threshold), a reminder that at this density an
 operator reviews candidates rather than trusting raw counts.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.485\linewidth}\centering
     \includegraphics[width=\linewidth]{figures/qual_gt.png}\\[2pt]
@@ -451,7 +458,6 @@ operator reviews candidates rather than trusting raw counts.
   \caption{Dense-scene comparison of ground truth and three operating modes.}
   \label{fig:qualgrid}
 \end{figure}
-\FloatBarrier
 
 The per-size results locate where the model still fails, and inspection of
 the missed detections groups the failures into three recurring types. The
@@ -469,14 +475,14 @@ larger targets, is nearly saturated. The model's internal evidence for these
 detections, its attention and P2 feature response on the running example, was
 shown in Figure~\ref{fig:explain}.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.46\linewidth}\centering
-    \includegraphics[width=\linewidth,height=5cm,keepaspectratio]{figures/detgrid_c2a_s8.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=6.8cm,keepaspectratio]{figures/detgrid_c2a_s8.png}\\[2pt]
     {\small (a) stride-8 (P3) grid}
   \end{minipage}\hfill
   \begin{minipage}{0.46\linewidth}\centering
-    \includegraphics[width=\linewidth,height=5cm,keepaspectratio]{figures/detgrid_c2a_s4.png}\\[2pt]
+    \includegraphics[width=\linewidth,height=6.8cm,keepaspectratio]{figures/detgrid_c2a_s4.png}\\[2pt]
     {\small (b) stride-4 (P2) grid}
   \end{minipage}
   \caption{Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}
@@ -494,7 +500,7 @@ $57.3$~M, roughly a third of the size. For a detector that must ride on
 airborne hardware, that trade, one point of $\mathrm{AP}_{50}$ short of a
 model three times larger, is the right one.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Comparison with published detectors on the C2A test set~\cite{nihal2024c2a}.}
   \label{tab:sota}
@@ -540,7 +546,7 @@ cannot extrapolate to several times the resolution. Both remain optional
 inference-time settings that trade latency for recall on the smallest targets;
 neither is part of the primary model.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{SAHI slice-size sweep and TTA for the recommended model.}
   \label{tab:sahi}
@@ -559,9 +565,17 @@ neither is part of the primary model.
   \end{tabular}
 \end{table}
 
-\begin{figure}[tbp]
+Figure~\ref{fig:sahibars} breaks the same sweep down by target size. Every
+inference-time setting lifts the very-tiny ($<8$~px) band the most, the band
+the P2 head already targets, while the larger bands barely move; the
+$1280$-px TTA bar is the tallest in the very-tiny group, matching the $0.850$
+recall of Table~\ref{tab:sahi}. Read together, the table and the figure show
+that the inference-time gain is concentrated exactly where the smallest
+victims sit, and that it costs latency rather than accuracy elsewhere.
+
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/per_size_recall_all_configs.png}{7cm}
+  \figorplaceholder{figures/per_size_recall_all_configs.png}{9.5cm}
   \caption{Per-size recall under each inference-time setting.}
   \label{fig:sahibars}
 \end{figure}
@@ -609,7 +623,7 @@ overhead and the evaluation and inference studies, total consumption is
 about $20$~kWh, or roughly BDT~200 of electricity. No paid datasets, cloud
 compute, or licences were used.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Cost estimate of the experimental workstation (Dhaka retail, mid-2026).}
   \label{tab:budget}

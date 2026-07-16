@@ -26,7 +26,7 @@ fuses all scales in a PAN--FPN neck extended down to stride~4, and decodes boxes
 at four scales before non-maximum suppression (NMS) produces the final human
 detections.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \input{tikz/fig_system_overview}
   \caption{High-level schematic of the proposed detection pipeline.}
@@ -51,35 +51,61 @@ The workflow has three phases:
 \end{itemize}
 
 \section{Proposed System Architecture}
-The complete layer-level architecture is shown in Figure~\ref{fig:fullarch}, and
-Table~\ref{tab:layers} lists every layer with its output resolution. The design
-is the verbatim training configuration used in the experiments: CBAM sits at
-backbone layer~10 in place of the original C2PSA block, the added P2 branch
-occupies neck layers 17--19, and the head at layer~29 detects over the four
-fused scales. The insets around the figure show the model's real input,
-attention map, P2 feature response, and detections on the scene. In the
-table, channel counts are the values realised at the YOLO11m scale (width
-1.0, channel cap 512, depth 0.5), and the rows in bold are the elements
-added or modified in this work.
+Figure~\ref{fig:fullarch} traces the complete data flow of the proposed
+detector on a real C2A scene. An input image enters at the top left and passes
+through the YOLO11m backbone, which produces feature maps at five decreasing
+resolutions from P1 to P5. At the deepest level the CBAM block, drawn in
+orange, replaces the original C2PSA attention and re-weights the P5 features
+before any fusion happens. The PAN--FPN neck then fuses the scales in a
+top-down and a bottom-up pass, and the fusion is carried one level further than
+the standard design so that a high-resolution stride-4 (P2) branch is produced.
+The four fused scales feed a single detection head, and non-maximum suppression
+returns one box per recovered person. The image insets placed around the
+diagram are the model's own signals on this scene, read as input, CBAM
+attention map, P2 feature response, and final detections; they show that the
+attention concentrates on human-shaped regions and that the P2 branch responds
+to the smallest scattered figures.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \figorplaceholder{figures/figures_png_format/cbam_p2_architecture.png}{10.5cm}
   \caption{Layer-level architecture of the proposed detector on a real C2A scene.}
   \label{fig:fullarch}
 \end{figure}
 
-\begin{table}[tbp]
-  \centering
+Table~\ref{tab:layers} lists the same architecture one layer at a time, so the
+figure can be reproduced exactly; it is the verbatim training configuration
+used in every experiment. The backbone, layers 0 to 9, halves the spatial
+resolution at each stage while raising the channel count, and layers 1 to 6 are
+marked as skip sources because the neck reuses their outputs later. The two
+bold rows are the elements this work changes: CBAM at layer~10, which replaces
+the C2PSA block at the end of the backbone at no increase in resolution, and
+the added P2 branch at layers 17 to 19, which upsamples to a $160\times160$ map
+and fuses the high-resolution backbone features. The head at layer~29 reads the
+four fused scales at strides 4, 8, 16, and 32, one detection level more than the
+stock three-scale head. The channel counts are the values realised at the
+YOLO11m width of 1.0, channel cap of 512, and depth of 0.5.
+
+{\small
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{@{}c l l l@{}}
   \caption{Layer configuration of the proposed detector at 640-px input.}
-  \label{tab:layers}
-  \small
-  \setlength{\tabcolsep}{7pt}
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{@{}c l l l@{}}
-    \toprule
-    Layers & Module (arguments) & Output & Role \\
-    \midrule
+  \label{tab:layers}\\
+  \toprule
+  Layers & Module (arguments) & Output & Role \\
+  \midrule
+  \endfirsthead
+  \multicolumn{4}{@{}l}{\itshape Table~\ref{tab:layers} (continued from previous page)}\\[2pt]
+  \toprule
+  Layers & Module (arguments) & Output & Role \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{4}{r@{}}{\itshape continued on next page}\\
+  \endfoot
+  \bottomrule
+  \endlastfoot
     0      & Conv(64, $3{\times}3$, s2)   & $320^2 \times 64$   & stem, P1/2 \\
     1--2   & Conv(128, s2); C3k2(256)     & $160^2 \times 256$  & P2/4 (skip source) \\
     3--4   & Conv(256, s2); C3k2(512)     & $80^2 \times 512$   & P3/8 (skip source) \\
@@ -94,9 +120,7 @@ added or modified in this work.
     23--25 & Conv(s2); Concat(13); C3k2(512) & $40^2 \times 512$  & bottom-up, P4 out \\
     26--28 & Conv(s2); Concat(10); C3k2(512) & $20^2 \times 512$  & bottom-up, P5 out \\
     \textbf{29} & \textbf{Detect[19, 22, 25, 28]} & strides 4--32 & \textbf{four-scale head} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\end{longtable}}
 
 \subsection{Data Preprocessing}
 All images are letterbox-resized to $640 \times 640$ so that the original aspect
@@ -182,7 +206,7 @@ Figure~\ref{fig:explain}: the CBAM attention, where warm colours mark high
 response, concentrates on human-shaped regions over the debris, the P2 feature responds most strongly at the smallest scattered
 figures, and the final detections recover the people the operator needs.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
@@ -222,9 +246,9 @@ adds, the attention improvement arrives at a negative parameter cost, about one
 million parameters below the baseline, with the lowest latency of all evaluated
 configurations.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/cbam_effect.png}{5.4cm}
+  \figorplaceholder{figures/figures_png_format/cbam_effect.png}{6.5cm}
   \caption{Effect of the CBAM substitution on clutter and target response.}
   \label{fig:cbameffect}
 \end{figure}
@@ -243,9 +267,9 @@ branch is additive, and the existing P3--P5 pathway is left untouched, which is
 what allows the ablation to attribute the very-tiny-recall gain to this single
 change.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/stride_problem.png}{6cm}
+  \figorplaceholder{figures/figures_png_format/stride_problem.png}{7.5cm}
   \caption{Stride problem motivating the P2 head.}
   \label{fig:strideprob}
 \end{figure}
@@ -263,7 +287,7 @@ difference is attributable to the architectural change alone. This design is
 what makes the negative state-space result interpretable: the variant fails
 under conditions in which the P2 head demonstrably succeeds.
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
   \caption{Additive ablation configurations, one change per step.}
   \label{tab:variants}
@@ -340,13 +364,12 @@ each tile at a low confidence floor, and the per-tile detections are merged by
 greedy non-maximum merging with an intersection-over-smaller matching metric at
 threshold 0.5, which suits partially-cut boxes at tile borders.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/sahi.png}{8.8cm}
+  \figorplaceholder{figures/figures_png_format/sahi.png}{9.5cm}
   \caption{SAHI inference pipeline.}
   \label{fig:sahipipe}
 \end{figure}
-\FloatBarrier
 
 Test-time augmentation (TTA) instead re-runs the detector on rescaled and
 flipped copies of the full image, at scale factors 1.0, 0.83, and 0.67, each
@@ -357,9 +380,9 @@ evaluated at a higher input resolution than it was trained at; running TTA at
 shows this is the most effective single inference-time setting, though the gain
 collapses beyond twice the training resolution.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/tta.png}{7cm}
+  \figorplaceholder{figures/figures_png_format/tta.png}{8cm}
   \caption{Test-time augmentation pipeline.}
   \label{fig:ttapipe}
 \end{figure}

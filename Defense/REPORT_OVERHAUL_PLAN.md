@@ -285,6 +285,42 @@
     attributes, Ch VII limitations/recommendations (genuine enumerations).
   - Caption spacing: captionsetup skip 6pt → 10pt (LaTeX standard).
   - Final state: EXIT=0, 0 errors, 0 overfull, 0 undefined, 62 pages.
+- 2026-07-16 (gap-fix + font + deterministic-placement pass, opus): user reported
+  my \FloatBarrier pass INTRODUCED mid-page gaps (p30-38) + fonts too small + p12
+  lone table + p15 gap. ROOT CAUSE of gaps = barriers forcing premature breaks.
+  FIX: removed all 21 \FloatBarriers; enlarged matplotlib figs (training 6->9.5cm,
+  diag panels 5.1->6.6, per-size 7->9.5, detgrid 5->6.8) which fixes gaps AND
+  apparent font size together; set EVERY figure/table in Ch II/III/IV to [H]
+  (float pkg) = deterministic inline placement -> no stacking (text between all
+  pairs as written), no mid-body gaps. Table 3.1 (14-row layer table) -> longtable
+  with \endfirsthead/\endhead repeated header, splits f15->f16 filling f15 gap
+  (IEEE convention, user-requested). p12 lone Table 2.1 fixed: shrank Fig 2.4 to
+  2.8cm, bridge sentence between Fig 2.4 and Table 2.1, discussion moved after ->
+  both on f11 w/ text between, closing para on f12. RESULT: mid-body gaps = NONE
+  (only front-matter ack/toc short); 7 two-float pages all text-between; chapter-
+  end pages f12/f42 have inherent whitespace (not introduced). FONT LIMIT (honest):
+  matplotlib plot fonts are baked-in small; can't regen here (needs training data
+  on user PC); enlarging display is the only lever and is partial. PowerPoint
+  diagrams already ~full column width. TRADE-OFF: [H] puts some figures mid-page
+  not strictly template top/bottom -- chose no-gaps/no-stacking over strict
+  top/bottom since that was the louder complaint. 64 pp, 0 err/overfull/undef.
+- 2026-07-16 (float-stacking + IEEE-explanation pass, opus): user rules = no
+  figure+table/table+table/figure+figure stacked on one page WITHOUT explanatory
+  text between; every float needs IEEE-style discussion (report size no concern);
+  no bare float page; figure-ends-page then table-starts-next-page is fine; if a
+  table splits across pages repeat header (none split — float tables move as a
+  unit). Technique that works: [tbp] + text-between-in-source + \FloatBarrier so
+  one float goes top, one bottom, paragraph between (loaded placeins). Fixed:
+  Ch III 3.3 split into arch-fig para + Fig 3.2 + layer-table para + Table 3.1
+  (barriers); 3.4/3.5 + 3.6/3.7 text-between; Ch IV added waterfall discussion
+  between Table 4.4 & Fig 4.3; dataset region rebuilt (split para|Table 4.2|
+  samples para|Fig 4.1|size para|Fig 4.2, each barriered); training/diagnostics/
+  qualitative figs [tbp]+barrier-after so Fig 4.5/4.6 no longer bare and 4.7+
+  Table 4.7+4.8 triple-stack unstacked onto separate pages each with text; Ch II
+  end (Fig 2.4+Table 2.1) compacted Table 2.1 (\small) + full discussion before
+  it so both sit on f11 with text between. RESULT: 5 two-float pages remain, ALL
+  with text between (f10,f11,f19,f22,f30); 0 bare pages; gap scan clean (only
+  front-matter ack/toc short, expected); 67 pp; 0 err/overfull/undef.
 - 2026-07-15 (formatting + float pass, opus): read ALL 12 template images, wrote
   Defense/TEMPLATE_SPEC_VERIFIED.md (authority). Global: caption justification=
   raggedright + singlelinecheck (2-line caption LEFT, 1-line CENTER per user);

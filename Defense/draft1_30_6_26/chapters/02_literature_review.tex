@@ -98,7 +98,7 @@ baseline and found CBAM to give better operational recall than ECA at a similar
 cost, which is why CBAM is used in this thesis; that comparison is summarised in
 Chapter~IV.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \figorplaceholder{figures/figures_png_format/cbam_module.png}{6.5cm}
   \caption{CBAM module with sequential channel and spatial attention~\cite{woo2018cbam}.}
@@ -113,14 +113,13 @@ cells cover $4\times4$ pixels, extending detection to targets as small as about
 four pixels. Figure~\ref{fig:p2} shows how the P2 branch attaches alongside the
 standard P3--P5 scales.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \figorplaceholder{figures/figures_png_format/p2head.png}{6.5cm}
   \caption{Construction of the added stride-4 (P2) detection branch.}
   \label{fig:p2}
 \end{figure}
 
-\FloatBarrier
 \subsection{State-Space Models and the C3k2Mamba Block}
 A state-space model maps an input sequence to an output through a hidden state
 whose dynamics, in the selective (Mamba) formulation, depend on the input. Applied
@@ -129,7 +128,7 @@ thesis, C3k2Mamba (Figure~\ref{fig:mamba}), scans a local window in both the for
 and reverse directions and fuses the two, and is inserted in place of selected C3k2
 neck blocks. Its effect on this task is measured in Chapter~IV.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \figorplaceholder{figures/figures_png_format/c3k2mamba.png}{6.5cm}
   \caption{Explored C3k2Mamba block with bidirectional local-window scans.}
@@ -148,22 +147,30 @@ scores but not a component-wise account of where a small-object gain actually co
 from. This thesis fills that gap with a single-variable additive ablation on C2A
 that measures attention, the P2 detection scale, and a state-space neck against one
 another under an identical training and evaluation protocol, and then reports which
-components are worth their cost. The four configurations are summarised in
-Figure~\ref{fig:chain}, and the specific differences from prior work are listed in
-Table~\ref{tab:gap}.
+components are worth their cost. Figure~\ref{fig:chain} summarises those four
+configurations as the additive chain the thesis evaluates: each step adds
+exactly one component to the design on its left, from the YOLO11m baseline
+through CBAM, the P2 head, and the state-space neck, so that the effect of each
+can be read from the difference it makes.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{4.5cm}
+  \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{2.8cm}
   \caption{Additive ablation chain studied in this thesis.}
   \label{fig:chain}
 \end{figure}
 
-\begin{table}[tbp]
+The same standpoint, expressed as a direct contrast with prior work along four
+axes, is set out in Table~\ref{tab:gap}.
+
+\begin{table}[H]
   \centering
   \caption{Position of this thesis relative to prior work.}
   \label{tab:gap}
-  \begin{tabular}{@{}p{4.2cm} p{5cm} p{5cm}@{}}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{@{}p{3.8cm} p{4.7cm} p{4.7cm}@{}}
     \toprule
     Aspect & Prior work & This thesis \\
     \midrule
@@ -174,3 +181,15 @@ Table~\ref{tab:gap}.
     \bottomrule
   \end{tabular}
 \end{table}
+
+Read row by row, the table marks the departure from prior work. Where earlier
+studies report small-object techniques one at a time, this thesis compares them
+in one controlled ablation; where the attention choice is usually asserted, it
+is measured here as CBAM against ECA; where state-space blocks are proposed as
+full backbones on generic data, they are tested in the neck against an
+otherwise identical baseline and reported whatever the outcome; and where most
+aerial detection studies use generic imagery, this work targets very small
+human figures in disaster and search-and-rescue scenes. Those four contrasts
+are the compact statement of what the thesis adds, and they set up the
+methodology developed in the next chapter, which turns the standpoint stated
+here into a concrete detector with a fixed training and evaluation protocol.
