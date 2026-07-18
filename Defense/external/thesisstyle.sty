@@ -1,0 +1,216 @@
+% ============================================================================
+%  thesisstyle.sty  --  CSE-4000 KUET thesis formatting
+%  Encodes Defense/TEMPLATE_FORMATTING_SPEC.md. Compile with XeLaTeX + biber.
+% ============================================================================
+\ProvidesPackage{thesisstyle}[2026/07/01 CSE-4000 KUET thesis style]
+
+% ---- Page geometry (spec section 0) ---------------------------------------
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  left=1.2in, right=1.0in, top=1.2in, bottom=1.0in,
+  headsep=0.25in, footskip=0.4in
+}
+
+% ---- Fonts: real Times New Roman via bundled .ttf (XeLaTeX) ----------------
+% Font files live in fonts/ so this works on Overleaf without a system install.
+\RequirePackage{fontspec}
+\setmainfont{Times New Roman}[
+  Path         = fonts/,
+  Extension    = .ttf,
+  UprightFont  = times,
+  BoldFont     = timesbd,
+  ItalicFont   = timesi,
+  BoldItalicFont = timesbi
+]
+% If the bundled fonts are ever unavailable, comment the block above and use:
+%   \setmainfont{TeX Gyre Termes}   % metric-compatible Times clone, ships with TeX Live
+
+\RequirePackage{amsmath}       % must load BEFORE unicode-math
+\RequirePackage{unicode-math}  % load last among math packages
+\setmathfont{TeX Gyre Termes Math}  % Times-matching math; falls back cleanly
+
+% ---- Line spacing (spec: 1.5 body, 1.2 references) -------------------------
+\RequirePackage{setspace}
+\onehalfspacing
+
+% ---- Paragraph style: block paragraphs, justified --------------------------
+% Word "space before 12pt / after 6pt" approximated as block spacing.
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+
+% ---- Heading fonts/sizes (spec section 6) ----------------------------------
+\RequirePackage{titlesec}
+\newcommand{\sizeChapNum}{\fontsize{14}{21}\selectfont}   % CHAPTER I  -> 14pt
+\newcommand{\sizeChapTtl}{\fontsize{16}{24}\selectfont}   % chapter title -> 16pt
+\newcommand{\sizeFrontHd}{\fontsize{16}{24}\selectfont}   % Abstract/LoT/LoF -> 16pt
+\newcommand{\sizeTitle}{\fontsize{18}{32}\selectfont}     % thesis title -> 18pt, 1.5 line space (Word-style)
+
+% Chapter heading prints "CHAPTER <Roman>" (14pt) then title (16pt), both centered.
+% NOTE: \thechapter stays ARABIC so sections/figures/tables number as 3.1, Figure 3.2
+% (template style), while only the heading label shows the Roman numeral.
+\titleformat{\chapter}[display]
+  {\centering\bfseries}
+  {\sizeChapNum CHAPTER \Roman{chapter}}
+  {18pt}%  1 blank line (size 12) between "CHAPTER n" and the title
+  {\sizeChapTtl}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}% + section's 12pt-before = ~2 blank lines
+
+% Sections: 14pt bold (template page-10 callout); subsections: 12pt bold.
+% Both left-aligned, space before 12pt after 6pt.
+\titleformat{\section}{\bfseries\fontsize{14}{21}\selectfont}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% ---- Numbering scheme (template rules) -------------------------------------
+% Chapter heading + TOC show Roman ("CHAPTER III"); body sections show arabic
+% ("3.1"); figures/tables/equations show arabic ("Figure 3.2"). We make
+% \thechapter Roman for the heading/TOC, but force the cross-reference numbers
+% to use the arabic chapter value so nothing becomes "III.1".
+\renewcommand{\thechapter}{\Roman{chapter}}
+\setcounter{secnumdepth}{2}% number chapter + section (X.Y) + subsection (X.Y.Z)
+\RequirePackage{graphicx}
+\RequirePackage{float}             % [H] exact placement to avoid stacking/gaps
+\RequirePackage{tikz}              % native vector figures (e.g. the ablation waterfall)
+\RequirePackage{pgfplots}          % appendix performance-vs-parameter scatter
+\pgfplotsset{compat=1.17}
+\RequirePackage{pgfgantt}          % project-planning Gantt chart (Chapter I)
+\numberwithin{equation}{chapter}   % resets per chapter
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+
+% ---- "n blank lines of size 12" vertical spacer (1.5-spaced 12pt = 18pt) ----
+\newcommand{\vblank}[1]{\vspace{\dimexpr 18pt*#1\relax}}
+
+% ---- Captions (template page 11): 11pt, "Figure 1.1: ..." ------------------
+% Template: caption 11pt, 1.5 line space, space before 12pt / after 6pt.
+% singlelinecheck=true + justification=raggedright  =>  a caption that fits on
+% ONE line is centered; a caption spilling to TWO+ lines is left-aligned
+% (per user rule). Figure caption sits BELOW (skip = fig->caption gap = 12pt);
+% table caption sits ABOVE (skip = caption->table gap = 6pt).
+\RequirePackage{caption}
+\captionsetup{
+  font={stretch=1.5},
+  labelsep=colon,
+  justification=raggedright,
+  singlelinecheck=true
+}
+\captionsetup{font+={small}}          % ~11pt at a 12pt base
+\captionsetup[figure]{skip=12pt}      % 12pt between figure and caption below
+\captionsetup[table]{skip=6pt}        % 6pt between caption above and table
+
+% ---- Tables ---------------------------------------------------------------
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{longtable}   % tables that split across pages with a repeated header
+
+% ---- Float placement / whitespace control ----------------------------------
+% Let pages end naturally (slack at the bottom) instead of stretching interior
+% gaps, and allow more/larger floats per page so text pages are not stranded.
+\raggedbottom
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.82}
+% Template "space before 12pt / after 6pt" around floats: keep separations near
+% one 12pt line so floats read as one block with text, without loose gaps.
+\setlength{\textfloatsep}{12pt plus 3pt minus 2pt}
+\setlength{\floatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+% \FloatBarrier keeps a figure with its own paragraph so two figures never stack
+% on one page without text between them (used at a few figure-dense boundaries).
+\RequirePackage{placeins}
+
+% ---- IEEE references via biblatex (spec 9) ---------------------------------
+\RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}
+% Reference list: 1.2 line spacing, hanging indent 0.31in. \sloppy + URL break
+% penalties keep long venue strings, arXiv ids, and URLs inside the margin.
+\setlength{\biblabelsep}{0.31in}
+\renewcommand*{\bibfont}{\normalfont\setstretch{1.2}\sloppy}
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+
+% ---- Mild global stretch so justified lines never cross the margin ---------
+\setlength{\emergencystretch}{1.5em}
+
+% ---- Table of Contents formatting (template page 5-7) ----------------------
+% Chapters: "CHAPTER <Roman>  Title ..... page" (bold). Front-matter items
+% (added numberless) render indented, normal weight. Sections show as bullets,
+% subsections as arrows -- numbers hidden in the TOC (they remain in the body).
+\RequirePackage{titletoc}
+\RequirePackage{pifont}
+\setcounter{tocdepth}{2}
+
+% No dotted leaders (template uses plain right-aligned page numbers).
+\titlecontents{chapter}[0pt]
+  {\addvspace{10pt}}
+  {\bfseries CHAPTER\ \thecontentslabel\hspace{1.2em}}% numbered = real chapters
+  {}%   numberless (front matter indents itself; References/Appendices stay at margin)
+  {\hfill\contentspage}
+
+\titlecontents{section}[0.5in]
+  {}
+  {\thecontentslabel\hspace{0.75em}}%   numeric label X.Y
+  {}%
+  {\hfill\contentspage}
+
+\titlecontents{subsection}[1.0in]
+  {}
+  {\thecontentslabel\hspace{0.75em}}%   numeric label X.Y.Z
+  {}%
+  {\hfill\contentspage}
+
+% List of Tables / Figures entries: "2.1  Description ....... page" WITHOUT dots.
+\titlecontents{table}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
+\titlecontents{figure}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
+
+% "PAGE" column header for the Contents, and header rows for LoT/LoF.
+\newcommand{\tocpagehead}{\mbox{}\hfill\textbf{PAGE}\par\vspace{2pt}}
+\newcommand{\lotlofhead}[1]{%
+  \noindent\textbf{#1 No.}\hfill\textbf{Description}\hfill\textbf{Page}\par
+  \vspace{4pt}}
+
+% ---- Front-matter heading helper (Acknowledgment/Abstract centered 16pt) ---
+\newcommand{\frontheading}[1]{%
+  \begin{center}\sizeFrontHd\bfseries #1\end{center}%
+  \vblank{2}% 2 blank lines of size 12 after the heading
+}
+
+% ---- Page numbering: footer centered (report/plain does this) --------------
+\pagestyle{plain}
+
+% ---- Hyperlinks (kept subtle; black for print) -----------------------------
+\RequirePackage[hidelinks]{hyperref}
+% microtype removed: on XeLaTeX its benefit is small and it adds compile time.
+
+% ---- Draft placeholder (remove as sections get written) --------------------
+\newcommand{\tbd}{\textit{[Content to be written.]}\par}
+
+% ---- Figure include-or-placeholder -----------------------------------------
+% Reserves EXACTLY the given height whether or not the file exists, so swapping a
+% placeholder for the real export never shifts page spacing. The real image is
+% scaled to fit width x height with keepaspectratio (no distortion). The border
+% appears ONLY on the pending placeholder (final figures have no border).
+% Usage: \figorplaceholder{path}{height}   (alias: \figbox)
+\newcommand{\figorplaceholder}[2]{%
+  \begin{minipage}[c][#2][c]{\linewidth}\centering
+    \IfFileExists{#1}%
+      {\includegraphics[width=\linewidth,height=#2,keepaspectratio]{#1}}%
+      {\fbox{\begin{minipage}[c][\dimexpr#2-2\fboxsep-2\fboxrule\relax][c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+         \centering\itshape [Figure pending export: \detokenize{#1}]%
+       \end{minipage}}}%
+  \end{minipage}}
+\let\figbox\figorplaceholder

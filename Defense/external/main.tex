@@ -1,0 +1,198 @@
+% ============================================================================
+%  CSE-4000 Thesis  --  Md Mofazzal Hosen (2007074), KUET CSE, Batch 2k20
+%  COMPILE: XeLaTeX -> biber -> XeLaTeX -> XeLaTeX   (Overleaf: set to XeLaTeX)
+% ============================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage{thesisstyle}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+% "PAGE" header as the first line inside the Contents list.
+\addtocontents{toc}{\protect\tocpagehead}
+
+% ---------- COVER (unnumbered) ----------
+\include{frontmatter/cover}
+
+% ---------- FRONT MATTER (roman: i, ii, iii, ...) ----------
+\pagenumbering{roman}
+\include{frontmatter/titlepage}      % i  (adds its own TOC line)
+\include{frontmatter/acknowledgment} % ii (adds its own TOC line)
+\include{frontmatter/abstract}       % iii(adds its own TOC line)
+
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Contents}
+\tableofcontents
+
+\clearpage
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Tables}
+\addtocontents{lot}{\protect\lotlofhead{Table}}
+\begingroup\setlength{\parskip}{1pt}\listoftables\endgroup
+
+\clearpage
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Figures}
+\addtocontents{lof}{\protect\lotlofhead{Figure}}
+\begingroup\setlength{\parskip}{1pt}\listoffigures\endgroup
+
+\include{frontmatter/abbreviations}
+
+% ---------- MAIN MATTER (arabic: 1, 2, 3, ...) ----------
+\clearpage
+\pagenumbering{arabic}
+
+\include{chapters/01_introduction}
+\include{chapters/02_literature_review}
+\include{chapters/03_methodology}
+\include{chapters/04_implementation_results}
+\include{chapters/05_societal_issues}
+\include{chapters/06_complex_engineering}
+\include{chapters/07_conclusions}
+
+
+% ---------- APPENDIX (template page 7: appendices precede references) ------
+\clearpage
+\appendix
+\phantomsection
+\addcontentsline{toc}{chapter}{Appendix: Model Selection History}
+\chapter*{Appendix: Model Selection History}
+\renewcommand{\thetable}{A.\arabic{table}}
+\renewcommand{\thefigure}{A.\arabic{figure}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+This appendix consolidates every configuration explored during model
+selection, so that any choice made in the body of the thesis can be traced
+to the attempt that motivated it. Two records are given. Table~\ref{tab:appfamily}
+is the detector-family benchmark that fixed the YOLO11m baseline; it was run
+under an earlier protocol (25 epochs on a $50\%$ data sample, batch~10, on
+different hardware), so its absolute values are not comparable to the final
+ablation of Table~\ref{tab:main} and
+it serves only to justify the backbone choice; $P$, $R$, and $F_1$ follow
+the definitions of Section~\ref{sec:metrics}, and Size is the weight-file
+size. Table~\ref{tab:apphistory}
+then lists every architectural variant attempted across the project with its
+outcome and the decision it produced, including the attempts that failed and
+the one whose first results were invalidated by an implementation fault.
+
+\begin{table}[H]
+  \centering
+  \caption{Detector-family benchmark used to select the baseline.}
+  \label{tab:appfamily}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l r r r r r r@{}}
+    \toprule
+    \textbf{Model} & \textbf{mAP50} & \textbf{mAP50-95} & \textbf{$\symbf{P}$} & \textbf{$\symbf{R}$} & \textbf{$\symbf{F_1}$} & \textbf{Size (MB)} \\
+    \midrule
+    YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\
+    YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\
+    YOLOv9-e   & 0.855 & 0.619 & 0.884 & 0.805 & 0.843 & 111.8 \\
+    YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\
+    YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\
+    YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\
+    YOLO11-s   & 0.803 & 0.535 & 0.845 & 0.757 & 0.798 & 18.3 \\
+    \textbf{YOLO11m (selected)} & 0.841 & 0.592 & 0.867 & 0.794 & 0.829 & 38.6 \\
+    YOLO11-l   & 0.847 & 0.603 & 0.876 & 0.796 & 0.834 & 48.8 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The choice of backbone was an accuracy-against-cost trade-off, and
+Figure~\ref{fig:appfrontier} plots the same benchmark that way, with detection
+accuracy on the vertical axis and weight-file size, a proxy for parameter
+count, on the horizontal. The nine detectors fall along a rising curve of
+diminishing returns. YOLO11m sits on the efficient part of that curve: at
+$38.6$~MB it reaches an mAP@50--95 of $0.592$, within $0.03$ of the largest
+model (YOLOv9-e) which needs roughly three times the size, and it matches or
+beats every detector of comparable size. That balance of accuracy and
+deployable footprint is why YOLO11m was fixed as the baseline for the ablation
+in the body.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      width=0.86\linewidth, height=6.6cm,
+      xlabel={Weight-file size (MB) $\rightarrow$ proxy for parameter count},
+      ylabel={mAP@50--95},
+      xmin=0, xmax=120, ymin=0.48, ymax=0.64,
+      grid=both, grid style={gray!18},
+      legend pos=south east,
+      legend style={font=\footnotesize, draw=gray!50, fill=white},
+      tick label style={font=\footnotesize},
+      label style={font=\small},
+      every axis plot/.append style={mark size=2.6pt},
+    ]
+      \addplot[only marks, mark=*, color=blue!70!black]
+        coordinates {(14.5,0.504) (38.9,0.565) (111.8,0.619)};
+      \addlegendentry{YOLOv9 (s,m,e)}
+      \addplot[only marks, mark=square*, color=orange!85!black]
+        coordinates {(15.8,0.517) (31.9,0.571) (49.8,0.598)};
+      \addlegendentry{YOLOv10 (s,m,l)}
+      \addplot[only marks, mark=triangle*, color=teal]
+        coordinates {(18.3,0.535) (48.8,0.603)};
+      \addlegendentry{YOLO11 (s,l)}
+      \addplot[only marks, mark=star, mark size=5pt, color=red]
+        coordinates {(38.6,0.592)};
+      \addlegendentry{YOLO11m (selected)}
+      \node[font=\scriptsize, anchor=west] at (axis cs:113,0.619) {v9-e};
+      \node[font=\scriptsize, anchor=south] at (axis cs:38.6,0.598) {11m};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Detection accuracy against model size for the nine benchmarked detectors of Table~\ref{tab:appfamily}; size stands in for parameter count. YOLO11m (star) lies on the efficient frontier.}
+  \label{fig:appfrontier}
+\end{figure}
+
+Table~\ref{tab:apphistory} is the second record: every architectural variant
+tried after the baseline was fixed, with the outcome it produced and the
+decision it drove. It is kept so that the negative results carry the same weight
+as the positive ones. Three patterns are worth drawing out. The two components
+that survived, CBAM and the P2 head, were retained because each showed a
+measurable gain on the metric it targeted rather than on the aggregate. The
+state-space neck was attempted twice: the first run was silently invalidated by
+a framework fault that stripped the injected blocks, which is why a
+module-presence check was later added to the protocol, and the corrected run
+returned a genuine null. The AtrousSSM prototype was set aside before a full run
+because its smoke tests showed no reliable gain. Read together, the table
+records not only what was adopted but the cost of finding it out, which is the
+part of a project that a results chapter usually omits.
+
+\begin{table}[H]
+  \centering
+  \caption{Architectural variants attempted during the project, with outcome and decision.}
+  \label{tab:apphistory}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}p{2.9cm} p{4.3cm} p{4.4cm} p{2.4cm}@{}}
+    \toprule
+    \textbf{Variant} & \textbf{What it changes} & \textbf{Outcome} & \textbf{Decision} \\
+    \midrule
+    ECA attention & C2PSA $\to$ ECA in backbone & $F_2$ 0.844, small-object recall 0.884 (earlier protocol): no gain over baseline & not adopted \\
+    CBAM attention & C2PSA $\to$ CBAM in backbone & $F_2$ 0.849, small-object recall 0.892 (earlier protocol); confirmed in final chain (Table~\ref{tab:main}) & adopted \\
+    P2 detection scale & adds stride-4 head branch & $\mathrm{AP}_{50}$ $0.843 \to 0.853$, very-tiny recall $0.743 \to 0.757$ (final protocol) & adopted; core of recommended model \\
+    C3k2Mamba, first attempt & post-initialisation SSM injection into neck & results invalid: the framework's training rebuild silently removed the injected blocks, so the model trained was CBAM~+~P2 & discarded; protocol gained module-presence verification \\
+    AtrousSSM & multi-scale dilated SSM scanning in neck & prototype stage; smoke evaluations showed no reliable gain and no protocol-compliant full run was completed & set aside \\
+    C3k2Mamba, corrected & verified SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy change (Table~\ref{tab:main}); scan-activity diagnostics confirm the blocks ran & excluded from recommendation \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Finally, a note on reproducibility. Every run recorded the artifacts needed to
+repeat it. Training used a single fixed seed (0) with deterministic cuDNN
+kernels; the train, validation, and test splits are pinned by content hash so
+that no image crosses between them; and each run wrote an environment manifest
+with the library versions, the dataset and weight-file hashes, and the full
+hyperparameter set. The body's final ablation ran on the RTX~4070~Ti~SUPER of
+Section~\ref{sec:setup}, whereas the family benchmark of
+Table~\ref{tab:appfamily} predates that machine and used the shorter protocol
+noted above, which is why its absolute scores are offset from the body's. These
+records let the negative results here be reported as measurements, not
+impressions.
+
+% ---------- REFERENCES (IEEE) : template places references last ------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\begin{center}{\fontsize{14}{21}\selectfont\bfseries REFERENCES}\end{center}
+\vblank{2}
+\printbibliography[heading=none]
+
+\end{document}

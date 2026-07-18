@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="C3k2Mamba block" id="c3k2mamba">
+    <mxGraphModel dx="1200" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="760" pageHeight="640" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="ttl" value="C3k2Mamba: bidirectional local-window selective scan in place of the C3k2 bottleneck (explored variant)" style="text;html=1;whiteSpace=wrap;fontFamily=Times New Roman;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="20" y="6" width="720" height="40" as="geometry" /></mxCell>
+
+        <!-- dashed grouping: the selective-scan core (drawn first, behind) -->
+        <mxCell id="ssmcore" value="Bidirectional selective scan (SSM core)" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=10;fontStyle=2;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;dashPattern=6 6;" vertex="1" parent="1"><mxGeometry x="372" y="100" width="340" height="232" as="geometry" /></mxCell>
+
+        <!-- ===================== ROW 1 (left to right) ===================== -->
+        <!-- input feature (tile stack) -->
+        <mxCell id="linlbl" value="Input  (C&#215;H&#215;W)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="0" y="104" width="110" height="18" as="geometry" /></mxCell>
+        <mxCell id="inCb" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="38" y="123" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="inC3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="32" y="127" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="inC2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="26" y="131" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="inC" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="20" y="135" width="12" height="90" as="geometry" /></mxCell>
+
+        <mxCell id="part" value="Window&#10;partition" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="110" y="152" width="92" height="56" as="geometry" /></mxCell>
+        <mxCell id="proj" value="LayerNorm&#10;+ in_proj&#10;&#8594; x, z" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="232" y="152" width="104" height="56" as="geometry" /></mxCell>
+
+        <mxCell id="fwd" value="Forward scan&#10;(SSM, d_state = 4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="386" y="118" width="156" height="50" as="geometry" /></mxCell>
+        <mxCell id="bwd" value="Reverse scan&#10;(flip &#8594; scan &#8594; flip)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="386" y="214" width="156" height="50" as="geometry" /></mxCell>
+
+        <mxCell id="sum" value="+" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=16;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="580" y="164" width="32" height="32" as="geometry" /></mxCell>
+        <mxCell id="gate" value="&#215;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=16;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="652" y="164" width="32" height="32" as="geometry" /></mxCell>
+
+        <!-- SiLU gate (middle band) -->
+        <mxCell id="silu" value="SiLU(z)&#10;gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="592" y="272" width="104" height="42" as="geometry" /></mxCell>
+
+        <!-- ===================== ROW 2 (right to left) ===================== -->
+        <mxCell id="outp" value="out_proj" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="600" y="402" width="88" height="56" as="geometry" /></mxCell>
+        <mxCell id="res" value="+" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=16;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="498" y="414" width="32" height="32" as="geometry" /></mxCell>
+        <mxCell id="onorm" value="out_norm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="378" y="402" width="90" height="56" as="geometry" /></mxCell>
+        <mxCell id="rev" value="Window&#10;reverse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=11;" vertex="1" parent="1"><mxGeometry x="238" y="402" width="96" height="56" as="geometry" /></mxCell>
+
+        <mxCell id="loutlbl" value="Output  (C&#215;H&#215;W)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="30" y="352" width="120" height="18" as="geometry" /></mxCell>
+        <mxCell id="outCb" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="88" y="373" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="outC3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="82" y="377" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="outC2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="76" y="381" width="12" height="90" as="geometry" /></mxCell>
+        <mxCell id="outC" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="70" y="385" width="12" height="90" as="geometry" /></mxCell>
+
+        <mxCell id="note" value="Shape-preserving drop-in for the C3k2 bottleneck: input and output share the same C&#215;H&#215;W, the surrounding Conv&#8211;bottleneck&#8211;Conv wrapper is unchanged. Injected at neck layers 13, 16, 19, 22, 25, 28; window size 6&#8211;8. Explored SSM variant &#8211; result reported in Chapter IV." style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="20" y="496" width="720" height="46" as="geometry" /></mxCell>
+
+        <!-- ===================== edges ===================== -->
+        <!-- row 1 -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="inCb" target="part"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="part" target="proj"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="x" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=9;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="proj" target="fwd"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="x" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=9;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="proj" target="bwd"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="fwd" target="sum"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0.5;entryY=1;" edge="1" parent="1" source="bwd" target="sum"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="sum" target="gate"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <!-- z gate -->
+        <mxCell id="e8" value="z" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=9;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="proj" target="silu"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="284" y="293" /></Array></mxGeometry></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="silu" target="gate"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="644" y="230" /><mxPoint x="668" y="230" /></Array></mxGeometry></mxCell>
+        <!-- turn: gate -> out_proj (U-turn on the right) -->
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="gate" target="outp"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="716" y="180" /><mxPoint x="716" y="430" /></Array></mxGeometry></mxCell>
+        <!-- row 2 (leftward) -->
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="outp" target="res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="res" target="onorm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="onorm" target="rev"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="rev" target="outCb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <!-- residual skip: partition -> res -->
+        <mxCell id="eres" value="residual" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=9;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="part" target="res"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="156" y="360" /><mxPoint x="514" y="360" /></Array></mxGeometry></mxCell>
+
+        <!-- ===================== legend ===================== -->
+        <mxCell id="lgbox" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;fontFamily=Times New Roman;fontSize=10;fontStyle=1;verticalAlign=top;align=left;spacingLeft=6;spacingTop=3;" vertex="1" parent="1"><mxGeometry x="20" y="548" width="720" height="64" as="geometry" /></mxCell>
+        <mxCell id="ls1" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="52" y="566" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="ls2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="46" y="570" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="ls3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="40" y="574" width="9" height="26" as="geometry" /></mxCell>
+        <mxCell id="lt1" value="Feature map (in = out, C&#215;H&#215;W)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="78" y="574" width="185" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg2s" value="" style="rounded=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="272" y="572" width="28" height="22" as="geometry" /></mxCell>
+        <mxCell id="lg2t" value="Operation" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="306" y="574" width="70" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg3s" value="" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="386" y="572" width="28" height="22" as="geometry" /></mxCell>
+        <mxCell id="lg3t" value="Selective scan (SSM)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="420" y="574" width="140" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg4s" value="+" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=13;" vertex="1" parent="1"><mxGeometry x="566" y="570" width="26" height="26" as="geometry" /></mxCell>
+        <mxCell id="lg4t" value="Sum" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="596" y="574" width="40" height="20" as="geometry" /></mxCell>
+        <mxCell id="lg5s" value="&#215;" style="ellipse;html=1;fillColor=#ffffff;strokeColor=#000000;fontFamily=Times New Roman;fontSize=13;" vertex="1" parent="1"><mxGeometry x="648" y="570" width="26" height="26" as="geometry" /></mxCell>
+        <mxCell id="lg5t" value="Product (gate)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="678" y="574" width="90" height="20" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

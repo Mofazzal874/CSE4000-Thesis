@@ -1,0 +1,230 @@
+\chapter{Introduction}
+
+\section{Introduction}
+When an earthquake, flood, or fire strikes, the first hours decide how many
+people are found alive. Uncrewed aerial vehicles can survey a disaster site far
+faster than ground teams, and they do so without risking a rescuer. The imagery
+they return, however, is hard to search by eye. A person photographed from
+altitude may occupy fewer than ten pixels among rubble, water, or smoke, and a
+single sortie can produce thousands of frames. An operator scanning that stream
+will miss people. Automating the search is therefore a practical need, not a
+convenience, and it is the problem this thesis addresses.
+
+Object detection itself is a mature field. Two-stage detectors in the R-CNN
+line~\cite{ren2015fasterrcnn} established high accuracy at high cost, one-stage
+detectors in the YOLO family~\cite{redmon2016yolo, jocher2024yolo11} made
+detection fast enough for live video, and transformer designs such as
+RT-DETR~\cite{zhao2024rtdetr} removed hand-built components. None of this
+maturity transfers cleanly to aerial search and rescue. The targets are an
+order of magnitude smaller than the objects these detectors were tuned for,
+and the published remedies for small objects, extra detection scales, feature
+attention, and sliced inference~\cite{akyon2022sahi}, are usually evaluated one
+at a time, on generic aerial benchmarks, and without a shared training
+protocol. State-space (Mamba) modules~\cite{gu2023mamba} have recently been
+promoted for detection as well, again without a controlled test on very small
+human targets. Anyone who wants to build a deployable rescue detector today
+has to guess which of these additions is worth its cost.
+
+This thesis replaces that guess with a measurement. Starting from the YOLO11m
+baseline, it adds one component at a time, attention, a high-resolution
+detection scale, and a state-space neck, trains every configuration under one
+frozen protocol on the C2A disaster-imagery benchmark~\cite{nihal2024c2a}, and
+reports what each change buys in accuracy, parameters, and latency. The outcome
+is a compact detector, small enough for airborne hardware, together with an
+evidence trail that justifies every design decision in it.
+
+\section{Problem Statement}
+Given an aerial image $I$, a detector must output a set of bounding boxes
+$\hat{B} = \{(x, y, w, h, c)\}$, one per visible person, each with a confidence
+score $c$. A prediction is counted as correct when it overlaps a ground-truth
+box $B$ sufficiently, measured by intersection over union,
+\begin{equation}
+  \mathrm{IoU}(\hat{B}, B) =
+    \frac{\mathrm{area}(\hat{B} \cap B)}{\mathrm{area}(\hat{B} \cup B)},
+  \label{eq:iou}
+\end{equation}
+with $\mathrm{IoU} \geq 0.5$ used as the matching threshold throughout this
+work. Stated this way the task sounds ordinary. What makes it hard is the
+geometry of aerial imagery.
+
+A one-stage detector predicts boxes on a grid whose cell size equals the
+feature stride $d$. A target of side $s$ pixels spans
+\begin{equation}
+  c_d(s) = \frac{s}{d}
+  \label{eq:coverage}
+\end{equation}
+cells in each direction. The finest standard YOLO scale detects at stride
+$d = 8$, so a 12-px person spans about 1.5 cells there, and only 0.4 of a cell
+at the stride-32 scale. A detector cannot localise what falls inside a
+fraction of one cell. In the C2A benchmark used here, about 47\% of the
+annotated people are smaller than ten pixels~\cite{nihal2024c2a}, which places
+nearly half the dataset at or below the resolving limit of a standard
+detection head. Scenes carry 20 to 40 people each, many partially buried or
+occluded, against backgrounds of rubble, flood water, fire, and wrecked
+vehicles. Figure~\ref{fig:introscene} shows the kind of scene an operator
+faces.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_intro_scene.png}{6.5cm}
+  \caption{Aerial drone footage of a flood-affected region~\cite{agiindia2024drones}.}
+  \label{fig:introscene}
+\end{figure}
+
+One more property of the domain shapes the whole thesis. In search and rescue,
+a missed person may not get a second chance, while a false alarm costs an
+operator a few seconds of review. Recall therefore matters more than
+precision, and the operational metric used throughout is the recall-weighted
+$F_2$ score,
+\begin{equation}
+  F_2 = \frac{5PR}{4P + R},
+  \label{eq:f2}
+\end{equation}
+where $P$ is precision and $R$ is recall. The engineering question of this
+thesis is then concrete: which architectural changes to a compact one-stage
+detector raise recall on sub-ten-pixel people, at a parameter and latency
+budget that still fits airborne deployment?
+
+\section{Objectives}
+The work pursues the following objectives.
+\begin{itemize}
+  \item To build a compact detector for very small human targets in aerial
+        disaster imagery by refining the YOLO11m baseline through an additive
+        ablation, in which channel-and-spatial attention (CBAM), a stride-4
+        (P2) detection scale, and a state-space neck are introduced one at a
+        time and measured under an identical training and evaluation protocol.
+  \item To identify, from those measurements, the configuration that best
+        serves very-small-target recall within a deployable parameter and
+        latency budget, and to show it performs close to the published state
+        of the art on the same benchmark.
+  \item To test the recent claim that state-space modules help detection, on
+        this task and under this protocol, and to report the outcome whether
+        or not it favours the module.
+  \item To raise recall on the smallest targets further at inference time,
+        without retraining, through slicing-aided inference and test-time
+        augmentation.
+\end{itemize}
+
+\section{Scope}
+The boundaries of the study are set as follows.
+\begin{itemize}
+  \item \textbf{Dataset.} Training and evaluation use the C2A disaster-imagery
+        benchmark~\cite{nihal2024c2a} with its frozen split of 6{,}129
+        training, 2{,}043 validation, and 2{,}043 test images, and a single
+        object class, \texttt{person}. Cross-dataset generalisation to real
+        search-and-rescue collections such as SARD is identified as future
+        work, not performed here.
+  \item \textbf{Input.} The detector operates on single RGB frames,
+        letterbox-resized to $640 \times 640$ for training. Video tracking,
+        thermal imagery, and multi-sensor fusion are outside the scope.
+  \item \textbf{Architecture.} The study covers attention substitution
+        (CBAM), an added stride-4 detection scale, and a state-space neck as
+        architectural changes, and SAHI slicing with test-time augmentation as
+        inference-time settings. It does not redesign the backbone or search
+        architectures automatically.
+  \item \textbf{Evaluation.} All results come from the COCO protocol plus an
+        operational evaluation at $\mathrm{IoU} = 0.5$, run on a single
+        consumer GPU (RTX 4070 Ti SUPER). No field trial with a physical
+        drone is included.
+\end{itemize}
+
+\section{Unfamiliarity of the Problem}
+No prior solution was reused wholesale. The individual ingredients are
+published, and are cited where they appear, but the specific design and the
+questions asked of it are this work's own. The additive, single-variable
+ablation chain on disaster imagery does not appear in prior C2A work, which
+reports whole models against whole models~\cite{nihal2024c2a} and leaves open
+where a gain actually comes from. The state-space experiment places
+bidirectional local-window Mamba blocks inside the \emph{neck} of an
+otherwise unchanged CNN detector, whereas published Mamba detectors replace
+the backbone~\cite{wang2025mambayolo}, which prevents a like-for-like
+attribution. The attention change is a substitution rather than the bolt-on
+that is usual in the small-object literature: it removes the baseline's
+C2PSA blocks, so the improvement arrives at a negative parameter cost. And a
+negative result is treated as a first-class finding here, documented with
+the same rigour as the successful components, because knowing what not to
+deploy is part of the engineering answer.
+
+\section{Project Planning}
+The thesis spans two academic terms of thirteen weeks each. The first term
+covered topic selection, the literature review, preparation of the C2A
+dataset, and a benchmark of the YOLO detector family that fixed the baseline.
+The second term ran the additive ablation, the state-space exploration, the
+inference-time studies, and the analysis and documentation. Writing proceeded
+alongside the later experiments rather than after them, so no phase waited on
+a finished predecessor. The thesis is the work of a single author, so no
+task-assignment matrix across members applies. Figure~\ref{fig:gantt} shows
+the timeline.
+
+\begin{figure}[tbp]
+  \centering
+  \resizebox{\linewidth}{!}{\input{tikz/fig_gantt}}
+  \caption{Timeline of the thesis across two thirteen-week terms.}
+  \label{fig:gantt}
+\end{figure}
+
+\section{Contribution}
+The main contributions of this thesis are the following.
+\begin{itemize}
+  \item A four-configuration additive ablation on C2A, trained and evaluated
+        under one frozen protocol, that attributes every gain to a single
+        architectural change.
+  \item A CBAM substitution that replaces the baseline's C2PSA attention and
+        removes roughly one million parameters while matching or improving
+        the operational scores, with the lowest latency of the four
+        configurations.
+  \item A stride-4 (P2) detection scale whose effect is quantified rather
+        than assumed: $\mathrm{AP}_{50}$ rises from 0.843 to 0.853 and
+        very-tiny recall from 0.743 to 0.757, at about half a million
+        parameters and one millisecond of latency.
+  \item A controlled negative result for the state-space neck: 2.4 million
+        added parameters and 2.8 times the latency for no accuracy change,
+        which argues against adopting such modules for this task on current
+        evidence.
+  \item An inference-time study showing that test-time augmentation at
+        1280-px input lifts very-tiny recall from 0.758 to 0.850 at 60~ms per
+        image, a larger gain than any slicing configuration at a fraction of
+        the slicing cost.
+  \item A recommended detector of 19.6 million parameters that matches or
+        exceeds every published C2A baseline except YOLOv9-e while using
+        about a third of that model's parameters.
+\end{itemize}
+
+\section{Application of the Work}
+The detector developed here has direct uses beyond the motivating scenario.
+\begin{enumerate}
+  \item \textbf{Search and rescue triage.} The immediate application: a
+        drone or a laptop at an incident site flags likely victims in live
+        aerial imagery so operators review candidates instead of raw frames.
+  \item \textbf{Disaster damage assessment.} The same detections, aggregated
+        over a survey flight, tell relief planners where people are
+        concentrated after a flood or earthquake.
+  \item \textbf{Crowd monitoring.} Counting very small people from altitude
+        is the same technical problem, so the model transfers to public-event
+        safety monitoring.
+  \item \textbf{Wide-area security.} Border and coastline patrols scan large
+        areas for isolated people, a low-density variant of the same task.
+  \item \textbf{Embedded deployment.} At 19.6 million parameters the design
+        fits consumer and edge GPUs, and the same recipe transfers to a
+        smaller YOLO11 backbone for fully on-board operation.
+\end{enumerate}
+
+\section{Organization of Report}
+The remainder of the thesis is organised as follows.
+\begin{itemize}
+  \item \textbf{Chapter II} reviews the detector families, the small-object
+        and aerial detection literature, and the base architectures this work
+        builds on, and closes with the research gap.
+  \item \textbf{Chapter III} presents the proposed detector: the system
+        overview, the layer-level architecture, the rationale for each
+        novelty, the loss design, and the inference-time procedures.
+  \item \textbf{Chapter IV} reports the experimental setup, the additive
+        ablation results, the per-size analysis, the comparison with
+        published detectors, and the SAHI and TTA studies.
+  \item \textbf{Chapter V} discusses the societal, ethical, legal, and safety
+        aspects of deploying a person detector.
+  \item \textbf{Chapter VI} maps the work onto the complex engineering
+        problem and activity attributes it satisfies.
+  \item \textbf{Chapter VII} summarises the findings, states the limitations,
+        and sets out future work.
+\end{itemize}

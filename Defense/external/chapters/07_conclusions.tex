@@ -1,0 +1,71 @@
+\chapter{Conclusions}
+
+\section{Summary}
+This thesis studied how to detect very small human targets in aerial disaster
+imagery with a model small enough to deploy. Starting from a YOLO11m
+baseline, an additive ablation measured the effect of CBAM attention, a
+high-resolution P2 detection scale, and a state-space neck on the C2A dataset
+under one training and evaluation protocol. The P2 scale was the component
+that mattered: it raised very-tiny recall from $0.743$ to $0.757$ and
+$\mathrm{AP}_{50}$ from $0.843$ to $0.853$ at a cost of half a million
+parameters and one millisecond of latency. CBAM was near-free, removing about
+one million parameters while slightly improving the operational scores. The
+state-space neck added $2.4$~million parameters and $2.8$ times the latency
+without improving any accuracy metric, and was excluded on that evidence. The
+recommended CBAM~+~P2 detector reaches $\mathrm{AP}_{50}$ $0.853$ and $F_2$
+$0.844$ at $19.6$~million parameters and $14.6$~ms per image, second among
+all published detectors on this benchmark and a third of the leader's size;
+test-time augmentation at $1280$~px lifts very-tiny recall further, from
+$0.758$ to $0.850$, at $60$~ms per image without retraining. The whole
+training campaign was carbon-accounted at $9.0$~kg of CO$_2$.
+
+\section{Limitations}
+The study has clear limits, summarised here so the results are read at their
+proper weight.
+\begin{itemize}
+  \item \textbf{Single, semi-synthetic dataset.} All results are on C2A,
+        whose scenes composite real disaster backgrounds with segmented
+        human figures. Absolute numbers may not transfer to fully real
+        footage, and no cross-dataset test is included in this phase.
+  \item \textbf{Single seed per configuration.} The ablation ran one seed
+        under the thesis protocol, so small between-model differences sit
+        within run-to-run noise; the saturated aggregate AP makes the same
+        point from the data side.
+  \item \textbf{Sparse medium-target evidence.} The medium band holds only
+        317 of roughly 72{,}500 test instances, so its recall estimates are
+        noisy and the apparent medium-band drop of the P2 models is
+        uncertain.
+  \item \textbf{No on-device measurement.} Latency was measured on a desktop
+        GPU. Embedded or airborne hardware will behave differently, and no
+        field trial with a drone was performed.
+\end{itemize}
+
+\section{Recommendations for Future Works}
+Several extensions follow directly, two of which are already in progress by
+the author.
+\begin{itemize}
+  \item \textbf{Server-side deployment.} Work is under way to serve the
+        recommended model behind a streaming pipeline in which a drone
+        transmits footage to a ground server that runs detection and returns
+        flagged frames to the operator. This keeps the airborne payload
+        light, allows the $1280$-px test-time augmentation mode when the
+        link budget permits, and is the practical route to field use.
+  \item \textbf{An enhanced dataset with own imagery.} The author is
+        integrating self-collected aerial footage with the existing corpus
+        to build an enhanced training set, which directly attacks the
+        composited-data limitation and the domain gap it creates.
+  \item \textbf{Validation on real rescue imagery.} Zero-shot and fine-tuned
+        evaluation on real search-and-rescue collections such as
+        SARD~\cite{sambolek2021sard} and HERIDAL~\cite{bozic2019heridal},
+        and broader aerial data such as VisDrone~\cite{zhu2021visdrone} and
+        Okutama-Action~\cite{barekatain2017okutama}, would ground the
+        generalisation claim.
+  \item \textbf{Multi-seed significance testing.} Repeating the chain over
+        several seeds with paired statistical tests would firm up the
+        component comparisons for publication.
+  \item \textbf{A purpose-built state-space design.} The negative result
+        here does not close the direction: a neck designed around the
+        geometry of very small targets, rather than a generic scan, remains
+        worth investigating, now with a validated protocol to test it
+        against.
+\end{itemize}

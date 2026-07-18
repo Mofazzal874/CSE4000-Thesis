@@ -1,0 +1,48 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Size distribution" id="sizedist">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="720" pageHeight="410" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="ttl" value="C2A human sizes vs. what each detection scale can resolve" style="text;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="30" y="6" width="660" height="22" as="geometry" /></mxCell>
+
+        <!-- axes -->
+        <mxCell id="yaxis" value="" style="rounded=0;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="80" y="70" width="1" height="230" as="geometry" /></mxCell>
+        <mxCell id="xaxis" value="" style="rounded=0;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="80" y="300" width="562" height="1" as="geometry" /></mxCell>
+        <mxCell id="ylab" value="instance density&#10;(share of humans per px)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;horizontal=0;" vertex="1" parent="1"><mxGeometry x="14" y="120" width="60" height="120" as="geometry" /></mxCell>
+        <mxCell id="xlab" value="human size &#8212; longest side (px)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=center;" vertex="1" parent="1"><mxGeometry x="230" y="352" width="260" height="16" as="geometry" /></mxCell>
+
+        <!-- distribution bars (area = share of instances) -->
+        <mxCell id="bin1" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="80" y="112" width="90" height="188" as="geometry" /></mxCell>
+        <mxCell id="bin2" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="170" y="248" width="360" height="52" as="geometry" /></mxCell>
+        <mxCell id="bin3" value="" style="rounded=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="530" y="296" width="90" height="4" as="geometry" /></mxCell>
+        <mxCell id="b1pct" value="47%&#10;(&lt; 10 px)" style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="150" width="90" height="34" as="geometry" /></mxCell>
+        <mxCell id="b2pct" value="52%&#10;(10&#8211;50 px)" style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=center;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="270" y="256" width="160" height="34" as="geometry" /></mxCell>
+        <mxCell id="b3pct" value="~1%  (&gt; 50 px)" style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;" vertex="1" parent="1"><mxGeometry x="500" y="270" width="150" height="16" as="geometry" /></mxCell>
+
+        <!-- x ticks -->
+        <mxCell id="tk0" value="0" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="70" y="304" width="20" height="14" as="geometry" /></mxCell>
+        <mxCell id="tk10" value="10" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="160" y="304" width="20" height="14" as="geometry" /></mxCell>
+        <mxCell id="tk20" value="20" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="250" y="304" width="20" height="14" as="geometry" /></mxCell>
+        <mxCell id="tk30" value="30" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="340" y="304" width="20" height="14" as="geometry" /></mxCell>
+        <mxCell id="tk40" value="40" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="430" y="304" width="20" height="14" as="geometry" /></mxCell>
+        <mxCell id="tk50" value="50" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="520" y="304" width="20" height="14" as="geometry" /></mxCell>
+
+        <!-- stride markers (dashed vertical) -->
+        <mxCell id="mP2" style="endArrow=none;dashed=1;html=1;strokeColor=#FF0000;strokeWidth=1.5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="116" y="300" as="sourcePoint" /><mxPoint x="116" y="66" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="mP3" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;strokeWidth=1.5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="152" y="300" as="sourcePoint" /><mxPoint x="152" y="66" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="mP4" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;strokeWidth=1.5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="224" y="300" as="sourcePoint" /><mxPoint x="224" y="66" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="mP5" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;strokeWidth=1.5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="368" y="300" as="sourcePoint" /><mxPoint x="368" y="66" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="mP2l" value="P2" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;fontStyle=1;fontColor=#c00000;" vertex="1" parent="1"><mxGeometry x="104" y="50" width="24" height="14" as="geometry" /></mxCell>
+        <mxCell id="mP3l" value="P3" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="140" y="50" width="24" height="14" as="geometry" /></mxCell>
+        <mxCell id="mP4l" value="P4" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="212" y="50" width="24" height="14" as="geometry" /></mxCell>
+        <mxCell id="mP5l" value="P5" style="text;html=1;fontFamily=Times New Roman;fontSize=9;align=center;" vertex="1" parent="1"><mxGeometry x="356" y="50" width="24" height="14" as="geometry" /></mxCell>
+
+        <mxCell id="msg" value="Bar area = share of C2A human instances (47% below 10 px, 52% at 10&#8211;50 px, ~1% larger). Dashed lines mark each head&#8217;s cell size (stride): P2 = 4, P3 = 8, P4 = 16, P5 = 32 px. The coarse P4/P5 cells sit in the near-empty tail, while the dominant small-target mass &#8211; including the ~47% below 10 px &#8211; is only reached by the added P2 (stride-4) and P3 scales." style="text;html=1;fontFamily=Times New Roman;fontSize=10;align=left;verticalAlign=top;whiteSpace=wrap;" vertex="1" parent="1"><mxGeometry x="30" y="368" width="660" height="40" as="geometry" /></mxCell>
+
+        <mxCell id="src" value="Size distribution: Nihal et al. (C2A, ICPR 2024). Strides: this model at 640-px input." style="text;html=1;fontFamily=Times New Roman;fontSize=8;fontStyle=2;align=right;" vertex="1" parent="1"><mxGeometry x="330" y="70" width="308" height="14" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

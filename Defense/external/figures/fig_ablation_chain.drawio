@@ -1,0 +1,20 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Ablation chain" id="ablationchain">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" arrows="1" fold="1" page="1" pageWidth="1400" pageHeight="360" math="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t" value="Additive ablation: one architectural change per step" style="text;html=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="380" y="16" width="640" height="24" as="geometry"/></mxCell>
+
+        <mxCell id="b0" value="YOLO11m&#10;baseline&#10;(C2PSA, P3&#8211;P5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="40" y="130" width="170" height="90" as="geometry"/></mxCell>
+        <mxCell id="b1" value="+ CBAM&#10;(C2PSA &#8594; CBAM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="290" y="130" width="170" height="90" as="geometry"/></mxCell>
+        <mxCell id="b2" value="+ CBAM + P2&#10;(add stride-4 head)&#10;recommended" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="540" y="130" width="170" height="90" as="geometry"/></mxCell>
+        <mxCell id="b3" value="+ Mamba + CBAM + P2&#10;(C3k2 &#8594; C3k2Mamba)&#10;explored, no gain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="790" y="130" width="190" height="90" as="geometry"/></mxCell>
+
+        <mxCell id="e1" value="attention" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;fontSize=11;" edge="1" parent="1" source="b0" target="b1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="multi-scale (P2)" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;fontSize=11;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="state-space neck" style="html=1;endArrow=block;edgeStyle=orthogonalEdgeStyle;fontSize=11;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

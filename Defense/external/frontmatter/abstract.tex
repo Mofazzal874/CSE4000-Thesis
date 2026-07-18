@@ -1,0 +1,30 @@
+% ---------- ABSTRACT (spec section 4) : page iii, <= 500 words ----------
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Abstract}
+\frontheading{Abstract}
+
+Locating people in aerial imagery is central to disaster search and rescue, but
+the targets are often only a few pixels wide, partially occluded, and set against
+cluttered backgrounds, which defeats standard object detectors. This thesis asks
+which architectural additions actually help for this task, and builds a compact
+detector around the answer. Starting from a YOLO11m baseline, an additive ablation
+introduces one change at a time and evaluates all four configurations on the C2A
+disaster-imagery dataset under one training and evaluation protocol. The changes
+are channel-and-spatial attention (CBAM) in place of the baseline self-attention
+block, a high-resolution P2 detection scale at stride four, and a bidirectional
+state-space (Mamba) neck. The results separate the components clearly. The P2 scale is
+the effective change: it raises recall of the smallest ($<8$~px) targets from
+$0.743$ to $0.757$ and $\mathrm{AP}_{50}$ from $0.843$ to $0.853$ at a cost of about
+half a million parameters and one millisecond of latency. CBAM is nearly free and
+lowers the parameter count below the baseline while holding accuracy. The
+state-space neck adds $2.4$~million parameters and roughly triples inference latency
+without improving any accuracy metric, and is therefore excluded from the
+recommended model. At inference time, test-time augmentation at
+$1280$-px input lifts recall of the smallest targets from $0.758$ to $0.850$
+at $60$~ms per image, without retraining. The main contribution is a
+controlled account of where a small-object detection gain comes from for
+aerial human detection, including a negative result for the state-space neck,
+together with the deployable model that follows from it. The recommended
+CBAM~+~P2 detector achieves $\mathrm{AP}_{50}$ $0.853$ and an operational
+$F_2$ of $0.844$ on the C2A test set with $19.6$~million parameters and
+$14.6$~ms end-to-end latency on a single consumer GPU, matching or exceeding
+every published detector on this dataset except one three times its size.
