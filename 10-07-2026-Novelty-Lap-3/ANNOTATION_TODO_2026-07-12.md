@@ -1,4 +1,9 @@
 # Annotation TODO — 2026-07-12 (beginner-proof Roboflow walkthrough)
+> **SUPERSEDED 2026-07-19 by `ANNOTATION_GUIDE_v2_2026-07-19.md`** (supervisor asked for more
+> frames + new sources: lying-down field shoot, campus-road tree occlusion, expanded R-set,
+> hard-negative mining for the void-FP problem, and a model-assisted workflow). The Roboflow
+> basics below (project setup, boxing rules, export recipe) remain correct and are referenced
+> from v2 rather than repeated.
 
 **Zero dependency note:** Claude's next coding step (S0) does NOT wait on this — annotate in
 parallel, take your time, accuracy > speed.

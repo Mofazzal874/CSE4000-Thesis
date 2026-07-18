@@ -1,10 +1,23 @@
-# RealDisaster R-set — real-event evaluation benchmark (created 2026-07-12)
+# RealDisaster R-set — real-event evaluation benchmark (created 2026-07-12, updated 2026-07-19)
 
 **What this is:** a small, carefully curated, **EVALUATION-ONLY** set of real disaster imagery
-(recent Venezuela earthquake, Bangladesh floods, …) to close the last credibility gap: real people
-inside real disaster scenes (C2A = fake people/real-ish scenes; SARD = real people/no disaster;
-own drone = real sensor/no disaster). Used ONLY in the S5 evaluation grid — **never trained on,
-never used for self-training, never mixed into any Roboflow training project.**
+(recent Venezuela earthquake, Bangladesh floods, Gaza — see ethics note, …) to close the last
+credibility gap: real people inside real disaster scenes (C2A = fake people/real-ish scenes;
+SARD = real people/no disaster; own drone = real sensor/no disaster). Used ONLY in the S5
+evaluation grid — **never trained on, never used for self-training, never mixed into any Roboflow
+training project, and NEVER labeled by any model (human-only annotation — eval-set purity rule).**
+
+## ⚠ Conflict-zone imagery (Gaza) — special handling
+Natural-disaster footage (earthquake, flood) is the R-set CORE and already carries the paper's
+claim. Conflict-zone imagery is different: it frequently shows casualties, and its use in a
+detection paper invites ethical review, reviewer discomfort, and politicization of a SAR-framed
+contribution. Rules if Gaza clips are used at all:
+1. AERIAL viewpoint only; scenes of structural damage with visible but NON-graphic people
+   (walking, searching, standing on rubble). NO casualties, no bodies, no close-ups of suffering.
+2. Frame it in the paper strictly as "urban structural-collapse search-and-rescue imagery".
+3. Every Gaza row in the provenance table gets `sensitive: yes` in notes; if in doubt about a
+   frame, DROP it. The earthquake+flood sets alone are sufficient for the real-event claim —
+   Gaza is optional enrichment, never a dependency.
 
 ## Workflow
 1. Drop the videos into `raw_videos\` (any names; mp4/mov/avi/mkv).
