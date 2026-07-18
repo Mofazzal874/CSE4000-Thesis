@@ -505,6 +505,46 @@ def build(store, engine=None):
 
         # ------------------------------------------------ TAB 4: results
         with gr.Tab("Results (from the report)"):
+            plots_dir = store.results / "plots"
+            figures = [
+                ("fig1_per_size_recall.png",
+                 "**Recall by object size** — the core result. How each config "
+                 "detects people at each size bucket; TTA 1280 gives the biggest "
+                 "very-tiny gain (.758 → .850)."),
+                ("fig2_recall_vs_latency.png",
+                 "**Cost of accuracy** — overall recall vs per-image latency "
+                 "(log scale). Up-and-left is better; TTA 1280 buys the most "
+                 "recall for the least time."),
+                ("fig3_pr_curves.png",
+                 "**Precision–recall envelope** — each curve sweeps the "
+                 "confidence threshold. TTA extends recall, SAHI holds precision, "
+                 "the plain model sits inside both."),
+                ("fig4_error_tradeoff.png",
+                 "**Error trade-off** — false alarms (FP) vs missed people (FN). "
+                 "TTA 1280 cuts misses but nearly doubles false alarms."),
+            ]
+            present = [(f, c) for f, c in figures if (plots_dir / f).is_file()]
+            if present:
+                gr.Markdown(
+                    "## Result figures\n"
+                    "*CBAM+P2 model, official C2A test split (2043 images, "
+                    "72,523 GT boxes). Rendered offline from the report metrics "
+                    "— run `python app\\build_result_plots.py` to regenerate.*")
+                for i in range(0, len(present), 2):
+                    with gr.Row():
+                        for fname, cap in present[i:i + 2]:
+                            with gr.Column():
+                                gr.Image(value=str(plots_dir / fname),
+                                         show_label=False, interactive=False,
+                                         container=False)
+                                gr.Markdown(cap)
+            else:
+                gr.Markdown(
+                    "*(result figures not found — run "
+                    "`python app\\build_result_plots.py` on a machine with "
+                    "matplotlib to generate `results\\plots\\`)*")
+
+            gr.Markdown("## Report tables")
             gr.Markdown(MAIN_ABLATION_MD)
             gr.Markdown(SAHI_TABLE_MD)
             if store.latency:
