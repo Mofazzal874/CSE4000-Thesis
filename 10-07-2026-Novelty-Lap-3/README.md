@@ -56,9 +56,15 @@ reason integrations kept failing. Lap-3's job:
       at init) + `yolo11m_fccg_p2.yaml` (Detect taps [21,24,27,30] keep base channel layout)
       + `11_fccg_smoke.py` + `SMOKE_CHECKLIST_PC4.md`. **15/15 CPU selftests PASS; +0.52M
       params.** Design respects all recorded rival deltas.
-- [ ] S0 EXIT GATE: run `SMOKE_CHECKLIST_PC4.md` on PC-4 (selftest → --check-load → 2-ep
-      smoke --no-amp batch 4). Pass ⇒ S1 paired 50-ep pilots (ranking doc §5).
-- [ ] P1 seam probe (PC-4, eval-only ~2h) — can share the same PC-4 session.
+- [ ] S0 EXIT GATE: PC-4 DOWN → run `scripts\SMOKE_CHECKLIST_PC2.md` on PC-2 GPU1 (selftest →
+      --check-load → 2-ep smoke batch 16). Pass ⇒ S1 paired 50-ep pilots (ranking doc §5).
+      (CBAM KeyError already fixed: lineage classes embedded in 10_fccg_modules, 16/16 selftests.)
+- [ ] P1 seam probe (eval-only ~2h) — PC-2 after the smoke, or PC-4 when it returns.
+- [x] ANNOTATION v2 (2026-07-19): `ANNOTATION_GUIDE_v2_2026-07-19.md` — expanded sources
+      (lying-down shoot spec, campus tree-occlusion, R-set+Gaza ethics, void-FP hard negatives)
+      + settled tiered hybrid workflow (eval=manual; T1 assist; T2 tiled+miss-hunt; T3 dual
+      our-model∪SAM3; N nulls). Evidence: `docs\2026-07-19_autolabel_landscape.md`.
+- [ ] USER: work the guide §3 queue (test 60 → drone 120 → assisted 120 → campus → shoot → R-set).
 
 ## Headline audit results (details in docs/)
 - FABRICATED by the search AI: YOLOv12 "Ghost+Swin/transformer head" · YOLOv13 "YOLO-TCM" &

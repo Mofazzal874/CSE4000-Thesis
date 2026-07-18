@@ -11,7 +11,21 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 (FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
 `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
 
-## RIGHT NOW (2026-07-12, evening)
+## RIGHT NOW (2026-07-19)
+- **Annotation plan v2 is live:** `10-07-2026-Novelty-Lap-3\ANNOTATION_GUIDE_v2_2026-07-19.md` —
+  supervisor-expanded scope (more frames + lying-down field shoot + tree-occluded campus road +
+  R-set incl. Gaza-with-ethics-rules + void-FP hard negatives) and the SETTLED workflow: tiered
+  hybrid (eval sets 100% manual; train tiers model-assisted via Roboflow Label Assist/Instant;
+  50 m tier = own-model tiled pre-labels + miss-hunt pass; novel poses/occlusion = our-model ∪
+  SAM 3 dual pre-label). Evidence: `docs\2026-07-19_autolabel_landscape.md` (web-verified).
+- Drop folders ready: `Drone Shoot\field_poses_v1\raw_videos\` (lying-down shoot, capture spec in
+  guide §1B) and `Drone Shoot\campus_v1\raw_videos\` (campus occlusion footage).
+- Void-FP problem (2026-07-18 demo finding): fix path = tier-N hard negatives (guide §1E) +
+  S2.5 fine-tune; FCCG context gate is the architectural half.
+- PC-4 is DOWN → S0 smoke moved to PC-2 GPU1 (`scripts\SMOKE_CHECKLIST_PC2.md`) — still pending.
+- Uncommitted changes awaiting user review (no-self-commit rule in force).
+
+## PREVIOUS (2026-07-12, evening)
 - **Decision locked: Option A** (composite architecture + sim-to-real pillar). Branch: `novelty-lap-3`.
 - **User is annotating** per `10-07-2026-Novelty-Lap-3\ANNOTATION_TODO_2026-07-12.md`
   (60 test frames finish first, then the staged 120-frame batch in
