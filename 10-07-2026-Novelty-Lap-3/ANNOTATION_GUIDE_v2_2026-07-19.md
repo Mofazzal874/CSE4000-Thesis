@@ -53,20 +53,30 @@ Purpose: real pose diversity matching C2A's 5 pose classes (bent/kneeling/lying/
 6. Drop videos: `Drone Shoot\field_poses_v1\raw_videos\` → extract with lap-3 script 12
    (`--every-sec 1 --max-per-video 80`) → curate → annotate (T3 tier; test clips = tier E).
 
-### C. Campus-road tree-occlusion footage (you already have it)
-Purpose: real occlusion evidence (need N6) — people partially hidden by tree canopy.
-1. Drop videos: `Drone Shoot\campus_v1\raw_videos\`.
-2. **Split at the CLIP level first**: pick 1–2 clips as EVAL-ONLY (tier E), rest = train (T3).
-   Never both from one clip.
-3. Extract with script 12 (`--every-sec 2 --max-per-video 60`), curate (delete unusable), then:
-   train clips → Roboflow project `campus-train-v1` (dual pre-label T3);
-   eval clips → project `campus-eval-v1` (MANUAL, assist off).
+### C. Campus-road tree-occlusion footage — DELIVERED 2026-07-19
+Purpose: real occlusion evidence (need N6) — people partially hidden by trees/buildings on roads.
+1. Source (actual): `Drone Shoot\ALL Drone Shots\KUET_ROAD_30m.MP4` + `KUET_ROAD_50m.MP4`
+   (1.2/1.1 GB, DJI SRT telemetry alongside). Extracted by script 12 (`--only KUET_ROAD
+   --every-sec 2 --max-per-video 80`) → `Drone Shoot\campus_v1\frames_v1\`.
+2. **Train/eval split is TEMPORAL (one clip per altitude → clip-level split impossible):**
+   eval = the middle 40–60% time window of each video, train = 0–35% and 65–100%, 5% guard gaps
+   (drone moves along the road ⇒ different time = different road section ≈ scene-disjoint).
+   Claude materializes `campus_v1\eval_frames\` and `campus_v1\train_frames\` from timestamps —
+   frames are named `..._t00042s.jpg` so the split is deterministic and auditable.
+3. Curate (delete unusable), then: `train_frames` → Roboflow project `campus-train-v1`
+   (dual pre-label T3); `eval_frames` → project `campus-eval-v1` (MANUAL, assist off).
 4. Boxing occluded people: box the VISIBLE extent, tight; if a person is fully hidden this frame,
    no box (we detect, not track). A trunk/canopy splitting a person visually is still ONE box
    over the visible parts' extent if the parts obviously belong together.
 5. Targets: train 150–250 frames, eval 40–60 frames, plus null frames with heavy shadow/voids (N).
 
-### D. RealDisaster R-set (Venezuela earthquake · Gaza · floods) — EVAL-ONLY
+### D. RealDisaster R-set — EVAL-ONLY — EXTRACTED 2026-07-19
+Actual set (from the demo-day inference videos, now copied to `RealDisaster\raw_videos\`):
+**Venezuela earthquake (2 clips, 36 frames) · Turkey earthquake (4 frames — static video, long
+stride as instructed) · Chennai flood (38 frames)** = 78 frames in `RealDisaster\frames_v1\`
+awaiting curation + manual annotation. Gaza + Greek-island flood clips exist in the demo folder
+but are NOT in the set (add later only per the ethics rules / user choice). ⚠ USER: fill the
+provenance table (YouTube source URLs) in `RealDisaster\README_PROVENANCE.md` before annotating.
 Full workflow + provenance table + **Gaza ethics rules** in `RealDisaster\README_PROVENANCE.md`
 (updated 2026-07-19). Non-negotiables: 100% manual (tier E — never machine-proposed), aerial
 viewpoint only, provenance row per video BEFORE extraction, 50–150 curated frames, Gaza only if

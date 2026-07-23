@@ -123,7 +123,7 @@ FBRT-YOLO) + latency/params + calibration. Every cell already has a script or a 
 | Gate | What | Where | Cost | Pass criterion |
 |---|---|---|---|---|
 | **P0 (this week, NEW)** | (a) read DERNet 2606.23825 **+ SAFE-Net (CVPRW 2026, AERO-HPR) + SRTSOD-YOLO (RS 17(20):3414 — gated fusion neck ON YOLO11) + AFGLFF-YOLO abstract (JSTARS 2026)** → 1-page differentiation note; (b) pose-label audit on ~100 C2A images (#37); (c) extract unlabeled drone train-pool frames, dedup, altitude-stratified (script 05; 60 test frames untouchable) | laptop | 0 GPU | note exists; pose labels usable y/n; ≥500 clean unlabeled frames |
-| **P0.5 (NEW, optional but cheap)** | DN-TOD (PR 2026, code ZhuHaoranEIS/DN-TOD) feasibility skim: can CLC/TLS bolt onto Ultralytics trainer? If yes → queue as S2 row (targets our paste-label-noise ceiling directly) | laptop | 0 GPU | go/no-go note |
+| **P0.5 DONE 2026-07-23** | DN-TOD feasibility = **GO-WITH-EFFORT**: MMDet-native but CLC/TLS are trainer-layer (portable like our NWD patch); re-implement TLS in Ultralytics (cross-epoch target buffer), CLC near-moot for single-class; queued as an S2 row vs the ~0.615 ceiling | laptop | 0 GPU | ✅ done |
 | **P1 seam probe (NEW)** | low-pass/re-JPEG C2A test images → eval CBAM+P2 (script 04); compare degradation slope vs SARD | PC-4 | ~2 h eval | ANY outcome reportable; if AP collapses ≫ SARD ⇒ seam reliance QUANTIFIED (feeds paper §, motivates C2A-H) |
 | S0 | FCCG modules + YAML + selftests (shape/grad/pickle/param) + 2-ep smoke — unchanged from lap-2, now with DERNet-differentiation checklist | laptop + PC-4 | 1–2 d | modules ACTIVE, ≤22.5M params |
 | S1 | paired 50-ep pilots scene-split: control vs +FCCG | PC-4/PC-2 | ~5 h each | +1.5 AP_small or +2 VT-recall |

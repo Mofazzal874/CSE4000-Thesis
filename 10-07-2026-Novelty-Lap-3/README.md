@@ -47,7 +47,14 @@ reason integrations kept failing. Lap-3's job:
       Verdict: none of the 4 rivals does cross-scale context→evidence gating; all leave assignment
       untouched; none does occlusion or sim-to-real. Positioning locked: lead with
       **"context-gated evidence"** (not "frequency"); forbidden claims recorded per rival.
-      OPEN ITEM: SAFE-Net PDF still "coming soon" on CVF — re-poll before paper writing.
+      OPEN ITEM: SAFE-Net PDF STILL unavailable as of 2026-07-23 (re-polled — CVF/arXiv/AERO-HPR
+      all empty, "coming soon"); re-poll when CVPR2026 workshop proceedings drop.
+      `docs/2026-07-23_open_items_followup.md`.
+- [x] P0.5 DN-TOD feasibility (2026-07-23): **GO-WITH-EFFORT.** MMDetection-native (RFLA-coupled,
+      batch-1) but CLC+TLS are TRAINING-LOOP components at the layer we already patch (NWD/CBAM).
+      Re-implement TLS (sample reweight + box regen; needs cross-epoch target buffer) in the
+      Ultralytics trainer; CLC near-moot for single-class person; pilot on a C2A subset as an
+      S2 row vs the ~0.615 label-noise ceiling. Details in the open-items doc.
 - [x] S0 CODE DONE (2026-07-12): `scripts/10_fccg_modules.py` — FCCGFuse (context-gated
       evidence at P2/P3 Concat seams; gate = decomposed large-kernel DW from the top-down
       semantic half; evidence = learnable X−AvgPool DW bank on the lateral half; shape-

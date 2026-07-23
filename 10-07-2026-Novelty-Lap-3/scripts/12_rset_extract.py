@@ -61,11 +61,15 @@ def extract_video(vp: Path, out_dir: Path, every_sec: float, max_frames: int) ->
             "skipped_quality": skipped_quality, "timestamps_s": timestamps}
 
 
-def run(videos_dir: Path, out_dir: Path, every_sec: float, max_frames: int) -> int:
+def run(videos_dir: Path, out_dir: Path, every_sec: float, max_frames: int,
+        only: str | None = None) -> int:
     vids = sorted(p for p in videos_dir.iterdir()
                   if p.is_file() and p.suffix.lower() in VIDEO_EXTS)
+    if only:
+        vids = [p for p in vids if only.lower() in p.name.lower()]
     if not vids:
-        print(f"[rset] no videos found in {videos_dir} (extensions: {sorted(VIDEO_EXTS)})")
+        print(f"[rset] no videos matched in {videos_dir}"
+              + (f" (filter --only '{only}')" if only else f" (extensions: {sorted(VIDEO_EXTS)})"))
         return 1
     out_dir.mkdir(parents=True, exist_ok=True)
     mpath = out_dir / "extract_manifest.json"
@@ -107,10 +111,11 @@ if __name__ == "__main__":
     ap.add_argument("--out", type=Path)
     ap.add_argument("--every-sec", type=float, default=2.0)
     ap.add_argument("--max-per-video", type=int, default=60)
+    ap.add_argument("--only", default=None, help="substring filter on video filename")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         sys.exit(selftest())
     if not a.videos_dir or not a.out:
         ap.error("--videos-dir and --out required (or --selftest)")
-    sys.exit(run(a.videos_dir, a.out, a.every_sec, a.max_per_video))
+    sys.exit(run(a.videos_dir, a.out, a.every_sec, a.max_per_video, a.only))

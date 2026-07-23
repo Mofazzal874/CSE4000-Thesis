@@ -11,7 +11,20 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 (FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
 `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
 
-## RIGHT NOW (2026-07-19)
+## RIGHT NOW (2026-07-23)
+- **Data collection ~65% done.** ✅ Drone train (120) + test (60, frozen 4K) annotated, verified,
+  exported to `extracted_v1\annotations\{selftrain_v1,test_v1}\`. Full status = `DATA_MAP.md`.
+- **User resumes annotation TOMORROW (with helpers):** R-set (36 frames, manual, `realdisaster-rset-v1`)
+  + campus-train (88, assist ON with the trained RF-DETR) + campus-eval (25, manual). Lying-down
+  shoot = future.
+- **THE unblock = S0 smoke on PC-2 GPU1** (`scripts\SMOKE_CHECKLIST_PC2.md`) — proves FCCG trains;
+  gate between "have code" and "training". PC-4 down. Still pending a PC session.
+- **Also check PC-1:** the G1 baseline retrain was running ~2026-07-12 — 11 days on, it's surely
+  finished; confirm + copy results to the inbox, frees PC-1 for the real runs.
+- Open items (2026-07-23): SAFE-Net PDF still unpublished (re-poll later); DN-TOD = GO-WITH-EFFORT,
+  queued S2. Lots uncommitted — review + commit when ready (no-self-commit rule).
+
+## PREVIOUS (2026-07-19)
 - **Annotation plan v2 is live:** `10-07-2026-Novelty-Lap-3\ANNOTATION_GUIDE_v2_2026-07-19.md` —
   supervisor-expanded scope (more frames + lying-down field shoot + tree-occluded campus road +
   R-set incl. Gaza-with-ethics-rules + void-FP hard negatives) and the SETTLED workflow: tiered
@@ -43,7 +56,10 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 ## If you are lost, read in this order
 1. This file (you are here).
 2. `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md` — what we're doing and why, no jargon.
-3. `10-07-2026-Novelty-Lap-3\README.md` — current lap status checklist.
+3. **`DATA_MAP.md` (repo root) — every dataset, its canonical path, and its status.** The
+   anti-scatter file: raw video → frames → Roboflow project → COCO export → done/todo. Check
+   here before hunting for any data folder.
+4. `10-07-2026-Novelty-Lap-3\README.md` — current lap status checklist.
 4. `10-07-2026-Novelty-Lap-3\docs\2026-07-10_ranking_and_publication_targets.md` — the full plan
    with gates (§5) and venue targets (§4).
 

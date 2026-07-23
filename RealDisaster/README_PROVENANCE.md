@@ -46,8 +46,12 @@ contribution. Rules if Gaza clips are used at all:
 - Skip/crop imagery showing identifiable victims in degrading conditions. When in doubt, drop the
   frame — 80 clean images beat 150 questionable ones.
 
-## PROVENANCE TABLE (fill me — one row per video in raw_videos\)
-| file | event (what/where/when) | source (URL or "own drone"/"own phone") | license/terms | viewpoint (aerial/oblique/ground) | notes |
-|---|---|---|---|---|---|
-| (example) flood_dhaka_01.mp4 | Bangladesh floods, Sylhet, 2026-06 | https://... | YouTube-CC-BY / news-fair-use / own | aerial | drone journalism clip |
-|  |  |  |  |  |  |
+## PROVENANCE TABLE (filled 2026-07-22; raw source = `Drone Shoot\Footage From News(Real)\`)
+| file | event (what/where/when) | source URL | viewpoint | notes |
+|---|---|---|---|---|
+| Chennai_flood_final.mp4 | Chennai floods, India | https://youtu.be/8YamDPCyTeM | aerial | news drone footage; eval-only |
+| venezuala_final.mp4 | Venezuela earthquake | https://youtu.be/azAQLD_LF9g | aerial | news drone footage; eval-only |
+| ~~turkey_earthquake~~ | Turkey earthquake | — | — | DROPPED 2026-07-22 (too generic / static) |
+
+License note: news footage used under fair-use for a non-commercial academic eval benchmark; the
+PAPER publishes these URLs + our annotations, NOT the video/frames themselves.
