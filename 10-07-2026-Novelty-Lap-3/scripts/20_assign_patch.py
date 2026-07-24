@@ -52,7 +52,8 @@ def assign_similarity(gt_bboxes, pd_bboxes, C: float = 12.8, eps: float = 1e-7, 
     import torch
     if metric != "nwd":
         raise NotImplementedError(f"assign_similarity metric='{metric}' not verified/implemented yet")
-    gt, pd = gt_bboxes, pd_bboxes
+    # fp32: under AMP the boxes are fp16 and raw center-coord squares overflow (640^2 > 65504).
+    gt, pd = gt_bboxes.float(), pd_bboxes.float()
     gw = (gt[..., 2] - gt[..., 0]).clamp(min=0); gh = (gt[..., 3] - gt[..., 1]).clamp(min=0)
     pw = (pd[..., 2] - pd[..., 0]).clamp(min=0); ph = (pd[..., 3] - pd[..., 1]).clamp(min=0)
     gcx = gt[..., 0] + gw / 2; gcy = gt[..., 1] + gh / 2
