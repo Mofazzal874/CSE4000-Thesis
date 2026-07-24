@@ -182,39 +182,61 @@ def main():
     if not fccg.register_fccg():                 # embeds CBAM too -> loads control or fccg ckpts
         print("FATAL: ultralytics not importable in this venv")
         return 1
-    from ultralytics import YOLO
     if not Path(a.weights).is_file():
         print(f"FATAL: weights not found: {a.weights}")
         return 1
-    model = YOLO(a.weights)
 
     img_dir = Path(a.images_dir)
     names = sorted(p.name for p in img_dir.iterdir()
                    if p.suffix.lower() in (".png", ".jpg", ".jpeg"))
     if a.limit:
         names = names[:a.limit]
-    gt, gt_raw = s18.load_gt(a.gt_json)
     sigmas = [float(x) for x in a.lowpass.split(",") if x != ""]
     quals = [int(x) for x in a.jpeg.split(",") if x != ""]
 
-    result = {"tag": a.tag, "weights": a.weights, "n_images": len(names),
-              "lowpass": [], "jpeg": []}
-    print(f"[probe:{a.tag}] low-pass sweep {sigmas} over {len(names)} imgs")
-    for sg in sigmas:
-        preds = _infer_variant(model, names, img_dir, a.device, a.imgsz, lambda im, s=sg: _lowpass(im, s))
-        m = _metrics(preds, gt, gt_raw); m["sigma"] = sg
-        result["lowpass"].append(m)
-        print(f"  sigma={sg}: AP_small={m['AP_small']} VT={m['recall_very_tiny']} AP50={m['AP50_allpoint']}")
-    print(f"[probe:{a.tag}] JPEG sweep {quals}")
-    for q in quals:
-        preds = _infer_variant(model, names, img_dir, a.device, a.imgsz, lambda im, qq=q: _jpeg(im, qq))
-        m = _metrics(preds, gt, gt_raw); m["quality"] = q
-        result["jpeg"].append(m)
-        print(f"  q={q}: AP_small={m['AP_small']} VT={m['recall_very_tiny']} AP50={m['AP50_allpoint']}")
-
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
     outp = PROBE_DIR / f"seam_probe_{a.tag}.json"
-    outp.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    # power-cut resume: reload completed passes, skip them, checkpoint after EACH pass
+    if outp.is_file():
+        result = json.loads(outp.read_text(encoding="utf-8"))
+        result.setdefault("lowpass", []); result.setdefault("jpeg", [])
+        print(f"[probe] resume: {len(result['lowpass'])} low-pass + {len(result['jpeg'])} "
+              f"JPEG passes already done -> skipping those")
+    else:
+        result = {"tag": a.tag, "weights": a.weights, "n_images": len(names),
+                  "lowpass": [], "jpeg": []}
+    done_sig = {r["sigma"] for r in result["lowpass"]}
+    done_q = {r["quality"] for r in result["jpeg"]}
+    todo_sig = [s for s in sigmas if s not in done_sig]
+    todo_q = [q for q in quals if q not in done_q]
+
+    if not todo_sig and not todo_q:
+        print("[probe] all passes already complete -> reporting saved results")
+        _print_slopes(result)
+        return 0
+
+    from ultralytics import YOLO
+    model = YOLO(a.weights)
+    gt, gt_raw = s18.load_gt(a.gt_json)
+
+    def _save():
+        outp.write_text(json.dumps(result, indent=2), encoding="utf-8")
+
+    if todo_sig:
+        print(f"[probe:{a.tag}] low-pass sweep {todo_sig} over {len(names)} imgs")
+    for sg in todo_sig:
+        preds = _infer_variant(model, names, img_dir, a.device, a.imgsz, lambda im, s=sg: _lowpass(im, s))
+        m = _metrics(preds, gt, gt_raw); m["sigma"] = sg
+        result["lowpass"].append(m); _save()          # checkpoint after each pass
+        print(f"  sigma={sg}: AP_small={m['AP_small']} VT={m['recall_very_tiny']} AP50={m['AP50_allpoint']}")
+    if todo_q:
+        print(f"[probe:{a.tag}] JPEG sweep {todo_q}")
+    for q in todo_q:
+        preds = _infer_variant(model, names, img_dir, a.device, a.imgsz, lambda im, qq=q: _jpeg(im, qq))
+        m = _metrics(preds, gt, gt_raw); m["quality"] = q
+        result["jpeg"].append(m); _save()              # checkpoint after each pass
+        print(f"  q={q}: AP_small={m['AP_small']} VT={m['recall_very_tiny']} AP50={m['AP50_allpoint']}")
+
     _print_slopes(result)
     print(f"\n[probe] saved -> {outp}   (run a real set with the same --weights, then --compare)")
     return 0
