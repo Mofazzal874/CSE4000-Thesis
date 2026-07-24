@@ -63,10 +63,14 @@ reason integrations kept failing. Lap-3's job:
       at init) + `yolo11m_fccg_p2.yaml` (Detect taps [21,24,27,30] keep base channel layout)
       + `11_fccg_smoke.py` + `SMOKE_CHECKLIST_PC4.md`. **15/15 CPU selftests PASS; +0.52M
       params.** Design respects all recorded rival deltas.
-- [ ] S0 EXIT GATE: PC-4 DOWN → run `scripts\SMOKE_CHECKLIST_PC2.md` on PC-2 GPU1 (selftest →
-      --check-load → 2-ep smoke batch 16). Pass ⇒ S1 paired 50-ep pilots (ranking doc §5).
-      (CBAM KeyError already fixed: lineage classes embedded in 10_fccg_modules, 16/16 selftests.)
-- [ ] P1 seam probe (eval-only ~2h) — PC-2 after the smoke, or PC-4 when it returns.
+- [x] **S0 EXIT GATE PASSED (2026-07-24, PC-2 A6000):** 20.12M params, all FCCG modules active,
+      2-ep smoke trained clean (losses fell, mAP rose), **gates active+learning** (L16 0.78→0.70,
+      L20 0.66→0.59, unsaturated), ckpt roundtrip OK. Results: `results\pc2\2026-07-24_S0_fccg_smoke\`
+      + MANIFEST. GPU-slot guard (`16_gpu_guard.py`, --reserve-gb) + save_period/resume now standard
+      on shared PCs (user rule 2026-07-24, [[feedback-gpu-slot-protection]]).
+- [ ] **S1 (NEXT): paired 50-ep pilots** scene-split, control (CBAM+P2) vs +FCCG → compare
+      AP_small / VT-recall (ranking §5). ~4-5h each on A6000; use --reserve-gb + --resume.
+- [ ] P1 seam probe (eval-only ~2h) — PC-2 alongside S1.
 - [x] ANNOTATION v2 (2026-07-19): `ANNOTATION_GUIDE_v2_2026-07-19.md` — expanded sources
       (lying-down shoot spec, campus tree-occlusion, R-set+Gaza ethics, void-FP hard negatives)
       + settled tiered hybrid workflow (eval=manual; T1 assist; T2 tiled+miss-hunt; T3 dual

@@ -48,3 +48,19 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
 
 ### (pending) — pc1 — G1 — CBAM+P2 scene-split retrain
 - Running since 2026-07-08 ~02:17 on PC-1. When done copy `runs\<id>\{metrics,logs}\`, `results.csv`, `args.yaml`, `env.json`, `scenesplit_run.log`, `weights\best.pt` → `results\pc1\<date>_G1_scenesplit_cbam_p2\`. See `..\PC1_RUN_STATUS.md`.
+
+### 2026-07-24 - pc2 - S0 - FCCG smoke (2-epoch trainability gate) - PASS
+- Location: results\pc2\2026-07-24_S0_fccg_smoke\fccg_s0\ (best.pt, last.pt, results.csv, args.yaml)
+- Model: YOLO11m+CBAM+P2+FCCG (context-gated evidence), 20.12M params, 98.9 GFLOPs; modules parsed active (CBAM@10, FFLUp@11/14/18, FCCGFuse@16/20).
+- 2 epochs from scratch, C2A scene-split (6135/2040), A6000, batch16, AMP, ~15 min.
+- Losses fell (box 2.73->1.90, cls 2.05->1.36, dfl 1.90->1.32); val mAP50 0.531->0.626 (2-ep scratch, not a real number).
+- KEY: gates ACTIVE+LEARNING: L16 0.779->0.698, L20 0.661->0.587 (off 0.5 init, unsaturated). Ckpt roundtrip OK.
+- Verdict: S0 CLEARED. Next = S1 paired 50-ep pilots (control vs +FCCG).
+
+### 2026-07-24 - pc1 - G1 - CBAM+P2 scene-split baseline (300-ep protocol) - DONE
+- Run: 20260708_022132_yolo11m_cbam_p2head_s0_nogit (262 ep, F2 early-stop @152, 12.1h, seed 0).
+- TEST: AP50 0.8372 / AP 0.6107 / AP_small 0.6132 / VT-recall 0.7454 / tiny 0.8459 / small 0.8591.
+- VAL:  AP50 0.8565 / AP 0.6311 / AP_small 0.6336. Effic 19.57M / 86.7 GFLOPs / 15.67ms / ECE 0.026.
+- Leakage vs official (0.8533/0.6153/0.6156/0.7575): -1.6 AP50 / -0.2 AP_small / -1.2 VT = MODEST.
+- THIS is the authoritative scene-split baseline FCCG-YOLO must beat at full protocol.
+- Copy folder -> results\pc1\2026-07-24_G1_scenesplit_cbam_p2\ (metrics, results.csv, summary.json, args, best.pt).

@@ -11,7 +11,20 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 (FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
 `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
 
-## RIGHT NOW (2026-07-23)
+## RIGHT NOW (2026-07-24)
+- **DATA COLLECTION 100% DONE** — 5 sets, 317 imgs / 17,365 boxes, all geometry-validated
+  (`DATA_MAP.md`). Lying-down shoot dropped.
+- **S0 SMOKE PASSED (PC-2 A6000):** FCCG architecture builds + trains + gates learn. S0 CLEARED.
+  Results in `05-07-2026-Novelty-Lap\results\pc2\2026-07-24_S0_fccg_smoke\`.
+- **NEXT = S1:** paired 50-ep pilots (control CBAM+P2 vs +FCCG) on C2A scene-split → does FCCG
+  lift AP_small / VT-recall? ~4-5h each on A6000. Claude to build the S1 runner (with GPU-slot
+  guard `--reserve-gb` + `--resume` baked in — shared-box rule).
+- Storage: freed ~18GB (dead Mamba zips + dup videos + old benchmark zips); disk 25GB free.
+  Held for user OK: `c2a.zip` (4.7GB backup; extracted copy intact).
+- Uncommitted for review: `16_gpu_guard.py`, `11_fccg_smoke.py` update, PC config note.
+- Still open: check PC-1 (G1 baseline running since ~07-12, surely done — confirm + copy results).
+
+## PREVIOUS (2026-07-23)
 - **Data collection ~65% done.** ✅ Drone train (120) + test (60, frozen 4K) annotated, verified,
   exported to `extracted_v1\annotations\{selftrain_v1,test_v1}\`. Full status = `DATA_MAP.md`.
 - **User resumes annotation TOMORROW (with helpers):** R-set (36 frames, manual, `realdisaster-rset-v1`)

@@ -29,12 +29,25 @@ def main() -> int:
     ap.add_argument("--epochs", type=int, default=2)
     ap.add_argument("--no-amp", action="store_true", help="MANDATORY on PC-4")
     ap.add_argument("--device", default=None, help="e.g. 0; PC-2 MUST pass the free GPU (ours=1)")
+    ap.add_argument("--mem-frac", type=float, default=0.90, help="cap our GPU memory fraction (anti-spill)")
+    ap.add_argument("--reserve-gb", type=float, default=0.0,
+                    help="reserve N GB up front so latecomers OOM instead of us (shared box; use ~44 on PC-2 for REAL runs, 0 for smoke)")
+    ap.add_argument("--resume", action="store_true", help="resume this run from last.pt after a kill")
     a = ap.parse_args()
 
     if not fccg.register_fccg():
         print("FATAL: ultralytics not importable in this venv")
         return 1
     from ultralytics import YOLO
+
+    # SHARED-BOX GUARD: claim/reserve GPU memory BEFORE building the model (see 16_gpu_guard.py).
+    if a.device is not None:
+        try:
+            guard = import_module("16_gpu_guard")
+            guard.claim(device=int(a.device), mem_frac=a.mem_frac,
+                        reserve_gb=(a.reserve_gb or None))
+        except Exception as e:
+            print(f"[smoke] gpu-guard skipped ({e})")
 
     ypath = HERE / fccg.YAML_NAME
     if not ypath.exists():
@@ -56,7 +69,8 @@ def main() -> int:
     kw = dict(data=a.data, epochs=a.epochs, imgsz=a.imgsz, batch=a.batch,
               optimizer="AdamW", lr0=0.001, seed=0, workers=2, patience=50,
               amp=not a.no_amp, project=str(HERE / "runs_smoke"), name="fccg_s0",
-              exist_ok=True, val=True, plots=False)
+              exist_ok=True, val=True, plots=False,
+              save_period=1, resume=a.resume)  # save_period=1 = kill costs <=1 epoch
     if a.device is not None:
         kw["device"] = a.device
     model.train(**kw)

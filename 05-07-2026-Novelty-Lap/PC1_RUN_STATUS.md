@@ -4,7 +4,15 @@ Keep this file until both G1 runs finish. This is the paper's HEADLINE experimen
 ## Machine
 - **PC-1**, root `E:\Thesis_mofazzal_2007074`, **RTX 4070 Ti SUPER 16 GB**, venv **mofazzal1**, PowerShell.
 
-## Run 1 (IN PROGRESS) — CBAM+P2 on the scene-disjoint split
+## ✅ Run 1 DONE (2026-07-24 confirmed; ran 262 ep, F2-early-stop best epoch 152, 12.1h) — CBAM+P2 on the scene-disjoint split
+**HEADLINE NUMBERS (test / val), run `20260708_022132_yolo11m_cbam_p2head_s0_nogit`:**
+- TEST: AP50 **0.8372** · AP **0.6107** · AP_small **0.6132** · VT-recall **0.7454** · tiny 0.8459 · small 0.8591
+- VAL:  AP50 0.8565 · AP 0.6311 · AP_small 0.6336
+- Effic: 19.57M params · 86.7 GFLOPs · 15.67ms e2e · ECE 0.026 · CO2 2.0kg
+- LEAKAGE vs official split (0.8533/0.6153/0.6156/0.7575): AP50 −1.6 · AP_small −0.2 · VT −1.2 → MODEST (supporting finding).
+- **= the number FCCG-YOLO must beat at full protocol.** Copy run folder → `results\pc1\2026-07-24_G1_scenesplit_cbam_p2\`.
+
+## Run 1 (ORIGINAL launch record) — CBAM+P2 on the scene-disjoint split
 - Folder: `E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\CBAM_P2Head_SceneSplit`
 - Dataset: `E:\Thesis_mofazzal_2007074\common\c2a\C2A_Dataset\new_dataset3_scenesplit_v1` (6135/2040/2040, frozen md5 train=6cd79d40… val=abe020e9… test=83c91bea…)
 - Verified correct at launch: DATASET_ROOT = scenesplit_v1, val=2040 (scene split, not official 2043), `[splits] FROZEN new split md5`, CBAM@10, 19,592,246 params, 764/764 transferred, AMP passed.
@@ -37,10 +45,13 @@ cd "E:\Thesis_mofazzal_2007074\Benchmarking YOLOs\Yolo11m_SceneSplit"
 python yolo11m_thesis.py *>&1 | Tee-Object -FilePath .\scenesplit_run.log
 ```
 
-## GATE G1 (the headline result)
-When each run finishes, read `runs\<id>\metrics\summary.json`. Compare scene-split vs official-split:
-| Model | Official AP50 / COCO-AP_small | Scene-split (fill in) |
-|---|---|---|
-| CBAM+P2 | 0.853 / 0.616 | ? |
-| baseline yolo11m | 0.843 / 0.615 | ? |
-A meaningful DROP on the scene split = leakage confirmed = paper headline. (Also record per-size recall — leakage may hit tiny objects hardest.)
+## GATE G1 — BOTH RUNS DONE (CBAM+P2 07-08, baseline yolo11m 07-09) — COMPLETE
+Scene-split TEST vs official (COCO AP50 / AP_small):
+| Model | Official | Scene-split (clean) | Leakage Δ |
+|---|---|---|---|
+| CBAM+P2 | 0.8533 / 0.6156 | **0.8372 / 0.6132** (VT-recall 0.7454) | −1.6 AP50 / −0.2 AP_s |
+| baseline yolo11m | 0.843 / 0.615 | **0.8193 / 0.5960** (AR_small 0.6684) | ~−1.5 AP50 / ~−1.9 AP_s |
+- Leakage MODEST both models (~−1.6 AP50) → supporting finding, not headline (lap-2/3 verdict holds).
+- **On the CLEAN split, CBAM+P2 beats baseline +1.8 AP50 / +1.7 AP_small** → confirms CBAM+P2 is the right base for FCCG.
+- FCCG-YOLO's bar to beat (scene-split test): 0.8372 / 0.6132 / VT-recall 0.7454.
+- Both run folders → copy to `results\pc1\` when convenient. PC-1 now FREE (nothing pending).
