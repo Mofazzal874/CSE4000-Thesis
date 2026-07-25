@@ -196,8 +196,10 @@ def evaluate(preds, gt, gt_raw):
         mpre[i] = max(mpre[i], mpre[i + 1])
     out["AP50_allpoint"] = round(float(np.sum(np.diff(mrec) * mpre[1:])), 4)
 
-    # threshold sweep -> F1-optimal operating point
+    # threshold sweep -> F1/F2-optimal points (F2 = thesis PRIMARY: SAR favors recall) + op@0.25
     best_f1, opt_thr = -1.0, 0.25
+    best_f2, opt_thr2 = -1.0, 0.25
+    op = None
     for thr in np.arange(0.0, 1.0001, 0.01):
         m = scores >= thr
         TP = float(corr[m].sum())
@@ -206,10 +208,20 @@ def evaluate(preds, gt, gt_raw):
         P = TP / max(TP + FP, 1e-9)
         R = TP / max(TP + FN, 1e-9)
         F1 = 2 * P * R / max(P + R, 1e-9)
+        F2 = 5 * P * R / max(4 * P + R, 1e-9)      # weights recall 2x (spec 6 primary)
         if F1 > best_f1:
             best_f1, opt_thr = F1, round(float(thr), 2)
+        if F2 > best_f2:
+            best_f2, opt_thr2 = F2, round(float(thr), 2)
+        if abs(thr - 0.25) < 0.005:                # operational point (spec 5: conf=0.25)
+            op = (P, R, F1, F2)
     out["OptThr_F1"] = opt_thr
     out["Best_F1"] = round(float(best_f1), 4)
+    out["OptThr_F2"] = opt_thr2
+    out["Best_F2"] = round(float(best_f2), 4)
+    if op:
+        out["op_conf25"] = {"precision": round(op[0], 4), "recall": round(op[1], 4),
+                            "F1": round(op[2], 4), "F2": round(op[3], 4)}
 
     # per-size recall at OptThr_F1
     size_tot = {b[0]: 0 for b in SIZE_BINS}
@@ -237,14 +249,28 @@ def evaluate(preds, gt, gt_raw):
                               for n, _, _ in SIZE_BINS}
     out["per_size_n"] = dict(size_tot)
 
-    out["coco"] = coco_block(preds, gt_raw)
+    # calibration of detections (spec 6: ECE 10-bin, MCE, Brier)
+    edges = np.linspace(0, 1, 11)
+    ece = mce = 0.0
+    for i in range(10):
+        mm = (scores > edges[i]) & (scores <= edges[i + 1])
+        if mm.any():
+            gap = abs(corr[mm].mean() - scores[mm].mean())
+            ece += mm.mean() * gap
+            mce = max(mce, gap)
+    out["calibration"] = {"ECE": round(float(ece), 4), "MCE": round(float(mce), 4),
+                          "Brier": round(float(np.mean((scores - corr) ** 2)), 4)}
+
+    out["coco"] = coco_block(preds, gt_raw)        # full 12-stat: AP/AP50/AP75/AP_s/m/l + AR
     return out
 
 
 # ------------------------------------------------------------------ reporting
 def _print_one(o):
     print(f"\n=== S1 eval [{o.get('variant')}] (scene-split TEST, n={o['n_images']}) ===")
-    print(f"  AP50_allpoint {o['AP50_allpoint']}   Best_F1 {o['Best_F1']} @thr {o['OptThr_F1']}")
+    print(f"  AP50_allpoint {o['AP50_allpoint']}   Best_F1 {o['Best_F1']} @{o['OptThr_F1']}")
+    print(f"  Best_F2 {o.get('Best_F2')} @{o.get('OptThr_F2')}  (F2=PRIMARY)   op@0.25 {o.get('op_conf25')}")
+    print(f"  calibration {o.get('calibration')}")
     ap_s = o["coco"]["AP_small"] if o.get("coco") else None
     print(f"  AP_small(coco) {ap_s if ap_s is not None else 'SKIP (no pycocotools)'}")
     r, n = o["per_size_recall"], o["per_size_n"]
