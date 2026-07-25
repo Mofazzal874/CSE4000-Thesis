@@ -1,0 +1,89 @@
+{
+  "tag": "c2a",
+  "weights": "E:\\Thesis_mofazzal_2007074\\10-07-2026-Novelty-Lap-3\\scripts\\runs_s1\\s1_control\\weights\\best.pt",
+  "n_images": 2040,
+  "lowpass": [
+    {
+      "AP50_allpoint": 0.8208,
+      "AP_small": 0.5596,
+      "recall_very_tiny": 0.6931,
+      "recall_tiny": 0.812,
+      "recall_small": 0.8304,
+      "sigma": 0.0
+    },
+    {
+      "AP50_allpoint": 0.8086,
+      "AP_small": 0.5363,
+      "recall_very_tiny": 0.677,
+      "recall_tiny": 0.7976,
+      "recall_small": 0.8382,
+      "sigma": 0.5
+    },
+    {
+      "AP50_allpoint": 0.64,
+      "AP_small": 0.3506,
+      "recall_very_tiny": 0.4216,
+      "recall_tiny": 0.7143,
+      "recall_small": 0.756,
+      "sigma": 1.0
+    },
+    {
+      "AP50_allpoint": 0.451,
+      "AP_small": 0.2271,
+      "recall_very_tiny": 0.1461,
+      "recall_tiny": 0.5708,
+      "recall_small": 0.6393,
+      "sigma": 1.5
+    },
+    {
+      "AP50_allpoint": 0.2842,
+      "AP_small": 0.1426,
+      "recall_very_tiny": 0.0365,
+      "recall_tiny": 0.3938,
+      "recall_small": 0.4931,
+      "sigma": 2.0
+    }
+  ],
+  "jpeg": [
+    {
+      "AP50_allpoint": 0.8208,
+      "AP_small": 0.5596,
+      "recall_very_tiny": 0.6931,
+      "recall_tiny": 0.812,
+      "recall_small": 0.8304,
+      "quality": 100
+    },
+    {
+      "AP50_allpoint": 0.1711,
+      "AP_small": 0.0675,
+      "recall_very_tiny": 0.0966,
+      "recall_tiny": 0.3292,
+      "recall_small": 0.3334,
+      "quality": 90
+    },
+    {
+      "AP50_allpoint": 0.0999,
+      "AP_small": 0.0396,
+      "recall_very_tiny": 0.0654,
+      "recall_tiny": 0.2761,
+      "recall_small": 0.2217,
+      "quality": 70
+    },
+    {
+      "AP50_allpoint": 0.0866,
+      "AP_small": 0.0325,
+      "recall_very_tiny": 0.0449,
+      "recall_tiny": 0.2399,
+      "recall_small": 0.2245,
+      "quality": 50
+    },
+    {
+      "AP50_allpoint": 0.0638,
+      "AP_small": 0.0256,
+      "recall_very_tiny": 0.0331,
+      "recall_tiny": 0.1908,
+      "recall_small": 0.2051,
+      "quality": 30
+    }
+  ]
+}
