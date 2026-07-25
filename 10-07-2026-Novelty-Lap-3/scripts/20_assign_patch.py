@@ -252,7 +252,8 @@ def _train(args) -> int:
     cache_val = False if str(args.cache).lower() in ("false", "0", "none", "") else args.cache
     kw = dict(data=args.data, epochs=args.epochs, imgsz=args.imgsz, batch=args.batch,
               optimizer="AdamW", lr0=0.001, seed=args.seed, workers=args.workers,
-              patience=args.epochs, amp=not args.no_amp, project=str(RUNS), name=name,
+              patience=(args.patience if args.patience > 0 else args.epochs),
+              amp=not args.no_amp, project=str(RUNS), name=name,
               exist_ok=True, val=True, plots=True, deterministic=True, cache=cache_val,
               save_period=-1, resume=resumed)
     if args.device is not None:
@@ -275,6 +276,7 @@ if __name__ == "__main__":
     ap.add_argument("--C", type=float, default=12.8, help="NWD scale const (C2A median box ~12 px)")
     ap.add_argument("--pretrained", default="", help="'' = from scratch (pilots); 'yolo11m.pt' = transfer matching layers (full-protocol S3)")
     ap.add_argument("--epochs", type=int, default=50)
+    ap.add_argument("--patience", type=int, default=50, help="early-stop patience (G1 used 50); pass 0 to disable (patience=epochs)")
     ap.add_argument("--batch", type=int, default=12)
     ap.add_argument("--imgsz", type=int, default=640)
     ap.add_argument("--device", default=None)
