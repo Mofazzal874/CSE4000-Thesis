@@ -340,6 +340,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--variant", choices=["control", "fccg"])
     ap.add_argument("--weights", help="override; default runs_s1/s1_<variant>/weights/best.pt")
+    ap.add_argument("--tag", help="output filename key (default=variant); set for S2/other weights "
+                                  "so it does NOT overwrite the saved control/fccg evals")
     ap.add_argument("--images-dir")
     ap.add_argument("--gt-json")
     ap.add_argument("--device", default="0")
@@ -365,15 +367,15 @@ def main():
     if not weights.is_file():
         print(f"FATAL: weights not found: {weights}")
         return 1
-    save_path = RUNS / f"s1_eval_{a.variant}_preds.json"
+    out_key = a.tag or a.variant
+    save_path = RUNS / f"s1_eval_{out_key}_preds.json"
     preds = run_inference(weights, a.images_dir, a.device, a.imgsz, a.limit, str(save_path))
     gt, gt_raw = load_gt(a.gt_json)
     out = evaluate(preds, gt, gt_raw)
-    out["variant"] = a.variant
-    (RUNS / f"s1_eval_{a.variant}.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
+    out["variant"] = out_key
+    (RUNS / f"s1_eval_{out_key}.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     _print_one(out)
-    print(f"\n[eval] saved -> {RUNS / f's1_eval_{a.variant}.json'}   "
-          f"(run both variants, then: python 18_s1_eval.py --compare)")
+    print(f"\n[eval] saved -> {RUNS / f's1_eval_{out_key}.json'}")
     return 0
 
 
