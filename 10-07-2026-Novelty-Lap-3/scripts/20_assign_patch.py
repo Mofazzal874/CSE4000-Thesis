@@ -115,11 +115,12 @@ def make_verify_callback():
         if getattr(cb, "done", False):
             return
         cb.done = True
-        if _STATE["calls"] == 0:
+        if (_STATE.get("alpha") or 0) > 0 and _STATE["calls"] == 0:
             raise RuntimeError("[assign-verify] FATAL: an epoch finished but the NWD-blended "
                                "iou_calculation was NEVER called -- patch not in the assignment "
                                "path (version drift?). Training aborted; do not trust this run.")
-        print(f"[assign-verify] OK -- NWD-in-assignment active (calls: {_STATE['calls']})")
+        print(f"[assign-verify] OK -- NWD-in-assignment active "
+              f"(calls: {_STATE['calls']}, alpha={_STATE.get('alpha')})")
     return cb
 
 
@@ -238,6 +239,12 @@ def _train(args) -> int:
         if not ypath.exists():
             fccg.emit_control_yaml()
         model = YOLO(str(ypath))
+        if args.pretrained:                                  # transfer matching layers (full-protocol S3, like G1)
+            try:
+                model.load(args.pretrained)
+                print(f"[assign] transferred matching layers from {args.pretrained}")
+            except Exception as e:
+                print(f"[assign] pretrained transfer skipped ({e}) -- from scratch")
     n = sum(p.numel() for p in model.model.parameters())
     print(f"[assign] {name} built: {n/1e6:.2f}M params (CBAM+P2 control config + NWD-in-TAL)")
 
@@ -266,6 +273,7 @@ if __name__ == "__main__":
     ap.add_argument("--alpha", type=float, default=0.5, help="0=vanilla, 1.0=full RFLA/SimD-style replace")
     ap.add_argument("--name", default="s2_assign", help="run folder under runs_s1/ (use a distinct name per alpha, e.g. s2_assign_a10)")
     ap.add_argument("--C", type=float, default=12.8, help="NWD scale const (C2A median box ~12 px)")
+    ap.add_argument("--pretrained", default="", help="'' = from scratch (pilots); 'yolo11m.pt' = transfer matching layers (full-protocol S3)")
     ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch", type=int, default=12)
     ap.add_argument("--imgsz", type=int, default=640)
