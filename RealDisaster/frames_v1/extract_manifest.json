@@ -1,0 +1,54 @@
+{
+  "Chennai_flood_final.mp4": {
+    "fps": 30.0,
+    "total_frames": 1177,
+    "sampled": 10,
+    "skipped_quality": 0,
+    "timestamps_s": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36
+    ]
+  },
+  "venezuala_final.mp4": {
+    "fps": 30.0,
+    "total_frames": 2338,
+    "sampled": 26,
+    "skipped_quality": 0,
+    "timestamps_s": [
+      0,
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30,
+      33,
+      36,
+      39,
+      42,
+      45,
+      48,
+      51,
+      54,
+      57,
+      60,
+      63,
+      66,
+      69,
+      72,
+      75
+    ]
+  }
+}
