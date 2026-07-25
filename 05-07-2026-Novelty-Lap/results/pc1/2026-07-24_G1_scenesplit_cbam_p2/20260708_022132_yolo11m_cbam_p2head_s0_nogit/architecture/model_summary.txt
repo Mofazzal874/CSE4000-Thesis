@@ -1,0 +1,700 @@
+====================================================================================================================================================================================
+Layer (type:depth-idx)                                  Input Shape               Output Shape              Param #                   Mult-Adds                 Trainable
+====================================================================================================================================================================================
+DetectionModel                                          [1, 3, 640, 640]          [1, 5, 34000]             --                        --                        False
+├─Sequential: 1-1                                       --                        --                        --                        --                        False
+│    └─Conv: 2-1                                        [1, 3, 640, 640]          [1, 64, 320, 320]         --                        --                        False
+│    │    └─Conv2d: 3-1                                 [1, 3, 640, 640]          [1, 64, 320, 320]         (1,792)                   183,500,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-3                                        [1, 64, 320, 320]         [1, 128, 160, 160]        --                        --                        False
+│    │    └─Conv2d: 3-3                                 [1, 64, 320, 320]         [1, 128, 160, 160]        (73,856)                  1,890,713,600             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-5                                        [1, 128, 160, 160]        [1, 256, 160, 160]        94,720                    --                        False
+│    │    └─Conv: 3-5                                   [1, 128, 160, 160]        [1, 128, 160, 160]        --                        --                        False
+│    │    │    └─Conv2d: 4-3                            [1, 128, 160, 160]        [1, 128, 160, 160]        (16,512)                  422,707,200               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-5                               [1, 64, 160, 160]         [1, 64, 160, 160]         (45,312)                  53,248,000                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-19                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-17                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-21                                       --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-21                                  [1, 192, 160, 160]        [1, 256, 160, 160]        --                        --                        False
+│    │    │    └─Conv2d: 4-19                           [1, 192, 160, 160]        [1, 256, 160, 160]        (49,408)                  1,264,844,800             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-23                                       [1, 256, 160, 160]        [1, 256, 80, 80]          --                        --                        False
+│    │    └─Conv2d: 3-23                                [1, 256, 160, 160]        [1, 256, 80, 80]          (590,080)                 3,776,512,000             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-25                                       [1, 256, 80, 80]          [1, 512, 80, 80]          377,856                   --                        False
+│    │    └─Conv: 3-25                                  [1, 256, 80, 80]          [1, 256, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-22                           [1, 256, 80, 80]          [1, 256, 80, 80]          (65,792)                  421,068,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-24                              [1, 128, 80, 80]          [1, 128, 80, 80]          (180,736)                 52,838,400                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-39                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-36                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-41                                       --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-41                                  [1, 384, 80, 80]          [1, 512, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-38                           [1, 384, 80, 80]          [1, 512, 80, 80]          (197,120)                 1,261,568,000             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-43                                       [1, 512, 80, 80]          [1, 512, 40, 40]          --                        --                        False
+│    │    └─Conv2d: 3-43                                [1, 512, 80, 80]          [1, 512, 40, 40]          (2,359,808)               3,775,692,800             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-45                                       [1, 512, 40, 40]          [1, 512, 40, 40]          1,115,648                 --                        False
+│    │    └─Conv: 3-45                                  [1, 512, 40, 40]          [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-41                           [1, 512, 40, 40]          [1, 512, 40, 40]          (262,656)                 420,249,600               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-43                              [1, 256, 40, 40]          [1, 256, 40, 40]          (721,920)                 52,633,600                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-59                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-55                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-61                                       --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-61                                  [1, 768, 40, 40]          [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-57                           [1, 768, 40, 40]          [1, 512, 40, 40]          (393,728)                 629,964,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-63                                       [1, 512, 40, 40]          [1, 512, 20, 20]          --                        --                        False
+│    │    └─Conv2d: 3-63                                [1, 512, 40, 40]          [1, 512, 20, 20]          (2,359,808)               943,923,200               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-65                                       [1, 512, 20, 20]          [1, 512, 20, 20]          1,115,648                 --                        False
+│    │    └─Conv: 3-65                                  [1, 512, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-60                           [1, 512, 20, 20]          [1, 512, 20, 20]          (262,656)                 105,062,400               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-62                              [1, 256, 20, 20]          [1, 256, 20, 20]          (721,920)                 13,158,400                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-79                            --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-74                              --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-81                                       --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-81                                  [1, 768, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-76                           [1, 768, 20, 20]          [1, 512, 20, 20]          (393,728)                 157,491,200               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─SPPF: 2-83                                       [1, 512, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    └─Conv: 3-83                                  [1, 512, 20, 20]          [1, 256, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-78                           [1, 512, 20, 20]          [1, 256, 20, 20]          (131,328)                 52,531,200                False
+│    │    │    └─Identity: 4-79                         [1, 256, 20, 20]          [1, 256, 20, 20]          --                        --                        --
+│    │    └─MaxPool2d: 3-84                             [1, 256, 20, 20]          [1, 256, 20, 20]          --                        --                        --
+│    │    └─MaxPool2d: 3-85                             [1, 256, 20, 20]          [1, 256, 20, 20]          --                        --                        --
+│    │    └─MaxPool2d: 3-86                             [1, 256, 20, 20]          [1, 256, 20, 20]          --                        --                        --
+│    │    └─Conv: 3-87                                  [1, 1024, 20, 20]         [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-80                           [1, 1024, 20, 20]         [1, 512, 20, 20]          (524,800)                 209,920,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─CBAM: 2-85                                       [1, 512, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    └─ChannelAttention: 3-89                      [1, 512, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─AdaptiveAvgPool2d: 4-82                [1, 512, 20, 20]          [1, 512, 1, 1]            --                        --                        --
+│    │    │    └─Conv2d: 4-83                           [1, 512, 1, 1]            [1, 32, 1, 1]             (16,384)                  16,384                    False
+│    │    │    └─ReLU: 4-84                             [1, 32, 1, 1]             [1, 32, 1, 1]             --                        --                        --
+│    │    │    └─Conv2d: 4-85                           [1, 32, 1, 1]             [1, 512, 1, 1]            (16,384)                  16,384                    False
+│    │    │    └─AdaptiveMaxPool2d: 4-86                [1, 512, 20, 20]          [1, 512, 1, 1]            --                        --                        --
+│    │    │    └─Conv2d: 4-87                           [1, 512, 1, 1]            [1, 32, 1, 1]             (recursive)               16,384                    False
+│    │    │    └─ReLU: 4-88                             [1, 32, 1, 1]             [1, 32, 1, 1]             --                        --                        --
+│    │    │    └─Conv2d: 4-89                           [1, 32, 1, 1]             [1, 512, 1, 1]            (recursive)               16,384                    False
+│    │    │    └─Sigmoid: 4-90                          [1, 512, 1, 1]            [1, 512, 1, 1]            --                        --                        --
+│    │    └─SpatialAttention: 3-90                      [1, 512, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-91                           [1, 2, 20, 20]            [1, 1, 20, 20]            (98)                      39,200                    False
+│    │    │    └─Sigmoid: 4-92                          [1, 1, 20, 20]            [1, 1, 20, 20]            --                        --                        --
+│    └─Upsample: 2-86                                   [1, 512, 20, 20]          [1, 512, 40, 40]          --                        --                        --
+│    └─Concat: 2-87                                     [1, 512, 40, 40]          [1, 1024, 40, 40]         --                        --                        --
+│    └─C3k2: 2-88                                       [1, 1024, 40, 40]         [1, 512, 40, 40]          1,115,648                 --                        False
+│    │    └─Conv: 3-91                                  [1, 1024, 40, 40]         [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-93                           [1, 1024, 40, 40]         [1, 512, 40, 40]          (524,800)                 839,680,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-95                              [1, 256, 40, 40]          [1, 256, 40, 40]          (721,920)                 52,633,600                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-105                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-107                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-104                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-107                                 [1, 768, 40, 40]          [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-109                          [1, 768, 40, 40]          [1, 512, 40, 40]          (393,728)                 629,964,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Upsample: 2-106                                  [1, 512, 40, 40]          [1, 512, 80, 80]          --                        --                        --
+│    └─Concat: 2-107                                    [1, 512, 80, 80]          [1, 1024, 80, 80]         --                        --                        --
+│    └─C3k2: 2-108                                      [1, 1024, 80, 80]         [1, 256, 80, 80]          279,296                   --                        False
+│    │    └─Conv: 3-109                                 [1, 1024, 80, 80]         [1, 256, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-111                          [1, 1024, 80, 80]         [1, 256, 80, 80]          (262,400)                 1,679,360,000             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-113                             [1, 128, 80, 80]          [1, 128, 80, 80]          (180,736)                 52,838,400                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-123                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-125                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-124                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-125                                 [1, 384, 80, 80]          [1, 256, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-127                          [1, 384, 80, 80]          [1, 256, 80, 80]          (98,560)                  630,784,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Upsample: 2-126                                  [1, 256, 80, 80]          [1, 256, 160, 160]        --                        --                        --
+│    └─Concat: 2-127                                    [1, 256, 160, 160]        [1, 512, 160, 160]        --                        --                        --
+│    └─C3k2: 2-128                                      [1, 512, 160, 160]        [1, 128, 160, 160]        70,016                    --                        False
+│    │    └─Conv: 3-127                                 [1, 512, 160, 160]        [1, 128, 160, 160]        --                        --                        False
+│    │    │    └─Conv2d: 4-129                          [1, 512, 160, 160]        [1, 128, 160, 160]        (65,664)                  1,680,998,400             False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-131                             [1, 64, 160, 160]         [1, 64, 160, 160]         (45,312)                  53,248,000                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-141                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-143                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-144                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-143                                 [1, 192, 160, 160]        [1, 128, 160, 160]        --                        --                        False
+│    │    │    └─Conv2d: 4-145                          [1, 192, 160, 160]        [1, 128, 160, 160]        (24,704)                  632,422,400               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-146                                      [1, 128, 160, 160]        [1, 128, 80, 80]          --                        --                        False
+│    │    └─Conv2d: 3-145                               [1, 128, 160, 160]        [1, 128, 80, 80]          (147,584)                 944,537,600               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Concat: 2-148                                    [1, 128, 80, 80]          [1, 384, 80, 80]          --                        --                        --
+│    └─C3k2: 2-149                                      [1, 384, 80, 80]          [1, 256, 80, 80]          279,296                   --                        False
+│    │    └─Conv: 3-147                                 [1, 384, 80, 80]          [1, 256, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-148                          [1, 384, 80, 80]          [1, 256, 80, 80]          (98,560)                  630,784,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-150                             [1, 128, 80, 80]          [1, 128, 80, 80]          (180,736)                 52,838,400                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-161                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-162                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-165                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-163                                 [1, 384, 80, 80]          [1, 256, 80, 80]          --                        --                        False
+│    │    │    └─Conv2d: 4-164                          [1, 384, 80, 80]          [1, 256, 80, 80]          (98,560)                  630,784,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-167                                      [1, 256, 80, 80]          [1, 256, 40, 40]          --                        --                        False
+│    │    └─Conv2d: 3-165                               [1, 256, 80, 80]          [1, 256, 40, 40]          (590,080)                 944,128,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Concat: 2-169                                    [1, 256, 40, 40]          [1, 768, 40, 40]          --                        --                        --
+│    └─C3k2: 2-170                                      [1, 768, 40, 40]          [1, 512, 40, 40]          1,115,648                 --                        False
+│    │    └─Conv: 3-167                                 [1, 768, 40, 40]          [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-167                          [1, 768, 40, 40]          [1, 512, 40, 40]          (393,728)                 629,964,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-169                             [1, 256, 40, 40]          [1, 256, 40, 40]          (721,920)                 52,633,600                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-181                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-181                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-186                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-183                                 [1, 768, 40, 40]          [1, 512, 40, 40]          --                        --                        False
+│    │    │    └─Conv2d: 4-183                          [1, 768, 40, 40]          [1, 512, 40, 40]          (393,728)                 629,964,800               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Conv: 2-188                                      [1, 512, 40, 40]          [1, 512, 20, 20]          --                        --                        False
+│    │    └─Conv2d: 3-185                               [1, 512, 40, 40]          [1, 512, 20, 20]          (2,359,808)               943,923,200               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Concat: 2-190                                    [1, 512, 20, 20]          [1, 1024, 20, 20]         --                        --                        --
+│    └─C3k2: 2-191                                      [1, 1024, 20, 20]         [1, 512, 20, 20]          1,115,648                 --                        False
+│    │    └─Conv: 3-187                                 [1, 1024, 20, 20]         [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-186                          [1, 1024, 20, 20]         [1, 512, 20, 20]          (524,800)                 209,920,000               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-188                             [1, 256, 20, 20]          [1, 256, 20, 20]          (721,920)                 13,158,400                False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-201                           --                        --                        (recursive)               --                        False
+│    │    │    └─C3k: 4-200                             --                        --                        (recursive)               --                        False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─C3k2: 2-207                                      --                        --                        (recursive)               --                        False
+│    │    └─Conv: 3-203                                 [1, 768, 20, 20]          [1, 512, 20, 20]          --                        --                        False
+│    │    │    └─Conv2d: 4-202                          [1, 768, 20, 20]          [1, 512, 20, 20]          (393,728)                 157,491,200               False
+│    └─Detect: 2-208                                    --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    └─Detect: 2-209                                    [1, 128, 160, 160]        [1, 5, 34000]             --                        --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-204                      [1, 128, 160, 160]        [1, 64, 160, 160]         (114,880)                 1,889,075,200             False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-208                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-208                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-209                      [1, 256, 80, 80]          [1, 64, 80, 80]           (188,608)                 944,128,000               False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-213                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-213                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-214                      [1, 512, 40, 40]          [1, 64, 40, 40]           (336,064)                 471,961,600               False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-218                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-218                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-219                      [1, 512, 20, 20]          [1, 64, 20, 20]           (336,064)                 117,990,400               False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-223                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-221                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-223                      --                        --                        (recursive)               --                        False
+│    │    └─ModuleList: 3-222                           --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-224                      [1, 128, 160, 160]        [1, 1, 160, 160]          (35,713)                  32,768,000                False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-232                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-232                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-232                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-232                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-233                      [1, 256, 80, 80]          [1, 1, 80, 80]            (53,377)                  16,384,000                False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-241                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-241                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-241                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-241                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-242                      [1, 512, 40, 40]          [1, 1, 40, 40]            (88,705)                  8,192,000                 False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-250                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-250                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-250                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-249                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-250                      --                        --                        (recursive)               --                        False
+│    │    │    └─Sequential: 4-251                      [1, 512, 20, 20]          [1, 1, 20, 20]            (88,705)                  35,482,000                False
+│    │    └─DFL: 3-223                                  [1, 64, 34000]            [1, 4, 34000]             --                        --                        False
+│    │    │    └─Conv2d: 4-252                          [1, 16, 4, 34000]         [1, 1, 4, 34000]          (16)                      2,176,000                 False
+====================================================================================================================================================================================
+Total params: 34,216,569
+Trainable params: 0
+Non-trainable params: 34,216,569
+Total mult-adds (Units.GIGABYTES): 43.42
+====================================================================================================================================================================================
+Input size (MB): 4.92
+Forward/backward pass size (MB): 817.50
+Params size (MB): 78.28
+Estimated Total Size (MB): 900.70
+====================================================================================================================================================================================

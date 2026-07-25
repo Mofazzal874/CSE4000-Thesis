@@ -1,0 +1,14 @@
+{
+  "channel_attention_mean": 0.5096372365951538,
+  "channel_attention_std": 0.4501604437828064,
+  "spatial_attention_entropy_mean": 5.9914643761778885,
+  "spatial_attention_entropy_std": 6.851872162696202e-08,
+  "spatial_attention_entropy_per_image": [
+    5.991464275303811,
+    5.9914643837223815,
+    5.991464386266271,
+    5.991464420133558,
+    5.991464482800076,
+    5.991464308841232
+  ]
+}

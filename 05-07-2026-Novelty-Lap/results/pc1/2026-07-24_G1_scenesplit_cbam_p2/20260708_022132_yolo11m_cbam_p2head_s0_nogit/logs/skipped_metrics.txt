@@ -1,0 +1,9 @@
+[SKIPPED] paired bootstrap vs another model -- BASELINE_PER_IMAGE_CSV not configured; per-image scores saved in metrics/per_image_test.csv for later Phase-D.
+[SKIPPED] per-stride_AP (true per-head AP attribution) -- anchor-free dynamic assignment; per_size.csv (very-tiny/tiny recall) is the operative P2 metric. Full per-stride AP deferred to the paper.
+[SKIPPED] ssm_state_norm                 -- no SSM in yolo11m_cbam_p2head
+[SKIPPED] forward_vs_backward_scan_disag -- no SSM in yolo11m_cbam_p2head
+[SKIPPED] window_size_per_layer          -- no SSM in yolo11m_cbam_p2head
+[SKIPPED] dilation_branch_contribution   -- no SSM in yolo11m_cbam_p2head
+[SKIPPED] injection_layer_indices        -- no SSM in yolo11m_cbam_p2head
+[SKIPPED] SAHI-specific metrics          -- not part of this run
+[SKIPPED] TTA-specific metrics           -- not part of this run

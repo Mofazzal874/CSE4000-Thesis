@@ -1,0 +1,41 @@
+{
+  "n_detection_scales": 4,
+  "has_p2_head": true,
+  "detection_scales": [
+    {
+      "scale": "P2",
+      "stride": 4,
+      "feat_res_at_640": "160x160",
+      "min_detectable_px_approx": 4,
+      "primary_size_band_px": "<16"
+    },
+    {
+      "scale": "P3",
+      "stride": 8,
+      "feat_res_at_640": "80x80",
+      "min_detectable_px_approx": 8,
+      "primary_size_band_px": "16-32"
+    },
+    {
+      "scale": "P4",
+      "stride": 16,
+      "feat_res_at_640": "40x40",
+      "min_detectable_px_approx": 16,
+      "primary_size_band_px": "32-96"
+    },
+    {
+      "scale": "P5",
+      "stride": 32,
+      "feat_res_at_640": "20x20",
+      "min_detectable_px_approx": 32,
+      "primary_size_band_px": ">=96"
+    }
+  ],
+  "per_size_recall": {
+    "very_tiny": 0.7454435969490164,
+    "tiny": 0.845906362545018,
+    "small": 0.8591491274061868,
+    "medium": 0.2804878048780488,
+    "large": null
+  }
+}

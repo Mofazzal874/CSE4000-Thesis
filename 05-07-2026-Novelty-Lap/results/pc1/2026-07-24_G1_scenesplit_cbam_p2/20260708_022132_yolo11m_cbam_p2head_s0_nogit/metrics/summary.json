@@ -1,0 +1,163 @@
+{
+  "run_id": "20260708_022132_yolo11m_cbam_p2head_s0_nogit",
+  "model_tag": "yolo11m_cbam_p2head",
+  "seed": 0,
+  "train_wallclock_s": 43695.4,
+  "train_wallclock_h": 12.138,
+  "headline": {
+    "val": {
+      "AP": 0.6310751448850208,
+      "AP50": 0.8564590335142492,
+      "AP75": 0.6771651075391688,
+      "AP_small": 0.6335522317269716,
+      "AP_medium": 0.25031615255303313,
+      "AP_large": -1.0,
+      "AR_1": 0.027024465044957136,
+      "AR_10": 0.24891754373736666,
+      "AR_100": 0.7130326897609256,
+      "AR_small": 0.7157802413696324,
+      "AR_medium": 0.30168421052631583,
+      "AR_large": -1.0
+    },
+    "test": {
+      "AP": 0.6107461659943081,
+      "AP50": 0.8372070106191731,
+      "AP75": 0.6523733016541734,
+      "AP_small": 0.6131730404063783,
+      "AP_medium": 0.21407684155567575,
+      "AP_large": -1.0,
+      "AR_1": 0.026459565939571984,
+      "AR_10": 0.242228231773443,
+      "AR_100": 0.6908383323952942,
+      "AR_small": 0.693235501194141,
+      "AR_medium": 0.2673170731707317,
+      "AR_large": -1.0
+    }
+  },
+  "opt_thresholds": {
+    "OptThr_F1": 0.29,
+    "Best_F1": 0.843404359433806,
+    "OptThr_F2": 0.13,
+    "Best_F2": 0.8318323727185399
+  },
+  "efficiency": {
+    "params_total_M": 19.5709,
+    "weights_size_MB": 37.945,
+    "latency_e2e_mean_ms": 15.66694950980392,
+    "latency_e2e_p50_ms": 11.5795,
+    "latency_e2e_p95_ms": 26.962049999999998,
+    "latency_mean_ms": 6.932381199978408,
+    "latency_std_ms": 0.9243068094428653,
+    "latency_p50_ms": 6.4957000031427015,
+    "latency_p95_ms": 9.429449999151984,
+    "latency_p99_ms": 9.656128001952311,
+    "params_trainable_M": 19.5709,
+    "gflops": 86.656,
+    "layers_total": 153,
+    "export_onnx_OK": true,
+    "onnx_size_MB": 75.46370506286621
+  },
+  "calibration": {
+    "ECE": 0.025642107370704124,
+    "MCE": 0.24404321662244743,
+    "Brier": 0.030428955813333415
+  },
+  "bca_cis": {
+    "F1": {
+      "mean": 0.8431810372549019,
+      "ci_lo": 0.8375514905046433,
+      "ci_hi": 0.8480929360802489
+    },
+    "F2": {
+      "mean": 0.8313594083333332,
+      "ci_lo": 0.8253490944148613,
+      "ci_hi": 0.8369660323911758
+    },
+    "precision": {
+      "mean": 0.8780487343137254,
+      "ci_lo": 0.8741439935310414,
+      "ci_hi": 0.8813077041611447
+    },
+    "recall": {
+      "mean": 0.8251233078431371,
+      "ci_lo": 0.8189685477613406,
+      "ci_hi": 0.8311314219322112
+    }
+  },
+  "paired_bootstrap": null,
+  "resource_summary": {
+    "gpu_util_avg_%": 69.94258505917159,
+    "gpu_util_max_%": 100.0,
+    "gpu_power_avg_W": 184.46701719674556,
+    "gpu_power_max_W": 223.954,
+    "gpu_temp_avg_C": 68.2165772928994,
+    "gpu_temp_max_C": 75.0,
+    "vram_used_max_MB": 15792.16015625,
+    "cpu_util_avg_%": 38.06215329142012,
+    "ram_used_max_GB": 82.6942024230957
+  },
+  "training_co2_kg": 2.002777436365745,
+  "f2_early_stop": {
+    "best_epoch": 152,
+    "best_f2": 0.8347253439185396,
+    "stopped": true
+  },
+  "cbam_attention": {
+    "channel_attention_mean": 0.5096372365951538,
+    "channel_attention_std": 0.4501604437828064,
+    "spatial_attention_entropy_mean": 5.9914643761778885,
+    "spatial_attention_entropy_std": 6.851872162696202e-08,
+    "spatial_attention_entropy_per_image": [
+      5.991464275303811,
+      5.9914643837223815,
+      5.991464386266271,
+      5.991464420133558,
+      5.991464482800076,
+      5.991464308841232
+    ],
+    "attention_map_examples": 6,
+    "cbam_modules_found": 1
+  },
+  "p2_detection_scales": {
+    "n_detection_scales": 4,
+    "has_p2_head": true,
+    "detection_scales": [
+      {
+        "scale": "P2",
+        "stride": 4,
+        "feat_res_at_640": "160x160",
+        "min_detectable_px_approx": 4,
+        "primary_size_band_px": "<16"
+      },
+      {
+        "scale": "P3",
+        "stride": 8,
+        "feat_res_at_640": "80x80",
+        "min_detectable_px_approx": 8,
+        "primary_size_band_px": "16-32"
+      },
+      {
+        "scale": "P4",
+        "stride": 16,
+        "feat_res_at_640": "40x40",
+        "min_detectable_px_approx": 16,
+        "primary_size_band_px": "32-96"
+      },
+      {
+        "scale": "P5",
+        "stride": 32,
+        "feat_res_at_640": "20x20",
+        "min_detectable_px_approx": 32,
+        "primary_size_band_px": ">=96"
+      }
+    ],
+    "per_size_recall": {
+      "very_tiny": 0.7454435969490164,
+      "tiny": 0.845906362545018,
+      "small": 0.8591491274061868,
+      "medium": 0.2804878048780488,
+      "large": null
+    }
+  },
+  "skipped_metrics_count": 9
+}

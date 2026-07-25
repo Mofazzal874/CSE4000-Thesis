@@ -1,0 +1,17 @@
+epochs: 300
+patience: 50
+f2_patience: 40
+imgsz: 640
+batch: 8
+save_period: 25
+num_workers: 4
+cache: ram
+cos_lr: true
+lrf: 0.01
+optimizer: AdamW
+lr0: 0.001
+nominal_batch: 16
+amp: true
+seed: 0
+model_tag: yolo11m_cbam_p2head
+pretrained: yolo11m.pt
