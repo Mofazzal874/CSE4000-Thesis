@@ -226,7 +226,7 @@ def _train(args) -> int:
 
     apply_assign_patch(alpha=args.alpha, C=args.C)           # BEFORE building/training
 
-    name = "s2_assign"
+    name = args.name
     last_pt = RUNS / name / "weights" / "last.pt"
     resumed = bool(args.resume and last_pt.exists())
     if resumed:
@@ -264,6 +264,7 @@ if __name__ == "__main__":
     ap.add_argument("--weights")
     ap.add_argument("--data")
     ap.add_argument("--alpha", type=float, default=0.5, help="0=vanilla, 1.0=full RFLA/SimD-style replace")
+    ap.add_argument("--name", default="s2_assign", help="run folder under runs_s1/ (use a distinct name per alpha, e.g. s2_assign_a10)")
     ap.add_argument("--C", type=float, default=12.8, help="NWD scale const (C2A median box ~12 px)")
     ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch", type=int, default=12)
