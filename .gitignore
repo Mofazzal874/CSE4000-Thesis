@@ -97,3 +97,14 @@ drone_inference_out/
 
 # Defense demo bundle (kept on disk, excluded from novelty branches - 4k+ files)
 Defense/demo/
+
+# Large detection / prediction JSON dumps (regenerable via the eval harness --save-preds;
+# keep the small s1_eval_*.json summaries, drop the multi-MB per-detection dumps)
+*_preds.json
+*_coco_dets.json
+
+# RealDisaster extracted frames (images regenerable from source videos via the extractor;
+# keep manifests + annotation JSON, drop the frame images)
+RealDisaster/**/*.jpg
+RealDisaster/**/*.jpeg
+RealDisaster/**/*.png
