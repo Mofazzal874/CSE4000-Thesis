@@ -22,7 +22,22 @@ from pathlib import Path
 IMG_EXT = (".jpg", ".jpeg", ".png")
 
 
-def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: bool = True):
+def _iou_xywh(a, b):
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    ix1, iy1 = max(ax, bx), max(ay, by)
+    ix2, iy2 = min(ax + aw, bx + bw), min(ay + ah, by + bh)
+    iw, ih = max(0.0, ix2 - ix1), max(0.0, iy2 - iy1)
+    inter = iw * ih
+    u = aw * ah + bw * bh - inter
+    return inter / u if u > 0 else 0.0
+
+
+def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: bool = True,
+                 min_box_px: float = 3.0, dedup_iou: float = 0.9):
+    """COCO(_sc) -> YOLO images/+labels/. AUTO-CLEANS the annotation noise the audit found:
+    drops sub-min_box_px boxes (accidental micro-clicks) and near-duplicate boxes (IoU>dedup_iou,
+    same person labelled twice) so training never ingests them."""
     d = json.loads(Path(coco_json).read_text(encoding="utf-8"))
     by_img = defaultdict(list)
     for a in d.get("annotations", []):
@@ -32,15 +47,26 @@ def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: 
     img_out.mkdir(parents=True, exist_ok=True)
     lab_out.mkdir(parents=True, exist_ok=True)
     n_img = n_box = n_bg = n_miss = 0
+    drop = {"degenerate": 0, "tiny": 0, "duplicate": 0}
     for im in d["images"]:
         W, H = float(im["width"]), float(im["height"])
         fn = im["file_name"]
         stem = Path(fn).stem
-        lines = []
+        kept = []
         for a in by_img.get(im["id"], []):
             x, y, w, h = a["bbox"]
             if w <= 0 or h <= 0:
+                drop["degenerate"] += 1
                 continue
+            if (w * h) ** 0.5 < min_box_px:
+                drop["tiny"] += 1
+                continue
+            if any(_iou_xywh((x, y, w, h), k) > dedup_iou for k in kept):
+                drop["duplicate"] += 1
+                continue
+            kept.append((x, y, w, h))
+        lines = []
+        for (x, y, w, h) in kept:
             xc = min(max((x + w / 2) / W, 0.0), 1.0)
             yc = min(max((y + h / 2) / H, 0.0), 1.0)
             ww = min(max(w / W, 0.0), 1.0)
@@ -60,7 +86,7 @@ def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: 
             else:
                 n_miss += 1
     return {"images": n_img, "boxes": n_box, "backgrounds": n_bg, "missing_src": n_miss,
-            "images_dir": str(img_out), "labels_dir": str(lab_out)}
+            "dropped": drop, "images_dir": str(img_out), "labels_dir": str(lab_out)}
 
 
 def main() -> int:
@@ -91,12 +117,15 @@ def _selftest() -> int:
         (tmp / "src" / fn).write_bytes(b"\xff\xd8\xff\xd9")  # dummy jpg bytes
     coco = {"images": [{"id": 1, "file_name": "a.jpg", "width": 100, "height": 50},
                        {"id": 2, "file_name": "b.jpg", "width": 100, "height": 50}],
-            "annotations": [{"id": 1, "image_id": 1, "category_id": 0, "bbox": [10, 10, 20, 20]}],
+            "annotations": [{"id": 1, "image_id": 1, "category_id": 0, "bbox": [10, 10, 20, 20]},
+                            {"id": 3, "image_id": 1, "category_id": 0, "bbox": [10, 10, 20, 20]},  # duplicate
+                            {"id": 4, "image_id": 1, "category_id": 0, "bbox": [50, 25, 1, 1]}],    # micro-click
             "categories": [{"id": 0, "name": "person"}]}
     cj = tmp / "coco.json"
     cj.write_text(json.dumps(coco))
     st = export_split(cj, tmp / "src", tmp / "out")
     assert st["images"] == 2 and st["boxes"] == 1 and st["backgrounds"] == 1, st
+    assert st["dropped"]["duplicate"] == 1 and st["dropped"]["tiny"] == 1, st["dropped"]
     a_txt = (tmp / "out" / "labels" / "a.txt").read_text().strip().split()
     assert a_txt[0] == "0" and abs(float(a_txt[1]) - 0.20) < 1e-4 and abs(float(a_txt[3]) - 0.20) < 1e-4, a_txt
     assert (tmp / "out" / "labels" / "b.txt").read_text() == "", "background must be an EMPTY txt"
