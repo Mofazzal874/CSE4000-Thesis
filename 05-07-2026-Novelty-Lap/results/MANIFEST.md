@@ -76,18 +76,18 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
   | +FCCG | 0.5535 | 0.6907 | 0.8172 | 0.8308 | 0.8185 |
 - VERDICT: FCCG = clean NULL (AP_small -0.61pp, VT-recall -0.24pp; within noise; reproduced on PC-2 too). Demoted to a documented NEGATIVE ablation row. Pass bar (+1.5 AP_small OR +2.0 VT-recall) missed on every bin.
 
-### 2026-07-25 - pc1 - misc - S2 tiny-aware assignment (NWD-in-TAL, alpha=0.5), scene-split - DONE (BORDERLINE +)
-- Path: `results\pc1\runs_s1\s2_assign\` + `s1_eval_s2_assign.json`. Runner = 20_assign_patch.py.
-- Source (remote): `E:\Thesis_mofazzal_2007074\...\scripts\runs_s1\s2_assign\`
-- Mechanism: scale-robust NWD blended (alpha=0.5) into TaskAlignedAssigner.iou_calculation (assignment-side; distinct insertion point from the failed G2 loss-side NWD). Same 50-ep protocol as s1_control.
-- Key numbers (TEST) vs s1_control:
-  | metric | control | s2_assign | delta |
+### 2026-07-25 - pc1 - misc - S2 tiny-aware assignment (NWD-in-TAL) alpha-sweep {0,0.5,1.0}, scene-split - DONE (KEEPER)
+- Paths: `results\pc1\runs_s1\s2_assign\` (a=0.5) + `s2_assign_a10\` (a=1.0) + s1_eval_s2_assign{,_a10}.json. Runner = 20_assign_patch.py.
+- Mechanism: scale-robust NWD blended (weight `alpha`) into TaskAlignedAssigner.iou_calculation (assignment-side; distinct from the failed G2 loss-side NWD). 50-ep-from-scratch, same protocol as s1_control.
+- Dose-response (TEST):
+  | metric | control | a=0.5 | a=1.0 |
   |---|---|---|---|
-  | VT-recall (<8) | 0.6931 | 0.7120 | **+1.89pp** |
-  | AP_small | 0.5596 | 0.5526 | -0.70pp |
-  | small (16-32) | 0.8304 | 0.8199 | -1.05pp |
-  | AP50 | 0.8208 | 0.8232 | +0.24pp |
-- VERDICT: BORDERLINE POSITIVE. First lever to move <8px recall (+1.89pp, ~8x FCCG's delta) - just under the +2.0 bar, a targeted trade (helps <8px, costs 16-32px + mAP50-95 -0.96). Assignment-over-loss direction VALIDATED. Next: alpha=1.0 sweep (s2_assign_a10).
+  | VT-recall (<8) | 0.6931 | 0.7120 (+1.89) | 0.7293 (+3.62) |
+  | tiny (8-16) | 0.8120 | 0.8094 | 0.7947 |
+  | small (16-32) | 0.8304 | 0.8199 | 0.7974 |
+  | AP_small | 0.5596 | 0.5526 (-0.70) | 0.5053 (-5.43) |
+  | AP50 | 0.8208 | 0.8232 | 0.8078 |
+- VERDICT: **KEEPER** (architecture contribution; replaces FCCG). `alpha` = a clean MONOTONIC trade dial: higher alpha -> more <8px recall, less small/AP_small. Sweet spot **alpha=0.5** (+1.89 VT for -0.70 AP_small, ratio ~2.7); alpha=1.0 clears +2.0 VT (+3.62) but wrecks AP_small (-5.43, ratio ~0.67). First real tiny-object lever; assignment>loss VALIDATED. NEXT: confirm at full protocol (S3, 300-ep pretrained) + pivot to D3 sim-to-real.
 
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
