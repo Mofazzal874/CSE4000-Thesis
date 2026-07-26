@@ -1,0 +1,37 @@
+{
+  "n_images": 2040,
+  "n_gt": 72847,
+  "n_det": 502126,
+  "AP50_allpoint": 0.8441,
+  "OptThr_F1": 0.39,
+  "Best_F1": 0.8441,
+  "per_size_recall": {
+    "very_tiny": 0.7508,
+    "tiny": 0.8228,
+    "small": 0.841,
+    "medium": 0.2317,
+    "large": null
+  },
+  "per_size_n": {
+    "very_tiny": 24806,
+    "tiny": 20893,
+    "small": 26738,
+    "medium": 410,
+    "large": 0
+  },
+  "coco": {
+    "AP": 0.6126,
+    "AP50": 0.8323,
+    "AP75": 0.6559,
+    "AP_small": 0.6151,
+    "AP_medium": 0.1972,
+    "AP_large": -1.0,
+    "AR_1": 0.0264,
+    "AR_10": 0.2439,
+    "AR_100": 0.6885,
+    "AR_small": 0.691,
+    "AR_medium": 0.2437,
+    "AR_large": -1.0
+  },
+  "variant": "s3_assign_full"
+}

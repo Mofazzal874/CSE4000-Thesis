@@ -1,0 +1,50 @@
+{
+  "n_images": 60,
+  "n_gt": 3584,
+  "n_det": 18000,
+  "AP50_allpoint": 0.3354,
+  "OptThr_F1": 0.37,
+  "Best_F1": 0.4291,
+  "OptThr_F2": 0.14,
+  "Best_F2": 0.3759,
+  "op_conf25": {
+    "precision": 0.5748,
+    "recall": 0.3365,
+    "F1": 0.4245,
+    "F2": 0.3669
+  },
+  "per_size_recall": {
+    "very_tiny": null,
+    "tiny": 0.0,
+    "small": 0.1184,
+    "medium": 0.3517,
+    "large": 0.4128
+  },
+  "per_size_n": {
+    "very_tiny": 0,
+    "tiny": 7,
+    "small": 642,
+    "medium": 2826,
+    "large": 109
+  },
+  "calibration": {
+    "ECE": 0.0198,
+    "MCE": 0.154,
+    "Brier": 0.0463
+  },
+  "coco": {
+    "AP": 0.1749,
+    "AP50": 0.3236,
+    "AP75": 0.1732,
+    "AP_small": 0.0368,
+    "AP_medium": 0.2139,
+    "AP_large": 0.3007,
+    "AR_1": 0.0107,
+    "AR_10": 0.0954,
+    "AR_100": 0.2427,
+    "AR_small": 0.0921,
+    "AR_medium": 0.2705,
+    "AR_large": 0.4193
+  },
+  "variant": "s3_drone_before"
+}
