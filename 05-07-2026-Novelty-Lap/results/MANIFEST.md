@@ -89,6 +89,23 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
   | AP50 | 0.8208 | 0.8232 | 0.8078 |
 - VERDICT: **KEEPER** (architecture contribution; replaces FCCG). `alpha` = a clean MONOTONIC trade dial: higher alpha -> more <8px recall, less small/AP_small. Sweet spot **alpha=0.5** (+1.89 VT for -0.70 AP_small, ratio ~2.7); alpha=1.0 clears +2.0 VT (+3.62) but wrecks AP_small (-5.43, ratio ~0.67). First real tiny-object lever; assignment>loss VALIDATED. NEXT: confirm at full protocol (S3, 300-ep pretrained) + pivot to D3 sim-to-real.
 
+### 2026-07-26 - pc1 - S3 - assignment (alpha=0.5) FULL protocol (pretrained, 300-ep) - DONE
+- Path: results\pc1\runs_s1\s3_assign_full\ + s1_eval_s3_assign_full.json. Runner 20_assign_patch (--pretrained yolo11m --epochs 300 --patience 50). Early-stopped 291/300, best@241.
+- TEST (scene-split): AP50 0.8441 / AP_small 0.6151 (= C2A ~0.615 label ceiling) / VT-recall 0.7508 / tiny 0.8228 / small 0.841.
+- vs G1 CBAM+P2 (300-ep, thesis script): +0.69 AP50 / +0.19 AP_small / +0.54 VT-recall; tiny/small traded down. NOTE: not a clean pair (different runner) -> clean pair = s3_control_full (alpha=0, running on PC-2). Full-protocol assignment gain is SMALLER than the 50-ep pilot; PC-2 control settles it.
+
+### 2026-07-26 - pc1 - D3 - sim-to-real fine-tune (C2A+assignment -> +labeled drone) - STRONG HEADLINE
+- Path: results\pc1\runs_d3\d3_joint_A\ + runs_s1\s1_eval_{s3_drone_before,d3_drone_after,d3_c2a}.json. Runner 24_joint_finetune (fine-tune s3_assign_full on C2A + 20x oversampled labeled drone@1280px, AdamW 5e-4, 80-ep best@30, cache=disk).
+- SIM-TO-REAL GAP CLOSED (drone test, 60 frozen frames, BEFORE=C2A zero-shot vs AFTER=fine-tuned):
+  | metric | BEFORE | AFTER | delta |
+  |---|---|---|---|
+  | AP50 | 0.324 | 0.725 | +40.1pp (2.2x) |
+  | Best_F2 (PRIMARY) | 0.376 | 0.755 | +37.9pp |
+  | recall@0.25 | 0.337 | 0.828 | +49.2pp |
+  | mAP50-95 | 0.175 | 0.421 | +24.6pp |
+- C2A NO REGRESSION (fine-tuned on C2A test vs S3): AP50 0.8441->0.8366 (-0.75pp), AP_small 0.6151->0.6026 (-1.25pp), VT-recall 0.7508->0.7503 (-0.05pp).
+- VERDICT: sim-to-real pillar = STRONG. +40pp AP50 / recall 0.34->0.83 on the real drone benchmark at ~0 C2A cost. CAVEATS: drone test medium-dominated (very_tiny n=0, tiny n=7) = DOMAIN-transfer result not tiny-object; precision 0.575->0.518 @0.25 (more FPs) -> measure void-FP next. NEXT: eval d3 on R-set (real disaster) + void-FP before/after + S5 tables.
+
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
 - Probe: low-pass blur + JPEG re-compression of scene-split TEST, degradation eval.
