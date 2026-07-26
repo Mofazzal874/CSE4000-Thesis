@@ -106,6 +106,11 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
 - C2A NO REGRESSION (fine-tuned on C2A test vs S3): AP50 0.8441->0.8366 (-0.75pp), AP_small 0.6151->0.6026 (-1.25pp), VT-recall 0.7508->0.7503 (-0.05pp).
 - VERDICT: sim-to-real pillar = STRONG. +40pp AP50 / recall 0.34->0.83 on the real drone benchmark at ~0 C2A cost. CAVEATS: drone test medium-dominated (very_tiny n=0, tiny n=7) = DOMAIN-transfer result not tiny-object; precision 0.575->0.518 @0.25 (more FPs) -> measure void-FP next. NEXT: eval d3 on R-set (real disaster) + void-FP before/after + S5 tables.
 
+### 2026-07-26 - pc1 - D3 - R-set (real DISASTER) eval: drone-tune does NOT transfer - KEY FINDING
+- Path: runs_s1\s1_eval_{s3_rset_before,d3_rset_after}.json. R-set = 25 real flood/rubble frames, 17px median (tiny+cluttered).
+- BEFORE (C2A zero-shot) vs AFTER (drone-tuned): AP50 0.134->0.125, F2 0.202->0.187, recall@0.25 0.127->0.122 -- FLAT / slightly worse.
+- FINDING: domain adaptation is domain-SPECIFIC. Drone-shoot (sports fields, medium people) tuning gave +40pp on drone test but 0 on disaster R-set. Both models ~0.13 AP50 on R-set (tiny + disaster clutter = hard). To get a real-DISASTER result, need DISASTER training frames (mine from Footage From News(Real), label ~50-100; also fixes void-FP). Honest limitation + the Tier-1 hard-negative next step.
+
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
 - Probe: low-pass blur + JPEG re-compression of scene-split TEST, degradation eval.
