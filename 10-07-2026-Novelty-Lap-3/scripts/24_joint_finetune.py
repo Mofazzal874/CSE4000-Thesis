@@ -82,7 +82,7 @@ def f2_early_stop_cb(patience: int):
     return cb
 
 
-def _prep_drone(drone_root: Path, out_root: Path):
+def _prep_drone(drone_root: Path, out_root: Path, img_max_side: int = 1280):
     """Export drone selftrain train+valid COCO(_sc) -> YOLO structure. Returns (train_imgs, val_imgs)."""
     c2y = import_module("23_coco_to_yolo")
     splits = {}
@@ -92,7 +92,7 @@ def _prep_drone(drone_root: Path, out_root: Path):
         if not coco.is_file():
             raise FileNotFoundError(f"missing {coco} -- run 22_coco_singleclass.py --tree first")
         out = out_root / split
-        stats = c2y.export_split(coco, src, out, copy_images=True)
+        stats = c2y.export_split(coco, src, out, copy_images=True, img_max_side=img_max_side)
         print(f"[d3] drone {split}: {stats['images']} imgs, {stats['boxes']} boxes, "
               f"{stats['backgrounds']} void-negatives -> {out}")
         splits[split] = Path(stats["images_dir"])
@@ -118,7 +118,7 @@ def _train(a) -> int:
     # 1) drone COCO -> YOLO, 2) combined oversampled train list, 3) data.yaml
     drone_root = Path(a.drone_root)
     yolo_root = drone_root.parent / "drone_yolo"
-    train_imgs, val_imgs = _prep_drone(drone_root, yolo_root)
+    train_imgs, val_imgs = _prep_drone(drone_root, yolo_root, a.drone_max_side)
     c2a_train_images = Path(a.c2a_root) / "train" / "images"
     if not c2a_train_images.is_dir():
         print(f"FATAL: C2A train images not found: {c2a_train_images}"); return 1
@@ -208,6 +208,7 @@ if __name__ == "__main__":
     ap.add_argument("--c2a-root", help="scene-split root (has train/images + train/labels)")
     ap.add_argument("--drone-root", help="drone annotations root (has selftrain_v1/{train,valid}/_annotations_sc.coco.json)")
     ap.add_argument("--oversample", type=int, default=20, help="repeat each labeled drone frame N times (drone-heavy mix)")
+    ap.add_argument("--drone-max-side", type=int, default=1280, help="downscale drone imgs to this max side (kills 4K RAM/decode blowup; 0=keep 4K)")
     ap.add_argument("--epochs", type=int, default=80)
     ap.add_argument("--lr0", type=float, default=0.0005, help="lower than pretrain (fine-tune)")
     ap.add_argument("--alpha", type=float, default=0.5, help="keep the D2 assignment lever at this weight")
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     ap.add_argument("--mem-frac", type=float, default=0.90)
     ap.add_argument("--reserve-gb", type=float, default=0.0)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--cache", default="ram")
+    ap.add_argument("--cache", default="disk", help="'disk' (safe for mixed C2A+drone), 'ram' (needs lots of RAM), or 'False'")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--name", default="d3_joint_A")
     ap.add_argument("--resume", action="store_true", help="safe to always pass (power-cut recovery)")

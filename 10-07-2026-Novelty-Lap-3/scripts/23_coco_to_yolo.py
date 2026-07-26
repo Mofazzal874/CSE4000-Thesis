@@ -34,7 +34,7 @@ def _iou_xywh(a, b):
 
 
 def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: bool = True,
-                 min_box_px: float = 3.0, dedup_iou: float = 0.9):
+                 min_box_px: float = 3.0, dedup_iou: float = 0.9, img_max_side: int = 0):
     """COCO(_sc) -> YOLO images/+labels/. AUTO-CLEANS the annotation noise the audit found:
     drops sub-min_box_px boxes (accidental micro-clicks) and near-duplicate boxes (IoU>dedup_iou,
     same person labelled twice) so training never ingests them."""
@@ -82,7 +82,19 @@ def export_split(coco_json: Path, src_images: Path, out_dir: Path, copy_images: 
             if src.is_file():
                 dst = img_out / fn
                 if not dst.exists():
-                    shutil.copy2(src, dst)
+                    if img_max_side and img_max_side > 0:      # downscale (labels are relative -> unaffected)
+                        import cv2
+                        arr = cv2.imread(str(src))
+                        if arr is not None:
+                            ih, iw = arr.shape[:2]
+                            if max(iw, ih) > img_max_side:
+                                s = img_max_side / max(iw, ih)
+                                arr = cv2.resize(arr, (int(iw * s), int(ih * s)))
+                            cv2.imwrite(str(dst), arr)
+                        else:
+                            shutil.copy2(src, dst)
+                    else:
+                        shutil.copy2(src, dst)
             else:
                 n_miss += 1
     return {"images": n_img, "boxes": n_box, "backgrounds": n_bg, "missing_src": n_miss,
@@ -95,13 +107,15 @@ def main() -> int:
     ap.add_argument("--images", help="dir holding the source images (Roboflow: same folder as the coco json)")
     ap.add_argument("--out", help="output dir; creates <out>/images + <out>/labels")
     ap.add_argument("--no-copy", action="store_true", help="write labels only (images already in place)")
+    ap.add_argument("--img-max-side", type=int, default=0, help="downscale copied images to this max side (0=off; ~1280 for training to kill 4K RAM/decode blowup)")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         return _selftest()
     if not (a.coco and a.images and a.out):
         ap.error("--coco, --images, --out required (or --selftest)")
-    stats = export_split(Path(a.coco), Path(a.images), Path(a.out), copy_images=not a.no_copy)
+    stats = export_split(Path(a.coco), Path(a.images), Path(a.out), copy_images=not a.no_copy,
+                         img_max_side=a.img_max_side)
     print(f"[c2y] {stats}")
     if stats["missing_src"]:
         print(f"[c2y] WARNING: {stats['missing_src']} images referenced in COCO not found in {a.images}")
