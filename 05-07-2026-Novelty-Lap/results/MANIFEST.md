@@ -111,6 +111,18 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
 - BEFORE (C2A zero-shot) vs AFTER (drone-tuned): AP50 0.134->0.125, F2 0.202->0.187, recall@0.25 0.127->0.122 -- FLAT / slightly worse.
 - FINDING: domain adaptation is domain-SPECIFIC. Drone-shoot (sports fields, medium people) tuning gave +40pp on drone test but 0 on disaster R-set. Both models ~0.13 AP50 on R-set (tiny + disaster clutter = hard). To get a real-DISASTER result, need DISASTER training frames (mine from Footage From News(Real), label ~50-100; also fixes void-FP). Honest limitation + the Tier-1 hard-negative next step.
 
+### 2026-07-27 - pc1 - CLEAN D2 pair: control (a=0) vs assignment (a=0.5) FULL protocol - CONFIRMED +
+- Path: runs_s1\s3_control_full\ (best@242, power-cut corrupted last.pt but best.pt intact) + s1_eval_s3_control_full.json vs s1_eval_s3_assign_full.json. Same runner (20_assign_patch), same protocol (pretrained, 300-cap, patience 50), same GPU (PC-1) -> ONLY alpha differs = the clean architecture pair.
+- Delta (assignment a=0.5 - control a=0), C2A scene-split TEST:
+  | metric | control | assign | delta |
+  |---|---|---|---|
+  | very-tiny recall (<8) | 0.7299 | 0.7508 | +2.09pp |
+  | AP_small | 0.5951 | 0.6151 | +2.00pp |
+  | tiny (8-16) | 0.8343 | 0.8228 | -1.15pp |
+  | small (16-32) | 0.8504 | 0.841 | -0.94pp |
+  | AP50 | 0.8449 | 0.8441 | -0.08pp |
+- VERDICT: D2 architecture lever CLEANLY CONFIRMED at full protocol -- clears BOTH pass bars (+1.5 AP_small AND +2.0 VT-recall) for a -1pp cost on 8-32px. NOTE the clean control shows the lever is STRONGER than the G1 comparison (+0.54 VT) implied -- G1's different runner undersold it. (Control F2 0.8257; re-eval s3_assign_full with current 18 for its F2 to complete the pair.)
+
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
 - Probe: low-pass blur + JPEG re-compression of scene-split TEST, degradation eval.
