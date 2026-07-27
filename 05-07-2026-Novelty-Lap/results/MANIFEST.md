@@ -116,12 +116,13 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
 - Delta (assignment a=0.5 - control a=0), C2A scene-split TEST:
   | metric | control | assign | delta |
   |---|---|---|---|
-  | very-tiny recall (<8) | 0.7299 | 0.7508 | +2.09pp |
+  | Best_F2 (PRIMARY) | 0.8257 | 0.8284 | +0.27pp |
   | AP_small | 0.5951 | 0.6151 | +2.00pp |
+  | very-tiny recall (<8) | 0.7299 | 0.7508 | +2.09pp |
   | tiny (8-16) | 0.8343 | 0.8228 | -1.15pp |
   | small (16-32) | 0.8504 | 0.841 | -0.94pp |
   | AP50 | 0.8449 | 0.8441 | -0.08pp |
-- VERDICT: D2 architecture lever CLEANLY CONFIRMED at full protocol -- clears BOTH pass bars (+1.5 AP_small AND +2.0 VT-recall) for a -1pp cost on 8-32px. NOTE the clean control shows the lever is STRONGER than the G1 comparison (+0.54 VT) implied -- G1's different runner undersold it. (Control F2 0.8257; re-eval s3_assign_full with current 18 for its F2 to complete the pair.)
+- VERDICT: D2 = tiny-object SPECIALIST, cleanly confirmed. Concentrated gain on the SAR-critical regime (+2.00 AP_small, +2.09 <8px recall) at NEUTRAL overall F2 (+0.27) / AP50 (-0.08) and a -1pp cost on 8-32px. Clears both pass bars. Clean matched control shows the lever is STRONGER than the G1 comparison (+0.54 VT) implied -- G1's different runner undersold it. Paper framing: "reallocates capacity to the very-tiniest people; +2pp AP_small/<8px recall without hurting overall F2."
 
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
