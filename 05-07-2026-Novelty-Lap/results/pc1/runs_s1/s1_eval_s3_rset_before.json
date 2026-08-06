@@ -1,0 +1,50 @@
+{
+  "n_images": 25,
+  "n_gt": 1070,
+  "n_det": 6017,
+  "AP50_allpoint": 0.1326,
+  "OptThr_F1": 0.07,
+  "Best_F1": 0.23,
+  "OptThr_F2": 0.01,
+  "Best_F2": 0.2016,
+  "op_conf25": {
+    "precision": 0.5211,
+    "recall": 0.1271,
+    "F1": 0.2044,
+    "F2": 0.1497
+  },
+  "per_size_recall": {
+    "very_tiny": 0.0,
+    "tiny": 0.06,
+    "small": 0.2295,
+    "medium": 0.3701,
+    "large": 0.0
+  },
+  "per_size_n": {
+    "very_tiny": 54,
+    "tiny": 433,
+    "small": 427,
+    "medium": 154,
+    "large": 2
+  },
+  "calibration": {
+    "ECE": 0.021,
+    "MCE": 0.1973,
+    "Brier": 0.0361
+  },
+  "coco": {
+    "AP": 0.0541,
+    "AP50": 0.1335,
+    "AP75": 0.0341,
+    "AP_small": 0.036,
+    "AP_medium": 0.1735,
+    "AP_large": 0.3535,
+    "AR_1": 0.0073,
+    "AR_10": 0.0462,
+    "AR_100": 0.1134,
+    "AR_small": 0.084,
+    "AR_medium": 0.2844,
+    "AR_large": 0.35
+  },
+  "variant": "s3_rset_before"
+}

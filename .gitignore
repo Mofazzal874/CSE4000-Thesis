@@ -102,6 +102,8 @@ Defense/demo/
 # keep the small s1_eval_*.json summaries, drop the multi-MB per-detection dumps)
 *_preds.json
 *_coco_dets.json
+# per-detection (score,correct) arrays for significance -- binary, regenerable by re-running 18_s1_eval
+*_scorecorr.npz
 
 # RealDisaster extracted frames (images regenerable from source videos via the extractor;
 # keep manifests + annotation JSON, drop the frame images)

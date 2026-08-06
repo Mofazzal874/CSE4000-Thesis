@@ -124,6 +124,40 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
   | AP50 | 0.8449 | 0.8441 | -0.08pp |
 - VERDICT: D2 = tiny-object SPECIALIST, cleanly confirmed. Concentrated gain on the SAR-critical regime (+2.00 AP_small, +2.09 <8px recall) at NEUTRAL overall F2 (+0.27) / AP50 (-0.08) and a -1pp cost on 8-32px. Clears both pass bars. Clean matched control shows the lever is STRONGER than the G1 comparison (+0.54 VT) implied -- G1's different runner undersold it. Paper framing: "reallocates capacity to the very-tiniest people; +2pp AP_small/<8px recall without hurting overall F2."
 
+### 2026-08-06 - pc1 - LAP4 - disaster retrain (d3_all: C2A+drone+campus+disaster) - STRONG: R-set TRIPLED
+- Path: runs_d3\d3_all\ (best@66, 80ep, run_config.json + args.yaml frozen; CBAM+P2 backbone, 19.57M/86.7GFLOPs)
+  + runs_s1\s1_eval_d3all_{rset,drone,campus}.json. Runner 24 --preset d3_all. 248 real train frames
+  (drone 101 + disaster 60 + campus 87), oversample x20, on C2A base; eval on FROZEN held-out sets.
+- R-SET (real disaster, 25 frames) -- the headline. Both prior models ~0.13; disaster labels transfer where drone didn't:
+  | stage | AP50 | F2 | recall@.25 | AP_small |
+  |---|---|---|---|---|
+  | zero-shot (C2A) | 0.134 | 0.202 | 0.127 | - |
+  | drone-tuned (D3) | 0.125 | 0.187 | 0.122 | - |
+  | **disaster-tuned (d3_all)** | **0.411** | **0.472** | **0.451** | 0.127 |
+  => +27.7pp AP50 / +27pp F2 / +32pp recall vs zero-shot. CLEAN CONTROL: drone-tune 0.134->0.125 (nothing),
+  disaster-tune 0.134->0.411 (3x) on the SAME R-set = target-domain labels necessary; cross-domain (drone) don't.
+- DRONE test (60 frozen), AP50_allpoint (authoritative saved jsons): zero-shot 0.335 -> drone-only 0.783 -> all-real 0.795
+  (F2 0.771, recall 0.837). Adding disaster+campus = +1.25pp on drone = NO regression (earlier "+7pp" was a stale figure).
+- CAMPUS eval (25, occlusion, new): AP50 0.689 / F2 0.666 / recall 0.718 / AP_small 0.262.
+- C2A regression (d3all_c2a vs s3_assign_full): AP50 0.844->0.837 (-0.71pp), F2 -0.45, AP_small 0.615->0.602 (-1.34),
+  VT-recall -0.41; ECE 0.0142->0.0111 (better). = NEGLIGIBLE, no forgetting. Efficiency: 19.57M/86.7GFLOPs/39.7MB/8.7ms/115FPS.
+- CAVEATS (must state honestly): (1) disaster-train + R-set share the SAME 2 news clips (deduped frames) =>
+  SAME-DOMAIN/within-video adaptation, NOT cross-video generalization; the drone-vs-disaster contrast is valid
+  (same R-set) but absolute claim = "small target-domain budget -> big same-domain gain". (2) very_tiny <8px R-set
+  recall = 0 (n=54) still missed. (3) R-set = 25 frames, wide CI. (4) VOID-FP FIX NOT DEMONSTRATED: R-set precision@.25
+  0.521(zero-shot)->0.513(disaster) = FLAT; the win is RECALL (+32pp) at neutral precision, NOT a proven void-FP drop
+  (needs a dedicated void-region FP check). VERDICT: disaster pillar = STRONG (R-set 3x); all 4 held-out gates pass
+  (C2A held, drone held, R-set tripled, campus solid) -> ONE unified real-domain model. Flips the earlier
+  "domain-specific limitation" into a demonstrated FIX (target-domain labels necessary; drone labels don't transfer).
+
+### 2026-08-05 - YOLO26m PARKED to lap-5 (removed from the lap-4 yolo11m story)
+- Decision: lap-4 = a clean yolo11m story. YOLO26m gets its OWN lap (novelty-lap-5): base + CBAM + P2 +
+  assignment + sim-to-real, to test whether the newer backbone subsumes or complements our contributions.
+- The plain-YOLO26m anchor (AP50 0.8552 / F2 0.8364 / AP_small 0.6229 / VT 0.742) is the lap-5 STARTING
+  baseline, recorded in `27-07-2026-Novelty-Lap-4\..\05-08-2026-Novelty-Lap-5\README.md`. Data preserved,
+  not deleted: eval json `runs_s1\s1_eval_yolo26m.json`; model on PC-1 `runs_anchor\yolo26m\weights\best.pt`;
+  runner `21_yolo26_anchor.py`. NOT part of any lap-4 paper table.
+
 ### 2026-07-25 - pc1 - misc - P1 seam-reliance probe (C2A, CBAM+P2 s1_control) - DONE [json still on remote]
 - Remote: `E:\Thesis_mofazzal_2007074\...\scripts\runs_probe\seam_probe_c2a.json` (copy to results\pc1\ when convenient). Runner = 19_seam_probe.py.
 - Probe: low-pass blur + JPEG re-compression of scene-split TEST, degradation eval.

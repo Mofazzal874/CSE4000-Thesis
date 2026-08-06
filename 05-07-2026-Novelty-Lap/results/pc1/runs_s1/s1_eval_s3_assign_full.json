@@ -5,6 +5,14 @@
   "AP50_allpoint": 0.8441,
   "OptThr_F1": 0.39,
   "Best_F1": 0.8441,
+  "OptThr_F2": 0.19,
+  "Best_F2": 0.8284,
+  "op_conf25": {
+    "precision": 0.854,
+    "recall": 0.8212,
+    "F1": 0.8373,
+    "F2": 0.8276
+  },
   "per_size_recall": {
     "very_tiny": 0.7508,
     "tiny": 0.8228,
@@ -18,6 +26,11 @@
     "small": 26738,
     "medium": 410,
     "large": 0
+  },
+  "calibration": {
+    "ECE": 0.0142,
+    "MCE": 0.1181,
+    "Brier": 0.0264
   },
   "coco": {
     "AP": 0.6126,

@@ -1,0 +1,3 @@
+[SKIPPED] qualitative grids (detection/failure-16/success) -- dedicated figures pass, not this numeric eval
+[SKIPPED] per-stride AP / confusion matrix -- lap-1 script 04 (04_eval_fusion_ablation.py)
+[SKIPPED] training-dynamics curves -- live in the run folder's results.csv

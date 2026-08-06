@@ -1,0 +1,5 @@
+path: E:/Thesis_mofazzal_2007074/10-07-2026-Novelty-Lap-3/scripts/runs_d3/d3_all
+train: E:/Thesis_mofazzal_2007074/10-07-2026-Novelty-Lap-3/scripts/runs_d3/d3_all/combined_train.txt
+val: E:/Thesis_mofazzal_2007074/drone_data/drone_yolo/valid/images
+nc: 1
+names: [person]

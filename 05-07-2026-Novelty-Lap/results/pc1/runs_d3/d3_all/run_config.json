@@ -1,0 +1,36 @@
+{
+  "preset": "d3_all",
+  "checkpoint": "runs_s1\\s3_assign_full\\weights\\best.pt",
+  "c2a_root": "E:\\Thesis_mofazzal_2007074\\common\\c2a\\C2A_Dataset\\new_dataset3_scenesplit_v1",
+  "drone_root": "E:\\Thesis_mofazzal_2007074\\drone_data\\annotations",
+  "extra_set": [
+    [
+      "disaster",
+      "disaster-train-v1",
+      "20"
+    ],
+    [
+      "campus",
+      "campus_train_v1",
+      "20"
+    ]
+  ],
+  "name": "d3_all",
+  "oversample": 20,
+  "drone_max_side": 1280,
+  "epochs": 80,
+  "lr0": 0.0005,
+  "alpha": 0.5,
+  "C": 12.8,
+  "batch": 12,
+  "imgsz": 640,
+  "patience": 50,
+  "f2_patience": 40,
+  "mem_frac": 0.95,
+  "reserve_gb": 0.0,
+  "seed": 0,
+  "cache": "disk",
+  "workers": 4,
+  "no_amp": false,
+  "device": "0"
+}

@@ -1,0 +1,50 @@
+{
+  "n_images": 2040,
+  "n_gt": 72847,
+  "n_det": 578686,
+  "AP50_allpoint": 0.8449,
+  "OptThr_F1": 0.31,
+  "Best_F1": 0.8354,
+  "OptThr_F2": 0.18,
+  "Best_F2": 0.8257,
+  "op_conf25": {
+    "precision": 0.8509,
+    "recall": 0.8155,
+    "F1": 0.8328,
+    "F2": 0.8223
+  },
+  "per_size_recall": {
+    "very_tiny": 0.7299,
+    "tiny": 0.8343,
+    "small": 0.8504,
+    "medium": 0.3634,
+    "large": null
+  },
+  "per_size_n": {
+    "very_tiny": 24806,
+    "tiny": 20893,
+    "small": 26738,
+    "medium": 410,
+    "large": 0
+  },
+  "calibration": {
+    "ECE": 0.019,
+    "MCE": 0.2086,
+    "Brier": 0.0272
+  },
+  "coco": {
+    "AP": 0.593,
+    "AP50": 0.832,
+    "AP75": 0.6335,
+    "AP_small": 0.5951,
+    "AP_medium": 0.2257,
+    "AP_large": -1.0,
+    "AR_1": 0.026,
+    "AR_10": 0.2377,
+    "AR_100": 0.6775,
+    "AR_small": 0.6793,
+    "AR_medium": 0.3602,
+    "AR_large": -1.0
+  },
+  "variant": "s3_control_full"
+}
