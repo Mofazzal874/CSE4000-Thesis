@@ -54,16 +54,23 @@ AdamW column. Re-run under AdamW deferred to the paper.
   fewer params than C2PSA. ECA: faster but no consistent recall/mAP gain.
 - **→ CBAM chosen** for operational superiority at lower cost.
 
-## 3. INFERENCE-TIME ENHANCEMENT — SAHI / TTA  ⚠️ MODEL-MISMATCH OPEN ITEM
-All SAHI/TTA in the deck were run on the **old Mamba+CBAM+P2** model (March, `31-03-26(Mamba-ViT-CNN)/SAHI+TTA/`),
-which is *not* the recommended model. Numbers (per-image box matching @IoU 0.5; mAP not comparable to ultralytics):
-- **SAHI-512** (ov0.25): P 0.867 / R 0.865 / F1 0.866 / F2 0.865 / VT-recall 0.808 / 187 ms — best balanced.
-- **SAHI-256** (ov0.30): P 0.790 / R 0.872 / F1 0.829 / F2 0.854 / VT-recall **0.829** (+6.24%) / 534 ms — best VT recall.
-- **TTA@1280:** mAP50 0.890 (+1.64%), mAP50-95 0.698 (+5.39%), miss-rate 14%→10%. TTA@1920 degrades.
-- SAHI+TTA combined = no extra gain over SAHI.
-- Copy-paste augmentation = **negative result** (medium recall collapsed −13%).
-- **DECIDED (2026-07-02):** user will **re-run SAHI on CBAM+P2** (recommended model). Report's
-  inference-time section gets a slot; numbers above are the old-Mamba reference only, pending the new run.
+## 3. INFERENCE-TIME ENHANCEMENT — SAHI / TTA  ✅ RESOLVED (CBAM+P2 re-run 2026-07-07)
+Canonical run: `Last Month/24_01_26- Benchmarking YOLOs/CBAM_P2Head/runs_sahi_tta/20260707_062217_sahi_tta_cbam_p2/`
+(per-image box matching @IoU 0.5, conf 0.25; TTA rows also have official val() mAP). **These are the report numbers.**
+
+| Setting | P | R | F1 | F2 | VT-recall | lat ms |
+|---|---|---|---|---|---|---|
+| baseline 640 | .857 | .835 | .845 | .839 | .758 | 15 |
+| SAHI 256/ov.30 | .853 | .846 | .850 | .848 | .788 | 162 |
+| SAHI 320/ov.25 | .861 | .844 | **.852** | .847 | .782 | 113 |
+| SAHI 512/ov.25 | .864 | .837 | .850 | .842 | .763 | 66 |
+| SAHI 640/ov.30 | .864 | .833 | .848 | .839 | .756 | 54 |
+| TTA 1280 | .774 | .877 | .822 | **.854** | **.850** | 60 |
+
+- **TTA@1280 is the headline**: VT-recall .758→.850 (+9.2 pts) at 60 ms; val mAP50 .868→.878, mAP50-95 .632→.677.
+- TTA 640/832/1920 val mAP50: .8407/.8732/.8507 (1920 degrades). SAHI+TTA combo = no gain over SAHI-256.
+- Copy-paste augmentation = **negative result** (medium recall collapsed −13%) — unchanged.
+- ⚠️ Old-Mamba March numbers (SAHI-512 F1 .866 etc.) are SUPERSEDED — do not use.
 
 ## 4. SOTA COMPARISON — Nihal et al. (ICPR 2024, C2A, same test split, no SAHI/TTA)
 | Model | mAP50 | mAP50-95 | Params | Source |

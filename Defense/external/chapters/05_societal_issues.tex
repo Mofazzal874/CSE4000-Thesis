@@ -1,0 +1,144 @@
+\chapter{Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}
+
+\section{Introduction}
+A detector intended for disaster response is deployed around vulnerable people
+and operated by public agencies, so its wider implications matter as much as
+its accuracy. The same model that finds flood victims can, unmodified, watch a
+crowd; that dual use runs through every consideration below. This chapter sets
+out the intellectual-property, ethical, safety, legal, societal, and
+environmental aspects of the work, using the measured resource data recorded
+during training rather than generic statements.
+
+\section{Intellectual Property Considerations}
+The work builds on external software, data, and published methods, and each is
+used within its terms. The detector is built on the Ultralytics YOLO11
+framework~\cite{jocher2024yolo11} and PyTorch, both under their open-source
+licences; the CBAM design follows its publication~\cite{woo2018cbam}, and the
+SAHI library~\cite{akyon2022sahi} handles sliced inference, each credited
+where it appears.
+
+The dataset deserves a specific note. C2A is distributed through
+Kaggle~\cite{c2akaggle} by its authors, who request citation of the
+accompanying paper~\cite{nihal2024c2a} but publish no explicit licence text.
+It is therefore used here strictly for academic research, cited in both
+forms, and not redistributed. The sources it composites, AIDER
+backgrounds~\cite{kyrkou2020aider} and pose imagery segmented with
+U$^2$-Net~\cite{qin2020u2net}, carry their own academic-use terms. The
+additive ablation design, the trained weights, the negative state-space
+finding, and the analysis are the author's contributions; any public release
+of weights would state that they derive from C2A and inherit its
+academic-use position.
+
+\section{Ethical Considerations}
+The system detects people, which obliges care on several fronts. The first is
+dual use: a person detector tuned for rescue is technically indistinguishable
+from one used for surveillance. This thesis frames, trains, and evaluates the
+model for search and rescue, and Section~\ref{sec:legal5} notes the
+regulatory line, but the honest position is that misuse cannot be prevented
+by architecture, only by governance of deployment.
+
+The second is error asymmetry. A missed victim is a life risk, while a false
+alarm costs an operator seconds, so the evaluation weights recall through the
+$F_2$ metric and the operating threshold errs towards flagging, with a human
+making every final judgement. Two data-side considerations complete the
+picture. The training imagery is composited rather than photographic, so no
+images of real, identifiable disaster victims were used to develop the model.
+At the same time, C2A covers four scene types and composited poses, and the
+model may behave differently on populations, clothing, or terrain it never
+saw; the cross-dataset validation planned as future work is the concrete
+answer to that bias.
+
+\section{Safety Considerations}
+The detector is an assistive tool, not an autonomous decision-maker. It
+directs an operator's attention and does not clear areas; its outputs must
+never be read as a definitive count of survivors, and
+Figure~\ref{fig:qualgrid} shows why, since box counts at the review threshold
+exceed the annotated count on dense scenes. Safe use also depends on knowing
+where the model is weak. The measured failure modes, heavily occluded
+targets, few-pixel targets, and merged detections in crowds, are quantified
+in Chapter~IV (Table~\ref{tab:persize}, Section~\ref{sec:qual}) so operators
+know where trust should thin. The operating point itself is stable: the
+$F_2$-optimal confidence sits in a narrow band (0.16 to 0.20) across all
+configurations (Table~\ref{tab:thrcal}) and calibration error is near
+$0.02$, so the deployed threshold behaves predictably rather than requiring
+per-mission tuning.
+
+\section{Legal Considerations}
+\label{sec:legal5}
+Airborne collection of imagery that contains people is regulated on two
+fronts. Drone operation over populated or disaster areas is subject to
+civil-aviation permissions on flight, altitude, and no-fly zones; in
+Bangladesh these are administered by the Civil Aviation Authority, and
+equivalents apply elsewhere. This thesis concerns the detection model rather
+than flight operations, but any deployment inherits those rules. Imagery of
+identifiable people also engages data-protection regimes such as the EU
+General Data Protection Regulation~\cite{gdpr2016}, even when collected in
+an emergency; retention, access, and secondary use of rescue footage need
+explicit policy before deployment, and the surveillance-capable nature of
+the model makes that policy a requirement rather than a courtesy. Within the
+research itself, all experimentation used public academic data under the
+terms above, and no personal data was collected by the author.
+
+\section{Impact of the Project on Societal, Health, and Cultural Issues}
+Faster location of survivors has a direct health benefit: it shortens the time
+to reach injured people, which is decisive in the first hours after an
+earthquake or flood. The societal value is greatest where trained search teams
+are scarce relative to the affected area, which is the situation in many
+disaster-prone regions, including Bangladesh, whose flood seasons regularly
+displace communities along major rivers. Because the recommended model is
+small (19.6~M parameters, Table~\ref{tab:main}) and runs in real time on a
+single consumer GPU, it does not presume expensive infrastructure, which
+widens the set of agencies that can afford to operate it. Culturally, aerial
+imaging of disaster sites must respect the dignity of victims and local norms
+around photographing the dead and injured; the human-in-the-loop design keeps
+those judgements with people rather than software.
+
+\section{Impact of Project on the Environment and Sustainability}
+The environmental cost of this work was measured, not estimated. A tracker
+recorded the energy and emissions of every training run, and a two-second
+sampler logged GPU power for their full duration; Table~\ref{tab:carbon}
+reports the results. The four runs consumed about $10.6$~kWh of GPU energy
+and emitted an estimated $9.0$~kg of CO$_2$ under the local grid intensity,
+roughly the emissions of a 75~km car journey. Two design choices kept the
+figure low: saved weights were re-evaluated instead of retrained whenever a
+metric could be recomputed, and the ablation ran one seed per configuration
+in this phase. The state-space variant is the environmental outlier as well
+as the accuracy one: it produced more than half of the total emissions
+($4.65$~kg, $2.6$ times the recommended model's) for no measured gain, which
+turns the argument for honest negative results into an environmental one.
+Energy-aware reporting of this kind follows the practice argued for in the
+literature on the carbon cost of deep learning~\cite{strubell2019energy}, and
+the tracking used the CodeCarbon library~\cite{codecarbon}. At inference, the
+recommended model's $14.6$~ms latency on a consumer GPU translates to a small
+per-image energy cost, and choosing the 19.6~M-parameter design over a model
+three times larger (Table~\ref{tab:sota}) reduces the energy drawn by every
+future deployment of the system.
+
+\begin{table}[tbp]
+  \centering
+  \caption{Measured training cost and CO$_2$ of the four configurations.}
+  \label{tab:carbon}
+  \begin{tabular}{@{}l r r r r@{}}
+    \toprule
+    \textbf{Configuration} & \textbf{Wall clock (h)} & \textbf{Mean power (W)} & \textbf{Energy (kWh)} & \textbf{CO$_2$ (kg)} \\
+    \midrule
+    YOLO11m baseline    & 7.3  & 216 & 1.6 & 1.31 \\
+    + CBAM              & 7.0  & 218 & 1.5 & 1.28 \\
+    + CBAM + P2         & 10.2 & 207 & 2.1 & 1.78 \\
+    + Mamba + CBAM + P2 & 29.5 & 182 & 5.4 & 4.65 \\
+    \midrule
+    \textbf{Total}      & \textbf{54.0} & --- & \textbf{10.6} & \textbf{9.02} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Conclusion}
+The considerations above do not sit beside the engineering; they shaped it.
+The recall-weighted evaluation encodes the ethical asymmetry of the task, the
+composited dataset avoids imagery of real victims, the documented failure
+modes and stable operating point make the human-in-the-loop role practical,
+and the measured carbon account puts a number on what each architectural
+decision cost the environment. The dual-use nature of person detection
+remains the standing obligation: the model built here to find people in
+rubble must be governed, wherever it is deployed, so that it stays on that
+side of the line.

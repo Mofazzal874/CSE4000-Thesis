@@ -83,9 +83,12 @@ YOLO11~\cite{jocher2024yolo11} is a single-stage detector with three parts: a
 convolutional backbone that extracts features at decreasing spatial resolution
 through C3k2 stages, a path-aggregation neck (PAN--FPN) that fuses features across
 scales, and a decoupled detection head that predicts boxes at three strides (P3,
-P4, P5). The YOLO11 backbone ends with a spatial-pyramid-pooling (SPPF) stage
-followed by a C2PSA self-attention block. The medium variant, YOLO11m, is used as
-the baseline throughout this thesis.
+P4, P5). The backbone ends with a spatial-pyramid-pooling (SPPF) stage and a
+C2PSA self-attention block. Its medium variant, YOLO11m, is the baseline used
+throughout this thesis; it was chosen from a nine-model comparison of the
+YOLOv9, YOLOv10, and YOLO11 families reported in the appendix
+(Table~\ref{tab:appfamily} and Figure~\ref{fig:appfrontier}), where it sits on
+the best accuracy-to-size trade-off.
 
 \subsection{Attention: CBAM and ECA}
 Attention modules re-weight feature maps so that informative channels and spatial
@@ -98,13 +101,10 @@ baseline and found CBAM to give better operational recall than ECA at a similar
 cost, which is why CBAM is used in this thesis; that comparison is summarised in
 Chapter~IV.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/fig_cbam_module.png}{6.5cm}
-  \caption{The CBAM module. Channel attention (from global average and max pooling
-  through a shared multi-layer perceptron) refines the feature map, after which
-  spatial attention (from channel-wise pooling and a $7\times7$ convolution)
-  refines it again.}
+  \figorplaceholder{figures/figures_png_format/cbam_module.png}{6.5cm}
+  \caption{CBAM module with sequential channel and spatial attention~\cite{woo2018cbam}.}
   \label{fig:cbam}
 \end{figure}
 
@@ -116,12 +116,10 @@ cells cover $4\times4$ pixels, extending detection to targets as small as about
 four pixels. Figure~\ref{fig:p2} shows how the P2 branch attaches alongside the
 standard P3--P5 scales.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/fig_p2_head.png}{6.5cm}
-  \caption{The four-scale detection head. The P2 scale (stride~4, $160\times160$)
-  is added to the standard P3--P5 scales to resolve very small targets; each scale
-  feeds per-scale detections into non-maximum suppression.}
+  \figorplaceholder{figures/figures_png_format/p2head.png}{6.5cm}
+  \caption{Construction of the added stride-4 (P2) detection branch.}
   \label{fig:p2}
 \end{figure}
 
@@ -133,12 +131,10 @@ thesis, C3k2Mamba (Figure~\ref{fig:mamba}), scans a local window in both the for
 and reverse directions and fuses the two, and is inserted in place of selected C3k2
 neck blocks. Its effect on this task is measured in Chapter~IV.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/fig_c3k2mamba.png}{6.5cm}
-  \caption{The explored C3k2Mamba block: forward and reverse selective scans over a
-  local window are fused and projected, replacing the C3k2 bottleneck at selected
-  neck layers while leaving the backbone and head unchanged.}
+  \figorplaceholder{figures/figures_png_format/c3k2mamba.png}{6.5cm}
+  \caption{Explored C3k2Mamba block with bidirectional local-window scans.}
   \label{fig:mamba}
 \end{figure}
 
@@ -154,25 +150,41 @@ scores but not a component-wise account of where a small-object gain actually co
 from. This thesis fills that gap with a single-variable additive ablation on C2A
 that measures attention, the P2 detection scale, and a state-space neck against one
 another under an identical training and evaluation protocol, and then reports which
-components are worth their cost. The four configurations are summarised in
-Figure~\ref{fig:chain}, and the specific differences from prior work are listed in
-Table~\ref{tab:gap}.
+components are worth their cost. Figure~\ref{fig:chain} summarises those four
+configurations as the additive chain the thesis evaluates: each step adds
+exactly one component to the design on its left, from the YOLO11m baseline
+through CBAM, the P2 head, and the state-space neck, so that the effect of each
+can be read from the difference it makes.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
-  \figorplaceholder{figures/fig_ablation_chain.png}{4.5cm}
-  \caption{The additive ablation studied in this thesis: each step changes one
-  component of the YOLO11m baseline, isolating the effect of attention, the P2
-  detection scale, and the state-space neck.}
+  \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{6cm}
+  \caption{Additive ablation chain studied in this thesis.}
   \label{fig:chain}
 \end{figure}
 
-\begin{table}[tbp]
+The chain is deliberately linear rather than a full factorial sweep. A
+factorial design over three components would need eight models and eight
+training runs; the additive order used here needs only four, and it answers the
+practical question directly, because each step asks whether the next component
+earns its place on top of the best design so far. The order also matches the
+engineering priority: attention is tried first because it is nearly free, the
+high-resolution P2 scale next because it targets the dominant failure mode, and
+the state-space neck last because it is the most expensive addition to justify.
+Read from left to right, the chain therefore doubles as a cost-ordered decision
+procedure, and Chapter~IV reports the measured gain or loss at each step.
+
+The same standpoint, expressed as a direct contrast with prior work along four
+axes, is set out in Table~\ref{tab:gap}.
+
+\begin{table}[H]
   \centering
-  \caption{Position of this thesis relative to prior work on small-object aerial
-  human detection.}
+  \caption{Position of this thesis relative to prior work.}
   \label{tab:gap}
-  \begin{tabular}{@{}p{4.2cm} p{5cm} p{5cm}@{}}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{@{}p{3.8cm} p{4.7cm} p{4.7cm}@{}}
     \toprule
     Aspect & Prior work & This thesis \\
     \midrule
@@ -183,3 +195,15 @@ Table~\ref{tab:gap}.
     \bottomrule
   \end{tabular}
 \end{table}
+
+Read row by row, the table marks the departure from prior work. Where earlier
+studies report small-object techniques one at a time, this thesis compares them
+in one controlled ablation; where the attention choice is usually asserted, it
+is measured here as CBAM against ECA; where state-space blocks are proposed as
+full backbones on generic data, they are tested in the neck against an
+otherwise identical baseline and reported whatever the outcome; and where most
+aerial detection studies use generic imagery, this work targets very small
+human figures in disaster and search-and-rescue scenes. Those four contrasts
+are the compact statement of what the thesis adds, and they set up the
+methodology developed in the next chapter, which turns the standpoint stated
+here into a concrete detector with a fixed training and evaluation protocol.

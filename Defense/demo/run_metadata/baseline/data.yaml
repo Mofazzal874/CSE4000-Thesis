@@ -1,0 +1,7 @@
+path: E:/Thesis_mofazzal_2007074/common/c2a/C2A_Dataset/new_dataset3
+train: train/images
+val: val/images
+test: test/images
+names:
+  0: person
+nc: 1

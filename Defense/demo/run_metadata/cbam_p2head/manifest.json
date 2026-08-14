@@ -1,0 +1,19 @@
+{
+  "run_id": "20260602_063759_yolo11m_cbam_p2head_s0_nogit",
+  "model_tag": "yolo11m_cbam_p2head",
+  "matrix_status": "CBAM+P2 ablation (yolo11m_cbam_p2head) per system_spec_thesis.md Sec 3 row 4",
+  "parent_run_id": null,
+  "git_commit": "nogit",
+  "git_dirty": false,
+  "smoke_passed_at": "2026-06-01T17:22:47.571072+00:00",
+  "weights_md5": "2bcc5c9bf57a736c49febf1c3e880ae2414a3b5d41bc7e6e91061fb1722f9930",
+  "data_yaml_md5": "6df3158450d0445fdd1e1daef5d8caf0",
+  "dataset_split_md5": {
+    "train": "e03db54f95acd15a4a83a5bb28765024",
+    "val": "84793a339a7eadb47727c3e3bcd150d7",
+    "test": "c750aaf4476ff926294cce7034281eab"
+  },
+  "seed": 0,
+  "completed_utc": "2026-06-02T10:58:30.474985+00:00",
+  "summary_pointer": "metrics/summary.json"
+}
