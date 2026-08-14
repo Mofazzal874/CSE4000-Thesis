@@ -110,3 +110,8 @@ Defense/demo/
 RealDisaster/**/*.jpg
 RealDisaster/**/*.jpeg
 RealDisaster/**/*.png
+
+# Third-party Claude Code skills (vendored from public repos into .claude/skills/;
+# ~330KB of upstream code, re-installable from E:\Claude Skills -- not thesis history).
+# NOTE: only skills/ is ignored; .claude/settings.json stays tracked.
+.claude/skills/

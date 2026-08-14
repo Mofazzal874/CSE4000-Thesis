@@ -10,11 +10,13 @@ so R-set frames are caught even though they were exported.
 
   python 27_disaster_extract.py --selftest
   python 27_disaster_extract.py ^
-    --videos "d:\...\Drone Shoot\Footage From News(Real)\Chennai_flood_final.mp4" ^
-             "d:\...\Drone Shoot\Footage From News(Real)\venezuala_final.mp4" ^
-    --rset-dir "d:\...\Drone Shoot\extracted_v1\annotations\rset_v1\test" ^
-    --out "d:\...\Drone Shoot\extracted_v1\disaster_train_raw" ^
-    --every-sec 1.5 --max-frames 200
+    --videos "d:\...\Drone Shoot\Footage From News(Real)\disaster_israel_trim.mp4" ^
+    --exclude-dirs "d:\...\extracted_v1\annotations\rset_v1\test" ^
+                   "d:\...\extracted_v1\annotations\disaster-train-v1\train" ^
+    --out "d:\...\Drone Shoot\extracted_v1\disaster_xevent_raw" ^
+    --every-sec 1.5 --max-frames 50
+  (--exclude-dirs = every frame the model trained on OR was evaluated on -> the new-video TEST
+   set is provably disjoint from all of it, so it's a clean cross-event generalization test.)
 """
 from __future__ import annotations
 import argparse
@@ -44,19 +46,24 @@ def _near_dup(h: int, pool, dist: int) -> bool:
     return any(hamming(h, p) <= dist for p in pool)
 
 
-def extract(videos, rset_dir, out_dir, every_sec=1.5, dedup_dist=8, max_frames=200):
+def extract(videos, exclude_dirs, out_dir, every_sec=1.5, dedup_dist=8, max_frames=200, start_sec=0.0):
     import cv2
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    # exclusion set: dHash of the 25 R-set eval frames
-    rset_hashes = []
-    if rset_dir:
-        for p in Path(rset_dir).iterdir():
+    # exclusion set: dHash every frame we must NOT overlap (R-set + disaster-train + ...) so a
+    # new-video TEST set is provably disjoint from everything the model trained/was evaluated on.
+    excl_hashes = []
+    for d in (exclude_dirs or []):
+        if not d:
+            continue
+        n0 = len(excl_hashes)
+        for p in Path(d).rglob("*"):
             if p.suffix.lower() in IMG_EXT:
                 im = cv2.imread(str(p))
                 if im is not None:
-                    rset_hashes.append(dhash(im))
-    print(f"[extract] loaded {len(rset_hashes)} R-set exclusion hashes")
+                    excl_hashes.append(dhash(im))
+        print(f"[extract] exclusion dir {d}: +{len(excl_hashes) - n0} frames")
+    print(f"[extract] total {len(excl_hashes)} exclusion hashes (zero-overlap guard)")
 
     kept_hashes = []
     manifest = []
@@ -71,28 +78,34 @@ def extract(videos, rset_dir, out_dir, every_sec=1.5, dedup_dist=8, max_frames=2
         nfr = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         print(f"[extract] {Path(vid).stem}: {fps:.1f} fps, {int(nfr)} frames (~{nfr/fps:.0f}s)")
         step = max(1, int(round(fps * every_sec)))
+        start_frame = int(round(fps * start_sec))
+        if start_frame:
+            print(f"[extract] {Path(vid).stem}: skipping first {start_sec}s ({start_frame} frames, e.g. intro/logo)")
         stem = Path(vid).stem
-        i = kept_v = skip_dup = skip_rset = 0
+        i = kept_v = skip_dup = skip_excl = skip_blank = 0
         while len(kept_hashes) < max_frames:
             ret, frame = cap.read()
             if not ret:
                 break
-            if i % step == 0:
-                h = dhash(frame)
-                if _near_dup(h, rset_hashes, dedup_dist):
-                    skip_rset += 1
-                elif _near_dup(h, kept_hashes, dedup_dist):
-                    skip_dup += 1
+            if i >= start_frame and i % step == 0:
+                if frame.std() < 5.0:                 # blank / fade-to-black frame (e.g. clip end)
+                    skip_blank += 1
                 else:
-                    t = i / fps
-                    fn = f"{stem}_t{int(t):05d}s_f{i:07d}.jpg"
-                    cv2.imwrite(str(out / fn), frame)
-                    kept_hashes.append(h)
-                    manifest.append({"file": fn, "video": stem, "sec": round(t, 2), "frame": i})
-                    kept_v += 1
+                    h = dhash(frame)
+                    if _near_dup(h, excl_hashes, dedup_dist):
+                        skip_excl += 1
+                    elif _near_dup(h, kept_hashes, dedup_dist):
+                        skip_dup += 1
+                    else:
+                        t = i / fps
+                        fn = f"{stem}_t{int(t):05d}s_f{i:07d}.jpg"
+                        cv2.imwrite(str(out / fn), frame)
+                        kept_hashes.append(h)
+                        manifest.append({"file": fn, "video": stem, "sec": round(t, 2), "frame": i})
+                        kept_v += 1
             i += 1
         cap.release()
-        print(f"[extract] {stem}: kept {kept_v}  (skipped {skip_dup} dup, {skip_rset} R-set-overlap)")
+        print(f"[extract] {stem}: kept {kept_v}  (skipped {skip_dup} dup, {skip_excl} exclusion-overlap, {skip_blank} blank)")
 
     (out / "extract_manifest.json").write_text(
         json.dumps({"total_kept": len(manifest), "every_sec": every_sec,
@@ -127,9 +140,11 @@ def _selftest() -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--videos", nargs="+")
-    ap.add_argument("--rset-dir", help="folder of the 25 R-set eval frames to EXCLUDE")
+    ap.add_argument("--exclude-dirs", nargs="+", help="folders of frames to EXCLUDE from extraction "
+                    "(R-set + disaster-train) so a new-video TEST set has ZERO overlap with anything")
     ap.add_argument("--out")
     ap.add_argument("--every-sec", type=float, default=1.5)
+    ap.add_argument("--start-sec", type=float, default=0.0, help="skip the first N seconds of each video (e.g. 10 to drop an intro/logo)")
     ap.add_argument("--dedup-dist", type=int, default=8, help="Hamming threshold for near-duplicate")
     ap.add_argument("--max-frames", type=int, default=200)
     ap.add_argument("--selftest", action="store_true")
@@ -138,7 +153,7 @@ def main() -> int:
         return _selftest()
     if not (a.videos and a.out):
         ap.error("--videos and --out required (or --selftest)")
-    extract(a.videos, a.rset_dir, a.out, a.every_sec, a.dedup_dist, a.max_frames)
+    extract(a.videos, a.exclude_dirs, a.out, a.every_sec, a.dedup_dist, a.max_frames, a.start_sec)
     return 0
 
 

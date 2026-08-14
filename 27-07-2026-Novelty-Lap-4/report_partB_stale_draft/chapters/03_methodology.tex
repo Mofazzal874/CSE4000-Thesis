@@ -1,0 +1,273 @@
+\chapter{Methodology}
+
+\section{Introduction}
+This chapter describes the detection pipeline proposed in this thesis and the
+systematic procedure used to build it. The design goal is a compact detector
+that recovers very small human targets in aerial search-and-rescue imagery
+without inflating the parameter or latency budget. Rather than adopting a single
+fixed architecture, the model is developed through an \emph{additive ablation}:
+starting from the YOLO11m baseline (reviewed in Chapter~II), one architectural
+change is introduced at a time so that the contribution of each component can be
+attributed independently. The chapter first presents the overall framework as a
+structural anchor, then details each proposed modification, the state-space neck
+variant that was explored, the ablation protocol, and a running example that
+follows a single image through the pipeline. The baseline YOLO11 architecture and
+the attention, multi-scale, and state-space concepts are covered in Chapter~II;
+here the focus is strictly on the proposed modifications. Three further methods from
+the extended phase of the work close the chapter: a tiny-aware change to the
+label-assignment step, a frequency-gated evidence branch that was explored and
+rejected, and the supervised procedure used to adapt the final model to real
+aerial footage.
+
+\section{Overall Framework}
+The complete detection pipeline is shown in Figure~\ref{fig:framework}. An input
+aerial image is letterbox-resized to $640 \times 640$ and passed through the
+YOLO11m backbone, in which the terminal C2PSA attention block is replaced by a
+Convolutional Block Attention Module (CBAM). The resulting multi-scale features
+are aggregated by a PAN--FPN neck and decoded by a four-scale detection head that
+adds a high-resolution P2 level (stride~4) to the standard P3--P5 levels. A final
+non-maximum-suppression (NMS) stage produces the human bounding boxes. The two
+proposed modifications, the CBAM attention block and the P2 detection scale,
+are highlighted in the figure; the optional state-space neck variant
+(Section~\ref{sec:mamba}) replaces selected neck blocks and is evaluated
+separately.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_overall_framework.png}{6cm}
+  \caption{Overall framework of the proposed detector. An aerial image is
+  preprocessed and passed through the YOLO11m backbone (with CBAM replacing the
+  C2PSA block after the SPPF stage), a PAN--FPN neck, and a four-scale detection
+  head; the added P2 level at stride~4 targets very small targets, and NMS yields
+  the final human detections.}
+  \label{fig:framework}
+\end{figure}
+
+\section{Detailed Methodology}
+
+\subsection{Data Preprocessing}
+All images are letterbox-resized to $640 \times 640$ so that the original aspect
+ratio is preserved and no target is geometrically distorted, which matters when
+the objects of interest are only a few pixels wide. Pixel values are normalised to
+$[0,1]$, and only the default YOLO11 training-time augmentations are used
+(mosaic, scaling, HSV jitter), with mosaic disabled for the final ten epochs
+(\texttt{close\_mosaic}). Aggressive small-object augmentation (copy--paste,
+mixup, vertical flip) was tested and discarded as a negative result, as reported
+in Chapter~IV.
+
+\subsection{Attention Enhancement: CBAM}
+The baseline YOLO11m places two C2PSA self-attention blocks (1024 channels) after
+the SPPF stage. In the proposed model these are replaced by a single CBAM module,
+which applies channel attention followed by spatial attention in sequence. Given
+an intermediate feature map $\mathbf{F} \in \mathbb{R}^{C \times H \times W}$, CBAM
+computes a channel attention map $\mathbf{M}_c$ and a spatial attention map
+$\mathbf{M}_s$,
+\begin{align}
+  \mathbf{M}_c(\mathbf{F}) &= \sigma\!\big(\mathrm{MLP}(\mathrm{AvgPool}(\mathbf{F}))
+      + \mathrm{MLP}(\mathrm{MaxPool}(\mathbf{F}))\big), \\
+  \mathbf{M}_s(\mathbf{F}') &= \sigma\!\big(f^{7\times7}\big([\mathrm{AvgPool}(\mathbf{F}');
+      \mathrm{MaxPool}(\mathbf{F}')]\big)\big),
+\end{align}
+where $\sigma$ is the sigmoid function and $f^{7\times7}$ a convolution with a
+$7\times7$ kernel. The features are refined multiplicatively,
+$\mathbf{F}' = \mathbf{M}_c(\mathbf{F}) \otimes \mathbf{F}$ and
+$\mathbf{F}'' = \mathbf{M}_s(\mathbf{F}') \otimes \mathbf{F}'$, where $\otimes$
+denotes element-wise multiplication with broadcasting. Because CBAM is lighter
+than the two C2PSA blocks it replaces, this substitution slightly \emph{reduces}
+the parameter count relative to the baseline while adding both channel and spatial
+selectivity.
+
+\subsection{Multi-Scale Detection: the P2 Head}
+The standard YOLO11 head detects at three scales: P3, P4 and P5 (strides 8, 16
+and 32). For $640 \times 640$ input, the finest of these (P3) operates on an
+$80 \times 80$ grid, so each cell already summarises an $8 \times 8$ pixel region;
+targets smaller than this are difficult to localise. The proposed model adds a
+fourth detection level, P2, at stride~4. This introduces a $160 \times 160$
+feature map in which each cell covers only a $4 \times 4$ pixel region, allowing
+the detector to resolve targets as small as approximately four pixels. The P2
+level is formed by up-sampling and fusing the corresponding high-resolution
+backbone features into the neck and attaching an additional detection branch, as
+summarised in Figure~\ref{fig:framework}. As shown in Chapter~IV, this
+high-resolution scale is the principal driver of the improvement in very-small-%
+target recall.
+
+\subsection{State-Space Neck Variant: C3k2Mamba}
+\label{sec:mamba}
+To test whether a selective state-space model (SSM) can improve feature
+aggregation in the neck, an explored variant replaces the C3k2 bottleneck at six
+neck layers (indices 13, 16, 19, 22, 25 and 28) with a C3k2Mamba block. Each such
+block performs bidirectional local-window scanning, a forward and a reverse
+selective scan over a local window (window sizes 6--8, state dimension
+$d_{\text{state}} = 4$), and is inserted by post-initialisation surgical
+replacement so that the surrounding CNN backbone and the P2 head are unchanged.
+This variant is included for completeness and evaluated under the same protocol;
+Chapter~IV reports that it does not improve accuracy while increasing both the
+parameter count and the inference latency, and it is therefore excluded from the
+recommended model.
+
+\subsection{The Additive Ablation Design}
+The four configurations evaluated in this thesis are summarised in
+Table~\ref{tab:variants}. Each row introduces exactly one change with respect to
+the preceding design, so that the effect of attention (CBAM), of the
+high-resolution detection scale (P2), of their combination, and of the
+state-space neck can each be isolated. All configurations are trained on the same
+frozen C2A split with identical optimisation settings (AdamW, $\text{lr}_0 = 0.001$,
+cosine schedule, up to 300 epochs with early stopping) and evaluated with the same
+protocol and thresholds, so that every reported difference is attributable to the
+architectural change alone. The experimental setup and these settings are detailed
+in Chapter~IV.
+
+\begin{table}[tbp]
+  \centering
+  \caption{The additive ablation. Each configuration differs from the previous one
+  by a single architectural change, isolating the contribution of attention,
+  multi-scale detection, and the state-space neck.}
+  \label{tab:variants}
+  \begin{tabular}{@{}l l l l@{}}
+    \toprule
+    Configuration & Backbone attention & Detection scales & Neck \\
+    \midrule
+    YOLO11m (baseline)   & C2PSA            & P3, P4, P5         & C3k2 \\
+    + CBAM               & CBAM             & P3, P4, P5         & C3k2 \\
+    + CBAM + P2          & CBAM             & P2, P3, P4, P5     & C3k2 \\
+    + Mamba + CBAM + P2  & CBAM             & P2, P3, P4, P5     & C3k2Mamba (6 layers) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Running Example}
+It helps to trace one image through the pipeline of Figure~\ref{fig:framework}.
+Consider a collapsed-building scene of the kind shown in
+Figure~\ref{fig:dataset_samples}(a), a $2000\times1500$ aerial photograph with more
+than thirty people scattered across rubble, most of them under sixteen pixels tall.
+The image is first letterbox-resized to $640\times640$, which preserves the aspect
+ratio so the already small figures are not stretched. The backbone extracts features
+at five scales, and the CBAM block after the SPPF stage re-weights them so that
+human-shaped regions are emphasised over the surrounding debris. The neck fuses the
+scales, and the head predicts boxes at all four levels; the added P2 level, at
+stride four, is the one that fires on the smallest figures, which the stride-eight
+P3 level would summarise into a single cell. Non-maximum suppression then removes
+overlapping boxes, so that a cluster of nearby people is kept as separate detections
+rather than merged. The output is one bounding box per recovered person, which is
+what an operator reviews.
+
+\subsection{Tiny-Aware Label Assignment}
+\label{sec:assignmethod}
+The methods so far change the network. The extended study of
+Section~\ref{sec:partb} adds three methods that leave the recommended
+architecture untouched, described in this and the next two subsections. The
+first acts on the step that decides which predictions are trained at all. During
+training, the task-aligned assigner scores every candidate prediction against
+every ground-truth box and selects the top candidates as positive samples, using
+the alignment score
+\begin{align}
+  t = s^{\,p} \, u^{\,q},
+\end{align}
+where $s$ is the classification score of the candidate, $u$ is the localisation
+overlap between the candidate box and the ground-truth box, and $p$ and $q$ are
+fixed exponents. The default overlap is the complete IoU, which is the weak
+point for this task: for a person a few pixels wide, a one-pixel offset between
+candidate and ground truth can drive the IoU to zero, so the ranking among
+candidates for the smallest targets carries almost no signal, and the smallest
+people are trained on poorly chosen samples. Prior work on tiny-object
+benchmarks reached the same diagnosis and moved the fix into the assignment
+step, as reviewed in Chapter~II.
+
+The modification keeps the assigner and replaces only its overlap term. For a
+ground-truth box $g$ and a candidate $b$ with centres $(c_x, c_y)$, widths $w$,
+and heights $h$, the squared 2-Wasserstein distance between the Gaussians fitted
+to the two boxes is
+\begin{align}
+  W_2^2(g,b) = (c_{x}^{g}-c_{x}^{b})^2 + (c_{y}^{g}-c_{y}^{b})^2
+             + \tfrac{1}{4}\big[(w^{g}-w^{b})^2 + (h^{g}-h^{b})^2\big],
+\end{align}
+and the normalised Wasserstein similarity~\cite{wang2021nwd} maps it into
+$(0,1]$ as
+\begin{align}
+  S_{\mathrm{NWD}}(g,b) = \exp\!\big(-\,W_2(g,b)\,/\,C\big),
+\end{align}
+with the scale constant $C=12.8$ set to the median person size of the dataset in
+pixels. Unlike the IoU, this similarity stays informative for disjoint tiny
+boxes: a near-miss candidate scores higher than a distant one even when both
+have zero overlap. The overlap term used by the assigner becomes the blend
+\begin{align}
+  u = (1-\alpha)\,\mathrm{CIoU}(g,b) + \alpha\, S_{\mathrm{NWD}}(g,b),
+  \label{eq:blend}
+\end{align}
+where $\alpha \in [0,1]$ sets how far the assignment trusts the scale-robust
+similarity over the IoU; $\alpha=0$ recovers the unmodified assigner.
+Figure~\ref{fig:assignmech} places the blend inside the assignment pipeline. The
+change affects training only, adds no parameters and no inference cost, and is
+distinct from using the Wasserstein distance inside the regression loss, which
+was also tried and did not help; Chapter~IV reports the sweep over $\alpha$ and
+the matched comparison at $\alpha=0.5$.
+
+\begin{figure}[tbp]
+  \centering
+  \figorplaceholder{figures/fig_assign_mechanism.png}{6.5cm}
+  \caption{Tiny-aware label assignment. For each ground-truth and candidate box
+  pair the assigner computes a classification score $s$ and a localisation
+  overlap $u$; the proposed change replaces $u$ with a blend of the complete IoU
+  and the normalised Wasserstein similarity, weighted by $\alpha$, before the
+  usual top-$k$ selection of positive training samples. The network, the loss,
+  and inference are unchanged.}
+  \label{fig:assignmech}
+\end{figure}
+
+\subsection{A Frequency-Gated Evidence Branch (Explored)}
+\label{sec:fccgmethod}
+The second added method is an architecture branch that was built, tested, and
+rejected; it is described so that the negative result of Chapter~IV is
+interpretable. A degradation probe showed that the detector's tiny-object signal
+lives almost entirely in the highest spatial-frequency band of the image, which
+suggested making that band explicit. The branch extracts high-frequency
+evidence from the finest feature maps and multiplies it by a gate computed with
+large-kernel convolutions from the surrounding context, the intent being to keep
+high-frequency responses where context indicates a plausible person and suppress
+them over clutter. The gated evidence is added back at the two finest fusion
+points of the neck (the P3 and P2 seams), adding $0.55$~M parameters. The gates
+train stably and remain active, so the branch fails for a substantive reason
+rather than a mechanical one: whatever it contributes, the CBAM~+~P2 features
+already carry.
+
+\subsection{Supervised Adaptation to Real Imagery}
+\label{sec:adaptmethod}
+The third added method carries the trained detector from composited training
+data to real footage. Real aerial frames were collected from three sources: the
+author's own drone flights over open ground at 10, 30, and 50~m altitude,
+recorded in 4K; campus scenes with partial occlusion from the same platform; and
+frames sampled from published news footage of two disaster events, a flood and a
+building collapse. Frames were extracted at fixed intervals, de-duplicated with
+a perceptual hash, and annotated by the author with segmentation-assisted box
+drawing in a web labelling tool, with every visible person boxed and frames
+containing no people kept as explicit negatives. An automated audit
+(degenerate, duplicate, undersized, and oversized boxes) and a visual overlay
+check of every frame preceded any training use. Evaluation frames are frozen:
+the same perceptual hash guarantees that no training frame is a near-duplicate
+of any evaluation frame.
+
+Adaptation is a supervised fine-tune of the assignment model from
+Section~\ref{sec:assignmethod}. The training mixture holds the full C2A training
+split together with the real training frames repeated twenty times, so that the
+few hundred real frames are not drowned out by the 6{,}135 synthetic images while
+the synthetic distribution is retained; 4K frames are downscaled to 1{,}280~px on
+the long side beforehand. The fine-tune runs at a reduced learning rate
+($\mathrm{lr}_0 = 5\times10^{-4}$, cosine schedule) for at most 80 epochs with
+the same dual early stopping as the main protocol, and the assignment blend of
+Equation~\eqref{eq:blend} stays active. This recipe deliberately contains no
+domain-adaptation machinery beyond data mixing: it measures what a small
+labelled budget buys with the simplest reliable procedure, which makes the
+result a floor for more elaborate methods rather than a claim of novelty in the
+adaptation itself.
+
+\section{Conclusion}
+This chapter presented the proposed detector as an additive refinement of YOLO11m:
+CBAM attention in place of C2PSA, a high-resolution P2 detection scale for very
+small targets, and an explored state-space neck variant. The overall framework
+anchors these modifications, and the additive ablation
+design ensures that each component's contribution can be measured independently.
+The extended methods change how the detector is trained rather than what it is:
+a Wasserstein-based blend inside the label assigner, a rejected frequency-gated
+branch, and a data-mixing fine-tune that adapts the model to real footage. The
+next chapter reports the experimental setup and the quantitative and
+qualitative results of the ablation and of the extended study.

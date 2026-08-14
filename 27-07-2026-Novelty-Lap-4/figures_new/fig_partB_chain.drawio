@@ -1,0 +1,33 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="fig_partB_chain" id="partbchain">
+    <mxGraphModel dx="1400" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b1" value="CBAM + P2&#10;(recommended model,&#10;official split AP₅₀ 0.853)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#FFFFFF;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="Scene-disjoint re-split&#10;(98% scene leakage audited;&#10;−1.6 AP₅₀, protocol hardened)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="340" y="120" width="250" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="Tiny-aware assignment&#10;u = (1−α)·CIoU + α·NWD, α = 0.5&#10;kept: +2.1 pts recall &lt; 8 px" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="660" y="120" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" value="Real-data fine-tune&#10;C2A + drone + campus + disaster&#10;(248 labelled frames, ×20 oversample)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="120" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" value="One model,&#10;five held-out test domains&#10;(C2A / drone / disaster ×2 / campus)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#FFFFFF;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="120" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rej" value="Frequency-gated evidence branch&#10;tested, no gain (ΔAP_S −0.6, +0.55 M params)&#10;rejected, reported as negative" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=2;fillColor=#F5F5F5;strokeColor=#000000;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="310" width="290" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="tried and dropped" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontFamily=Times New Roman;fontSize=12;" edge="1" parent="1" source="b2" target="rej"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

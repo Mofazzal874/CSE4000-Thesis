@@ -41,10 +41,29 @@
       "Bash(echo \"\")",
       "Bash(find runs *)",
       "Bash(python -m py_compile sard_eval.py)",
-      "Bash(python -m py_compile sard_fewshot.py)"
+      "Bash(python -m py_compile sard_fewshot.py)",
+      "Bash(python -m py_compile 27_disaster_extract.py)",
+      "Bash(python 27_disaster_extract.py --selftest)",
+      "Bash(awk 'NR==1||NR==8||NR==16||NR==24||NR==32||NR==40||NR==47')",
+      "Bash(python montage_xevent.py)",
+      "Bash(python 22_coco_singleclass.py --tree \"d:\\\\Academics\\\\thesis folder\\\\Drone Shoot\\\\extracted_v1\\\\annotations\\\\disaster-xevent-v1\")",
+      "Bash(python render_xevent_boxes.py)",
+      "Bash(mkdir -p \"27-07-2026-Novelty-Lap-4/report_partB_stale_draft/chapters\" \"27-07-2026-Novelty-Lap-4/report_partB_stale_draft/frontmatter\")",
+      "Bash(cp Defense/draft1_30_6_26/chapters/*.tex \"27-07-2026-Novelty-Lap-4/report_partB_stale_draft/chapters/\")",
+      "Bash(cp Defense/draft1_30_6_26/frontmatter/abstract.tex \"27-07-2026-Novelty-Lap-4/report_partB_stale_draft/frontmatter/\")",
+      "Bash(cp Defense/draft1_30_6_26/references.bib Defense/FINDINGS_AND_SOURCES.md \"27-07-2026-Novelty-Lap-4/report_partB_stale_draft/\")",
+      "Bash(git checkout *)",
+      "Bash(cd \"d:/Academics/thesis folder/Defense\" && cp -r draft1_30_6_26 draft2_06_8_26 && cd draft2_06_8_26 && rm -f main.pdf *.aux *.log *.blg *.bbl *.bcf *.toc *.lot *.lof *.out *.run.xml chapters/*.aux frontmatter/*.aux 2>/dev/null; echo \"draft2 created \\(build artifacts cleaned\\)\" && ls -1 | head -12 && echo \"\" && echo \"=== docs at Defense root \\(main-tip state\\) ===\" && cd .. && ls -1 *.md *.MD 2>/dev/null)",
+      "Read(//d/Academics/**)",
+      "Bash(cd \"d:/Academics/thesis folder/Defense/draft2_06_8_26\" && rm -f *.pdf chapters.rar && echo \"draft2 cleaned:\" && ls -1 && echo \"\" && cat _map.txt 2>/dev/null | head -30)",
+      "Bash(python -)",
+      "Bash(python make_partB_figs.py)",
+      "Bash(cp fig_gamma_dose.png fig_sim2real_bars.png \"d:/Academics/thesis folder/Defense/draft2_06_8_26/figures/\")",
+      "Bash(wsl.exe bash *)"
     ],
     "additionalDirectories": [
-      "C:\\Users\\Dell\\AppData\\Local\\Temp"
+      "C:\\Users\\Dell\\AppData\\Local\\Temp",
+      "D:\\Academics\\thesis folder\\Defense"
     ]
   }
 }

@@ -1,0 +1,46 @@
+% ---------- ABSTRACT (spec section 4) : page iii, <= 500 words ----------
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Abstract}
+\frontheading{Abstract}
+
+Locating people in aerial imagery is central to disaster search and rescue, but
+the targets are often only a few pixels wide, partially occluded, and set against
+cluttered backgrounds, which defeats standard object detectors. This thesis asks
+which changes to a modern detector actually help for this task, and answers in
+two phases: a controlled architecture ablation, and an extended study that
+hardens the protocol and carries the model to real footage. Starting from a
+YOLO11m baseline, an additive ablation introduces one change at a time and
+evaluates every configuration on the C2A disaster-imagery dataset under one
+training and evaluation protocol. The changes are channel-and-spatial attention
+(CBAM) in place of the baseline self-attention block, a high-resolution P2
+detection scale at stride four, and a bidirectional state-space (Mamba) neck.
+The P2 scale is the effective change: it raises recall of the smallest
+($<8$~px) targets from $0.743$ to $0.757$ and $\mathrm{AP}_{50}$ from $0.843$
+to $0.853$ at a cost of about half a million parameters. CBAM is nearly free
+and lowers the parameter count below the baseline while holding accuracy. The
+state-space neck adds $2.4$~million parameters and roughly triples inference
+latency without improving any accuracy metric, and is excluded. The recommended
+CBAM~+~P2 detector, at $19.6$~million parameters, matches or exceeds all but one
+published detector on the same dataset at about a third of its size, and runs in
+real time on a single consumer GPU. The extended study then re-examines the
+ground these results stand on. An audit finds that the official split shares
+98\% of its test scenes with training; a scene-disjoint re-split costs $1.6$
+points of $\mathrm{AP}_{50}$ and becomes the protocol for all further work.
+Under it, the productive lever moves from architecture to training supervision:
+blending a normalised Wasserstein similarity into the task-aligned label
+assigner raises sub-8-pixel recall by $2.1$ points (95\% confidence interval
+$[1.8, 2.4]$) at a measured cost on larger sizes, while a frequency-gated
+evidence branch fails the same paired test and is reported as a second negative
+result beside the state-space neck. Real aerial footage collected and annotated
+for this thesis (drone flights at three altitudes, occluded campus scenes, and
+frames from news video of disaster events) then measures transfer. Zero-shot,
+the synthetic-trained model reaches $\mathrm{AP}_{50}$ $0.335$ on drone footage
+and $0.133$ on real disaster frames; supervised fine-tuning on a few hundred
+labelled real frames raises these to $0.795$ and $0.411$ while the source
+benchmark moves by less than a point. A disaster event held out from all
+training bounds the claim: there the adapted model's gain is not statistically
+significant, and sub-8-pixel recall on real disaster footage is zero for every
+model tested. The thesis contributes a controlled account of where small-object
+gains come from on this task, a leakage-audited protocol, an assignment-level
+mechanism with quantified trade-offs, an annotated real-imagery test suite, and
+honest bounds on what a small labelling budget buys. The same lesson appears
+twice: training supervision moved the metric where added architecture did not.

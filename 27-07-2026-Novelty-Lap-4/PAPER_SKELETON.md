@@ -38,7 +38,7 @@ efficiency on the 4070 Ti S.
 | assignment at full protocol (S3) | ✅ | S3, MANIFEST |
 | **matched control (α=0) full protocol** — clean D2 pair | ⏳ PC-1 running | s3_control_full |
 | **sim-to-real drone: zero-shot 0.324 → 0.725 AP50 (+40pp)** | ✅ | D3, MANIFEST |
-| R-set disaster retrain: 0.134→**0.411** AP50 (3x; drone-tune did nothing); C2A held −0.7pp; drone/campus held | ✅ | MANIFEST 08-06 |
+| disaster fine-tune: within-video R-set 3× BUT cross-event (unseen AP clip) only +1.7pp over base (within noise) → target-specific, honest limit; C2A/drone/campus held | ✅ | MANIFEST 08-06 |
 | baselines: G1 CBAM+P2 (thesis, yolo11m) + cite YOLOv9-e C2A bar | ✅ | MANIFEST (YOLO26m moved to lap-5) |
 | efficiency (params/GFLOPs/latency) | ✅ | run folders |
 

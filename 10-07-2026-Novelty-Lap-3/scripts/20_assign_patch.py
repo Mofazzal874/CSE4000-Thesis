@@ -255,7 +255,7 @@ def _train(args) -> int:
               patience=(args.patience if args.patience > 0 else args.epochs),
               amp=not args.no_amp, project=str(RUNS), name=name,
               exist_ok=True, val=True, plots=True, deterministic=True, cache=cache_val,
-              save_period=-1, resume=resumed)
+              save_period=args.save_period, resume=resumed)
     if args.device is not None:
         kw["device"] = args.device
     model.train(**kw)
@@ -284,6 +284,7 @@ if __name__ == "__main__":
     ap.add_argument("--mem-frac", type=float, default=0.90)
     ap.add_argument("--reserve-gb", type=float, default=0.0)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--save-period", type=int, default=-1, help="save epoch<N>.pt every N epochs (power-cut fallback; -1=off, only best/last). Use 25 for long multi-seed runs.")
     ap.add_argument("--cache", default="ram")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--resume", action="store_true", help="safe to always pass (power-cut recovery)")

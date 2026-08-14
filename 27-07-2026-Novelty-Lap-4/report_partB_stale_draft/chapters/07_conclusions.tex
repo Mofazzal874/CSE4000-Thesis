@@ -1,0 +1,71 @@
+\chapter{Conclusions}
+
+\section{Summary}
+This thesis studied how to detect very small human targets in aerial disaster
+imagery with a model small enough to deploy, and it did so in two phases. In the
+first, an additive ablation on a YOLO11m baseline measured the effect of CBAM
+attention, a high-resolution P2 detection scale, and a state-space neck on the
+C2A dataset under one training and evaluation protocol. The P2 scale was the
+component that mattered: it raised very-tiny recall and $\mathrm{AP}_{50}$ at a
+small parameter and latency cost. CBAM was near-free and slightly improved
+operational scores while reducing model size. The state-space neck added
+parameters and roughly tripled latency without improving accuracy, and was
+excluded. The recommended CBAM~+~P2 model is competitive with much larger
+published detectors on the same data at about a third of their parameter count.
+The second phase hardened and extended that result. A split audit showed the
+official benchmark leaks scenes between training and test sets at a measured
+cost of $1.6$ points of $\mathrm{AP}_{50}$, and all further work moved to a
+scene-disjoint protocol. Under it, a blend of a normalised Wasserstein
+similarity into the task-aligned assigner raised sub-8-pixel recall by $2.1$
+points with a bootstrap interval that excludes zero, at a measured cost on
+larger targets; a frequency-gated architecture branch failed the same paired
+test and joined the state-space neck as a documented negative. Real footage
+collected and annotated for this thesis then showed that the synthetic-trained
+model transfers poorly zero-shot ($\mathrm{AP}_{50}$ $0.335$ on drone imagery,
+$0.133$ on real disaster frames), that a labelled budget of a few hundred frames
+closes most of the drone gap ($0.795$) and triples the within-video disaster
+score ($0.411$) at almost no cost to the source benchmark, and that this
+adaptation does not carry to a disaster event held out from training, where the
+gain over the un-adapted model is not statistically significant. Two findings
+organise the whole: on this task, training supervision beat added architecture
+everywhere it was tried, and adaptation gains are specific to the footage they
+come from.
+
+\section{Limitations}
+The study has clear limits. The primary benchmark, C2A, is semi-synthetic, and
+its paste-based annotations put a ceiling on localisation accuracy that all
+compared models share. Every headline training run uses a single seed; the
+bootstrap intervals of Chapter~IV treat test-set variation only, and the
+multi-seed replication of the assignment pair was still in progress at the time
+of writing. The real evaluation sets are small (23 to 60 frames each), so their
+scores carry wide intervals and should be read as evidence of direction rather
+than precise levels. The within-video disaster result shares source videos
+between the training and evaluation frames, deliberately and with de-duplication,
+and is reported as same-event adaptation, not generalisation; the honest
+cross-event number is the one from the held-out event. Recall of sub-8-pixel
+people in real disaster footage is zero for every model tested here, so the
+regime the thesis targets on synthetic data remains open on real data. The
+adaptation fine-tune also cost 13 points of precision on the held-out event, so
+recall-side gains were partly paid for in false alarms. On-device measurement on
+drone hardware is still not covered.
+
+\section{Recommendations and Future Works}
+The limits above set the agenda. The first need is scale on the real-disaster
+side: the cross-event result shows that 60 frames from two events adapt the
+model to those events only, so a multi-event disaster training set, on the order
+of many events rather than many frames per event, is the most direct route to
+generalisation, and the annotation pipeline built here (frame extraction,
+perceptual-hash de-duplication, assisted labelling, automated audits) makes each
+additional event cheap. The multi-seed replication of the assignment pair should
+be completed and folded into the reported table. The sub-8-pixel failure on real
+footage suggests combining the assignment blend with higher-resolution real
+training data, or with the slicing of Chapter~IV at inference time, and
+measuring whether the two compose. Cross-dataset validation on real corpora such
+as SARD~\cite{sambolek2021sard}, HERIDAL~\cite{bozic2019heridal}, and
+VisDrone~\cite{zhu2021visdrone} remains worthwhile. On the deployment side, the
+lightweight variant should be exported and measured on embedded hardware. The
+architecture-side negatives do not close their directions: a state-space or
+frequency-domain design built specifically around the geometry of sub-8-pixel
+targets, rather than adapted from generic modules, remains untested, and the
+newest YOLO generation should be re-run through the same protocol as a stronger
+starting point.

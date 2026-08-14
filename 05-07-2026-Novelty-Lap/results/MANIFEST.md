@@ -150,6 +150,42 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
   (C2A held, drone held, R-set tripled, campus solid) -> ONE unified real-domain model. Flips the earlier
   "domain-specific limitation" into a demonstrated FIX (target-domain labels necessary; drone labels don't transfer).
 
+### 2026-08-06 - pc1 - LAP4 - CROSS-EVENT test (unseen AP Israel disaster clip, 23 frames) - HONEST: R-set gain was target-specific
+- Path: runs_s1\s1_eval_{d3all_xevent,s3_xevent}.json (+ pngs/env/scorecorr). Set = disaster-xevent-v1 (23 frames,
+  1 AP news clip, DISJOINT from R-set+disaster-train via dHash guard). Small/medium people (median 28px, 0 very-tiny).
+- PURPOSE: kill the "R-set shares videos with disaster-train" attack by testing on a genuinely unseen event.
+- RESULT (does disaster fine-tuning generalize cross-event?): compare s3_assign_full (NO disaster) vs d3_all on the SAME unseen set:
+  | on unseen Israel event | AP50 | F2 | AP_small | small-recall | precision@25 |
+  |---|---|---|---|---|---|
+  | s3 (C2A+assign, no disaster) | 0.396 | 0.435 | 0.256 | 0.502 | 0.732 |
+  | d3_all (disaster-trained)   | 0.413 | 0.451 | 0.235 | 0.461 | 0.601 |
+  | delta from disaster training | +1.7 | +1.6 | -2.1 | -4.2 | -13.1 |
+- HONEST VERDICT: disaster fine-tuning adds only +1.7pp AP50 (WITHIN NOISE, 23 frames) on an unseen event, at a -13pp
+  precision cost. The R-set +27.7pp was INFLATED by (a) within-video overlap with training clips + (b) R-set being the
+  tiny regime (C2A weak there, 0.13). On same-size unseen data the gain vanishes. => target-VIDEO adaptation, NOT
+  disaster-domain generalization. Silver lining: the C2A+assignment BASE model transfers to unseen real disaster
+  small/medium people ON ITS OWN (0.40 AP50); it fails specifically on <16px real people. Cross-event test = defensibility
+  WIN (measured + reported honestly; kills the same-video attack). Paper: demote disaster to an honest case study
+  (within-video strong, cross-event marginal); headline = D2 assignment + DRONE sim-to-real (+46pp). Future work: broader disaster data.
+
+### 2026-08-06 - pc1 - LAP4 - BOOTSTRAP significance (paired image-level, 28_bootstrap_sig, 1000 boots) - D2 gain SIGNIFICANT
+- Path: runs_s1\bootstrap_s3_control_full_vs_s3_assign_full.json + bootstrap_s3_xevent_vs_d3all_xevent.json.
+- Method: resample test images w/ replacement (paired A/B), recompute metric, delta=B-A -> 95% CI + two-sided p. No GPU/retrain.
+- D2 pair (s3_control_full vs s3_assign_full, n=2040): the tiny-object claim is significant vs test-set noise:
+  | metric | delta | 95% CI (pp) | p |
+  |---|---|---|---|
+  | VT-recall<8 | +2.08 | [1.77, 2.38] | <0.001 SIG |
+  | F2 | +0.27 | [0.03, 0.50] | 0.024 SIG |
+  | AP50 | -0.08 | [-0.32, 0.17] | 0.54 n.s. |
+  | tiny 8-16 | -1.15 | [-1.48,-0.84] | <0.001 (sig cost) |
+  | small 16-32 | -0.95 | [-1.4,-0.5] | <0.001 (sig cost) |
+  | medium 32-96 | -13.2 | [-17.9,-9.3] | <0.001 (sig cost, n=410) |
+  => genuine tiny-SPECIALIST reallocation, statistically validated. (AP_small not bootstrapped-pycocotools too slow; VT-recall = the clean tiny claim.)
+- Cross-event (s3_xevent vs d3all_xevent, n=23): AP50 +1.69 [-3.19,5.69] p=0.47 n.s.; F2 +1.62 p=0.41 n.s.;
+  precision@25 -13.1 [-25.3,-2.3] p=0.018 (sig WORSE). => disaster fine-tune does NOT significantly generalize
+  cross-event; honest limitation CONFIRMED with a p-value. NEXT: 3-seed D2 runs add the training-variance half
+  (bootstrap = test-variance only). Bootstrap alone already JSTARS-strength.
+
 ### 2026-08-05 - YOLO26m PARKED to lap-5 (removed from the lap-4 yolo11m story)
 - Decision: lap-4 = a clean yolo11m story. YOLO26m gets its OWN lap (novelty-lap-5): base + CBAM + P2 +
   assignment + sim-to-real, to test whether the newer backbone subsumes or complements our contributions.

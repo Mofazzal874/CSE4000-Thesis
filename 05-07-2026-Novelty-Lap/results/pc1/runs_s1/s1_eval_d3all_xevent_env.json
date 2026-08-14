@@ -1,0 +1,31 @@
+{
+  "tag": "d3all_xevent",
+  "utc": "2026-08-12T05:21:45Z",
+  "weights": "runs_d3\\d3_all\\weights\\best.pt",
+  "weights_md5": "3722c3ff2aaa349f6929984750ddf423",
+  "gt_json": "E:\\Thesis_mofazzal_2007074\\drone_data\\annotations\\disaster-xevent-v1\\test\\_annotations_sc.coco.json",
+  "gt_md5": "060cf2b385ac424947da2802534b87d9",
+  "conf_floor": 0.001,
+  "iou_match": 0.5,
+  "versions": {
+    "python": "3.11.9",
+    "ultralytics": "8.4.56",
+    "torch": "2.12.0+cu126",
+    "numpy": "2.4.4",
+    "pycocotools": "installed"
+  },
+  "args": {
+    "variant": "control",
+    "weights": "runs_d3\\d3_all\\weights\\best.pt",
+    "tag": "d3all_xevent",
+    "images_dir": "E:\\Thesis_mofazzal_2007074\\drone_data\\annotations\\disaster-xevent-v1\\test",
+    "gt_json": "E:\\Thesis_mofazzal_2007074\\drone_data\\annotations\\disaster-xevent-v1\\test\\_annotations_sc.coco.json",
+    "device": "0",
+    "imgsz": 640,
+    "limit": 0,
+    "profile": false,
+    "no_plots": false,
+    "compare": null,
+    "selftest": false
+  }
+}
