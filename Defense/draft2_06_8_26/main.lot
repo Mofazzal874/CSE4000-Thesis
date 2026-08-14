@@ -1,0 +1,29 @@
+\lotlofhead {Table}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Position of this thesis relative to prior work.}}{14}{table.caption.17}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Layer configuration of the proposed detector at 640-px input.}}{17}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Additive ablation configurations, one change per step.}}{22}{table.caption.23}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Training configuration shared by all four models.}}{30}{table.caption.27}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces C2A dataset split used for all experiments.}}{32}{table.caption.28}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Preliminary attention-module comparison on C2A.}}{34}{table.caption.31}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Additive ablation results on the C2A test set (COCO protocol).}}{35}{table.caption.32}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Per-size recall on the C2A test set with ground-truth counts.}}{36}{table.caption.34}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Operating threshold and calibration per configuration.}}{36}{table.caption.35}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Comparison with published detectors on the C2A test set~\blx@tocontentsinit {0}\cite {nihal2024c2a}.}}{40}{table.caption.40}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces SAHI slice-size sweep and TTA for the recommended model.}}{41}{table.caption.41}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces Scene-leakage cost for the recommended model.}}{43}{table.caption.43}%
+\contentsline {table}{\numberline {4.10}{\ignorespaces Dose--response of the assignment blend in fifty-epoch pilots.}}{43}{table.caption.44}%
+\contentsline {table}{\numberline {4.11}{\ignorespaces Matched full-protocol pair differing only in the assignment blend.}}{45}{table.caption.46}%
+\contentsline {table}{\numberline {4.12}{\ignorespaces Real-imagery sets built for the extended study.}}{45}{table.caption.47}%
+\contentsline {table}{\numberline {4.13}{\ignorespaces Final adapted model on every held-out evaluation set.}}{47}{table.caption.50}%
+\contentsline {table}{\numberline {4.14}{\ignorespaces Cost estimate of the experimental workstation (Dhaka retail, mid-2026).}}{49}{table.caption.51}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Measured training cost and CO$_2$ of the four configurations.}}{54}{table.caption.52}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Detector-family benchmark used to select the baseline.}}{61}{table.caption.55}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Architectural variants attempted during the project, with outcome and decision.}}{63}{table.caption.57}%
+\contentsfinish 

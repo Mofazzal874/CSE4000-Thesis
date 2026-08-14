@@ -1,0 +1,54 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Detection head tiles (decreasing)" id="head-tiles">
+    <mxGraphModel dx="900" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="820" pageHeight="360" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="ttl" value="Four-scale detection head: grid gets coarser P2 &#8594; P5 (tile shrinks)" style="text;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="12" width="640" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- bottoms aligned at y=250; size decreases P2 -> P5 -->
+        <mxCell id="tP2" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#5B7FB4;strokeColor=#FF0000;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="lP2" value="P2 &#183; 160&#215;160&#10;stride 4 (added)" style="text;html=1;fontFamily=Times New Roman;fontSize=11;fontColor=#CC0000;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="256" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tP3" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#5B7FB4;strokeColor=#31507E;" vertex="1" parent="1">
+          <mxGeometry x="255" y="140" width="145" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="lP3" value="P3 &#183; 80&#215;80&#10;stride 8" style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="255" y="256" width="145" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tP4" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#5B7FB4;strokeColor=#31507E;" vertex="1" parent="1">
+          <mxGeometry x="430" y="168" width="112" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="lP4" value="P4 &#183; 40&#215;40&#10;stride 16" style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="430" y="256" width="112" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tP5" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#5B7FB4;strokeColor=#31507E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="192" width="86" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="lP5" value="P5 &#183; 20&#215;20&#10;stride 32" style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="570" y="256" width="86" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- decreasing-size guide arrow -->
+        <mxCell id="gArrow" value="finer grid, smaller detectable objects  &#8594;  coarser grid" style="text;html=1;fontFamily=Times New Roman;fontSize=10;fontStyle=2;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="620" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ar" style="html=1;endArrow=block;strokeColor=#888888;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="330" as="sourcePoint" />
+            <mxPoint x="620" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

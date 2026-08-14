@@ -1,0 +1,113 @@
+\chapter{Conclusions}
+
+\section{Summary}
+This thesis studied how to detect very small human targets in aerial disaster
+imagery with a model small enough to deploy. Starting from a YOLO11m
+baseline, an additive ablation measured the effect of CBAM attention, a
+high-resolution P2 detection scale, and a state-space neck on the C2A dataset
+under one training and evaluation protocol. The P2 scale was the component
+that mattered: it raised very-tiny recall from $0.743$ to $0.757$ and
+$\mathrm{AP}_{50}$ from $0.843$ to $0.853$ at a cost of half a million
+parameters and one millisecond of latency. CBAM was near-free, removing about
+one million parameters while slightly improving the operational scores. The
+state-space neck added $2.4$~million parameters and $2.8$ times the latency
+without improving any accuracy metric, and was excluded on that evidence. The
+recommended CBAM~+~P2 detector reaches $\mathrm{AP}_{50}$ $0.853$ and $F_2$
+$0.844$ at $19.6$~million parameters and $14.6$~ms per image, second among
+all published detectors on this benchmark and a third of the leader's size;
+test-time augmentation at $1280$~px lifts very-tiny recall further, from
+$0.758$ to $0.850$, at $60$~ms per image without retraining. The whole
+training campaign was carbon-accounted at $9.0$~kg of CO$_2$.
+
+An extended phase then hardened and stretched these results. A split audit
+found 98\% scene sharing in the official benchmark and re-based everything on
+a scene-disjoint split, at a measured cost of $1.6$ points of
+$\mathrm{AP}_{50}$ and no changed conclusion. With the architecture search
+stalled, the productive lever moved to training supervision: a Wasserstein
+blend inside the label assigner raised sub-8-pixel recall by $2.08$ points
+with a bootstrap interval that excludes zero, while a frequency-gated
+evidence branch failed its paired test and joined the state-space neck as a
+documented negative. Real footage collected for this thesis completed the
+picture. The synthetic-trained model transfers poorly zero-shot
+($\mathrm{AP}_{50}$ $0.335$ on drone footage, $0.133$ on real disaster
+frames), a few hundred labelled frames close most of the drone gap ($0.795$)
+and triple the within-video disaster score ($0.411$) at almost no cost to
+the source benchmark, and a disaster event held out from all training shows
+where that adaptation stops: there the gain is not statistically
+significant. Twice over, supervision moved the metric where added
+architecture did not.
+
+\section{Limitations}
+The study has clear limits, summarised here so the results are read at their
+proper weight.
+\begin{itemize}
+  \item \textbf{Semi-synthetic primary benchmark.} The main results are on
+        C2A, whose scenes composite real backgrounds with segmented human
+        figures, and whose paste-based annotations cap localisation accuracy
+        for every model compared. The extended phase measured the transfer
+        gap directly instead of leaving it open, and the gap is large:
+        zero-shot $\mathrm{AP}_{50}$ falls from $0.844$ on C2A to $0.335$ on
+        the drone test and $0.133$ on real disaster frames.
+  \item \textbf{Small real evaluation sets.} The real test sets hold 23 to
+        60 frames each, so their scores carry wide intervals and should be
+        read as evidence of direction, not precise levels. The within-video
+        disaster result also shares source videos between training and
+        evaluation frames, deliberately and with de-duplication; the honest
+        cross-event number is the held-out one, and it is not significant.
+  \item \textbf{Sub-8-pixel people in real footage remain undetected.} On
+        the disaster R-set, recall below 8~px is zero for every model
+        tested, across all 54 such instances. The regime the thesis targets
+        on synthetic data is still open on real data, and the adaptation
+        fine-tune also paid 13 points of precision on the held-out event.
+  \item \textbf{Single seed per training run.} The ablation and the extended
+        runs use seed 0. The bootstrap intervals of
+        Section~\ref{sec:stats} treat test-set variation only; replicate
+        runs of the assignment pair at two further seeds were in progress at
+        the time of writing.
+  \item \textbf{Sparse medium-target evidence.} The medium band holds only
+        317 of roughly 72{,}500 test instances on the official split (410 on
+        the scene-disjoint split), so its recall estimates are noisy.
+  \item \textbf{No on-device measurement.} Latency was measured on a desktop
+        GPU. Embedded or airborne hardware will behave differently, and no
+        field trial with a drone was performed.
+\end{itemize}
+
+\section{Recommendations for Future Works}
+The limitations above set the agenda, and the extension phase has already
+converted two earlier recommendations into results: the enhanced dataset
+with the author's own imagery now exists as the real-imagery suite of
+Table~\ref{tab:owndata}, and its adaptation study is reported in
+Section~\ref{sec:realresults}. What follows is what remains.
+\begin{itemize}
+  \item \textbf{Multi-event disaster data.} The cross-event result shows
+        that 60 frames from two events adapt the model to those events, not
+        to the disaster domain. A disaster training set spanning many
+        events, rather than many frames per event, is the most direct route
+        to generalisation, and the annotation pipeline built here makes each
+        added event cheap.
+  \item \textbf{Completing the seed replication.} The replicate runs of the
+        assignment pair should be finished and folded into
+        Table~\ref{tab:d2pair} as a mean and spread, closing the last gap in
+        the statistical story.
+  \item \textbf{Server-side deployment.} Work is under way to serve the
+        recommended model behind a streaming pipeline in which a drone
+        transmits footage to a ground server that runs detection and returns
+        flagged frames to the operator. This keeps the airborne payload
+        light, allows the $1280$-px test-time augmentation mode when the
+        link budget permits, and is the practical route to field use.
+  \item \textbf{Composing the levers.} The assignment blend, the P2 scale,
+        and inference-time slicing all target the same sub-8-pixel band by
+        different mechanisms; whether they stack on real footage, where that
+        band is still lost entirely, is an open and testable question.
+  \item \textbf{Validation on public rescue imagery.} Zero-shot and
+        fine-tuned evaluation on collections such as
+        SARD~\cite{sambolek2021sard}, HERIDAL~\cite{bozic2019heridal},
+        VisDrone~\cite{zhu2021visdrone}, and
+        Okutama-Action~\cite{barekatain2017okutama} would ground the
+        generalisation claim beyond the author's own sets.
+  \item \textbf{A purpose-built state-space design.} Two rejected branches
+        do not close the architecture direction: a neck designed around the
+        geometry of very small targets, rather than a generic scan or a
+        generic frequency gate, remains worth investigating, now with a
+        validated protocol and a statistical harness to test it against.
+\end{itemize}

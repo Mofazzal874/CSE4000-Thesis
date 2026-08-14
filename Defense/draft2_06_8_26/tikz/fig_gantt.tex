@@ -1,0 +1,45 @@
+% ============================================================================
+%  fig_gantt.tex -- thesis timeline as a pgfgantt chart (Chapter I).
+%  Two CSE-4000 terms of 13 weeks each; phases follow the actual project
+%  history (family benchmark Jan 2026, additive ablation Feb, state-space
+%  exploration Mar-Jun, SAHI/TTA and documentation Jun-Jul).
+%  Needs \usepackage{pgfgantt} (loaded in thesisstyle.sty).
+%  Include with:  \input{tikz/fig_gantt}
+% ============================================================================
+\definecolor{gtBlue}{HTML}{6C8EBF}
+\definecolor{gtBlueFill}{HTML}{DAE8FC}
+\definecolor{gtGreen}{HTML}{82B366}
+\definecolor{gtGreenFill}{HTML}{D5E8D4}
+\begin{ganttchart}[
+    hgrid={*1{draw=black!12}},
+    vgrid={*1{draw=black!8}},
+    x unit=0.408cm,
+    y unit title=0.55cm,
+    y unit chart=0.5cm,
+    title label font=\scriptsize,
+    group label font=\scriptsize\bfseries,
+    bar label font=\scriptsize,
+    bar height=0.55,
+    bar top shift=0.22,
+    bar/.append style={fill=gtBlueFill, draw=gtBlue, line width=0.6pt},
+    title/.append style={draw=black!30, fill=black!4},
+    canvas/.append style={draw=black!30}
+  ]{1}{26}
+  \gantttitle{First term (weeks)}{13}
+  \gantttitle{Second term (weeks)}{13} \\
+  \gantttitlelist{1,...,13}{1}
+  \gantttitlelist{1,...,13}{1} \\
+  \ganttbar{Topic selection and confirmation}{1}{3} \\
+  \ganttbar{Literature review}{2}{9} \\
+  \ganttbar{Dataset preparation (C2A)}{6}{9} \\
+  \ganttbar{Detector family benchmark}{9}{13} \\
+  \ganttbar{Pre-defense preparation}{11}{13} \\
+  \ganttbar[bar/.append style={fill=gtGreenFill, draw=gtGreen, line width=0.6pt}]
+           {Additive ablation (CBAM, P2)}{14}{18} \\
+  \ganttbar[bar/.append style={fill=gtGreenFill, draw=gtGreen, line width=0.6pt}]
+           {State-space neck exploration}{16}{22} \\
+  \ganttbar[bar/.append style={fill=gtGreenFill, draw=gtGreen, line width=0.6pt}]
+           {SAHI and TTA evaluation}{20}{24} \\
+  \ganttbar{Result analysis and comparison}{21}{25} \\
+  \ganttbar{Documentation and defense}{22}{26}
+\end{ganttchart}

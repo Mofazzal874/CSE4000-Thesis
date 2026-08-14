@@ -1,0 +1,102 @@
+\tocpagehead 
+\contentsline {chapter}{\hspace *{0.5in}Title Page}{i}{section*.1}%
+\contentsline {chapter}{\hspace *{0.5in}Acknowledgment}{ii}{section*.2}%
+\contentsline {chapter}{\hspace *{0.5in}Abstract}{iii}{section*.3}%
+\contentsline {chapter}{\hspace *{0.5in}Contents}{iv}{section*.4}%
+\contentsline {chapter}{\hspace *{0.5in}List of Tables}{viii}{section*.6}%
+\contentsline {chapter}{\hspace *{0.5in}List of Figures}{ix}{section*.8}%
+\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{x}{section*.10}%
+\contentsline {chapter}{\numberline {I}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Objectives}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Scope}{3}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Unfamiliarity of the Problem}{4}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Project Planning}{4}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Contribution}{5}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Application of the Work}{6}{section.1.8}%
+\contentsline {section}{\numberline {1.9}Organization of Report}{6}{section.1.9}%
+\contentsline {chapter}{\numberline {II}Literature Review}{8}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduction}{8}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Literature Review}{8}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}From Two-Stage Detectors to Real-Time and Transformer Models}{8}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Small-Object and Aerial Detection}{8}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Label Assignment for Tiny Objects}{9}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Human Detection in Disaster and Search-and-Rescue Imagery}{9}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}State-Space Models for Vision}{10}{subsection.2.2.5}%
+\contentsline {section}{\numberline {2.3}Core Concepts}{10}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}The YOLO11 Baseline}{10}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Attention: CBAM and ECA}{10}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Multi-Scale Detection and the P2 Scale}{11}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}State-Space Models and the C3k2Mamba Block}{12}{subsection.2.3.4}%
+\contentsline {section}{\numberline {2.4}Discussion}{12}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Research Gap and Proposed Solution}{12}{subsection.2.4.1}%
+\contentsline {chapter}{\numberline {III}Methodology}{15}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{15}{section.3.1}%
+\contentsline {section}{\numberline {3.2}System Architecture Overview}{15}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Proposed System Architecture}{16}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Data Preprocessing}{18}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Attention Enhancement: CBAM}{18}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Multi-Scale Detection: the P2 Head}{19}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}State-Space Neck Variant: C3k2Mamba}{19}{subsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.3.5}Running Example}{19}{subsection.3.3.5}%
+\contentsline {section}{\numberline {3.4}Architecture Novelties}{20}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Attention That Pays for Itself}{20}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}A Detection Scale Where the Targets Are}{21}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Single-Variable Additive Design}{22}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Loss Function Design}{22}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Extended Training Methods}{23}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Tiny-Aware Label Assignment}{24}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}A Frequency-Gated Evidence Branch (Explored)}{25}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Supervised Adaptation to Real Imagery}{25}{subsection.3.6.3}%
+\contentsline {section}{\numberline {3.7}Inference-Time Enhancement: SAHI and TTA}{26}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Conclusion}{28}{section.3.8}%
+\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{29}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{29}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Experimental Setup}{29}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Evaluation Metrics}{30}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Operational Scores: Why F2 Leads}{30}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Localisation Quality: AP at the Right Threshold}{30}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Per-Size Recall: the Hypothesis Test}{31}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Calibration and Efficiency}{31}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Dataset}{31}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Experimentation}{33}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Quantitative Results}{34}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{34}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}The Additive Ablation}{34}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{35}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{36}{subsection.4.6.4}%
+\contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{37}{subsection.4.6.5}%
+\contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{38}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{40}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{41}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Extended Study: Protocol Hardening and Real-World Adaptation}{42}{section.4.10}%
+\contentsline {subsection}{\numberline {4.10.1}Scene Leakage and the Scene-Disjoint Re-Split}{42}{subsection.4.10.1}%
+\contentsline {subsection}{\numberline {4.10.2}Tiny-Aware Assignment: Sweep and Matched Pair}{43}{subsection.4.10.2}%
+\contentsline {subsection}{\numberline {4.10.3}Adaptation to Real Imagery}{45}{subsection.4.10.3}%
+\contentsline {subsection}{\numberline {4.10.4}Within-Video Against Cross-Event}{47}{subsection.4.10.4}%
+\contentsline {subsection}{\numberline {4.10.5}Statistical Validation}{48}{subsection.4.10.5}%
+\contentsline {section}{\numberline {4.11}Objectives Achieved}{48}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Financial Analysis and Budget}{49}{section.4.12}%
+\contentsline {section}{\numberline {4.13}Conclusion}{50}{section.4.13}%
+\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{51}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{51}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{51}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Ethical Considerations}{52}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Safety Considerations}{52}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Legal Considerations}{53}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{53}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{53}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{54}{section.5.8}%
+\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{55}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{55}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{55}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{56}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conclusion}{57}{section.6.4}%
+\contentsline {chapter}{\numberline {VII}Conclusions}{58}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary}{58}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitations}{59}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{59}{section.7.3}%
+\contentsline {chapter}{Appendix: Model Selection History}{61}{section*.53}%
+\contentsline {chapter}{References}{64}{section*.58}%
+\contentsfinish 
