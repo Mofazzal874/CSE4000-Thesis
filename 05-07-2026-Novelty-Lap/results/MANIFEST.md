@@ -186,6 +186,21 @@ entry below — no exceptions.** (If an entry is missing, the data effectively d
   cross-event; honest limitation CONFIRMED with a p-value. NEXT: 3-seed D2 runs add the training-variance half
   (bootstrap = test-variance only). Bootstrap alone already JSTARS-strength.
 
+### 2026-08-16 - pc1 - LAP4 - D2 seed replication COMPLETE (3 seeds) - VT gain REPLICATES; AP_small does NOT
+- Path: runs_s1\s1_eval_s3_{assign,control}_full_s{1,2}.json + run folders (results.csv/args.yaml) + requirements_pc1.txt.
+  Chain: run_d2_seeds.ps1 (power-cut resumed; control_s2 finished manually after chain died silently on the heal probe).
+- Per-seed deltas (assign a=.5 minus control a=0), scene-split TEST:
+  | metric | s0 | s1 | s2 | mean+-std | verdict |
+  |---|---|---|---|---|---|
+  | VT-recall<8 | +2.09 | +1.66 | +1.11 | **+1.62 +- 0.49** | POSITIVE IN EVERY SEED - headline REPLICATES |
+  | AP_small | +2.00 | -1.29 | +0.53 | +0.41 +- 1.65 | noise (control-side variance) - claim DOWNGRADED |
+  | F2 | +0.27 | -0.11 | -0.04 | +0.04 +- 0.20 | neutral |
+  | AP50 | -0.08 | +0.09 | -0.03 | -0.01 +- 0.09 | neutral |
+- Assign VT nearly constant across seeds: .7508/.7503/.7475. Stops: assign 227/297ep, control 226/112->done ep.
+- FINAL D2 STATEMENT (report updated accordingly, draft2 ch4 4.10.2+4.10.6, ch1/ch7/abstract):
+  sub-8px recall rises in every seed (+1.6+-0.5pp; +2.08 in the matched pair, bootstrap CI [1.77,2.38] p<0.001)
+  at neutral F2/AP50; the seed-0 +2.0pp AP_small does NOT survive replication and is no longer claimed.
+
 ### 2026-08-05 - YOLO26m PARKED to lap-5 (removed from the lap-4 yolo11m story)
 - Decision: lap-4 = a clean yolo11m story. YOLO26m gets its OWN lap (novelty-lap-5): base + CBAM + P2 +
   assignment + sim-to-real, to test whether the newer backbone subsumes or complements our contributions.

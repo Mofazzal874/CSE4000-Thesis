@@ -59,7 +59,10 @@
       "Bash(python -)",
       "Bash(python make_partB_figs.py)",
       "Bash(cp fig_gamma_dose.png fig_sim2real_bars.png \"d:/Academics/thesis folder/Defense/draft2_06_8_26/figures/\")",
-      "Bash(wsl.exe bash *)"
+      "Bash(wsl.exe bash *)",
+      "Bash(mkdir -p real_samples_cells)",
+      "Bash(rm -f qa_*.png qa_full.txt)",
+      "Bash(wsl.exe bash -lc 'cd '\\\\''/mnt/d/Academics/thesis folder/Defense/draft2_06_8_26'\\\\'' && pdftotext -layout main.pdf - 2>/dev/null | python3 -c \" *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dell\\AppData\\Local\\Temp",

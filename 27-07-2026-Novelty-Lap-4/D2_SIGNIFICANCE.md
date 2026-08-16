@@ -80,9 +80,9 @@ python 28_bootstrap_sig.py --tag-a s3_xevent --tag-b d3all_xevent --gt-json "$D\
 ## Results log (fill as runs land)
 | metric | s0 Δ | s1 Δ | s2 Δ | mean±std | bootstrap (seed0, n=2040, 1000 boots) |
 |---|---|---|---|---|---|
-| VT-recall<8 | +2.09 | | | | **+2.08pp [1.77, 2.38] p<0.001 SIG** |
-| F2 | +0.27 | | | | +0.27pp [0.03, 0.50] p=0.024 SIG |
-| AP50 | -0.08 | | | | -0.08pp [-0.32, 0.17] p=0.54 n.s. |
+| VT-recall<8 | +2.09 | +1.66 | +1.11 | +1.62 +- 0.49 | **+2.08pp [1.77, 2.38] p<0.001 SIG** |
+| F2 | +0.27 | -0.11 | -0.04 | +0.04 +- 0.20 | +0.27pp [0.03, 0.50] p=0.024 SIG |
+| AP50 | -0.08 | +0.09 | -0.03 | -0.01 +- 0.09 | -0.08pp [-0.32, 0.17] p=0.54 n.s. |
 | tiny 8-16 | -1.15 | | | | -1.15pp [-1.48, -0.84] p<0.001 (sig cost) |
 | small 16-32 | -0.95 | | | | -0.95pp [-1.4, -0.5] p<0.001 (sig cost) |
 | medium 32-96 | -1.3?? | | | | -13.2pp [-17.9, -9.3] p<0.001 (sig cost, n=410) |
@@ -96,5 +96,5 @@ python 28_bootstrap_sig.py --tag-a s3_xevent --tag-b d3all_xevent --gt-json "$D\
 - [x] scripts ready + selftested (20 seed/save-period, 28 bootstrap)
 - [x] Step 0 config read (data=scenesplit_pc1.yaml, 300ep/pat50/b12/AdamW lr0.001)
 - [x] **BOOTSTRAP DONE** — D2 VT-recall significant (p<0.001); cross-event n.s. (honest limit confirmed)
-- [ ] Step 1 smoke · [ ] assign_s1 · [ ] control_s1 · [ ] assign_s2 · [ ] control_s2
-- [ ] seed evals · [ ] aggregate mean±std → paper §5 D2 row
+- [x] all 4 seed runs + evals DONE (2026-08-16). VT delta +2.09/+1.66/+1.11 = +1.62+-0.49 (replicates);
+  AP_small delta +2.00/-1.29/+0.53 = noise -> claim dropped. Report updated (draft2).

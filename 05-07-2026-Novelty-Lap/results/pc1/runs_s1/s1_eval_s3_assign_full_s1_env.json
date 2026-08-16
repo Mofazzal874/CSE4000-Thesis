@@ -1,0 +1,31 @@
+{
+  "tag": "s3_assign_full_s1",
+  "utc": "2026-08-13T19:50:04Z",
+  "weights": "runs_s1\\s3_assign_full_s1\\weights\\best.pt",
+  "weights_md5": "2b3ccb3f4fa8f190708e5c79e1127a4c",
+  "gt_json": "E:\\Thesis_mofazzal_2007074\\common\\c2a\\C2A_Dataset\\new_dataset3_scenesplit_v1\\test\\test_annotations.json",
+  "gt_md5": "398d156bca2bb494e9299adff1066218",
+  "conf_floor": 0.001,
+  "iou_match": 0.5,
+  "versions": {
+    "python": "3.11.9",
+    "ultralytics": "8.4.56",
+    "torch": "2.12.0+cu126",
+    "numpy": "2.4.4",
+    "pycocotools": "installed"
+  },
+  "args": {
+    "variant": "control",
+    "weights": "runs_s1\\s3_assign_full_s1\\weights\\best.pt",
+    "tag": "s3_assign_full_s1",
+    "images_dir": "E:\\Thesis_mofazzal_2007074\\common\\c2a\\C2A_Dataset\\new_dataset3_scenesplit_v1\\test\\images",
+    "gt_json": "E:\\Thesis_mofazzal_2007074\\common\\c2a\\C2A_Dataset\\new_dataset3_scenesplit_v1\\test\\test_annotations.json",
+    "device": "0",
+    "imgsz": 640,
+    "limit": 0,
+    "profile": false,
+    "no_plots": false,
+    "compare": null,
+    "selftest": false
+  }
+}
