@@ -10,7 +10,7 @@
         <mxCell id="b2" value="Scene-disjoint re-split&#10;(98% scene leakage audited;&#10;−1.6 AP₅₀, protocol hardened)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="340" y="120" width="250" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="b3" value="Tiny-aware assignment&#10;u = (1−α)·CIoU + α·NWD, α = 0.5&#10;kept: +2.1 pts recall &lt; 8 px" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="b3" value="Tiny-aware assignment&#10;u = (1−γ)·CIoU + γ·NWD, γ = 0.5&#10;kept: +2.1 pts recall &lt; 8 px" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="660" y="120" width="270" height="90" as="geometry" />
         </mxCell>
         <mxCell id="b4" value="Real-data fine-tune&#10;C2A + drone + campus + disaster&#10;(248 labelled frames, ×20 oversample)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">

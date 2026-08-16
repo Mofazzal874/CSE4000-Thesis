@@ -18,8 +18,7 @@ feed BOTH a "CIoU(g,b)" box (annotated: collapses for boxes < 16 px) and an "NWD
 S = exp(−W₂(g,b)/C), C = 12.8" box (annotated: stays informative for tiny boxes). The two feed a
 highlighted blend box "u = (1−γ)·CIoU + γ·S" (arrow labels "1−γ" and "γ"). The blend plus a
 "Classification score s" box feed "Alignment score t = s^p · u^q", which feeds "Top-k selection →
-positive training samples". Italic footnote: "Training only: no new parameters, no inference cost;
-loss and network unchanged. γ = 0 recovers the standard assigner."
+positive training samples". NO footnote line inside the image: that explanation lives in the body prose (July caption convention).
 
 **Gemini prompt:**
 "Draw a clean academic block diagram, white background, black thin rectangular boxes, Times New
@@ -29,8 +28,7 @@ below. Both middle boxes connect into one highlighted box (light yellow fill, bo
 'u = (1−γ)·CIoU + γ·S', with the top arrow labelled '1−γ' and the bottom arrow labelled 'γ'. A
 separate box 'Classification score s' above joins the highlighted box's output into a box
 'Alignment score t = s^p · u^q', which flows into a final box 'Top-k selection → positive training
-samples'. Add a small italic caption line under the diagram: 'Training only; network, loss and
-inference unchanged.' Flat 2D, no shadows, no colors except the one yellow highlight."
+samples'. Flat 2D, no shadows, no colors except the one yellow highlight."
 
 ---
 ## 2. `fig_partB_chain.png`  (wide chain; reserve 4.5 cm; export ~3.2:1)

@@ -16,7 +16,7 @@
         <mxCell id="nwd" value="NWD similarity&#10;S = exp( −W₂(g,b) / C ),  C = 12.8&#10;(stays informative for tiny boxes)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="300" y="320" width="220" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="blend" value="Blended overlap&#10;u = (1−α)·CIoU + α·S&#10;(the proposed change)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="blend" value="Blended overlap&#10;u = (1−γ)·CIoU + γ·S&#10;(the proposed change)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="600" y="230" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="cls" value="Classification score s&#10;(from the head, unchanged)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#FFFFFF;strokeColor=#000000;" vertex="1" parent="1">
@@ -28,15 +28,12 @@
         <mxCell id="topk" value="Top-k selection&#10;→ positive training samples" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;fillColor=#F5F5F5;strokeColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="880" y="330" width="180" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="note" value="Training only: no new parameters, no inference cost; loss and network unchanged. α = 0 recovers the standard assigner." style="text;html=1;align=center;fontFamily=Times New Roman;fontSize=13;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="300" y="520" width="560" height="40" as="geometry" />
-        </mxCell>
         <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="gt" target="ciou"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="cand" target="ciou"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="gt" target="nwd"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="cand" target="nwd"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" value="1−α" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=13;" edge="1" parent="1" source="ciou" target="blend"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e6" value="α" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=13;" edge="1" parent="1" source="nwd" target="blend"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="1−γ" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=13;" edge="1" parent="1" source="ciou" target="blend"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="γ" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontFamily=Times New Roman;fontSize=13;" edge="1" parent="1" source="nwd" target="blend"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="blend" target="align"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="cls" target="align"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="align" target="topk"><mxGeometry relative="1" as="geometry" /></mxCell>

@@ -5,7 +5,7 @@
 \contentsline {chapter}{\hspace *{0.5in}Contents}{iv}{section*.4}%
 \contentsline {chapter}{\hspace *{0.5in}List of Tables}{viii}{section*.6}%
 \contentsline {chapter}{\hspace *{0.5in}List of Figures}{ix}{section*.8}%
-\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{x}{section*.10}%
+\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{xi}{section*.10}%
 \contentsline {chapter}{\numberline {I}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}%
@@ -71,12 +71,12 @@
 \contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{40}{section.4.8}%
 \contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{41}{section.4.9}%
 \contentsline {section}{\numberline {4.10}Extended Study: Protocol Hardening and Real-World Adaptation}{42}{section.4.10}%
-\contentsline {subsection}{\numberline {4.10.1}Scene Leakage and the Scene-Disjoint Re-Split}{42}{subsection.4.10.1}%
+\contentsline {subsection}{\numberline {4.10.1}Scene Leakage and the Scene-Disjoint Re-Split}{43}{subsection.4.10.1}%
 \contentsline {subsection}{\numberline {4.10.2}Tiny-Aware Assignment: Sweep and Matched Pair}{43}{subsection.4.10.2}%
 \contentsline {subsection}{\numberline {4.10.3}Adaptation to Real Imagery}{45}{subsection.4.10.3}%
 \contentsline {subsection}{\numberline {4.10.4}Within-Video Against Cross-Event}{47}{subsection.4.10.4}%
 \contentsline {subsection}{\numberline {4.10.5}Statistical Validation}{48}{subsection.4.10.5}%
-\contentsline {section}{\numberline {4.11}Objectives Achieved}{48}{section.4.11}%
+\contentsline {section}{\numberline {4.11}Objectives Achieved}{49}{section.4.11}%
 \contentsline {section}{\numberline {4.12}Financial Analysis and Budget}{49}{section.4.12}%
 \contentsline {section}{\numberline {4.13}Conclusion}{50}{section.4.13}%
 \contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{51}{chapter.5}%
@@ -97,6 +97,6 @@
 \contentsline {section}{\numberline {7.1}Summary}{58}{section.7.1}%
 \contentsline {section}{\numberline {7.2}Limitations}{59}{section.7.2}%
 \contentsline {section}{\numberline {7.3}Recommendations for Future Works}{59}{section.7.3}%
-\contentsline {chapter}{Appendix: Model Selection History}{61}{section*.53}%
-\contentsline {chapter}{References}{64}{section*.58}%
+\contentsline {chapter}{Appendix: Model Selection History}{61}{section*.54}%
+\contentsline {chapter}{References}{64}{section*.59}%
 \contentsfinish 

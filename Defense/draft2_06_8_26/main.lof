@@ -25,11 +25,12 @@
 \contentsline {figure}{\numberline {4.6}{\ignorespaces Dense-scene comparison of ground truth and three operating modes.}}{39}{figure.caption.38}%
 \contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}}{40}{figure.caption.39}%
 \contentsline {figure}{\numberline {4.8}{\ignorespaces Per-size recall under each inference-time setting.}}{42}{figure.caption.42}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Assignment blend weight as a recall-against-precision trade dial.}}{44}{figure.caption.45}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Samples from the real-imagery sets with ground-truth boxes.}}{46}{figure.caption.48}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Adaptation stages across the three real evaluation domains.}}{47}{figure.caption.49}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Decision chain of the extended study.}}{43}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Assignment blend weight as a recall-against-precision trade dial.}}{44}{figure.caption.46}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Samples from the real-imagery sets with ground-truth boxes.}}{46}{figure.caption.49}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Adaptation stages across the three real evaluation domains.}}{47}{figure.caption.50}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Detection accuracy against model size for the nine benchmarked detectors of Table~\ref {tab:appfamily}; size stands in for parameter count. YOLO11m (star) lies on the efficient frontier.}}{62}{figure.caption.56}%
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Detection accuracy against model size for the nine benchmarked detectors of Table~\ref {tab:appfamily}; size stands in for parameter count. YOLO11m (star) lies on the efficient frontier.}}{62}{figure.caption.57}%
 \contentsfinish 

@@ -24,8 +24,9 @@ found 98\% scene sharing in the official benchmark and re-based everything on
 a scene-disjoint split, at a measured cost of $1.6$ points of
 $\mathrm{AP}_{50}$ and no changed conclusion. With the architecture search
 stalled, the productive lever moved to training supervision: a Wasserstein
-blend inside the label assigner raised sub-8-pixel recall by $2.08$ points
-with a bootstrap interval that excludes zero, while a frequency-gated
+blend inside the label assigner raised sub-8-pixel recall in every training
+seed tested (mean $+1.6$ points; $+2.08$ in the matched pair, bootstrap
+interval excluding zero), while a frequency-gated
 evidence branch failed its paired test and joined the state-space neck as a
 documented negative. Real footage collected for this thesis completed the
 picture. The synthetic-trained model transfers poorly zero-shot
@@ -59,11 +60,13 @@ proper weight.
         tested, across all 54 such instances. The regime the thesis targets
         on synthetic data is still open on real data, and the adaptation
         fine-tune also paid 13 points of precision on the held-out event.
-  \item \textbf{Single seed per training run.} The ablation and the extended
-        runs use seed 0. The bootstrap intervals of
-        Section~\ref{sec:stats} treat test-set variation only; replicate
-        runs of the assignment pair at two further seeds were in progress at
-        the time of writing.
+  \item \textbf{Single seed for most training runs.} The ablation and the
+        adaptation runs use seed 0, and the bootstrap intervals of
+        Section~\ref{sec:stats} treat test-set variation only. The central
+        assignment pair is the exception: replicated at three seeds, its
+        very-tiny gain held in all three while the seed-0 $\mathrm{AP}_S$
+        gain did not, which calibrates how far any other single-seed
+        difference in this thesis should be trusted.
   \item \textbf{Sparse medium-target evidence.} The medium band holds only
         317 of roughly 72{,}500 test instances on the official split (410 on
         the scene-disjoint split), so its recall estimates are noisy.
@@ -74,10 +77,12 @@ proper weight.
 
 \section{Recommendations for Future Works}
 The limitations above set the agenda, and the extension phase has already
-converted two earlier recommendations into results: the enhanced dataset
+converted three earlier recommendations into results: the enhanced dataset
 with the author's own imagery now exists as the real-imagery suite of
-Table~\ref{tab:owndata}, and its adaptation study is reported in
-Section~\ref{sec:realresults}. What follows is what remains.
+Table~\ref{tab:owndata}, its adaptation study is reported in
+Section~\ref{sec:realresults}, and the multi-seed replication of the central
+comparison is reported in Section~\ref{sec:stats}. What follows is what
+remains.
 \begin{itemize}
   \item \textbf{Multi-event disaster data.} The cross-event result shows
         that 60 frames from two events adapt the model to those events, not
@@ -85,10 +90,6 @@ Section~\ref{sec:realresults}. What follows is what remains.
         events, rather than many frames per event, is the most direct route
         to generalisation, and the annotation pipeline built here makes each
         added event cheap.
-  \item \textbf{Completing the seed replication.} The replicate runs of the
-        assignment pair should be finished and folded into
-        Table~\ref{tab:d2pair} as a mean and spread, closing the last gap in
-        the statistical story.
   \item \textbf{Server-side deployment.} Work is under way to serve the
         recommended model behind a streaming pipeline in which a drone
         transmits footage to a ground server that runs detection and returns

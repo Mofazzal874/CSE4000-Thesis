@@ -598,7 +598,18 @@ workstation and under the same metric definitions as the rest of the chapter;
 training settings that differ from Table~\ref{tab:setup} are stated where they
 apply. Two findings organise it. The productive lever moved from architecture
 to training supervision, and adaptation gains proved specific to the footage
-they came from.
+they came from. Figure~\ref{fig:partbchain} summarises the phase as the chain
+of decisions the subsections walk through: the re-split is adopted, a
+frequency-gated branch is tried and dropped, the assignment blend is kept,
+and the real-data fine-tune produces one model evaluated on five held-out
+domains.
+
+\begin{figure}[H]
+  \centering
+  \figorplaceholder{figures/fig_partB_chain.png}{4.5cm}
+  \caption{Decision chain of the extended study.}
+  \label{fig:partbchain}
+\end{figure}
 
 \subsection{Scene Leakage and the Scene-Disjoint Re-Split}
 \label{sec:leak}
@@ -673,11 +684,13 @@ from the same launcher, initialisation, split, and schedule, differing only in
 $\gamma$. Table~\ref{tab:d2pair} reports the pair with confidence intervals
 from the bootstrap of Section~\ref{sec:stats}. The blend raises very-tiny
 recall from $0.730$ to $0.751$, a gain of $\mathbf{+2.08}$ points whose 95\%
-interval $[1.77, 2.38]$ excludes zero ($p<0.001$), and lifts $\mathrm{AP}_S$
-by two points. The overall operating score holds ($F_2$ $+0.27$ points,
-$p=0.024$), $\mathrm{AP}_{50}$ does not move ($-0.08$, not significant), and
-the gain is paid for with losses of about one point in the 8--16 and
-16--32~px bands and a larger relative loss in the sparse 32--96~px band. In
+interval $[1.77, 2.38]$ excludes zero ($p<0.001$); the two-point
+$\mathrm{AP}_S$ gain in the same pair is revisited under seed replication in
+Section~\ref{sec:stats} and does not survive it. The overall operating score
+holds ($F_2$ $+0.27$ points, $p=0.024$), $\mathrm{AP}_{50}$ does not move
+($-0.08$, not significant), and the gain is paid for with losses of about one
+point in the 8--16 and 16--32~px bands and a larger relative loss in the
+sparse 32--96~px band. In
 other words the mechanism reallocates capacity toward the smallest targets
 instead of improving everything at once. For search and rescue, where the
 sub-8-pixel band holds the most easily missed people, that is the intended
@@ -830,7 +843,11 @@ model's $0.396$, a difference of $+1.7$ points whose bootstrap interval spans
 zero ($[-3.2, 5.7]$, $p=0.47$), while precision at the operating threshold
 drops by 13 points ($p=0.018$). Two conclusions follow. Fine-tuning on 60
 frames from two events adapts the model to those events, not to the disaster
-domain. And the synthetic-trained base model transfers better than expected on
+domain. Presentation artifacts illustrate why: both training clips are
+pillarboxed broadcast footage, with 41\% and 47\% of each frame taken up by
+black borders and station graphics that the R-set shares and the held-out
+clip entirely lacks, so part of what the fine-tune absorbs is the clips'
+framing rather than the disasters' content. And the synthetic-trained base model transfers better than expected on
 its own ($0.396$ from composited data alone), with its genuine failure
 concentrated below 16~px: on the R-set, recall of sub-8-pixel people is zero
 for every model tested, across all 54 such instances. Detecting the smallest
@@ -846,17 +863,21 @@ applies the same resample to both models of a pair, and recomputes each
 metric, which yields a 95\% percentile interval and a two-sided $p$-value for
 every delta; per-image predictions are cached, so the procedure re-reads
 recorded detections rather than re-running inference. This treats test-set
-sampling variability. It does not treat training-run variability, which the
-protocol of Section~\ref{sec:protocol} deferred: every run here still uses
-seed 0. For the central assignment claim that gap is being closed directly,
-with replicate runs of the matched pair at two further seeds in progress at
-the time of writing. Until they land, the single-seed conclusion rests on the
-tight interval of Table~\ref{tab:d2pair} and the monotone dose--response of
-Table~\ref{tab:gamma}, two independent lines of evidence that the very-tiny
-gain is not noise.
-%% TODO(seeds): when s3_{assign,control}_full_s{1,2} finish on PC-1, replace the
-%% "in progress" sentence above with the 3-seed mean±std (see
-%% 27-07-2026-Novelty-Lap-4/D2_SIGNIFICANCE.md) and update Ch VII limitations.
+sampling variability, not training-run variability, so the central assignment
+claim was additionally replicated: the matched pair of Table~\ref{tab:d2pair}
+was retrained twice more, both models at seed 1 and at seed 2, and each pair
+was evaluated identically. The very-tiny gain holds in every seed, at
+$+2.09$, $+1.66$, and $+1.11$ points (mean $+1.6$, standard deviation
+$0.5$), and the blended model's very-tiny recall itself is nearly constant
+across seeds ($0.751$, $0.750$, $0.748$). Replication also corrects two
+secondary readings rather than defending them. The two-point $\mathrm{AP}_S$
+gain of the seed-0 pair does not recur ($+2.0$, $-1.3$, $+0.5$ points,
+noise around zero, driven by control-side variance), and the small seed-0
+$F_2$ gain averages away ($+0.27$, $-0.11$, $-0.04$). What survives all
+three seeds, the bootstrap interval, and the dose--response of
+Table~\ref{tab:gamma} is the claim the method was built for: recall of
+sub-8-pixel people rises by one to two points at no cost to the overall
+operating score.
 
 \section{Objectives Achieved}
 \label{sec:objectives}
@@ -944,8 +965,8 @@ very-tiny recall from test-time augmentation when latency permits. The
 extended study sharpened that picture in three ways. The benchmark's scene
 leakage costs $1.6$ points of $\mathrm{AP}_{50}$ and changes no conclusion.
 On the smallest targets the productive lever turned out to be label
-assignment rather than architecture, worth $2.1$ points of sub-8-pixel recall
-with an interval that excludes zero, while a frequency-gated branch joined
+assignment rather than architecture, worth one to two points of sub-8-pixel
+recall in every training seed tested, while a frequency-gated branch joined
 the state-space neck as a documented negative. And on real footage a labelled
 budget of a few hundred frames adapted the model to its target domains at
 almost no cost to the source benchmark, with a held-out disaster event
