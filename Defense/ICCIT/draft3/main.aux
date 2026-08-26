@@ -1,0 +1,102 @@
+\relax 
+\citation{nihal2024c2a}
+\citation{zhu2021tphyolov5}
+\citation{woo2018cbam,wang2020eca}
+\citation{akyon2022sahi}
+\citation{gu2023mamba,wang2025mambayolo}
+\citation{wang2021nwd,xu2022rfla,shi2024simd}
+\citation{jocher2024yolo11}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Where recall of sub-8-pixel people comes from. (a) The effect of each lever, measured as the change from the configuration directly above it inside the same training protocol. The three network changes were measured on the official C2A split and the supervision change on a scene-disjoint re-split of the same data, so each bar is an effect within its own protocol and the four do not share an absolute level. The whisker is the paired image-level bootstrap 95\% interval on the supervision delta, which is positive in all three seeds retrained, mean 1.62 points. (b) Recall below 8 px for the strongest model on each source of imagery: 0.751 on C2A composites against none of the 54 sub-8-pixel people present in real disaster frames.}}{1}{}\protected@file@percent }
+\newlabel{fig:answer}{{1}{1}{}{}{}}
+\citation{ren2015fasterrcnn,cai2018cascade}
+\citation{liu2016ssd}
+\citation{lin2017focal}
+\citation{redmon2016yolo,wang2024yolov9,jocher2024yolo11}
+\citation{carion2020detr}
+\citation{zhao2024rtdetr}
+\citation{cheng2023smallobject}
+\citation{lin2017fpn}
+\citation{zhu2021tphyolov5}
+\citation{wang2020eca}
+\citation{woo2018cbam}
+\citation{akyon2022sahi}
+\citation{wang2021nwd}
+\citation{xu2022rfla}
+\citation{shi2024simd}
+\citation{feng2021tood}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces MSA-YOLO on a C2A scene. The backbone produces features at five resolutions; CBAM (orange) replaces the terminal self-attention block and re-weights the deepest features; the neck fuses scales and is carried one level further than the standard design to produce a stride-4 branch, so the head decodes at strides 4, 8, 16 and 32. The insets are the model's own signals on this scene: input, attention response, stride-4 feature response, and final detections. Note that the stride-4 map responds at the smallest scattered figures, which the stride-8 level summarizes into single cells.}}{2}{}\protected@file@percent }
+\newlabel{fig:arch}{{2}{2}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{}\protected@file@percent }
+\citation{sambolek2021sard}
+\citation{bozic2019heridal}
+\citation{nihal2024c2a}
+\citation{kyrkou2020aider}
+\citation{tobin2017domainrand}
+\citation{tremblay2018synthetic}
+\citation{woo2018cbam}
+\citation{wang2021nwd}
+\citation{nihal2024c2a}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Why a stride-4 scale is added. Each panel is the same 32 by 32 px patch of a 640 px input, holding one identical target box. A detection cell covers a stride-sized region, so a target of side $s$ spans $s/d$ cells at stride $d$: the box here falls inside a fraction of one cell at the two coarsest levels and covers about 1.5 cells at stride 8, the finest standard level. Stride 4 is the first level that gives it about three cells, which is enough spatial support to regress an offset from.}}{3}{}\protected@file@percent }
+\newlabel{fig:stride}{{3}{3}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Four Levers on One Detector}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Attention and Scale: MSA-YOLO}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}A State-Space Neck}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Tiny-Aware Label Assignment}{3}{}\protected@file@percent }
+\newlabel{sec:assign}{{\mbox  {III-C}}{3}{}{}{}}
+\newlabel{eq:blend}{{2}{3}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experimental Setup}{3}{}\protected@file@percent }
+\citation{akyon2022sahi}
+\citation{nihal2024c2a}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Where Sub-8-Pixel Recall Comes From}{4}{}\protected@file@percent }
+\newlabel{sec:where}{{V}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}The Three Network Levers}{4}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Additive Ablation on the Official C2A Test Split. Par.: parameters in millions; GF: GFLOPs; AR: average recall at 100 detections; VT: recall below 8 px; ms: end-to-end latency.}}{4}{}\protected@file@percent }
+\newlabel{tab:abl}{{I}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}The Supervision Lever}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Standing Among Published Detectors}{4}{}\protected@file@percent }
+\citation{nihal2024c2a}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Matched Pair Differing Only in the Assignment Blend, Scene-Disjoint Split. Changes are in points; the interval is a paired image-level bootstrap.}}{5}{}\protected@file@percent }
+\newlabel{tab:assign}{{II}{5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Comparison with Published Results on C2A. The upper block is as reported by Nihal et al.~\cite  {nihal2024c2a} on the same test split; no entry uses slicing or test-time augmentation.}}{5}{}\protected@file@percent }
+\newlabel{tab:sota}{{III}{5}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}What Survives on Real Footage}{5}{}\protected@file@percent }
+\newlabel{sec:real}{{VI}{5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Real-Imagery Sets Collected for This Study}}{5}{}\protected@file@percent }
+\newlabel{tab:real}{{IV}{5}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces AP50 of three training stages on the three real evaluation domains. Drone-only fine-tuning leaves disaster footage untouched (middle bars), so what helps disaster frames is disaster labels rather than real images in general. On an event held out from all training (right group) the adapted and base models are statistically indistinguishable, which bounds the result.}}{5}{}\protected@file@percent }
+\newlabel{fig:stages}{{4}{5}{}{}{}}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{nihal2024c2a}{1}
+\bibcite{zhu2021tphyolov5}{2}
+\bibcite{woo2018cbam}{3}
+\bibcite{wang2020eca}{4}
+\bibcite{akyon2022sahi}{5}
+\bibcite{gu2023mamba}{6}
+\bibcite{wang2025mambayolo}{7}
+\bibcite{wang2021nwd}{8}
+\bibcite{xu2022rfla}{9}
+\bibcite{shi2024simd}{10}
+\bibcite{jocher2024yolo11}{11}
+\bibcite{ren2015fasterrcnn}{12}
+\bibcite{cai2018cascade}{13}
+\bibcite{liu2016ssd}{14}
+\bibcite{lin2017focal}{15}
+\bibcite{redmon2016yolo}{16}
+\bibcite{wang2024yolov9}{17}
+\bibcite{carion2020detr}{18}
+\bibcite{zhao2024rtdetr}{19}
+\bibcite{cheng2023smallobject}{20}
+\bibcite{lin2017fpn}{21}
+\bibcite{feng2021tood}{22}
+\bibcite{sambolek2021sard}{23}
+\bibcite{bozic2019heridal}{24}
+\bibcite{kyrkou2020aider}{25}
+\bibcite{tobin2017domainrand}{26}
+\bibcite{tremblay2018synthetic}{27}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces The Adapted Model on Every Held-Out Set. Rec.\ is recall at the operating threshold of 0.25.}}{6}{}\protected@file@percent }
+\newlabel{tab:multi}{{V}{6}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{6}{}\protected@file@percent }
+\gdef \@abspage@last{6}

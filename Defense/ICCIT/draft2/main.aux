@@ -1,0 +1,100 @@
+\relax 
+\citation{nihal2024c2a}
+\citation{zhu2021tphyolov5}
+\citation{woo2018cbam,wang2020eca}
+\citation{akyon2022sahi}
+\citation{gu2023mamba,wang2025mambayolo}
+\citation{jocher2024yolo11}
+\citation{ren2015fasterrcnn,cai2018cascade}
+\citation{liu2016ssd}
+\citation{lin2017focal}
+\citation{redmon2016yolo,wang2024yolov9,jocher2024yolo11}
+\citation{carion2020detr}
+\citation{zhao2024rtdetr}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{1}{}\protected@file@percent }
+\citation{cheng2023smallobject}
+\citation{lin2017fpn}
+\citation{zhu2021tphyolov5}
+\citation{wang2020eca}
+\citation{woo2018cbam}
+\citation{akyon2022sahi}
+\citation{wang2021nwd}
+\citation{xu2022rfla}
+\citation{shi2024simd}
+\citation{feng2021tood}
+\citation{sambolek2021sard}
+\citation{bozic2019heridal}
+\citation{nihal2024c2a}
+\citation{kyrkou2020aider}
+\citation{tobin2017domainrand}
+\citation{tremblay2018synthetic}
+\citation{woo2018cbam}
+\citation{wang2021nwd}
+\@writefile{toc}{\contentsline {section}{\numberline {III}MSA-YOLO}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Overall Architecture}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Attention Substitution}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}The Stride-4 Detection Scale}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Tiny-Aware Label Assignment}{2}{}\protected@file@percent }
+\newlabel{sec:assign}{{\mbox  {III-D}}{2}{}{}{}}
+\newlabel{eq:blend}{{4}{2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}An Explored State-Space Neck}{2}{}\protected@file@percent }
+\citation{nihal2024c2a}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces MSA-YOLO on a C2A scene. The backbone produces features at five resolutions; CBAM (orange) replaces the terminal self-attention block and re-weights the deepest features; the neck fuses scales and is carried one level further than the standard design to produce a stride-4 branch, so the head decodes at strides 4, 8, 16 and 32. The insets are the model's own signals on this scene: input, attention response, stride-4 feature response, and final detections. Note that the stride-4 map responds at the smallest scattered figures, which the stride-8 level summarizes into single cells.}}{3}{}\protected@file@percent }
+\newlabel{fig:arch}{{1}{3}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experimental Setup}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results}{3}{}\protected@file@percent }
+\newlabel{sec:ablation}{{V}{3}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Additive Ablation}{3}{}\protected@file@percent }
+\citation{nihal2024c2a}
+\citation{nihal2024c2a}
+\citation{akyon2022sahi}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Additive Ablation on the Official C2A Test Split. Par.\ is parameters in millions, GF is GFLOPs, AR is average recall at 100 detections, VT is recall below 8 px, and ms is end-to-end latency. The last row adds the state-space neck on top of CBAM and P2.}}{4}{}\protected@file@percent }
+\newlabel{tab:abl}{{I}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Comparison with Published Detectors}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Tiny-Aware Assignment}{4}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Comparison with Published Results on C2A. The upper block is as reported by Nihal et al.~\cite  {nihal2024c2a} on the same test split; no entry uses slicing or test-time augmentation.}}{4}{}\protected@file@percent }
+\newlabel{tab:sota}{{II}{4}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Matched Pair Differing Only in the Assignment Blend}}{4}{}\protected@file@percent }
+\newlabel{tab:assign}{{III}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Inference-Time Enhancement}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Real-Footage Validation}{5}{}\protected@file@percent }
+\newlabel{sec:real}{{VI}{5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Real-Imagery Sets Collected for This Study}}{5}{}\protected@file@percent }
+\newlabel{tab:real}{{IV}{5}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces AP50 of three training stages on the three real evaluation domains. Drone-only fine-tuning leaves disaster footage untouched (middle bars), so what helps disaster frames is disaster labels rather than real images in general. On an event held out from all training (right group) the adapted and base models are statistically indistinguishable, which bounds the result.}}{5}{}\protected@file@percent }
+\newlabel{fig:stages}{{2}{5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces The Adapted Model on Every Held-Out Set}}{5}{}\protected@file@percent }
+\newlabel{tab:multi}{{V}{5}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{5}{}\protected@file@percent }
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{nihal2024c2a}{1}
+\bibcite{zhu2021tphyolov5}{2}
+\bibcite{woo2018cbam}{3}
+\bibcite{wang2020eca}{4}
+\bibcite{akyon2022sahi}{5}
+\bibcite{gu2023mamba}{6}
+\bibcite{wang2025mambayolo}{7}
+\bibcite{jocher2024yolo11}{8}
+\bibcite{ren2015fasterrcnn}{9}
+\bibcite{cai2018cascade}{10}
+\bibcite{liu2016ssd}{11}
+\bibcite{lin2017focal}{12}
+\bibcite{redmon2016yolo}{13}
+\bibcite{wang2024yolov9}{14}
+\bibcite{carion2020detr}{15}
+\bibcite{zhao2024rtdetr}{16}
+\bibcite{cheng2023smallobject}{17}
+\bibcite{lin2017fpn}{18}
+\bibcite{wang2021nwd}{19}
+\bibcite{xu2022rfla}{20}
+\bibcite{shi2024simd}{21}
+\bibcite{feng2021tood}{22}
+\bibcite{sambolek2021sard}{23}
+\bibcite{bozic2019heridal}{24}
+\bibcite{kyrkou2020aider}{25}
+\bibcite{tobin2017domainrand}{26}
+\bibcite{tremblay2018synthetic}{27}
+\@writefile{toc}{\contentsline {section}{References}{6}{}\protected@file@percent }
+\gdef \@abspage@last{6}
