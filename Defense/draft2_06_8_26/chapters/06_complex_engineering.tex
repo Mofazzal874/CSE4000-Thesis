@@ -1,9 +1,8 @@
 \chapter{Addressing Complex Engineering Problems and Activities}
 
 \section{Introduction}
-Outcome-based engineering education assesses a final-year project against the
-graduate-attribute framework of the International Engineering
-Alliance~\cite{iea2021gapc}, under which the Washington Accord defines the
+The International Engineering Alliance's graduate-attribute
+framework~\cite{iea2021gapc} defines the
 attributes of a Complex Engineering Problem (WP1 to WP7) and of Complex
 Engineering Activities (EA1 to EA5). A problem qualifies as complex when it
 demands in-depth knowledge (WP1) together with some or all of the remaining
@@ -14,9 +13,9 @@ or figure of this report where the evidence sits.
 
 \section{Complex Engineering Problems Associated with the Current Thesis}
 \begin{itemize}
-  \item \textbf{WP1: Depth of knowledge required.} Detecting sub-ten-pixel
-        humans cannot be solved by applying a detector API with default
-        settings. It required working knowledge of one-stage detection
+  \item \textbf{WP1: Depth of knowledge required.} The default detector was
+        inadequate for the sub-ten-pixel regime measured in this dataset. The
+        investigation required working knowledge of one-stage detection
         architectures at the layer level (Table~\ref{tab:layers}), of
         channel and spatial attention (Section~\ref{sec:cbam3}), of selective
         state-space models and their scan mechanics (Section~\ref{sec:mamba}), and of
@@ -33,11 +32,10 @@ or figure of this report where the evidence sits.
         the ethical asymmetry directly into the evaluation.
   \item \textbf{WP3: Depth of analysis, no obvious solution.} Which of
         attention, resolution, or sequence modelling helps tiny-target
-        detection had no a-priori answer; plausible reasoning supported all
-        three. The additive ablation (Section~\ref{sec:protocol}) is the analytical
-        instrument built to answer it, and the outcome, one strong
-        component, one cheap one, and one null, was not predictable from
-        the literature.
+        detection had no a-priori answer; each had a plausible mechanism. The
+        additive ablation (Section~\ref{sec:protocol}) provides the comparison,
+        and its result distinguishes one useful scale change, one efficient
+        substitution, and one costly null result.
   \item \textbf{WP4: Familiarity of issues.} The dominant issues are
         infrequently encountered in standard detection practice: targets
         smaller than one detection cell (Figure~\ref{fig:strideprob}), a
@@ -78,14 +76,13 @@ or figure of this report where the evidence sits.
         which forced the pinned AdamW configuration; resolving these
         interactions without breaking comparability was the day-to-day
         engineering of the thesis.
-  \item \textbf{EA3: Innovation.} The work uses established principles in a
-        way the source literature does not: attention added by substitution
-        at negative parameter cost rather than as a bolt-on, state-space
-        blocks placed surgically in the neck of an unchanged CNN detector so
-        their effect is attributable (published Mamba detectors replace the
-        backbone~\cite{wang2025mambayolo}), and an evaluation that elevates
-        per-size recall and $F_2$ to first-class metrics because the task
-        demands them.
+  \item \textbf{EA3: Innovation.} The individual modules are established; the
+        contribution lies in how they are tested and selected. Attention is
+        substituted rather than appended, the state-space blocks are isolated
+        in the neck of an otherwise unchanged detector, and tiny-object recall
+        and $F_2$ are treated as decision metrics. The later assignment blend
+        then modifies positive-sample selection without adding inference cost
+        (Section~\ref{sec:assignmethod}).
   \item \textbf{EA4: Consequences for society and the environment.} The
         activity was run with its externalities measured: a carbon tracker
         and power sampler on every run (9.0~kg CO$_2$ total,
@@ -114,6 +111,5 @@ thesis presents a complex engineering problem, in-depth knowledge applied to
 an unfamiliar, standard-less task with conflicting requirements and coupled
 sub-problems, and its execution shows the corresponding complex activities,
 from resource and interaction management to innovation and measured
-consequences. The mapping is not decorative: each attribute above is
-anchored to a numbered table, figure, or section of this report where the
-claim can be checked.
+consequences. Each attribute above is tied to a numbered table, figure, or
+section so that the mapping can be checked against the work reported here.

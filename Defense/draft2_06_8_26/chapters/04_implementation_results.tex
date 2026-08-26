@@ -1,8 +1,8 @@
 \chapter{Implementation, Results and Discussions}
 
 \section{Introduction}
-This chapter reports how the four detector configurations of Chapter~III were
-trained and evaluated, and what the measurements show. It fixes the experimental
+Four detector configurations are trained and evaluated under the protocol of
+Chapter~III. This chapter fixes the experimental
 setup, explains why each evaluation metric was chosen for this task, describes
 the C2A dataset, and documents the training protocol as it actually ran,
 including which early-stopping criterion ended each run. The results follow in
@@ -32,12 +32,12 @@ AdamW at $\text{lr}_0 = 0.001$ because the framework's automatic choice
 (an SGD variant at $\text{lr}_0 = 0.01$) diverged on the P2-head
 architecture, with the validation classification loss growing without bound
 near epoch 50; AdamW trained every configuration stably. The early-stopping
-patience of 50 epochs, with a stricter $F_2$-based stop at 40, follows the
-convention of published small-object work rather than the framework default:
-cosine-schedule training on noisy small-target data improves late, and a short
-patience cuts runs before that late gain arrives.
+patience of 50 epochs, with a separate $F_2$-based stop at 40, was fixed in
+the project protocol before the comparative runs. The longer window was used
+because preliminary cosine-schedule runs continued to improve late; fixing it
+also prevents one architecture from receiving a more favourable stopping rule.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Training configuration shared by all four models.}
   \label{tab:setup}
@@ -86,8 +86,8 @@ over IoU thresholds $0.5$ to $0.95$, together with $\mathrm{AP}_{50}$,
 $\mathrm{AP}_{75}$, and the size-partitioned $\mathrm{AP}_S$. For targets a
 few pixels wide, $\mathrm{AP}_{50}$ carries most of the signal: a one-pixel
 shift on an 8-px box moves its IoU far more than the same shift on an 80-px
-box, so the strict thresholds inside the averaged AP mostly measure
-annotation noise at this scale. The aggregate AP is still reported for
+box, so strict thresholds are unusually sensitive to both localisation error
+and annotation uncertainty at this scale. The aggregate AP is still reported for
 comparability, and Section~\ref{sec:quant} shows it is nearly flat across
 configurations while $\mathrm{AP}_{50}$ and recall move. Average recall at
 100 detections ($\mathrm{AR}_{100}$) is included because C2A scenes carry 20
@@ -126,15 +126,16 @@ annotated with horizontal boxes. The dataset contains 10{,}215 images and
 roughly 360{,}000 labelled instances across four scene types (collapsed
 buildings, fire, flood, and traffic accident), with 20 to 40 people per
 image. The composited origin is a stated limitation: results on C2A measure
-detection of very small human shapes in disaster clutter, and transfer to
-fully real imagery is future work.
+detection of very small human shapes in disaster clutter. The extended study
+in Section~\ref{sec:realresults} measures, rather than assumes, how these
+models transfer to fully real imagery.
 
 The frozen split used throughout is given in Table~\ref{tab:split}. Split
 hashes are recorded so that the baseline and the three variants all see
 exactly the same training, validation, and test images, which is what makes
 the single-seed comparison between configurations fair.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{C2A dataset split used for all experiments.}
   \label{tab:split}
@@ -155,7 +156,7 @@ markings. Across all four the people are alike, only a few pixels tall,
 scattered, and often part hidden by the very clutter that defines the scene,
 which is what makes the detection problem hard even for a human reader.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_collapsed.png}\\[2pt]
@@ -183,11 +184,11 @@ resolve. Of the roughly $72{,}500$ annotated people in the test split,
 $25{,}072$ are under $8$~px, $20{,}520$ fall in the $8$--$16$~px band, and
 $26{,}614$ in the $16$--$32$~px band; only $317$ reach the $32$--$96$~px range
 and none exceed $96$~px. Three bands therefore hold $99.6\%$ of the targets,
-every one below the size a stride-8 head resolves cleanly. That single
+all of them in a regime that is challenging for a stride-8 head. That
 measurement is what motivates the stride-4 scale and frames the per-size
 recall reported later in Table~\ref{tab:persize}.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \input{tikz/fig_size_distribution}
   \caption{Measured size distribution of C2A test-set human targets.}
@@ -221,10 +222,10 @@ after its best score at epoch 239 and the CBAM+P2 run after epoch 218. The
 baseline kept improving until epoch 270 and ran out the 300-epoch cap. The
 state-space run peaked earliest, at epoch 149, and the fitness patience ended
 it at epoch 154; its 29.5-hour wall clock, four times the baseline's, bought
-no later improvement. The ablation chain uses one seed (0) throughout, per
-the thesis protocol; multi-seed significance testing is deferred to a
-follow-up publication, and no claim in this chapter rests on a difference
-smaller than the seed noise observed in preliminary runs.
+no later improvement. The original ablation chain uses one seed (0), which
+limits the strength of small between-model differences. The later assignment
+comparison is the only training intervention replicated across three seeds;
+Section~\ref{sec:stats} reports those results separately.
 
 \section{Quantitative Results}
 \label{sec:quant}
@@ -243,7 +244,7 @@ detector-family benchmark that fixed the YOLO11m baseline
 (Figure~\ref{fig:appfrontier}), together with every architectural variant
 attempted and its outcome (Table~\ref{tab:apphistory}).
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Preliminary attention-module comparison on C2A.}
   \label{tab:eca}
@@ -271,15 +272,15 @@ appear in the metrics that matter for the task. Adding the P2 head raises
 $\mathrm{AP}_{50}$ from $0.843$ to $0.853$, $\mathrm{AR}_{100}$ from $0.691$
 to $0.703$, and the operational $F_2$ from $0.840$ to $0.844$, at a cost of
 about $0.5$~M parameters and $1$~ms of latency. CBAM on its own is close to
-free: it removes about $1$~M parameters relative to the baseline, since it
-replaces the two heavier C2PSA blocks, while matching or slightly improving
-$F_1$/$F_2$ and giving the lowest latency of the four. The state-space neck
+free: it removes about $1$~M parameters relative to the baseline by replacing
+the C2PSA module, while preserving $F_1$/$F_2$ and giving the lowest latency
+of the four. The state-space neck
 is the outlier in the wrong direction: it adds $2.4$~M parameters and
 roughly triples end-to-end latency ($14.6 \to 41.1$~ms) without improving
 any accuracy metric. On this evidence the recommended configuration is
 CBAM~+~P2, and the state-space neck is not carried forward.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Additive ablation results on the C2A test set (COCO protocol).}
   \label{tab:main}
@@ -302,13 +303,13 @@ Figure~\ref{fig:waterfall} shows the same story as a per-component waterfall.
 The $y$-axis is zoomed to the $0.838$--$0.856$ range so the small differences
 are visible; each bar's height is the change in $\mathrm{AP}_{50}$ from the
 configuration to its left, and the parameter count and latency are printed
-beneath each step. The green bars mark the two genuine gains, CBAM
+beneath each step. The green bars mark the two measured increases, CBAM
 ($+0.0041$) and the P2 head ($+0.0060$), while the red bar shows the
 state-space neck removing $0.0012$ at almost triple the latency. Read left to
 right, the figure is the visual argument for stopping the chain at
 CBAM~+~P2.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \input{tikz/fig_ablation_waterfall}
   \caption{Per-component contribution to $\mathrm{AP}_{50}$ on the C2A test set.}
@@ -326,11 +327,11 @@ small and its estimate is noisy. The net effect is a model that is better at
 the smallest targets and roughly even elsewhere, which is the intended trade
 for this application. The state-space neck tracks CBAM~+~P2 almost exactly
 here, confirming it adds nothing in the size regime it was meant to help; its
-scan diagnostics show the module was genuinely active (the forward and
-reverse scans disagree with a mean cosine distance of $0.836$), so the null
-result reflects the architecture, not a wiring fault.
+scan diagnostics show the module was active (the forward and reverse scans
+disagree with a mean cosine distance of $0.836$), so an inactive or disconnected
+module does not explain the null result.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Per-size recall on the C2A test set with ground-truth counts.}
   \label{tab:persize}
@@ -353,11 +354,12 @@ Table~\ref{tab:thrcal} records the operating point and calibration of each
 configuration. The $F_2$-optimal confidence threshold sits between $0.16$ and
 $0.20$ for all four models, so a deployment does not need per-model tuning;
 the recommended model operates at $0.16$. Calibration is good across the
-chain: expected calibration errors of about $0.02$ mean a reported confidence
-of $0.8$ corresponds to roughly $0.8$ empirical precision, which is what lets
-an operator trust the scores when triaging detections.
+chain: expected calibration errors of about $0.02$ indicate a small average
+gap between binned confidence and empirical correctness. ECE is an aggregate
+measure, however, and does not guarantee that every individual score is a
+calibrated probability.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Operating threshold and calibration per configuration.}
   \label{tab:thrcal}
@@ -383,14 +385,14 @@ gives the state-space variant, the weakest configuration of the chain. It is
 also the only run with a visible incident: at epoch 28 its validation
 classification loss jumped from $0.61$ to $4.5$ and validation mAP50 collapsed
 to near zero, recovering over the following fifteen epochs. None of the three
-convolutional configurations showed such an event, which points at the
-optimisation fragility of the scan blocks rather than at the data or the
-schedule. After recovery, the variant's validation mAP50 plateaus by epoch
+convolutional configurations showed such an event. The incident is consistent
+with optimisation fragility in this scan-block configuration, but one run
+cannot isolate the cause. After recovery, the variant's validation mAP50 plateaus by epoch
 149 despite the run continuing to epoch 154, and no late improvement appears. The other three runs follow the same
 shape with the endpoints already reported in Table~\ref{tab:main}; their
 stopping epochs (270, 239, and 218) are given in Section~\ref{sec:protocol}.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_training_worst.png}{9.5cm}
   \caption{Training dynamics of the state-space variant.}
@@ -403,13 +405,13 @@ recall passes $0.8$ and then falls, the shape expected when the remaining
 misses are the sub-eight-pixel targets. The score-against-confidence curve
 (b) is broad and flat near its peak, so the exact operating threshold is not
 delicate; the dashed line marks the $F_2$-optimal value of
-Table~\ref{tab:thrcal}. The reliability diagram (c) tracks the diagonal,
-which is why a reported confidence can be read as an empirical precision, and
-the confusion counts (d) show the errors are almost all missed people rather
-than false alarms on background, the failure mode that matters least in a
-recall-first task.
+Table~\ref{tab:thrcal}. The reliability diagram (c) stays close to the
+diagonal over most populated bins, consistent with the low aggregate ECE.
+The confusion matrix (d) records both missed people and background false
+positives; together they motivate a review threshold rather than autonomous
+use of the detections.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}{0.49\linewidth}\centering
     \figorplaceholder{figures/cbam_p2_pr_curve.png}{6.6cm}\\[2pt]
@@ -433,9 +435,10 @@ recall-first task.
 
 \section{Qualitative Results and Error Analysis}
 \label{sec:qual}
-Figure~\ref{fig:qualgrid} shows the recommended model on one of the densest
-test scenes, a collapsed multi-storey building with 156 annotated people,
-with the ground truth and three operating modes side by side in one layout.
+Figure~\ref{fig:qualgrid} shows the older Mamba+CBAM+P2 checkpoint used for the
+exploratory SAHI/TTA study on one of the densest test scenes, a collapsed
+multi-storey building with 156 annotated people, with the ground truth and
+three operating modes side by side in one layout.
 The baseline pass at 640~px already recovers the large majority of the crowd;
 the sliced and augmented modes add detections along the rubble line, where
 the smallest and most occluded figures sit. Detection counts exceed the
@@ -443,7 +446,7 @@ ground-truth count in all three modes (209 to 217 boxes against 156
 annotations at the 0.25 review threshold), a reminder that at this density an
 operator reviews candidates rather than trusting raw counts.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}{0.485\linewidth}\centering
     \includegraphics[width=\linewidth]{figures/qual_gt.png}\\[2pt]
@@ -451,7 +454,7 @@ operator reviews candidates rather than trusting raw counts.
   \end{minipage}\hfill
   \begin{minipage}{0.485\linewidth}\centering
     \includegraphics[width=\linewidth]{figures/qual_baseline.png}\\[2pt]
-    {\small (b) CBAM~+~P2 at 640~px (209 boxes)}
+    {\small (b) exploratory checkpoint at 640~px (209 boxes)}
   \end{minipage}\\[8pt]
   \begin{minipage}{0.485\linewidth}\centering
     \includegraphics[width=\linewidth]{figures/qual_sahi256.png}\\[2pt]
@@ -461,7 +464,7 @@ operator reviews candidates rather than trusting raw counts.
     \includegraphics[width=\linewidth]{figures/qual_sahitta256.png}\\[2pt]
     {\small (d) with SAHI + TTA (217 boxes)}
   \end{minipage}
-  \caption{Dense-scene comparison of ground truth and three operating modes.}
+  \caption{Dense-scene comparison for the exploratory Mamba+CBAM+P2 checkpoint.}
   \label{fig:qualgrid}
 \end{figure}
 
@@ -481,7 +484,7 @@ larger targets, is nearly saturated. The model's internal evidence for these
 detections, its attention and P2 feature response on the running example, was
 shown in Figure~\ref{fig:explain}.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}{0.46\linewidth}\centering
     \includegraphics[width=\linewidth,height=6.8cm,keepaspectratio]{figures/detgrid_c2a_s8.png}\\[2pt]
@@ -504,9 +507,10 @@ or exceeds every convolutional and transformer baseline in that study except
 YOLOv9-e, and it does so with about $19.6$~M parameters against YOLOv9-e's
 $57.3$~M, roughly a third of the size. For a detector that must ride on
 airborne hardware, that trade, one point of $\mathrm{AP}_{50}$ short of a
-model three times larger, is the right one.
+model three times larger, demonstrates the accuracy--size trade-off selected
+for this thesis.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Comparison with published detectors on the C2A test set~\cite{nihal2024c2a}.}
   \label{tab:sota}
@@ -530,59 +534,50 @@ model three times larger, is the right one.
 
 \section{Inference-Time Enhancement: SAHI and TTA}
 \label{sec:sahitta}
-Slicing-aided hyper inference (SAHI)~\cite{akyon2022sahi} runs the trained detector
-over overlapping crops so that very small targets occupy a larger fraction of each
-input tile; test-time augmentation (TTA) instead runs the detector at several
-resolutions and merges the results. Both are applied to the recommended CBAM~+~P2
-model as separate, clearly-labelled inference-time settings, not folded into the
-primary table, because the sliced protocol uses per-image box matching for which the
-standard mAP is not directly comparable. Table~\ref{tab:sahi} reports the sweep, in which latency is the mean
-per-image time on the 4070 Ti SUPER and the baseline row is the same model
-at 640~px without slicing or augmentation; Figure~\ref{fig:sahibars} gives
-the resulting per-size recall, and Figure~\ref{fig:qualgrid} showed both
-modes on a dense scene. Among the SAHI
-settings, a $256$-px slice gives the highest very-tiny recall, $0.788$ (up from
-$0.758$, $+3.0$~points), but at $162$~ms per image; larger slices run faster
-($54$--$113$~ms) and recover slightly less. Test-time augmentation at $1280$~px is
-the most effective single setting: it raises very-tiny recall to $0.850$
-($+9.2$~points) and the operational $F_2$ to $0.854$, and lifts mAP50 from $0.868$
-to $0.878$ and mAP50-95 from $0.632$ to $0.677$, all at $60$~ms, cheaper than any
-SAHI configuration. Beyond $1280$~px it degrades, as a model trained at $640$~px
-cannot extrapolate to several times the resolution. Both remain optional
-inference-time settings that trade latency for recall on the smallest targets;
-neither is part of the primary model.
+Slicing-aided hyper inference (SAHI)~\cite{akyon2022sahi} runs a detector over
+overlapping crops, while test-time augmentation (TTA) evaluates transformed
+versions of the full image and merges their predictions. These experiments
+predate the final ablation and used the older Mamba+CBAM+P2 checkpoint, not the
+recommended CBAM+P2 model. They are retained because they show the operational
+trade-off, but they are not evidence for the final model and are excluded from
+the primary comparison. The SAHI scores also use per-image matching at
+$\mathrm{IoU}=0.5$, so they are not directly comparable with COCO AP.
 
-\begin{table}[H]
+Table~\ref{tab:sahi} reports the archived sweep. A 512-px slice gives the best
+balanced SAHI operating point ($F_2=0.865$, very-tiny recall $0.808$) at
+$187$~ms per image. The 256-px setting reaches the highest very-tiny recall
+($0.829$) but lowers precision and costs $534$~ms. The separate TTA run at
+1280~px increased its checkpoint's $\mathrm{AP}_{50}$ by $1.64$ points and
+its COCO AP by $5.39$ points; 1920~px degraded. Because the final CBAM+P2
+checkpoint was not rerun under these settings, the study supports only the
+general conclusion that higher-resolution inference can exchange latency for
+tiny-target recall. It is not included in the thesis headline metrics.
+
+\begin{table}[tbp]
   \centering
-  \caption{SAHI slice-size sweep and TTA for the recommended model.}
+  \caption{Exploratory SAHI sweep on the older Mamba+CBAM+P2 checkpoint.}
   \label{tab:sahi}
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{@{}l r r r r r r r@{}}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l r r r r r r@{}}
     \toprule
-    Setting & Size & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny R & Lat.\ (ms) \\
+    Setting & Size & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny R \\
     \midrule
-    no SAHI (baseline) & 640  & 0.857 & 0.835 & 0.845 & 0.839 & 0.758 & 15 \\
-    + SAHI             & 256  & 0.853 & 0.846 & 0.850 & 0.848 & 0.788 & 162 \\
-    + SAHI             & 320  & 0.861 & 0.844 & 0.852 & 0.847 & 0.782 & 113 \\
-    + SAHI             & 512  & 0.864 & 0.837 & 0.850 & 0.842 & 0.763 & 66 \\
-    + SAHI             & 640  & 0.864 & 0.833 & 0.848 & 0.839 & 0.756 & 54 \\
-    + TTA              & 1280 & 0.774 & 0.877 & 0.822 & \textbf{0.854} & \textbf{0.850} & 60 \\
+    no SAHI & --- & 0.855 & 0.845 & 0.850 & 0.847 & 0.767 \\
+    + SAHI  & 512 & 0.867 & 0.865 & \textbf{0.866} & \textbf{0.865} & 0.808 \\
+    + SAHI  & 256 & 0.790 & \textbf{0.872} & 0.829 & 0.854 & \textbf{0.829} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Figure~\ref{fig:sahibars} breaks the same sweep down by target size. Every
-inference-time setting lifts the very-tiny ($<8$~px) band the most, the band
-the P2 head already targets, while the larger bands barely move; the
-$1280$-px TTA bar is the tallest in the very-tiny group, matching the $0.850$
-recall of Table~\ref{tab:sahi}. Read together, the table and the figure show
-that the inference-time gain is concentrated exactly where the smallest
-victims sit, and that it costs latency rather than accuracy elsewhere.
+Figure~\ref{fig:sahibars} visualises the archived size-wise measurements. It
+belongs to the same older checkpoint and is shown as exploratory evidence only;
+the final model would require a new sweep before any of these gains could be
+claimed for deployment.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/per_size_recall_all_configs.png}{9.5cm}
-  \caption{Per-size recall under each inference-time setting.}
+  \caption{Archived per-size recall for the exploratory inference study.}
   \label{fig:sahibars}
 \end{figure}
 
@@ -596,15 +591,15 @@ targets? And what happens when the trained model meets real footage instead of
 composited scenes? This section reports the answers in that order, on the same
 workstation and under the same metric definitions as the rest of the chapter;
 training settings that differ from Table~\ref{tab:setup} are stated where they
-apply. Two findings organise it. The productive lever moved from architecture
-to training supervision, and adaptation gains proved specific to the footage
-they came from. Figure~\ref{fig:partbchain} summarises the phase as the chain
+apply. Two findings organise it: training supervision helped after the
+architecture search stalled, and adaptation gains were specific to the footage
+used for fine-tuning. Figure~\ref{fig:partbchain} summarises the phase as the chain
 of decisions the subsections walk through: the re-split is adopted, a
 frequency-gated branch is tried and dropped, the assignment blend is kept,
 and the real-data fine-tune produces one model evaluated on five held-out
 domains.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_partB_chain.png}{4.5cm}
   \caption{Decision chain of the extended study.}
@@ -629,7 +624,7 @@ the extended study rides on shared scenes. Its test set holds 72{,}847 person
 instances: 24{,}806 below 8~px, 20{,}893 at 8--16~px, 26{,}738 at 16--32~px,
 and 410 at 32--96~px.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Scene-leakage cost for the recommended model.}
   \label{tab:leak}
@@ -657,7 +652,7 @@ steeply: the full replacement at $\gamma=1.0$ pays more than five points of
 $\mathrm{AP}_S$ for its recall gain, a poor trade, while $\gamma=0.5$ keeps
 most of the gain at a tenth of the cost. The half-blend was carried forward.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Dose--response of the assignment blend in fifty-epoch pilots.}
   \label{tab:gamma}
@@ -672,14 +667,14 @@ most of the gain at a tenth of the cost. The half-blend was carried forward.
   \end{tabular}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_gamma_dose.png}{7.0cm}
   \caption{Assignment blend weight as a recall-against-precision trade dial.}
   \label{fig:gammadose}
 \end{figure}
 
-The decisive test is a matched pair at the full 300-epoch protocol: two runs
+The full-protocol test is a matched pair: two 300-epoch-cap runs
 from the same launcher, initialisation, split, and schedule, differing only in
 $\gamma$. Table~\ref{tab:d2pair} reports the pair with confidence intervals
 from the bootstrap of Section~\ref{sec:stats}. The blend raises very-tiny
@@ -706,14 +701,15 @@ way before the assignment change was adopted, and it failed. In a fifty-epoch
 paired ablation against its control it moved nothing that matters: very-tiny
 recall $0.691$ against $0.693$, $\mathrm{AP}_S$ $0.554$ against $0.560$, at
 $0.55$~M added parameters and 12 additional GFLOPs, and the result reproduced
-on a second machine. Its gates trained stably and stayed active, so the branch
-fails on substance, not wiring. Whatever high-frequency evidence it isolates,
-the CBAM and P2 features already carry. Together with the state-space neck of
+on a second machine. Its gates trained stably and stayed active, so the null is
+not explained by a disconnected implementation. The experiment cannot tell
+whether its evidence is redundant with existing features or simply unhelpful
+to the head. Together with the state-space neck of
 Table~\ref{tab:main}, that makes two architecture branches rejected under
 paired tests while a supervision change succeeded, which is the pattern that
 gives this section its title.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Matched full-protocol pair differing only in the assignment blend.}
   \label{tab:d2pair}
@@ -747,7 +743,7 @@ Median person size runs from 44~px on the drone test down to 17~px on the
 disaster evaluation frames, so the real sets span the size regime the thesis
 targets.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Real-imagery sets built for the extended study.}
   \label{tab:owndata}
@@ -769,15 +765,15 @@ targets.
   \end{tabular}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_real_samples.png}{8.5cm}
   \caption{Samples from the real-imagery sets with ground-truth boxes.}
   \label{fig:realsamples}
 \end{figure}
 
-Zero-shot transfer is poor, and that is worth stating plainly because the
-synthetic benchmark gives no hint of it. The assignment model that reaches
+Zero-shot transfer is poor even though the synthetic benchmark score is high.
+The assignment model that reaches
 $\mathrm{AP}_{50}$ $0.844$ on C2A manages $0.335$ on the drone test and
 $0.133$ on the disaster R-set. Supervised adaptation closes most of the drone
 gap: fine-tuning on C2A plus the oversampled real sets lifts the drone test to
@@ -792,7 +788,7 @@ Table~\ref{tab:main}. Figure~\ref{fig:sim2real} plots the three model stages
 across the three real domains, and Table~\ref{tab:multidomain} collects the
 final model's scores on every held-out set.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_sim2real_bars.png}{7.0cm}
   \caption{Adaptation stages across the three real evaluation domains.}
@@ -807,7 +803,7 @@ not evaluated there. The table beneath adds the campus set and the source
 benchmark, so the five rows together are the full held-out picture of one
 model.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Final adapted model on every held-out evaluation set.}
   \label{tab:multidomain}
@@ -826,8 +822,8 @@ model.
 
 \subsection{Within-Video Against Cross-Event}
 \label{sec:xevent}
-The disaster rows of Table~\ref{tab:multidomain} need careful reading, and the
-honest reading is the finding. The 60 disaster training frames and the 25
+The disaster rows of Table~\ref{tab:multidomain} require a distinction between
+within-video adaptation and cross-event transfer. The 60 disaster training frames and the 25
 R-set evaluation frames come from the same two news videos; the perceptual
 hash guarantees no frame is shared, but scenes, lighting, and people overlap.
 On that within-video set, adaptation works dramatically. $\mathrm{AP}_{50}$
@@ -905,10 +901,11 @@ latency for no accuracy change, its per-size behaviour in
 Table~\ref{tab:persize} tracks CBAM~+~P2, and its scan diagnostics confirm
 the module was active, so the negative result stands on solid measurement.
 
-The fourth objective, raising recall at inference time without retraining,
-is met in Section~\ref{sec:sahitta}: Table~\ref{tab:sahi} shows test-time
-augmentation lifting very-tiny recall from $0.758$ to $0.850$ at $60$~ms per
-image, with the SAHI alternatives characterised alongside.
+The fourth objective, characterising inference-time recall--latency trade-offs,
+is addressed in Section~\ref{sec:sahitta}. The archived SAHI/TTA experiments
+show that higher-resolution inference can recover more very small targets, but
+they used an older Mamba+CBAM+P2 checkpoint. They therefore motivate, rather
+than replace, a final-model deployment sweep.
 
 The extended study goes past the defended objectives rather than replacing
 them, and its outcomes are anchored the same way: the split audit in
@@ -922,8 +919,8 @@ second phase.
 \label{sec:budget}
 The work used hardware already available and open-source software, so the
 direct cost of the research was electricity alone. For replication,
-Table~\ref{tab:budget} gives a definitive estimate of the workstation used,
-priced at current Dhaka retail rates. The four training runs total 54
+Table~\ref{tab:budget} gives an illustrative mid-2026 estimate of the
+workstation used; the values are not purchase invoices. The four training runs total 54
 GPU-hours at measured average board powers of $182$ to $218$~W
 (Table~\ref{tab:carbon}), about $10.6$~kWh of GPU energy; with system
 overhead and the evaluation and inference studies, total consumption is
@@ -934,7 +931,7 @@ estimated additional $20$~kWh at the same board powers. Annotation of the
 real sets used the free tier of a web labelling tool. No paid datasets,
 cloud compute, or licences were used.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Cost estimate of the experimental workstation (Dhaka retail, mid-2026).}
   \label{tab:budget}
@@ -959,13 +956,12 @@ the P2 detection scale, which lifts very-tiny recall and $\mathrm{AP}_{50}$
 at a small cost, while CBAM contributes efficiency and the state-space neck
 contributes nothing at nearly triple the latency. The recommended CBAM~+~P2
 detector reaches $\mathrm{AP}_{50}$ $0.853$ and $F_2$ $0.844$ at $19.6$~M
-parameters and $14.6$~ms, stands second among all published detectors on this
-benchmark at a third of the leader's size, and gains a further nine points of
-very-tiny recall from test-time augmentation when latency permits. The
+parameters and $14.6$~ms. Among the detectors in the original C2A benchmark,
+only YOLOv9-e scores higher, at roughly three times the parameter count. The
 extended study sharpened that picture in three ways. The benchmark's scene
 leakage costs $1.6$ points of $\mathrm{AP}_{50}$ and changes no conclusion.
-On the smallest targets the productive lever turned out to be label
-assignment rather than architecture, worth one to two points of sub-8-pixel
+For the smallest targets, label assignment helped where the additional
+architecture did not, adding one to two points of sub-8-pixel
 recall in every training seed tested, while a frequency-gated branch joined
 the state-space neck as a documented negative. And on real footage a labelled
 budget of a few hundred frames adapted the model to its target domains at

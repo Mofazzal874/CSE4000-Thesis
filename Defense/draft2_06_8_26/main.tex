@@ -73,7 +73,7 @@ then lists every architectural variant attempted across the project with its
 outcome and the decision it produced, including the attempts that failed and
 the one whose first results were invalidated by an implementation fault.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Detector-family benchmark used to select the baseline.}
   \label{tab:appfamily}
@@ -106,7 +106,7 @@ beats every detector of comparable size. That balance of accuracy and
 deployable footprint is why YOLO11m was fixed as the baseline for the ablation
 in the body.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{tikzpicture}
     \begin{axis}[
@@ -137,7 +137,7 @@ in the body.
       \node[font=\scriptsize, anchor=south] at (axis cs:38.6,0.598) {11m};
     \end{axis}
   \end{tikzpicture}
-  \caption{Detection accuracy against model size for the nine benchmarked detectors of Table~\ref{tab:appfamily}; size stands in for parameter count. YOLO11m (star) lies on the efficient frontier.}
+  \caption{Detection accuracy against model size for the baseline benchmark.}
   \label{fig:appfrontier}
 \end{figure}
 
@@ -155,26 +155,6 @@ because its smoke tests showed no reliable gain. Read together, the table
 records not only what was adopted but the cost of finding it out, which is the
 part of a project that a results chapter usually omits.
 
-\begin{table}[H]
-  \centering
-  \caption{Architectural variants attempted during the project, with outcome and decision.}
-  \label{tab:apphistory}
-  \small
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{@{}p{2.9cm} p{4.3cm} p{4.4cm} p{2.4cm}@{}}
-    \toprule
-    Variant & What it changes & Outcome & Decision \\
-    \midrule
-    ECA attention & C2PSA $\to$ ECA in backbone & $F_2$ 0.844, small-object recall 0.884 (earlier protocol): no gain over baseline & not adopted \\
-    CBAM attention & C2PSA $\to$ CBAM in backbone & $F_2$ 0.849, small-object recall 0.892 (earlier protocol); confirmed in final chain (Table~\ref{tab:main}) & adopted \\
-    P2 detection scale & adds stride-4 head branch & $\mathrm{AP}_{50}$ $0.843 \to 0.853$, very-tiny recall $0.743 \to 0.757$ (final protocol) & adopted; core of recommended model \\
-    C3k2Mamba, first attempt & post-initialisation SSM injection into neck & results invalid: the framework's training rebuild silently removed the injected blocks, so the model trained was CBAM~+~P2 & discarded; protocol gained module-presence verification \\
-    AtrousSSM & multi-scale dilated SSM scanning in neck & prototype stage; smoke evaluations showed no reliable gain and no protocol-compliant full run was completed & set aside \\
-    C3k2Mamba, corrected & verified SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy change (Table~\ref{tab:main}); scan-activity diagnostics confirm the blocks ran & excluded from recommendation \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 Finally, a note on reproducibility. Every run recorded the artifacts needed to
 repeat it. Training used a single fixed seed (0) with deterministic cuDNN
 kernels; the train, validation, and test splits are pinned by content hash so
@@ -186,6 +166,30 @@ Table~\ref{tab:appfamily} predates that machine and used the shorter protocol
 noted above, which is why its absolute scores are offset from the body's. These
 records let the negative results here be reported as measurements, not
 impressions.
+
+\begin{table}[tbp]
+  \centering
+  \caption{Architectural variants attempted during the project, with outcome and decision.}
+  \label{tab:apphistory}
+  \small
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}
+    >{\raggedright\arraybackslash}p{2.4cm}
+    >{\raggedright\arraybackslash}p{3.5cm}
+    >{\raggedright\arraybackslash}p{5.1cm}
+    >{\raggedright\arraybackslash}p{2.7cm}@{}}
+    \toprule
+    Variant & What it changes & Outcome & Decision \\
+    \midrule
+    ECA attention & C2PSA $\to$ ECA & $F_2$ 0.844 and small-object recall 0.884 under the earlier protocol; no gain over baseline & not adopted \\
+    CBAM attention & C2PSA $\to$ CBAM & $F_2$ 0.849 and small-object recall 0.892 under the earlier protocol; efficiency confirmed in Table~\ref{tab:main} & adopted \\
+    P2 detection scale & add stride-4 head & $\mathrm{AP}_{50}$ $0.843 \to 0.853$ and very-tiny recall $0.743 \to 0.757$ & core of recommended model \\
+    C3k2Mamba, first attempt & inject SSM blocks after model construction & invalid: the training rebuild removed the injected blocks, so CBAM+P2 trained instead & discarded; added module-presence check \\
+    AtrousSSM & dilated SSM scans in neck & smoke tests showed no reliable gain; no protocol-compliant full run completed & set aside \\
+    C3k2Mamba, corrected & verify SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy gain; scan diagnostics confirmed execution & excluded \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 % ---------- REFERENCES (IEEE) : template places references last ------------
 \clearpage

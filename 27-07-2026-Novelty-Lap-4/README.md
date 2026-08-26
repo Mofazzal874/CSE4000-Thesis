@@ -22,12 +22,14 @@ real disaster *training* data (SAM3-assisted, no tedious manual boxing) and then
 4. **S5 tables** + write the report + paper.
 
 ## Status
-- [ ] extract disaster training frames (dedup; exclude R-set 25)
-- [ ] SAM3-annotate on Roboflow → normalize (22) → YOLO (23)
-- [ ] retrain joint (C2A + drone + campus + disaster) → eval R-set + void-FP
-- [ ] PC-2 matched control (clean D2 pair) — needs a PC-2 slot (next day)
-- [ ] YOLO26m anchor
-- [ ] S5 final ablation grid + tables → report + paper
+- [x] extract disaster training frames (dedup; exclude R-set 25)
+- [x] annotate/normalize disaster data and build the combined training set
+- [x] retrain joint (C2A + drone + campus + disaster) and evaluate R-set/void behavior
+- [x] complete D2 matched controls, three seeds, and paired-bootstrap significance
+- [x] run YOLO26m contextual anchor
+- [x] close FCCG as a null architectural experiment
+- [x] complete venue/impact audit: `2026-08-17_venue_research.md`
+- [ ] write and internally audit the paper (recommended first target: IEEE JSTARS)
 
 ## Scripts (reuse lap-3, in `../10-07-2026-Novelty-Lap-3/scripts/`)
 12 rset_extract · 22 coco_singleclass · 23 coco→yolo (downscale) · 24 joint_finetune · 18 eval ·

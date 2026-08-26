@@ -1,23 +1,21 @@
 \chapter{Methodology}
 
 \section{Introduction}
-This chapter presents the design and architectural implementation of the proposed
-detector for very small human targets in aerial search-and-rescue imagery. The
-methodology treats the task as a resolution-and-attention problem: the targets of
+The methodology treats very small aerial-human detection as a
+resolution-and-attention problem: the targets of
 interest are frequently smaller than the finest detection cell of a standard
 one-stage detector, and they sit in heavy background clutter. The proposed model
 therefore modifies the YOLO11m baseline (reviewed in Chapter~II) in exactly two
 places: a Convolutional Block Attention Module (CBAM) replaces the C2PSA attention
 block at the end of the backbone, and the neck and head are extended with a
 stride-4 (P2) detection scale. A third component, a bidirectional state-space
-(Mamba) neck block, was explored under the same protocol and is reported honestly
-as a negative result. Rather than adopting a single fixed architecture, the model
+(Mamba) neck block, was explored under the same protocol and produced a negative
+result. Rather than adopting a single fixed architecture, the model
 is developed through an \emph{additive ablation}: one architectural change is
 introduced at a time so that the contribution of each component can be attributed
-independently. The following sections give the system overview, the layer-level
-architecture, the novelties and their rationale, the loss design, the extended
-training methods of the second phase of the work, and the inference-time
-enhancement procedures evaluated in Chapter~IV.
+independently. The layer-level specification is followed by the loss,
+label-assignment, real-data adaptation, and inference procedures evaluated in
+Chapter~IV.
 
 \section{System Architecture Overview}
 The complete pipeline is shown in Figure~\ref{fig:framework}. Given an aerial
@@ -27,7 +25,7 @@ fuses all scales in a PAN--FPN neck extended down to stride~4, and decodes boxes
 at four scales before non-maximum suppression (NMS) produces the final human
 detections.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \input{tikz/fig_system_overview}
   \caption{High-level schematic of the proposed detection pipeline.}
@@ -38,17 +36,18 @@ The workflow has three phases:
 \begin{itemize}
   \item \textbf{Feature extraction and attention.} The backbone produces feature
   maps at strides 2--32 (P1--P5). At the deepest level, CBAM applies channel
-  attention followed by spatial attention, re-weighting the 512-channel P5
-  features so that human-shaped responses are emphasised over debris, water, and
-  vegetation before any fusion happens.
+  attention followed by spatial attention to the 512-channel P5 feature map
+  before fusion. This is a learned re-weighting operation; it is not assumed to
+  isolate people by itself.
   \item \textbf{Multi-scale fusion with a P2 extension.} The neck runs the usual
   top-down and bottom-up passes, but the top-down pass continues one level
   further than the standard design: it upsamples to stride~4 and fuses the
   high-resolution backbone P2 features, producing a $160 \times 160$ map whose
   cells cover only $4 \times 4$ input pixels.
   \item \textbf{Four-scale decoding.} The head predicts boxes at strides 4, 8,
-  16, and 32; NMS merges overlapping candidates so that clusters of nearby
-  people are kept as separate detections.
+  16, and 32. NMS then suppresses duplicate boxes. In crowded regions this
+  suppression can also remove a neighbouring person's prediction, which is
+  treated as a residual failure mode rather than a benefit of NMS.
 \end{itemize}
 
 \section{Proposed System Architecture}
@@ -62,12 +61,12 @@ top-down and a bottom-up pass, and the fusion is carried one level further than
 the standard design so that a high-resolution stride-4 (P2) branch is produced.
 The four fused scales feed a single detection head, and non-maximum suppression
 returns one box per recovered person. The image insets placed around the
-diagram are the model's own signals on this scene, read as input, CBAM
-attention map, P2 feature response, and final detections; they show that the
-attention concentrates on human-shaped regions and that the P2 branch responds
-to the smallest scattered figures.
+  diagram are the model's own signals on this scene: the input, CBAM attention
+  map, P2 feature response, and final detections. The CBAM map is spatially
+  diffuse rather than a person-localisation map; the P2 response provides the
+  finer spatial evidence used by the additional detection scale.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/cbam_p2_architecture.png}{10.5cm}
   \caption{Layer-level architecture of the proposed detector on a real C2A scene.}
@@ -133,8 +132,8 @@ in Chapter~IV.
 
 \subsection{Attention Enhancement: CBAM}
 \label{sec:cbam3}
-The baseline YOLO11m places two C2PSA self-attention blocks after the SPPF stage.
-In the proposed model these are replaced by a single CBAM module, which applies
+The baseline YOLO11m places one C2PSA module after the SPPF stage. In the
+proposed model it is replaced by a single CBAM module, which applies
 channel attention followed by spatial attention in sequence. Given an
 intermediate feature map $\mathbf{F} \in \mathbb{R}^{C \times H \times W}$, CBAM
 computes a channel attention map $\mathbf{M}_c$ and a spatial attention map
@@ -151,8 +150,8 @@ $\mathbf{F}' = \mathbf{M}_c(\mathbf{F}) \otimes \mathbf{F}$ and
 $\mathbf{F}'' = \mathbf{M}_s(\mathbf{F}') \otimes \mathbf{F}'$, where $\otimes$
 denotes element-wise multiplication with broadcasting. The module uses a channel
 reduction ratio of 16 and a $7\times7$ spatial kernel, matching the original
-design of Woo et al. Because CBAM is lighter than the two C2PSA blocks it
-replaces, this substitution slightly \emph{reduces} the parameter count relative
+design of Woo et al. Because CBAM is lighter than the C2PSA module it
+replaces, this substitution \emph{reduces} the parameter count relative
 to the baseline while adding both channel and spatial selectivity.
 
 \subsection{Multi-Scale Detection: the P2 Head}
@@ -166,8 +165,8 @@ neck's top-down pass one level further: the fused P3 neck feature
 high-resolution backbone P2 feature ($160^2 \times 256$, the skip from
 layer~2), and fused by a C3k2 block into the $160^2 \times 128$ P2 feature that
 a stride-4 detection branch reads. Each P2 cell covers only a $4 \times 4$ pixel
-region, allowing the detector to resolve targets as small as approximately four
-pixels. As shown in Chapter~IV, this high-resolution scale is the principal
+region, giving a four-pixel target more candidate locations than the stride-8
+grid. As shown in Chapter~IV, this high-resolution scale is the principal
 driver of the improvement in very-small-target recall.
 
 \subsection{State-Space Neck Variant: C3k2Mamba}
@@ -190,22 +189,22 @@ Consider a collapsed-building scene of the kind shown in
 Figure~\ref{fig:dataset_samples}(a), a $2000\times1500$ aerial photograph with more
 than thirty people scattered across rubble, most of them under sixteen pixels tall.
 The image is first letterbox-resized to $640\times640$, which preserves the aspect
-ratio so the already small figures are not stretched. The backbone extracts features
-at five scales, and the CBAM block after the SPPF stage re-weights them so that
-human-shaped regions are emphasised over the surrounding debris. The neck fuses the
-scales, and the head predicts boxes at all four levels; the added P2 level, at
-stride four, is the one that fires on the smallest figures, which the stride-eight
-P3 level would summarise into a single cell. Non-maximum suppression then removes
-overlapping boxes, so that a cluster of nearby people is kept as separate detections
-rather than merged. The output is one bounding box per recovered person, which is
-what an operator reviews.
+ratio so the already small figures are not stretched. The backbone extracts
+features at five scales, and the CBAM block after the SPPF stage re-weights the
+deepest feature map before fusion. The head predicts boxes at all four levels;
+the added stride-4 P2 level supplies finer candidate locations for the smallest
+figures, which the stride-8 P3 level represents more coarsely. Non-maximum
+suppression then removes duplicate candidates. Ideally one box remains per
+recovered person, but crowding can still cause merged or suppressed detections.
+The operator reviews that final candidate set.
 
 The internal behaviour of the trained model on this image is shown in
-Figure~\ref{fig:explain}: the CBAM attention, where warm colours mark high
-response, concentrates on human-shaped regions over the debris, the P2 feature responds most strongly at the smallest scattered
-figures, and the final detections recover the people the operator needs.
+Figure~\ref{fig:explain}. Warm colours in the CBAM panel mark higher response,
+but the response remains diffuse across the scene and should not be read as a
+segmentation map. The P2 panel shows fine-scale activation, and the final panel
+shows the detections produced from all four scales.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
@@ -228,24 +227,23 @@ figures, and the final detections recover the people the operator needs.
 \end{figure}
 
 \section{Architecture Novelties}
-The design does not chase novelty for its own sake; each departure from the
-baseline answers a specific failure mode of small-target detection, and each is
+Each departure from the baseline addresses a specific failure mode of
+small-target detection, and each is
 verified in isolation by the ablation of Chapter~IV. Three design decisions
 define the contribution.
 
 \subsection{Attention That Pays for Itself}
 Aerial disaster scenes are dominated by distractors: rubble textures, water
 glare, and vegetation produce strong generic feature responses that drown out
-faint human signatures. The first design decision replaces the baseline's two
-heavy C2PSA self-attention blocks with a single CBAM module. The intended effect
-is illustrated in Figure~\ref{fig:cbameffect} together with the model's real
-attention map: background clutter is down-weighted while the faint target
-response is amplified. Because the substitution removes more parameters than it
-adds, the attention improvement arrives at a negative parameter cost, about one
-million parameters below the baseline, with the lowest latency of all evaluated
-configurations.
+faint human signatures. The first design decision replaces the baseline C2PSA
+module with one CBAM module. Figure~\ref{fig:cbameffect} illustrates the intended
+channel-and-spatial re-weighting and includes a measured attention map. That map
+is diffuse, so it does not establish that CBAM localises individual people. The
+defensible result is narrower: the substitution removes about one million
+parameters, preserves the operational scores, and gives the lowest latency
+among the four evaluated configurations.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/cbam_effect.png}{6.5cm}
   \caption{Effect of the CBAM substitution on clutter and target response.}
@@ -260,13 +258,13 @@ occupies less than half of one P5 cell and under one P4 cell; even at P3 it span
 only about 1.5 cells. The added stride-4 scale is the first level at which such a
 target covers about three cells, enough spatial support to be localised
 precisely. On the C2A test split, $99.6\%$ of the human instances are smaller
-than 32~px (Figure~\ref{fig:sizedist}), so the added level is not a marginal
-refinement: it is the scale at which almost the entire dataset lives. The
+than 32~px (Figure~\ref{fig:sizedist}), so the added level addresses the
+dominant size range rather than a small subset of the dataset. The
 branch is additive, and the existing P3--P5 pathway is left untouched, which is
 what allows the ablation to attribute the very-tiny-recall gain to this single
 change.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/stride_problem.png}{7.5cm}
   \caption{Stride problem motivating the P2 head.}
@@ -286,7 +284,7 @@ difference is attributable to the architectural change alone. This design is
 what makes the negative state-space result interpretable: the variant fails
 under conditions in which the P2 head demonstrably succeeds.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Additive ablation configurations, one change per step.}
   \label{tab:variants}
@@ -316,7 +314,7 @@ Classification uses binary cross-entropy on the single \emph{person} class,
 \begin{equation}
   \mathcal{L}_{\mathrm{cls}} = -\big[\, y \log \hat{p} + (1-y)\log(1-\hat{p}) \,\big],
 \end{equation}
-where $\hat{p}$ is the predicted objectness-class probability and $y$ the
+where $\hat{p}$ is the predicted class probability and $y$ the
 assigned label. Box regression uses the complete-IoU loss,
 \begin{equation}
   \mathcal{L}_{\mathrm{CIoU}} = 1 - \mathrm{IoU}
@@ -398,7 +396,7 @@ and it is distinct from putting the Wasserstein distance inside the regression
 loss, which was also tried and did not help. Chapter~IV reports the sweep over
 $\gamma$ and a matched comparison at $\gamma=0.5$.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/fig_assign_mechanism.png}{6.5cm}
   \caption{Tiny-aware blend inside the task-aligned assigner.}
@@ -418,9 +416,10 @@ gate computed with large-kernel convolutions from the surrounding context, the
 intent being to keep high-frequency responses where context suggests a person
 and to suppress them over clutter. The gated evidence feeds back into the two
 finest fusion points of the neck at a cost of $0.55$~M parameters. The gates
-train stably and stay active, so the branch fails for a substantive reason
-rather than a mechanical one: whatever it contributes, the CBAM and P2 features
-already carry.
+train stably and stay active, so the null result is not explained by an
+inactive or disconnected implementation. The experiment does not establish
+whether the branch is redundant with CBAM and P2 or whether its evidence is
+simply unhelpful for the detector.
 
 \subsection{Supervised Adaptation to Real Imagery}
 \label{sec:adaptmethod}
@@ -464,7 +463,7 @@ each tile at a low confidence floor, and the per-tile detections are merged by
 greedy non-maximum merging with an intersection-over-smaller matching metric at
 threshold 0.5, which suits partially-cut boxes at tile borders.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/sahi.png}{9.5cm}
   \caption{SAHI inference pipeline.}
@@ -476,9 +475,9 @@ flipped copies of the full image, at scale factors 1.0, 0.83, and 0.67, each
 with a horizontal flip, and merges the union of predictions with standard NMS
 (Figure~\ref{fig:ttapipe}). Because the model is fully convolutional, it can be
 evaluated at a higher input resolution than it was trained at; running TTA at
-1280~px doubles the effective resolution of the smallest targets. Chapter~IV
-shows this is the most effective single inference-time setting, though the gain
-collapses beyond twice the training resolution.
+1280~px doubles the effective resolution of the smallest targets. The
+exploratory study in Chapter~IV shows the trade-off on an older checkpoint;
+the final recommended model was not rerun in that sweep.
 
 The two procedures buy recall in different ways and at different costs. SAHI
 multiplies the number of forward passes by the tile count, so its latency grows
@@ -489,13 +488,12 @@ fixed handful of passes at a few scales, so its cost is bounded and predictable,
 and its gain comes mainly from the single high-resolution pass rather than from
 tiling. Because neither procedure alters the trained weights, both can be
 switched on or off at deployment time according to the latency budget an
-operator can afford: a ground station reviewing footage after a sortie can pay
-for SAHI, while a live on-board feed may allow only the cheaper augmentation
-pass or none at all. Chapter~IV quantifies the recall each setting adds and the
-latency each costs, so the operating point can be chosen against a concrete
-budget rather than by rule of thumb.
+operator can afford. A ground station reviewing footage after a sortie may
+accept SAHI, while a live feed may allow only augmentation or neither. The
+archived measurements in Chapter~IV illustrate those costs but do not establish
+the final model's operating point.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/tta.png}{8cm}
   \caption{Test-time augmentation pipeline.}
@@ -503,8 +501,8 @@ budget rather than by rule of thumb.
 \end{figure}
 
 \section{Conclusion}
-This chapter presented the proposed detector as an additive refinement of
-YOLO11m: CBAM attention in place of C2PSA, a high-resolution P2 detection scale
+The resulting experimental design is an additive refinement of YOLO11m: CBAM
+in place of C2PSA, a high-resolution P2 detection scale
 for very small targets, and an explored state-space neck variant. The
 architecture was specified to the layer level, the rationale for each novelty
 was tied to a measurable failure mode, the unchanged composite loss keeps the

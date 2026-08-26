@@ -2,7 +2,7 @@
 
 \section{Summary}
 This thesis studied how to detect very small human targets in aerial disaster
-imagery with a model small enough to deploy. Starting from a YOLO11m
+imagery with a compact model intended for deployment. Starting from a YOLO11m
 baseline, an additive ablation measured the effect of CBAM attention, a
 high-resolution P2 detection scale, and a state-space neck on the C2A dataset
 under one training and evaluation protocol. The P2 scale was the component
@@ -13,17 +13,16 @@ one million parameters while slightly improving the operational scores. The
 state-space neck added $2.4$~million parameters and $2.8$ times the latency
 without improving any accuracy metric, and was excluded on that evidence. The
 recommended CBAM~+~P2 detector reaches $\mathrm{AP}_{50}$ $0.853$ and $F_2$
-$0.844$ at $19.6$~million parameters and $14.6$~ms per image, second among
-all published detectors on this benchmark and a third of the leader's size;
-test-time augmentation at $1280$~px lifts very-tiny recall further, from
-$0.758$ to $0.850$, at $60$~ms per image without retraining. The whole
+$0.844$ at $19.6$~million parameters and $14.6$~ms per image. Among the
+detectors reported in the original C2A study, only YOLOv9-e scores higher, and
+it has roughly three times as many parameters. The whole
 training campaign was carbon-accounted at $9.0$~kg of CO$_2$.
 
 An extended phase then hardened and stretched these results. A split audit
 found 98\% scene sharing in the official benchmark and re-based everything on
 a scene-disjoint split, at a measured cost of $1.6$ points of
 $\mathrm{AP}_{50}$ and no changed conclusion. With the architecture search
-stalled, the productive lever moved to training supervision: a Wasserstein
+stalled, the next measurable gain came from training supervision: a Wasserstein
 blend inside the label assigner raised sub-8-pixel recall in every training
 seed tested (mean $+1.6$ points; $+2.08$ in the matched pair, bootstrap
 interval excluding zero), while a frequency-gated
@@ -35,8 +34,8 @@ frames), a few hundred labelled frames close most of the drone gap ($0.795$)
 and triple the within-video disaster score ($0.411$) at almost no cost to
 the source benchmark, and a disaster event held out from all training shows
 where that adaptation stops: there the gain is not statistically
-significant. Twice over, supervision moved the metric where added
-architecture did not.
+significant. In both the assignment and adaptation experiments, changing the
+supervision had a larger measured effect than adding another feature branch.
 
 \section{Limitations}
 The study has clear limits, summarised here so the results are read at their

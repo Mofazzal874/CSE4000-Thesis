@@ -11,18 +11,24 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
 (FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
 `10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
 
-## RIGHT NOW (2026-07-24)
-- **DATA COLLECTION 100% DONE** — 5 sets, 317 imgs / 17,365 boxes, all geometry-validated
-  (`DATA_MAP.md`). Lying-down shoot dropped.
-- **S0 SMOKE PASSED (PC-2 A6000):** FCCG architecture builds + trains + gates learn. S0 CLEARED.
-  Results in `05-07-2026-Novelty-Lap\results\pc2\2026-07-24_S0_fccg_smoke\`.
-- **NEXT = S1:** paired 50-ep pilots (control CBAM+P2 vs +FCCG) on C2A scene-split → does FCCG
-  lift AP_small / VT-recall? ~4-5h each on A6000. Claude to build the S1 runner (with GPU-slot
-  guard `--reserve-gb` + `--resume` baked in — shared-box rule).
-- Storage: freed ~18GB (dead Mamba zips + dup videos + old benchmark zips); disk 25GB free.
-  Held for user OK: `c2a.zip` (4.7GB backup; extracted copy intact).
-- Uncommitted for review: `16_gpu_guard.py`, `11_fccg_smoke.py` update, PC config note.
-- Still open: check PC-1 (G1 baseline running since ~07-12, surely done — confirm + copy results).
+## RIGHT NOW (2026-08-17)
+- **ACTIVE LAP = `27-07-2026-Novelty-Lap-4/`.** Experiments and data collection are substantially
+  complete; the active task is paper writing and publication positioning.
+- **PRIMARY RESULT:** D2 tiny-aware assignment raises <8 px recall by +1.62 +/- 0.49 percentage
+  points over three seeds (positive all seeds; seed-0 paired bootstrap p<0.001), while overall
+  AP50/F2 remain neutral. It is a tiny-specialist recall reallocation, not universal superiority.
+- **SIM-TO-REAL RESULT:** own-drone AP50 improves .335 -> .795 with all-real supervised training.
+  Same-video disaster adaptation is strong, but unseen-event AP50 improves only +1.7 pp and is
+  non-significant (p=.47). Claim target-domain adaptation, not broad disaster robustness.
+- **FCCG IS A DOCUMENTED NULL RESULT** and is not the paper headline. Model profile remains
+  19.57M params / 86.7 GFLOPs / ~8.7 ms.
+- **DATA COLLECTION DONE:** 5 sets, 317 images / 17,365 boxes; see `DATA_MAP.md`.
+- **VENUE AUDIT CORRECTED, UNCOMMITTED:** ICCIT 2026's official deadline is now August 31
+  (extended; the earlier July 31 result was a stale cache). Risk-managed recommendation =
+  focused preliminary ICCIT paper, followed by a substantially expanded JSTARS article; never
+  concurrent. See `27-07-2026-Novelty-Lap-4/2026-08-17_iccit_vs_jstars_risk_audit.md`.
+- **DRAFT 2 EDITORIAL AUDIT COMPLETE, UNCOMMITTED:** see
+  `Defense/draft2_06_8_26/editorial/AUDIT_LEDGER.md`. No self-initiated commit was made.
 
 ## PREVIOUS (2026-07-23)
 - **Data collection ~65% done.** ✅ Drone train (120) + test (60, frozen 4K) annotated, verified,

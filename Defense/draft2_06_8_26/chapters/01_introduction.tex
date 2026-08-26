@@ -4,7 +4,7 @@
 When an earthquake, flood, or fire strikes, the first hours decide how many
 people are found alive. Uncrewed aerial vehicles can survey a disaster site far
 faster than ground teams, and they do so without risking a rescuer. The imagery
-they return, however, is hard to search by eye. A person photographed from
+they return, however, is difficult to search by eye. A person photographed from
 altitude may occupy fewer than ten pixels among rubble, water, or smoke, and a
 single sortie can produce thousands of frames. An operator scanning that stream
 will miss people. Automating the search is therefore a practical need, not a
@@ -22,15 +22,15 @@ attention, and sliced inference~\cite{akyon2022sahi}, are usually evaluated one
 at a time, on generic aerial benchmarks, and without a shared training
 protocol. State-space (Mamba) modules~\cite{gu2023mamba} have recently been
 promoted for detection as well, again without a controlled test on very small
-human targets. Anyone who wants to build a deployable rescue detector today
-has to guess which of these additions is worth its cost.
+human targets. The literature therefore gives limited guidance on which
+addition is worth its cost in a deployable rescue detector.
 
 This thesis replaces that guess with a measurement. Starting from the YOLO11m
 baseline, it adds one component at a time, attention, a high-resolution
 detection scale, and a state-space neck, trains every configuration under one
 frozen protocol on the C2A disaster-imagery benchmark~\cite{nihal2024c2a}, and
 reports what each change buys in accuracy, parameters, and latency. The outcome
-is a compact detector, small enough for airborne hardware, together with an
+is a compact detector intended for resource-constrained deployment, together with an
 evidence trail that justifies every design decision in it. A second phase of
 the work then pressure-tests that outcome: it audits the benchmark split for
 scene leakage, moves the search for further gains from the architecture into
@@ -60,8 +60,8 @@ feature stride $d$. A target of side $s$ pixels spans
 \end{equation}
 cells in each direction. The finest standard YOLO scale detects at stride
 $d = 8$, so a 12-px person spans about 1.5 cells there, and only 0.4 of a cell
-at the stride-32 scale. A detector cannot localise what falls inside a
-fraction of one cell. In the C2A benchmark used here, about 47\% of the
+at the stride-32 scale. A target represented by only a fraction of one cell
+provides little spatial support for localisation. In the C2A benchmark used here, about 47\% of the
 annotated people are smaller than ten pixels~\cite{nihal2024c2a}, which places
 nearly half the dataset at or below the resolving limit of a standard
 detection head. Scenes carry 20 to 40 people each, many partially buried or
@@ -86,9 +86,9 @@ $F_2$ score,
   \label{eq:f2}
 \end{equation}
 where $P$ is precision and $R$ is recall. The engineering question of this
-thesis is then concrete: which architectural changes to a compact one-stage
-detector raise recall on sub-ten-pixel people, at a parameter and latency
-budget that still fits airborne deployment?
+thesis is then concrete: which changes to a compact one-stage detector raise
+recall on sub-ten-pixel people without an unacceptable increase in parameters
+or desktop-GPU latency?
 
 \section{Objectives}
 The work pursues the following objectives.
@@ -105,9 +105,9 @@ The work pursues the following objectives.
   \item To test the recent claim that state-space modules help detection, on
         this task and under this protocol, and to report the outcome whether
         or not it favours the module.
-  \item To raise recall on the smallest targets further at inference time,
-        without retraining, through slicing-aided inference and test-time
-        augmentation.
+  \item To characterise the recall--latency trade-off of slicing-aided
+        inference and test-time augmentation without changing the trained
+        weights.
 \end{itemize}
 
 \section{Scope}
@@ -147,10 +147,10 @@ where a gain actually comes from. The state-space experiment places
 bidirectional local-window Mamba blocks inside the \emph{neck} of an
 otherwise unchanged CNN detector, whereas published Mamba detectors replace
 the backbone~\cite{wang2025mambayolo}, which prevents a like-for-like
-attribution. The attention change is a substitution rather than the bolt-on
-that is usual in the small-object literature: it removes the baseline's
-C2PSA blocks, so the improvement arrives at a negative parameter cost. And a
-negative result is treated as a first-class finding here, documented with
+attribution. The attention change is a substitution rather than a bolt-on: it
+replaces the baseline C2PSA module, reduces the parameter count, and preserves
+the measured accuracy. A negative result is treated as a first-class finding,
+documented with
 the same rigour as the successful components, because knowing what not to
 deploy is part of the engineering answer.
 
@@ -182,10 +182,9 @@ The main contributions of this thesis are the following.
   \item A four-configuration additive ablation on C2A, trained and evaluated
         under one frozen protocol, that attributes every gain to a single
         architectural change.
-  \item A CBAM substitution that replaces the baseline's C2PSA attention and
-        removes roughly one million parameters while matching or improving
-        the operational scores, with the lowest latency of the four
-        configurations.
+  \item A CBAM substitution that replaces the baseline's C2PSA module and
+        removes roughly one million parameters while preserving the
+        operational scores, with the lowest latency of the four configurations.
   \item A stride-4 (P2) detection scale whose effect is quantified rather
         than assumed: $\mathrm{AP}_{50}$ rises from 0.843 to 0.853 and
         very-tiny recall from 0.743 to 0.757, at about half a million
@@ -194,10 +193,8 @@ The main contributions of this thesis are the following.
         added parameters and 2.8 times the latency for no accuracy change,
         which argues against adopting such modules for this task on current
         evidence.
-  \item An inference-time study showing that test-time augmentation at
-        1280-px input lifts very-tiny recall from 0.758 to 0.850 at 60~ms per
-        image, a larger gain than any slicing configuration at a fraction of
-        the slicing cost.
+  \item An exploratory SAHI/TTA study on an older checkpoint, retained as a
+        latency--recall comparison but kept separate from the recommended model.
   \item A recommended detector of 19.6 million parameters that matches or
         exceeds every published C2A baseline except YOLOv9-e while using
         about a third of that model's parameters.

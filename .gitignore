@@ -115,3 +115,10 @@ RealDisaster/**/*.png
 # ~330KB of upstream code, re-installable from E:\Claude Skills -- not thesis history).
 # NOTE: only skills/ is ignored; .claude/settings.json stays tracked.
 .claude/skills/
+
+# Local thesis editorial backups, compiler transcripts, and rendered QA sheets.
+# These are retained on disk for recovery/review but are not research history.
+/Defense/draft2_06_8_26_BACKUP_*/
+/Defense/draft2_generated_stale_*/
+/Defense/draft2_06_8_26/build_editorial*.log
+/tmp/

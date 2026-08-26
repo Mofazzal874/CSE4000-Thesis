@@ -1,14 +1,13 @@
 \chapter{Literature Review}
 
 \section{Introduction}
-This chapter reviews the work that the thesis builds on and defines the components
-it modifies. The literature is grouped by theme rather than listed paper by paper:
-first the progression of object detectors, then the techniques developed
-specifically for small and aerial targets, and then human detection in disaster
-imagery. A separate section explains the base architectures (YOLO11, the CBAM
-and ECA attention modules, multi-scale detection, and state-space models) so
-that Chapter~III can concentrate on the proposed modifications. The chapter ends
-with the research gap that the thesis addresses.
+The detector design draws on four lines of work: real-time object detection,
+small-object feature pyramids, tiny-object label assignment, and aerial search
+and rescue. They are reviewed in that order, followed by the specific components
+modified in this thesis: YOLO11, CBAM and ECA, multi-scale detection, and visual
+state-space models. The final section identifies which comparisons remain absent
+from the C2A literature and turns them into the experimental questions of
+Chapter~III.
 
 \section{Literature Review}
 
@@ -20,12 +19,14 @@ classify them, which gives strong accuracy at a high computational cost. One-sta
 detectors such as SSD~\cite{liu2016ssd} predict boxes directly and trade a little
 accuracy for speed; RetinaNet~\cite{lin2017focal} addressed the resulting
 class-imbalance with the focal loss, and the YOLO family, from the original
-design~\cite{redmon2016yolo} through successive versions~\cite{redmon2018yolov3,%
-bochkovskiy2020yolov4,wang2023yolov7,jocher2023yolov8,wang2024yolov9,wang2024yolov10}
+design~\cite{redmon2016yolo} through successive versions
+\cite{redmon2018yolov3,bochkovskiy2020yolov4,wang2023yolov7,
+jocher2023yolov8,wang2024yolov9,wang2024yolov10}
 to YOLO11~\cite{jocher2024yolo11}, made single-pass detection the practical standard
-for real-time use. A third, transformer-based family removes hand-designed
-components such as anchor boxes and non-maximum suppression: DETR~\cite{carion2020detr}
-posed detection as set prediction, and RT-DETR~\cite{zhao2024rtdetr} later made this
+for real-time use. A third, transformer-based family reduces reliance on
+hand-designed components: DETR~\cite{carion2020detr} posed detection as set
+prediction and removed anchors and non-maximum suppression from its inference
+pipeline, while RT-DETR~\cite{zhao2024rtdetr} later made this approach
 competitive with YOLO at real-time speeds. This thesis works within the one-stage
 YOLO family because its speed and small model size suit airborne deployment.
 
@@ -60,8 +61,8 @@ largest gains when the substitution is made in the assignment step rather than
 in the regression loss. RFLA~\cite{xu2022rfla} built a full assignment strategy
 on a receptive-field Gaussian prior, and SimD~\cite{shi2024simd} learned an
 adaptive location-and-shape similarity for the same purpose. On the benchmarks
-these methods target, the assignment-side change is consistently what moves
-sub-16-pixel accuracy, and loss-only variants underperform. Modern YOLO
+reported by these studies, assignment-side changes improve tiny-object accuracy
+more consistently than loss-only variants. Modern YOLO
 versions select their training samples with the task-aligned assigner of
 TOOD~\cite{feng2021tood}, which still scores localisation with the IoU family,
 and none of the tiny-object assignment work above has been applied inside it
@@ -100,12 +101,12 @@ multiple directions, and Mamba-YOLO~\cite{wang2025mambayolo} applied the idea to
 detection by replacing the backbone with state-space blocks. The variant explored in
 this thesis is narrower: it keeps
 the convolutional backbone and inserts bidirectional local-window state-space
-blocks only in the neck, which lets its effect be measured against an otherwise
-identical model.
+blocks only in the neck, which allows its effect to be measured against an
+otherwise identical model.
 
 \section{Core Concepts}
-This section describes the base architectures that the thesis modifies. The
-proposed changes to them are the subject of Chapter~III.
+The following components form the baseline or one of its tested variants. Their
+modifications are specified in Chapter~III.
 
 \subsection{The YOLO11 Baseline}
 YOLO11~\cite{jocher2024yolo11} is a single-stage detector with three parts: a
@@ -130,7 +131,7 @@ baseline and found CBAM to give better operational recall than ECA at a similar
 cost, which is why CBAM is used in this thesis; that comparison is summarised in
 Chapter~IV.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/cbam_module.png}{6.5cm}
   \caption{CBAM module with sequential channel and spatial attention~\cite{woo2018cbam}.}
@@ -143,9 +144,10 @@ region per grid cell at $640$ input, which is coarse for targets only a few pixe
 across. Adding a P2 scale at stride~4 introduces a $160\times160$ feature map whose
 cells cover $4\times4$ pixels, extending detection to targets as small as about
 four pixels. Figure~\ref{fig:p2} shows how the P2 branch attaches alongside the
-standard P3--P5 scales.
+standard P3--P5 scales; it provides a finer prediction grid but does not, by
+itself, guarantee detection of every four-pixel target.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/p2head.png}{6.5cm}
   \caption{Construction of the added stride-4 (P2) detection branch.}
@@ -160,7 +162,7 @@ thesis, C3k2Mamba (Figure~\ref{fig:mamba}), scans a local window in both the for
 and reverse directions and fuses the two, and is inserted in place of selected C3k2
 neck blocks. Its effect on this task is measured in Chapter~IV.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/c3k2mamba.png}{6.5cm}
   \caption{Explored C3k2Mamba block with bidirectional local-window scans.}
@@ -185,7 +187,7 @@ exactly one component to the design on its left, from the YOLO11m baseline
 through CBAM, the P2 head, and the state-space neck, so that the effect of each
 can be read from the difference it makes.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/fig_ablation_chain.png}{6cm}
   \caption{Additive ablation chain studied in this thesis.}
@@ -206,14 +208,17 @@ procedure, and Chapter~IV reports the measured gain or loss at each step.
 The same standpoint, expressed as a direct contrast with prior work along four
 axes, is set out in Table~\ref{tab:gap}.
 
-\begin{table}[H]
+\begin{table}[tbp]
   \centering
   \caption{Position of this thesis relative to prior work.}
   \label{tab:gap}
   \small
   \setlength{\tabcolsep}{5pt}
   \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{@{}p{3.8cm} p{4.7cm} p{4.7cm}@{}}
+  \begin{tabular}{@{}
+    >{\raggedright\arraybackslash}p{3.8cm}
+    >{\raggedright\arraybackslash}p{4.7cm}
+    >{\raggedright\arraybackslash}p{4.7cm}@{}}
     \toprule
     Aspect & Prior work & This thesis \\
     \midrule

@@ -1959,6 +1959,35 @@
       \verb https://www.kaggle.com/datasets/rgbnihal/c2a-dataset
       \endverb
     \endentry
+    \entry{caabuav}{online}{}
+      \name{author}{1}{}{%
+        {{hash=522e4c7ae409cb083fdbf32525eaeffd}{%
+           family={{Civil Aviation Authority of Bangladesh}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \strng{fullhash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \strng{bibnamehash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \strng{authorbibnamehash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \strng{authornamehash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \strng{authorfullhash}{522e4c7ae409cb083fdbf32525eaeffd}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Official operational notice}
+      \field{title}{Notice Regarding Operation of Drone/Remotely Piloted Aircraft System ({UAV/RPAS})}
+      \field{urlday}{16}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://new.caab.gov.bd/pdf/notice/uav.pdf
+      \endverb
+      \verb{url}
+      \verb https://new.caab.gov.bd/pdf/notice/uav.pdf
+      \endverb
+    \endentry
     \entry{gdpr2016}{misc}{}
       \name{author}{1}{}{%
         {{hash=3179956fa9e74184739a2680047976ee}{%
@@ -2066,8 +2095,8 @@
       \strng{authorbibnamehash}{a77849b674b375a2aec420b75c781164}
       \strng{authornamehash}{a77849b674b375a2aec420b75c781164}
       \strng{authorfullhash}{a77849b674b375a2aec420b75c781164}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Graduate Attributes and Professional Competencies, Version 4}
