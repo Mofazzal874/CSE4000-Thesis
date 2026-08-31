@@ -234,6 +234,87 @@ style, citation integrity both directions, and that Fig 1 is on page 1.
   table "not reported" cells and the only `--` are numeric ranges, both correct IEEE usage.**
   Every one of the 13 labels is referenced.
 
+## 6b. ORIGINALITY VERIFICATION (2026-08-27, live web + primary sources)
+Run because ICCIT is peer-reviewed and the novelty claims had to be checked, not assumed.
+
+**FINDING THAT CHANGED THE PAPER. Close prior art exists for the assignment mechanism.**
+YOLOv7-UAV (Zeng, Zhang, He, Zhang; *Electronics* 12(14):3141, 2023;
+https://www.mdpi.com/2079-9292/12/14/3141) lists as its own contribution (iv) "utilization of the
+weighted normalized Gaussian Wasserstein distance (nwd) and intersection over union (IoU) as
+indicators for **positive and negative sample assignments**", evaluated on VisDrone2019 and
+**TinyPerson**, at a reported nwd:IoU ratio of **0.5:0.5** for TinyPerson. That is a weighted
+NWD/IoU blend, in assignment, on aerial imagery, on tiny people, at our own ratio.
+- **What still survives:** YOLOv7 is anchor-based and matches with SimOTA-style lead-head guided
+  assignment. We place the blend inside TOOD's **task-aligned assigner**, where the overlap term
+  feeds the alignment metric t = s^p u^q and so reshapes the joint classification/localization
+  ranking, not just a candidate filter. Different assigner, different detector generation.
+- **What does NOT survive:** any claim that nobody has blended NWD with IoU in assignment for
+  aerial tiny persons. The old Related Work sentence said exactly that. It is now FIXED: the paper
+  cites YOLOv7-UAV explicitly and narrows the unclaimed ground to the comparison in Section V.
+- **Why this did not wreck the paper:** the draft-3 reframe had already moved the headline off
+  "we invented an assignment method" and onto "supervision beats architecture, measured". The
+  mechanism being known prior art is fully compatible with that framing, and arguably supports it.
+  Had draft 2 been submitted, this finding would have hit the central claim instead.
+
+**VERIFIED AS STILL TRUE:**
+- No published report of C2A scene leakage. Searched the dataset by name against leakage /
+  train-test-split / shared-background terms; nothing. This is our most original finding, so it was
+  PROMOTED from a Setup paragraph to contribution bullet 4 plus a sentence in the abstract.
+- C2A bar unchanged: YOLOv9-e 0.8927 AP50 / 0.6883 AP is still the standing published result
+  (Nihal et al., arXiv 2408.04922). No newer C2A benchmark surfaced. "Second among published
+  results" holds.
+- Prior lap-3 lane-2 verification (2026-07-10 log line 133) called the TAL slot unclaimed. That was
+  right about TAL specifically and wrong to imply the broader idea was unclaimed; YOLOv7-UAV had
+  been in print since 2023. Lesson: search the MECHANISM, not only the exact module name.
+
+**CAPTION LENGTH, settled with evidence.** Checked the C2A paper's own captions
+(arxiv.org/html/2408.04922v2): its Fig. 1 caption runs about 110 words and Fig. 3 about 75, while
+every table caption is a single short title ("Performance Evaluation of state-of-the-art Models on
+the C2A Dataset"). Our figure captions (55 to 95 words) are in line with the subfield and were
+KEPT. Our table captions carried extra sentences and, because IEEEtran sets table captions in small
+caps, they looked oversized. All four were cut to short titles; the abbreviation glossary and the
+0.25 threshold moved into the running text. Do not re-lengthen them.
+
+## 6c. SUBMITTED TO ICCIT 2026 (2026-08-31)
+Uploaded to Microsoft CMT (`ICCITconf2026`, Track 2: Computer Vision) as
+`draft3/ICCIT2026_MSA-YOLO.pdf`, 6 pages, 1,164,225 bytes. Deadline was 2026-08-31, extended from
+2026-07-31. Notification 2026-10-15, camera-ready 2026-11-15, conference 2026-12-18 to 20,
+Cox's Bazar. NOTE: `*.pdf` is gitignored, so the exact submitted binary is NOT in the repo; it is
+reproducible from this commit.
+
+**Final title:** MSA-YOLO: Multi-Scale Attention and Tiny-Aware Supervision for Human Detection in
+UAV Search-and-Rescue Imagery.
+
+**Compliance verified against the CMT portal's nine stated rules**, not against assumption:
+6 pages / IEEE 2-column / A4; no author names, affiliations or acknowledgments; **no page numbers
+and no headers or footers** (checked empirically by rendering all six pages at 150 dpi: text ends
+at 85.3% of page height, zero ink below it and in the header zone); single PDF. PDF metadata
+carries only `Creator: TeX` and `Producer: pdfTeX`, and a raw binary string scan for the author's
+name, supervisor, institution, city, roll number and Windows paths returns zero hits.
+
+**Numbers audit (2026-08-27):** 130+ values re-verified folder by folder against primary run
+artifacts, not against the md files. Table I 32/32, size bands 20/20, assignment 25/25, gamma sweep
+6/6, SOTA 14/14 (checked against the C2A paper itself), multi-domain 15/15, found/missed 12/12
+recomputed from raw `*_preds.json`. Five errors were found and fixed: drone train people
+6,313 -> **6,315**; the unverifiable "47% under ten pixels" replaced with the exactly-measured
+**34.5% below 8 px and 63% below 16 px** (the C2A paper claims 47% by width, but the released data
+gives 45.30%, so their Table 3 does not match their own release); C=12.8 corrected from "the median
+person size" to Wang et al.'s constant (the C2A median is exactly 12.00, matching the code comment
+in `02_nwd_loss_patch.py:9`); the copy-paste result re-attributed to the four-augmentation stack it
+actually used; and parameter counts in Table IV re-attributed, since Nihal et al. report none.
+
+**Self-similarity:** 4.5% of the paper's 8-grams also appear in the thesis chapters. Low.
+
+**KNOWN REMAINING DEFECT:** the architecture figure contains two em dashes in its box labels
+("FPN — top-down fusion", "PAN — bottom-up fusion"). Text baked into the PNG is invisible to every
+grep. Not an ICCIT violation; it breaches the project's own HUMANIZER rule. Fix in PowerPoint
+before the camera-ready.
+
+**CAMERA-READY TODO (by 2026-11-15 if accepted):** add author names and affiliations; add the IEEE
+AI-disclosure statement to the acknowledgments (IEEE policy requires disclosing AI-generated
+content and naming the system; wording to be agreed with the supervisor); fix the figure em dashes;
+author list and order must match the CMT record exactly.
+
 ## 7. OPEN ITEMS FOR THE USER
 1. ~~Optional qualitative panel.~~ **DECIDED 2026-08-27: NOT in the ICCIT paper.** The paper is at
    exactly 6 pages with four figures and five tables, every one load-bearing; the panel carries no

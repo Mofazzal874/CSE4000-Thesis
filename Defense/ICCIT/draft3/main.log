@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.7.2)  27 AUG 2026 00:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.7.2)  31 AUG 2026 23:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -114,7 +114,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
 \c@IEEEbiography=\count267
 \@IEEEtranrubishbin=\box52
 )
-** ATTENTION: Overriding command lockouts (line 7).
+** ATTENTION: Overriding command lockouts (line 8).
 (/usr/share/texlive/texmf-dist/tex/latex/cite/cite.sty
 LaTeX Info: Redefining \cite on input line 302.
 LaTeX Info: Redefining \nocite on input line 332.
@@ -253,20 +253,20 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
 
 -- Lines per column: 56 (exact).
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -291,56 +291,48 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-<figures/fig_answer.png, id=1, 249.3315pt x 216.81pt>
-File: figures/fig_answer.png Graphic file (type png)
-<use figures/fig_answer.png>
-Package pdftex.def Info: figures/fig_answer.png  used on input line 69.
-(pdftex.def)             Requested size: 252.0pt x 219.13185pt.
-<figures/fig_arch.jpg, id=3, 2208.25pt x 1492.57625pt>
-File: figures/fig_arch.jpg Graphic file (type jpg)
-<use figures/fig_arch.jpg>
-Package pdftex.def Info: figures/fig_arch.jpg  used on input line 96.
-(pdftex.def)             Requested size: 485.04126pt x 327.84396pt.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 99.
 
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-
-dist/fonts/enc/dvips/base/8r.enc}
-
-
- <./figures/fig_answer.png>]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 123
-.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 123
-.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 99.
+
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \vbox (badness 3568) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [2 <./figures/fig_arch.jpg>]
-<figures/fig_stride.png, id=18, 249.3315pt x 102.6234pt>
-File: figures/fig_stride.png Graphic file (type png)
-<use figures/fig_stride.png>
-Package pdftex.def Info: figures/fig_stride.png  used on input line 200.
-(pdftex.def)             Requested size: 252.0pt x 103.7224pt.
- [3 <./figures/fig_stride.png>] [4]
-<figures/fig_adapt_stages_print.png, id=33, 1405.25pt x 1038.88126pt>
-File: figures/fig_adapt_stages_print.png Graphic file (type png)
-<use figures/fig_adapt_stages_print.png>
-Package pdftex.def Info: figures/fig_adapt_stages_print.png  used on input line
- 503.
-(pdftex.def)             Requested size: 252.0pt x 186.29306pt.
- [5 <./figures/fig_adapt_stages_print.png (PNG copy)>] (./main.bbl
-Underfull \hbox (badness 10000) in paragraph at lines 76--79
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf
+-dist/fonts/enc/dvips/base/8r.enc}
+
+
+]
+<figures/fig_arch_v2.jpg, id=11, 2409.0pt x 1186.4325pt>
+File: figures/fig_arch_v2.jpg Graphic file (type jpg)
+<use figures/fig_arch_v2.jpg>
+Package pdftex.def Info: figures/fig_arch_v2.jpg  used on input line 157.
+(pdftex.def)             Requested size: 474.71906pt x 233.78831pt.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
+07.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+) [2] [3 <./figures/fig_arch_v2.jpg>] [4]
+<figures/fig_qualitative.jpg, id=30, 1706.375pt x 962.59625pt>
+File: figures/fig_qualitative.jpg Graphic file (type jpg)
+<use figures/fig_qualitative.jpg>
+Package pdftex.def Info: figures/fig_qualitative.jpg  used on input line 578.
+(pdftex.def)             Requested size: 252.0pt x 142.15062pt.
+ [5] (./main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 31--34
 []\OT1/ptm/m/n/8 G. Jocher and J. Qiu, ``Ul-tr-a-lyt-ics YOLO11,''
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 76--79
+Underfull \hbox (badness 10000) in paragraph at lines 31--34
 \OT1/ptm/m/n/8 https://github.com/ultralytics/ultralytics, 2024, soft-ware, ver
 -sion
  []
@@ -357,20 +349,20 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[6] (./main.aux)
+[6 <./figures/fig_qualitative.jpg>] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4098 strings out of 476106
- 64173 string characters out of 5793934
- 1956975 words of memory out of 5000000
- 26068 multiletter control sequences out of 15000+600000
- 600372 words of font info for 120 fonts, out of 8000000 for 9000
+ 4119 strings out of 476106
+ 64218 string characters out of 5793934
+ 1963975 words of memory out of 5000000
+ 26083 multiletter control sequences out of 15000+600000
+ 601196 words of font info for 123 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 57i,11n,65p,870b,313s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,11n,65p,238b,313s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texli
@@ -382,15 +374,16 @@ blic/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf
--dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
-tmri8a.pfb>
-Output written on main.pdf (6 pages, 1110951 bytes).
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
+w/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (6 pages, 1164225 bytes).
 PDF statistics:
- 116 PDF objects out of 1000 (max. 8388607)
- 67 compressed objects within 1 object stream
+ 121 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

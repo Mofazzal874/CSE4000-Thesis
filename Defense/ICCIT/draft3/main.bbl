@@ -27,6 +27,32 @@ R.~A. Nihal, B.~Yen, K.~Itoyama, and K.~Nakadai, ``{UAV}-enhanced combination
   dataset for disaster scenarios,'' in \emph{Proc. Int. Conf. Pattern
   Recognition (ICPR)}, 2024, arXiv:2408.04922.
 
+\bibitem{jocher2024yolo11}
+G.~Jocher and J.~Qiu, ``Ultralytics {YOLO11},''
+  \url{https://github.com/ultralytics/ultralytics}, 2024, software, version
+  8.x.
+
+\bibitem{lin2017focal}
+T.-Y. Lin, P.~Goyal, R.~Girshick, K.~He, and P.~Doll{\'a}r, ``Focal loss for
+  dense object detection,'' in \emph{Proc. IEEE Int. Conf. Computer Vision
+  (ICCV)}, 2017, pp. 2980--2988.
+
+\bibitem{wang2024yolov9}
+C.-Y. Wang, I.-H. Yeh, and H.-Y.~M. Liao, ``{YOLOv9}: Learning what you want to
+  learn using programmable gradient information,'' in \emph{Proc. European
+  Conf. Computer Vision (ECCV)}, 2024, arXiv:2402.13616.
+
+\bibitem{zhao2024rtdetr}
+Y.~Zhao, W.~Lv, S.~Xu, J.~Wei, G.~Wang, Q.~Dang, Y.~Liu, and J.~Chen, ``{DETRs}
+  beat {YOLOs} on real-time object detection,'' in \emph{Proc. IEEE/CVF Conf.
+  Computer Vision and Pattern Recognition (CVPR)}, 2024.
+
+\bibitem{cheng2023smallobject}
+G.~Cheng, X.~Yuan, X.~Yao, K.~Yan, Q.~Zeng, X.~Xie, and J.~Han, ``Towards
+  large-scale small object detection: Survey and benchmarks,'' \emph{IEEE
+  Trans. Pattern Analysis and Machine Intelligence}, vol.~45, no.~11, pp.
+  13\,467--13\,488, 2023.
+
 \bibitem{zhu2021tphyolov5}
 X.~Zhu, S.~Lyu, X.~Wang, and Q.~Zhao, ``{TPH-YOLOv5}: Improved {YOLOv5} based
   on transformer prediction head for object detection on drone-captured
@@ -38,25 +64,10 @@ S.~Woo, J.~Park, J.-Y. Lee, and I.~S. Kweon, ``{CBAM}: Convolutional block
   attention module,'' in \emph{Proc. European Conf. Computer Vision (ECCV)},
   2018, pp. 3--19.
 
-\bibitem{wang2020eca}
-Q.~Wang, B.~Wu, P.~Zhu, P.~Li, W.~Zuo, and Q.~Hu, ``{ECA-Net}: Efficient
-  channel attention for deep convolutional neural networks,'' in \emph{Proc.
-  IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)}, 2020, pp.
-  11\,534--11\,542.
-
 \bibitem{akyon2022sahi}
 F.~C. Akyon, S.~O. Altinuc, and A.~Temizel, ``Slicing aided hyper inference and
   fine-tuning for small object detection,'' in \emph{Proc. IEEE Int. Conf.
   Image Processing (ICIP)}, 2022, pp. 966--970.
-
-\bibitem{gu2023mamba}
-A.~Gu and T.~Dao, ``Mamba: Linear-time sequence modeling with selective state
-  spaces,'' \emph{arXiv preprint arXiv:2312.00752}, 2023.
-
-\bibitem{wang2025mambayolo}
-Z.~Wang, C.~Li, H.~Xu, and X.~Zhu, ``Mamba {YOLO}: {SSMs}-based object
-  detection model,'' in \emph{Proc. AAAI Conf. Artificial Intelligence}, 2025,
-  arXiv:2406.05835.
 
 \bibitem{wang2021nwd}
 J.~Wang, C.~Xu, W.~Yang, and L.~Yu, ``A normalized {Gaussian Wasserstein}
@@ -72,61 +83,10 @@ S.~Shi, Q.~Fang, T.~Zhao, and X.~Xu, ``Similarity distance-based label
   assignment for tiny object detection,'' in \emph{Proc. IEEE/RSJ Int. Conf.
   Intelligent Robots and Systems (IROS)}, 2024, arXiv:2407.02394.
 
-\bibitem{jocher2024yolo11}
-G.~Jocher and J.~Qiu, ``Ultralytics {YOLO11},''
-  \url{https://github.com/ultralytics/ultralytics}, 2024, software, version
-  8.x.
-
-\bibitem{ren2015fasterrcnn}
-S.~Ren, K.~He, R.~Girshick, and J.~Sun, ``Faster {R-CNN}: Towards real-time
-  object detection with region proposal networks,'' \emph{IEEE Trans. Pattern
-  Analysis and Machine Intelligence}, vol.~39, no.~6, pp. 1137--1149, 2017.
-
-\bibitem{cai2018cascade}
-Z.~Cai and N.~Vasconcelos, ``Cascade {R-CNN}: Delving into high quality object
-  detection,'' in \emph{Proc. IEEE/CVF Conf. Computer Vision and Pattern
-  Recognition (CVPR)}, 2018, pp. 6154--6162.
-
-\bibitem{liu2016ssd}
-W.~Liu, D.~Anguelov, D.~Erhan, C.~Szegedy, S.~Reed, C.-Y. Fu, and A.~C. Berg,
-  ``{SSD}: Single shot multibox detector,'' in \emph{Proc. European Conf.
-  Computer Vision (ECCV)}, 2016, pp. 21--37.
-
-\bibitem{lin2017focal}
-T.-Y. Lin, P.~Goyal, R.~Girshick, K.~He, and P.~Doll{\'a}r, ``Focal loss for
-  dense object detection,'' in \emph{Proc. IEEE Int. Conf. Computer Vision
-  (ICCV)}, 2017, pp. 2980--2988.
-
-\bibitem{redmon2016yolo}
-J.~Redmon, S.~Divvala, R.~Girshick, and A.~Farhadi, ``You only look once:
-  Unified, real-time object detection,'' in \emph{Proc. IEEE Conf. Computer
-  Vision and Pattern Recognition (CVPR)}, 2016, pp. 779--788.
-
-\bibitem{wang2024yolov9}
-C.-Y. Wang, I.-H. Yeh, and H.-Y.~M. Liao, ``{YOLOv9}: Learning what you want to
-  learn using programmable gradient information,'' in \emph{Proc. European
-  Conf. Computer Vision (ECCV)}, 2024, arXiv:2402.13616.
-
-\bibitem{carion2020detr}
-N.~Carion, F.~Massa, G.~Synnaeve, N.~Usunier, A.~Kirillov, and S.~Zagoruyko,
-  ``End-to-end object detection with transformers,'' in \emph{Proc. European
-  Conf. Computer Vision (ECCV)}, 2020, pp. 213--229.
-
-\bibitem{zhao2024rtdetr}
-Y.~Zhao, W.~Lv, S.~Xu, J.~Wei, G.~Wang, Q.~Dang, Y.~Liu, and J.~Chen, ``{DETRs}
-  beat {YOLOs} on real-time object detection,'' in \emph{Proc. IEEE/CVF Conf.
-  Computer Vision and Pattern Recognition (CVPR)}, 2024.
-
-\bibitem{cheng2023smallobject}
-G.~Cheng, X.~Yuan, X.~Yao, K.~Yan, Q.~Zeng, X.~Xie, and J.~Han, ``Towards
-  large-scale small object detection: Survey and benchmarks,'' \emph{IEEE
-  Trans. Pattern Analysis and Machine Intelligence}, vol.~45, no.~11, pp.
-  13\,467--13\,488, 2023.
-
-\bibitem{lin2017fpn}
-T.-Y. Lin, P.~Doll{\'a}r, R.~Girshick, K.~He, B.~Hariharan, and S.~Belongie,
-  ``Feature pyramid networks for object detection,'' in \emph{Proc. IEEE Conf.
-  Computer Vision and Pattern Recognition (CVPR)}, 2017, pp. 2117--2125.
+\bibitem{zeng2023yolov7uav}
+Y.~Zeng, T.~Zhang, W.~He, and Z.~Zhang, ``{YOLOv7-UAV}: An unmanned aerial
+  vehicle image object detection algorithm based on improved {YOLOv7},''
+  \emph{Electronics}, vol.~12, no.~14, p. 3141, 2023.
 
 \bibitem{feng2021tood}
 C.~Feng, Y.~Zhong, Y.~Gao, M.~R. Scott, and W.~Huang, ``{TOOD}: Task-aligned
@@ -150,17 +110,20 @@ C.~Kyrkou and T.~Theocharides, ``{EmergencyNet}: Efficient aerial image
   convolutional feature fusion,'' in \emph{IEEE J. Sel. Topics Appl. Earth
   Observ. Remote Sens.}, vol.~13, 2020, pp. 1687--1699.
 
-\bibitem{tobin2017domainrand}
-J.~Tobin, R.~Fong, A.~Ray, J.~Schneider, W.~Zaremba, and P.~Abbeel, ``Domain
-  randomization for transferring deep neural networks from simulation to the
-  real world,'' in \emph{Proc. IEEE/RSJ Int. Conf. Intelligent Robots and
-  Systems (IROS)}, 2017, pp. 23--30.
-
 \bibitem{tremblay2018synthetic}
 J.~Tremblay, A.~Prakash, D.~Acuna, M.~Brophy, V.~Jampani, C.~Anil, T.~To,
   E.~Cameracci, S.~Boochoon, and S.~Birchfield, ``Training deep networks with
   synthetic data: Bridging the reality gap by domain randomization,'' in
   \emph{Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition Workshops
   (CVPRW)}, 2018, pp. 969--977.
+
+\bibitem{gu2023mamba}
+A.~Gu and T.~Dao, ``Mamba: Linear-time sequence modeling with selective state
+  spaces,'' \emph{arXiv preprint arXiv:2312.00752}, 2023.
+
+\bibitem{wang2025mambayolo}
+Z.~Wang, C.~Li, H.~Xu, and X.~Zhu, ``Mamba {YOLO}: {SSMs}-based object
+  detection model,'' in \emph{Proc. AAAI Conf. Artificial Intelligence}, 2025,
+  arXiv:2406.05835.
 
 \end{thebibliography}

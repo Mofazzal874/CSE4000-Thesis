@@ -1,6 +1,7 @@
 % ICCIT 2026 submission, draft 3. IEEE conference template, A4 (ICCIT requires the A4 template).
 % DOUBLE-BLIND: no author names, affiliations, addresses, or emails anywhere.
-% FRAMING: one investigation, four levers. See Defense/ICCIT/DRAFT3_PLAN.md.
+% FRAMING: proposed method (MSA-YOLO), components selected by measurement.
+% See Defense/ICCIT/DRAFT3_PLAN.md.
 % Every number here is verified in Defense/ICCIT/AUDIT_2026-08-21.md.
 % Build: pdflatex main && bibtex main && pdflatex main && pdflatex main
 \documentclass[conference,a4paper]{IEEEtran}
@@ -13,8 +14,8 @@
 
 \begin{document}
 
-\title{MSA-YOLO: Attention, Scale, and Supervision\\
-for Tiny-Human Detection in Aerial\\
+\title{MSA-YOLO: Multi-Scale Attention and Tiny-Aware\\
+Supervision for Human Detection in UAV\\
 Search-and-Rescue Imagery}
 
 % Double-blind submission: author block anonymized per ICCIT 2026 guidelines.
@@ -24,25 +25,32 @@ Search-and-Rescue Imagery}
 \maketitle
 
 \begin{abstract}
-A person photographed from a drone over a disaster site may span fewer than ten
-pixels, which is below the resolving limit of a standard detection head. Work on
-this regime adds attention modules, higher-resolution detection scales, sliced
-inference or state-space blocks, usually one at a time and on different data, so
-the relative worth of each is unknown. This paper asks where recall of
-sub-8-pixel people actually comes from, and measures four candidate answers on
-one detector under one protocol. Attention buys 0.3 points and arrives at a
-negative parameter cost. A stride-4 detection scale buys a further 1.1 points
-and is the strongest network-side option; the two together define MSA-YOLO,
-which reaches 0.853 AP50 with 19.6 million parameters, second among published
-C2A results to a detector three times its size. A bidirectional state-space neck
-buys nothing for 2.4 million parameters and 2.8 times the latency. A tiny-aware
-change to label assignment, which touches training only and adds no inference
-cost, buys 2.08 points, more than any change to the network, with a bootstrap
-interval that excludes zero and a positive effect across three seeds. The same
-detector was then run on real drone and disaster footage collected for this
-study. Zero-shot it reaches 0.335 and 0.133 AP50; 248 labeled real frames raise
-those to 0.795 and 0.411 while the synthetic benchmark holds at 0.837. Below 8
-pixels on real frames, recall is zero.
+Detecting people in aerial disaster imagery is constrained by object size, since
+at survey altitude a person occupies fewer than ten pixels, below the resolving
+limit of a standard detection head. Existing remedies introduce attention
+modules, higher-resolution detection scales, sliced inference or state-space
+blocks, but each is reported in isolation and on different datasets, so their
+relative contribution is unknown. This paper proposes MSA-YOLO, a multi-scale
+attention detector in
+which every component is selected by evaluating four candidates on one detector
+under a single training protocol and preprocessing pipeline. A stride-4
+detection scale provides the largest network-side improvement at 1.1 points of
+sub-8-pixel recall, an attention substitution contributes a further 0.3 points
+while reducing parameter count, and a bidirectional state-space neck yields no
+improvement for 2.4 million additional parameters and 2.8 times the latency. The
+resulting detector attains 0.853 mean average precision with 19.6 million
+parameters, second among published results on the C2A benchmark to a model three
+times its size. The largest single improvement originates in training rather
+than architecture: a tiny-aware modification to label assignment improves
+sub-8-pixel recall by 2.08 points at no inference cost, with a bootstrap interval
+excluding zero and a consistent effect across three seeds. A scene-level audit
+further establishes that 98 percent of the benchmark test scenes also occur in
+training, an inflation of 1.6 points, so this result is measured on a
+scene-disjoint re-split. Evaluation on drone and disaster footage collected for
+this study yields 0.335 and 0.133 mean average precision without adaptation, and
+248 annotated real frames raise these to 0.795 and 0.411 while synthetic
+performance is retained at 0.837. No instance below eight pixels is recovered on
+real footage.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -51,173 +59,188 @@ multi-scale detection, label assignment, UAV imagery
 \end{IEEEkeywords}
 
 \section{Introduction}
-When an earthquake or a flood strikes, the first hours decide how many people
-are found alive. A drone can sweep a disaster site far faster than a ground
-team, but the imagery it returns is punishing to search by eye: a person seen
-from altitude spans a few dozen pixels at best, and one sortie produces
-thousands of frames. Automating that search is a practical need rather than a
-convenience.
+Survival rates in earthquakes and floods fall sharply with the time taken to
+locate casualties, so search speed is an operational constraint rather than a
+convenience. Unmanned aerial vehicles can survey a disaster site faster than a
+ground team, but a single sortie yields thousands of high-resolution frames in
+which each person occupies only a few dozen pixels. Manual review of that volume
+is impractical, which motivates automatic detection.
 
 The difficulty is geometric. A one-stage detector predicts boxes on a grid whose
 cell covers a stride-sized region of the input, so at the finest standard scale,
 stride 8, a twelve-pixel person spans about one and a half cells, and a detector
 cannot localize what falls inside a fraction of one cell.
-In the C2A disaster benchmark used here~\cite{nihal2024c2a}, about 47\% of
-annotated people are smaller than ten pixels.
+In the C2A disaster benchmark used here~\cite{nihal2024c2a}, 34.5\% of
+annotated people are smaller than eight pixels and 63\% smaller than sixteen,
+measured on the square root of box area.
 
-\begin{figure}[t]
-\centerline{\includegraphics[width=\columnwidth]{figures/fig_answer.png}}
-\caption{Where recall of sub-8-pixel people comes from. (a) The effect of each
-lever, measured as the change from the configuration directly above it inside
-the same training protocol. The three network changes were measured on the
-official C2A split and the supervision change on a scene-disjoint re-split of
-the same data, so each bar is an effect within its own protocol and the four do
-not share an absolute level. The whisker is the paired image-level bootstrap 95\%
-interval on the supervision delta, which is positive in all three seeds
-retrained, mean 1.62 points. (b) Recall below 8 px for the strongest model on
-each source of imagery: 0.751 on C2A composites against none of the 54
-sub-8-pixel people present in real disaster frames.}
-\label{fig:answer}
-\end{figure}
+Four families of remedy address this regime, reviewed in Section~\ref{sec:rw}.
+Each is reported in isolation, on different datasets and without a shared
+training protocol, so their relative contribution remains unquantified and a
+practitioner choosing among them has little evidence on which to base the
+decision.
 
-Remedies for this regime exist and are individually plausible. Higher-resolution
-detection scales~\cite{zhu2021tphyolov5}, feature
-attention~\cite{woo2018cbam,wang2020eca}, sliced
-inference~\cite{akyon2022sahi} and state-space
-necks~\cite{gu2023mamba,wang2025mambayolo} have all been proposed. They are
-usually reported one at a time, on different aerial data, and without a shared
-training protocol, so anyone building a rescue detector today has to guess which
-addition earns its cost. A fourth family of methods changes neither the network
-nor the input but the training step that decides which predictions are
-supervised~\cite{wang2021nwd,xu2022rfla,shi2024simd}, and it is rarely compared
-against the architectural options at all.
+This paper proposes MSA-YOLO (Multi-Scale Attention YOLO), a detector for this
+regime built on YOLO11m~\cite{jocher2024yolo11}, in which each component is
+selected by measurement rather than assumption. The name denotes attention on the
+deepest features combined with a finer detection scale. Four candidates were evaluated on a single
+detector under one fixed protocol: channel-and-spatial attention, a stride-4
+detection scale, a bidirectional state-space neck, and the overlap measure used
+by the label assigner. Three were retained and one was rejected. The ordering of
+that selection constitutes the principal finding of this work, since the largest
+contribution to sub-8-pixel recall arises not from the network but from the
+assignment of supervision during training. The proposed detector is then
+evaluated on drone and disaster footage collected and annotated for this study,
+because detectors trained on composited imagery are seldom tested on real
+scenes. On that footage no instance below 8 px is recovered.
 
-\begin{figure*}[t]
-\centerline{\includegraphics[width=0.94\textwidth]{figures/fig_arch.jpg}}
-\caption{MSA-YOLO on a C2A scene. The backbone produces features at five
-resolutions; CBAM (orange) replaces the terminal self-attention block and
-re-weights the deepest features; the neck fuses scales and is carried one level
-further than the standard design to produce a stride-4 branch, so the head
-decodes at strides 4, 8, 16 and 32. The insets are the model's own signals on
-this scene: input, attention response, stride-4 feature response, and final
-detections. Note that the stride-4 map responds at the smallest scattered
-figures, which the stride-8 level summarizes into single cells.}
-\label{fig:arch}
-\end{figure*}
-
-This paper treats those options as one question. We ask where recall of
-sub-8-pixel people comes from, and we answer it by putting four levers on a
-single detector and measuring each under a fixed protocol: channel-and-spatial
-attention, a stride-4 detection scale, a bidirectional state-space neck, and the
-overlap measure the label assigner uses. Fig.~\ref{fig:answer} gives the result
-in advance. The two levers that pay for themselves in the network define
-MSA-YOLO, an enhancement of YOLO11m~\cite{jocher2024yolo11} that modifies the
-baseline in exactly two places. The lever that pays most, however, is not in the
-network at all. We then take the same detector to real drone and disaster
-footage collected and annotated for this study, because a model trained on
-composited scenes has never been asked what it does on real ones, and there the
-ladder runs out: below 8 px on real frames nothing is recovered.
-
-The contributions are the following.
+The contributions of this work are as follows.
 \begin{itemize}
-\item A single-protocol comparison of four levers for sub-8-pixel recall, with
-each effect attributed separately, showing that the assignment of supervision
-outweighs every change made to the network.
-\item MSA-YOLO, the strongest network-side configuration found, at 0.853 AP50
-and 19.6 million parameters, second only to a detector three times its size
-among published results on C2A, together with a documented negative result for
-a state-space neck that cost 2.4 million parameters and 2.8 times the latency.
-\item A tiny-aware label-assignment blend that adds 2.08 points of sub-8-pixel
-recall at no parameter or inference cost, with a bootstrap interval excluding
-zero and a positive effect in all three seeds tested.
-\item A real-footage study on our own drone, campus and disaster imagery that
-quantifies the synthetic-to-real gap, shows what 248 labeled frames buy, and
-reports where that budget stops paying.
+\item MSA-YOLO, a detector whose components are selected by single-protocol
+measurement, attaining 0.853 mean average precision with 19.6 million parameters
+while rejecting a state-space neck that increases latency 2.8-fold without
+accuracy benefit.
+\item A tiny-aware assignment blend within the task-aligned assigner that
+improves sub-8-pixel recall by 2.08 points at no inference cost, with a positive
+effect across three training seeds.
+\item A scene-level audit of C2A establishing that 98\% of its test scenes also
+occur in training, together with a scene-disjoint re-split that quantifies the
+resulting inflation.
+\item An annotated multi-domain aerial corpus of 248 training and 133 evaluation
+frames, and a transfer study quantifying the synthetic-to-real gap and the limits
+of a small annotation budget.
 \end{itemize}
 
 \section{Related Work}
-Object detection divides into two-stage detectors in the R-CNN
-line~\cite{ren2015fasterrcnn,cai2018cascade}, one-stage detectors such as
-SSD~\cite{liu2016ssd}, RetinaNet~\cite{lin2017focal} and the YOLO
-family~\cite{redmon2016yolo,wang2024yolov9,jocher2024yolo11}, and transformer
-designs such as DETR~\cite{carion2020detr} and RT-DETR~\cite{zhao2024rtdetr}. We
-work inside the one-stage YOLO family because its speed and small model size
-suit airborne deployment.
+\label{sec:rw}
+Object detection divides into two-stage detectors in the R-CNN line, one-stage
+detectors such as RetinaNet~\cite{lin2017focal} and the YOLO
+family~\cite{wang2024yolov9,jocher2024yolo11}, and transformer designs such as
+RT-DETR~\cite{zhao2024rtdetr}. This work adopts the one-stage YOLO family because
+its speed and small model size suit airborne deployment.
 
 Detecting very small objects is a distinct problem~\cite{cheng2023smallobject},
-and the literature attacks it in four places. It adds resolution, where feature
-pyramids~\cite{lin2017fpn} and a stride-4 head extend detection to targets a few
-pixels wide~\cite{zhu2021tphyolov5}. It re-weights features, using channel
-attention~\cite{wang2020eca} or combined channel-and-spatial
-attention~\cite{woo2018cbam}. It works at inference time, slicing the image into
-overlapping crops~\cite{akyon2022sahi}. And it changes the training step that
-selects positive samples, on the observation that intersection over union
-collapses for tiny boxes: Wang et al.~\cite{wang2021nwd} replaced it with a
+addressed in the literature at four points in the pipeline. The first adds
+resolution, where feature pyramids and a stride-4 head extend detection to
+targets a few pixels wide~\cite{zhu2021tphyolov5}. The second re-weights
+features, most often through combined channel-and-spatial
+attention~\cite{woo2018cbam}. A third operates at inference time by slicing the
+image into overlapping crops~\cite{akyon2022sahi}. The fourth modifies the
+training step that selects positive samples, motivated by the observation that
+intersection over union collapses for tiny boxes: Wang et
+al.~\cite{wang2021nwd} replaced it with a
 normalized Wasserstein distance, RFLA~\cite{xu2022rfla} built assignment on a
 receptive-field prior, and SimD~\cite{shi2024simd} learned an adaptive
-similarity. Modern YOLO versions assign samples with the task-aligned assigner
-of TOOD~\cite{feng2021tood}, which still scores localization with the IoU
-family, and none of the tiny-object assignment work above has been placed inside
-it for aerial person detection. Section~\ref{sec:assign} takes that opening, and
-Section~\ref{sec:where} measures it against the other three families on the same
-detector, which to our knowledge has not been done.
+similarity. Closest to the setting here, YOLOv7-UAV~\cite{zeng2023yolov7uav}
+weights a Wasserstein term against IoU when allocating positive and negative
+samples for UAV imagery, including tiny people, inside an anchor-based
+pipeline. Modern YOLO versions instead assign samples with the task-aligned
+assigner of TOOD~\cite{feng2021tood}, where the overlap term feeds an alignment
+metric that ranks classification and localization jointly, so the same blend
+acts on more than a candidate filter. Section~\ref{sec:assign} places it there.
+What has not previously been reported is the comparison in
+Section~\ref{sec:where}: this component measured against the three architectural
+families on one detector under one protocol.
 
 Real search-and-rescue collections such as SARD~\cite{sambolek2021sard} and
 HERIDAL~\cite{bozic2019heridal} hold only a few thousand frames.
 C2A~\cite{nihal2024c2a} instead composites segmented human figures onto real
 disaster backgrounds~\cite{kyrkou2020aider}, giving 10{,}215 images and roughly
 360{,}000 instances. Results on such data are almost always in-domain, which
-leaves transfer untested. Work on domain
-randomization~\cite{tobin2017domainrand} and on fine-tuning synthetic-trained
-models with a little real data~\cite{tremblay2018synthetic} suggests the recipe
-of Section~\ref{sec:real}.
+leaves transfer untested. Work on fine-tuning synthetic-trained models with a
+little real data~\cite{tremblay2018synthetic} suggests the recipe of
+Section~\ref{sec:real}.
 
-\section{Four Levers on One Detector}
-The four levers act in different places, which is what makes the comparison
-possible: two change the network, one changes the neck only, and one changes
-nothing that runs at inference time. All four sit on the same YOLO11m baseline,
-in which an aerial image is letterbox-resized to $640 \times 640$, passed
-through the backbone, fused across scales by a path-aggregation neck, and
-decoded by a multi-scale head before non-maximum suppression.
+\section{Proposed Method}
 
-\subsection{Attention and Scale: MSA-YOLO}
-The first lever replaces the self-attention block that follows the
+\begin{figure*}[t]
+\centerline{\includegraphics[width=0.92\textwidth]{figures/fig_arch_v2.jpg}}
+\caption{The proposed MSA-YOLO pipeline, shown on a C2A scene.}
+\label{fig:arch}
+\end{figure*}
+
+The full pipeline is shown in Fig.~\ref{fig:arch}. The backbone produces
+features at five resolutions and the terminal self-attention block is replaced
+by CBAM, drawn in orange. The neck fuses those scales and is carried one level
+further than the standard design to produce a stride-4 branch, so the head
+decodes at strides 4, 8, 16 and 32. The insets along the edges are the model's
+own signals on that scene: the input, the attention response, the stride-4
+feature response, and the final detections. The stride-4 map responds at the
+smallest scattered figures, which the stride-8 level summarizes into single
+cells.
+
+MSA-YOLO is a detector for tiny aerial humans built on
+YOLO11m~\cite{jocher2024yolo11} with two changes to the network and one to the
+way training assigns supervision. Every component was selected by measurement
+rather than assumption: each was introduced alone, under one fixed protocol, and
+kept only where it earned its cost. Section~\ref{sec:where} reports that
+selection, including one candidate that was rejected.
+
+\subsection{Problem Formulation}
+Given an aerial image $I$, the detector predicts a set of person boxes with
+confidences, $\{(\hat{b}_i, \hat{s}_i)\}$, which is scored against the ground
+truth $\{b_j\}$. Training minimizes
+\begin{equation}
+  \mathcal{L} = \lambda_{c}\mathcal{L}_{\mathrm{cls}}
+              + \lambda_{b}\mathcal{L}_{\mathrm{box}}
+              + \lambda_{d}\mathcal{L}_{\mathrm{dfl}},
+  \label{eq:loss}
+\end{equation}
+where all three terms act only on predictions the assigner has marked positive.
+Writing $r_{<8}$ for recall on people below 8 px, the design objective is to
+maximize $r_{<8}$ subject to no regression in overall mAP@0.5. Since the
+assigner rather than the loss determines which predictions receive supervision,
+Section~\ref{sec:assign} modifies the assigner.
+
+\subsection{Corpus Construction and Preprocessing}
+\label{sec:corpus}
+No public benchmark pairs composited disaster imagery with real footage of the
+same task, so a multi-domain corpus was assembled for this study. Aerial video
+was recorded with a DJI Air 3S quadrotor, whose 1-inch CMOS main camera captures
+3840 $\times$ 2160 at 60 frames per second, flown at 10, 30 and 50 m above
+ground level over open ground and over a
+university campus where tree canopy occludes many subjects. Disaster footage was
+sampled from news video of three events, two supplying training frames and the
+third reserved for evaluation. Frames were
+extracted at fixed intervals and de-duplicated with a perceptual hash, which also
+guarantees that no training frame is a near-duplicate of an evaluation frame.
+Annotation uses a single \texttt{person} class with segmentation-assisted boxes,
+audited for degenerate and oversized boxes. The corpus holds 395 frames and
+18{,}774 annotated people, 248 frames for training and 133 for evaluation, with
+per-set composition in Table~\ref{tab:real}. Median subject size ranges from
+17 px on disaster rubble to 44 px on drone footage, a wider range than C2A alone.
+
+All configurations share one preprocessing pipeline, so no comparison reported
+here is confounded by input handling. Images are letterbox-resized to
+$640 \times 640$ with aspect ratio preserved, real footage after downscaling to
+1{,}280 px on the long side. Training uses the framework default augmentation
+with mosaic disabled for the final ten epochs. A stronger set stacking
+copy-paste, mixup, vertical flipping and rotation was tested and rejected, since
+it returned 0.3 points at the very-tiny band while costing 13.3 points of
+medium-object recall.
+
+\subsection{Attention and Scale}
+The first change replaces the self-attention block that follows the
 spatial-pyramid-pooling stage with a convolutional block attention
 module~\cite{woo2018cbam}, which applies channel attention and then spatial
 attention with a reduction ratio of 16 and a $7 \times 7$ spatial kernel. The
 module is lighter than the block it replaces, so whatever it earns is earned at
 a negative parameter cost.
 
-The second lever adds resolution, for the reason drawn in
-Fig.~\ref{fig:stride}. The neck's top-down pass continues one level below the
+The second change adds resolution. A detection cell covers a stride-sized
+region, so a target of side $s$ spans $s/d$ cells at stride $d$: a twelve-pixel
+person covers about 1.5 cells at stride 8, the finest standard level, and about
+three at stride 4, which is the first level giving enough spatial support to
+regress an offset from. The neck's top-down pass continues one level below the
 standard design: the fused stride-8 feature is upsampled, concatenated with the
 backbone feature at stride 4, and fused into a $160 \times 160$ map that a
 fourth detection branch reads. The existing three levels are untouched, which
 keeps the addition attributable. These two changes together are MSA-YOLO,
 drawn in Fig.~\ref{fig:arch}.
 
-\begin{figure}[t]
-\centerline{\includegraphics[width=\columnwidth]{figures/fig_stride.png}}
-\caption{Why a stride-4 scale is added. Each panel is the same 32 by 32 px patch
-of a 640 px input, holding one identical target box. A detection cell covers a
-stride-sized region, so a target of side $s$ spans $s/d$ cells at stride $d$: the
-box here falls inside a fraction of one cell at the two coarsest levels and
-covers about 1.5 cells at stride 8, the finest standard level. Stride 4 is the
-first level that gives it about three cells, which is enough spatial support to
-regress an offset from.}
-\label{fig:stride}
-\end{figure}
-
-\subsection{A State-Space Neck}
-The third lever tests the claim that state-space blocks improve feature
-aggregation. A variant replaces the bottleneck at six neck layers with a block
-performing bidirectional local-window selective scans, inserted so that the
-backbone and the head are unchanged. Its scan diagnostics confirm the module was
-active, with a mean forward-to-reverse cosine distance of 0.836.
-
 \subsection{Tiny-Aware Label Assignment}
 \label{sec:assign}
-The fourth lever leaves the network alone. Modern YOLO versions select positive
+The third change leaves the network alone. Modern YOLO versions select positive
 samples with a task-aligned assigner that scores each candidate by
 $t = s^{p} u^{q}$, where $s$ is a classification score and $u$ a localization
 overlap measured with the complete IoU. That measurement is the weak point at
@@ -226,7 +249,7 @@ to zero, so candidates for the smallest targets are ranked with almost no signal
 and those people are trained on poorly chosen samples. The network can be made
 as sharp as one likes and this will still be true.
 
-We keep the assigner and replace only its overlap term. For a ground-truth box
+The assigner is retained and only its overlap term is replaced. For a ground-truth box
 $g$ and a candidate $b$ with centers, widths and heights $(c_x, c_y, w, h)$, the
 squared 2-Wasserstein distance between Gaussians fitted to the boxes is
 \begin{equation}
@@ -234,8 +257,10 @@ squared 2-Wasserstein distance between Gaussians fitted to the boxes is
     + \tfrac{1}{4}\big[(w^{g}\!-\!w^{b})^2 + (h^{g}\!-\!h^{b})^2\big],
 \end{equation}
 and the normalized Wasserstein similarity~\cite{wang2021nwd} maps it into
-$(0,1]$ as $S(g,b) = \exp(-W_2(g,b)/C)$ with $C$ set to the median person size
-of the dataset in pixels, here 12.8. Unlike the IoU, this similarity stays
+$(0,1]$ as $S(g,b) = \exp(-W_2(g,b)/C)$, where $C$ is a dataset-scale constant.
+The value of 12.8 used by Wang et al.~\cite{wang2021nwd} is retained, since the
+median person in C2A measures 12.0 px on the square root of area and so lies in
+the same regime. Unlike the IoU, this similarity stays
 informative for disjoint tiny boxes: a near miss scores above a distant one even
 when both overlap nothing. The overlap the assigner consumes becomes
 \begin{equation}
@@ -245,9 +270,18 @@ when both overlap nothing. The overlap the assigner consumes becomes
 where $\gamma$ sets how far assignment trusts the scale-tolerant similarity, and
 $\gamma = 0$ recovers the unmodified assigner. The change affects training only.
 It adds no parameters and no inference cost, and it is distinct from placing the
-same distance inside the regression loss, which we also tried without success.
+same distance inside the regression loss, which was also tested without success.
 
-\section{Experimental Setup}
+\subsection{A Rejected Alternative}
+A fourth candidate, tested and not adopted, replaced the bottleneck at six neck
+layers with a block performing bidirectional local-window selective scans in the
+manner of Mamba~\cite{gu2023mamba} and its detection
+adaptation~\cite{wang2025mambayolo}, leaving backbone and head unchanged. Scan diagnostics confirm it was active,
+with a mean forward-to-reverse cosine distance of 0.836.
+
+\section{Experiments and Results Analysis}
+
+\subsection{Implementation Details}
 All training and evaluation ran on one workstation with an NVIDIA RTX 4070 Ti
 SUPER (16 GB), an Intel Core i7-14700K and 128 GB of RAM, using Python 3.11,
 PyTorch 2.12 with CUDA 12.6, and Ultralytics 8.4.56. Every configuration used
@@ -257,67 +291,84 @@ optimizer was pinned because the framework default diverged on the four-scale
 head. Batch size was 16, reduced to 8 physical with gradient accumulation for
 the stride-4 models, whose extra scale raises activation memory.
 
+\subsection{Datasets and Protocols}
 C2A~\cite{nihal2024c2a} provides 10{,}215 images with roughly 360{,}000 person
 instances across collapsed-building, fire, flood and traffic scenes. Two
 protocols are used, and they are never mixed within a table. The \emph{official}
 split (6{,}129 training, 2{,}043 validation, 2{,}043 test images) carries the
 network comparison, because published results on this benchmark use it. An audit
 of scene identifiers found that 98\% of official test scenes also appear in
-training, since several composited images share one background, so we also built
-a \emph{scene-disjoint} re-split (6{,}135 / 2{,}040 / 2{,}040) in which all
-images of a scene fall on one side. Retraining the recommended model there costs
-1.6 points of AP50 and 1.2 points of sub-8-pixel recall, so the leakage inflates
+training, since several composited images share one background. A
+\emph{scene-disjoint} re-split (6{,}135 / 2{,}040 / 2{,}040) was therefore
+constructed, in which all images of a scene fall on one side. Retraining the recommended model there costs
+1.6 points of mAP@0.5 and 1.2 points of sub-8-pixel recall, so the leakage inflates
 the official protocol modestly and changes no conclusion. The assignment and
 real-footage experiments use the clean split.
 
-Because a missed person costs more than a false alarm, the primary operating
-metric is the recall-weighted $F_2$ score. We also report AP50, COCO average
-precision, average recall at 100 detections, recall in the size bands very-tiny
-(under 8 px), tiny (8 to 16 px), small (16 to 32 px) and medium (32 to 96 px)
-measured as the square root of box area, and end-to-end latency including
-preprocessing and non-maximum suppression. Where two models are compared on one
-set, a paired image-level bootstrap over 1{,}000 resamples gives a 95\%
-confidence interval and a two-sided $p$-value.
+\subsection{Evaluation Metrics}
+Because a missed person costs more than a false alarm, the primary metric is
+recall, reported with the recall-weighted $F_2$ score. Global and size-local
+measures are separated throughout, since a model may improve on one while losing
+the other. Global measures are mean average precision at IoU 0.5 (mAP@0.5), the
+same averaged over IoU 0.5 to 0.95 (mAP@0.5:0.95), and average recall at 100
+detections. Size-local measures are average precision on small objects and
+recall within the bands very-tiny (under 8 px), tiny (8 to 16), small (16 to 32)
+and medium (32 to 96), where size is the square root of box area. All average
+precision figures follow the COCO protocol. Latency is end-to-end, including
+preprocessing and non-maximum suppression. Paired comparisons use an image-level
+bootstrap over 1{,}000 resamples, giving a 95\% interval and a two-sided
+$p$-value.
 
-\section{Where Sub-8-Pixel Recall Comes From}
 \label{sec:where}
 
-\subsection{The Three Network Levers}
+\subsection{Ablation: Attention, Scale and Sequence Modeling}
 Table~\ref{tab:abl} introduces one network change at a time on the official C2A
-test set. Aggregate average precision is saturated, with all four models inside
-0.002 AP of one another, which is expected when annotation noise dominates at
-strict IoU thresholds for boxes this small. The differences appear where the
-task lives. The stride-4 scale is the effective change: on top of attention it
-lifts AP50 from 0.847 to 0.853, average recall from 0.692 to 0.703, sub-8-pixel
-recall from 0.746 to 0.757, and operational $F_2$ from 0.841 to 0.844, for about
-half a million
-parameters and one millisecond. The attention substitution is close to free. It
-removes roughly one million parameters relative to the baseline, gives the
-lowest latency of the four, and improves every accuracy column slightly. The
-state-space neck is the outlier in the wrong direction, adding 2.4 million
-parameters and taking latency from 14.6 to 41.1 ms while matching, not beating,
-the configuration below it. On this evidence MSA-YOLO is the attention plus
-stride-4 configuration, and the state-space neck is not carried forward.
+test set, grouped into global accuracy, size-local accuracy and cost.
+Aggregate average precision is saturated: all four configurations lie within
+0.002 of one another, which is consistent with annotation noise dominating at
+strict IoU thresholds for boxes of this size. The configurations separate on the
+size-local measures. The stride-4 scale accounts for most of the improvement.
+Added on top of attention, it raises mAP@0.5 from 0.847 to 0.853, average recall
+from 0.692 to 0.703, sub-8-pixel recall from 0.746 to 0.757 and $F_2$ from 0.841
+to 0.844, at a cost of 0.5 million parameters and 1.1 ms. The attention
+substitution is comparatively inexpensive, since it removes 0.96 million
+parameters relative to the baseline, yields the lowest latency of the four
+configurations and improves each accuracy measure marginally. The state-space
+neck is the only configuration that does not repay its cost, adding 2.4 million
+parameters and raising latency from 14.6 to 41.1 ms while matching rather than
+exceeding the preceding configuration. MSA-YOLO is therefore defined as the
+attention and stride-4 configuration, and the state-space neck is not retained.
 
 \begin{table}[htbp]
-\caption{Additive Ablation on the Official C2A Test Split. Par.: parameters in
-millions; GF: GFLOPs; AR: average recall at 100 detections; VT: recall below
-8 px; ms: end-to-end latency.}
+\caption{Additive Ablation on the Official C2A Test Split}
 \label{tab:abl}
 \begin{center}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{|l|c|c|c|c|}
 \hline
-\textbf{Configuration} & \textbf{Par.} & \textbf{GF} & \textbf{AP50} & \textbf{AP} & \textbf{AR} & \textbf{VT} & \textbf{ms} \\
+\textbf{Metric} & \textbf{YOLO11m} & \textbf{+\,CBAM} & \textbf{+\,P2} & \textbf{+\,SSM} \\
 \hline
-YOLO11m & 20.03 & 67.7 & 0.843 & 0.615 & 0.691 & 0.743 & 13.7 \\
 \hline
-+ CBAM & 19.08 & 66.9 & 0.847 & 0.616 & 0.692 & 0.746 & 13.5 \\
+Mean average precision @0.5 & 0.843 & 0.847 & \textbf{0.853} & 0.852 \\
 \hline
-+ CBAM + P2 & 19.57 & 86.7 & \textbf{0.853} & 0.615 & 0.703 & \textbf{0.757} & 14.6 \\
+Mean average precision @0.5:0.95 & 0.615 & 0.616 & 0.615 & 0.614 \\
 \hline
-+ SSM neck & 22.01 & 98.4 & 0.852 & 0.614 & 0.704 & 0.757 & 41.1 \\
+Average recall, 100 detections & 0.691 & 0.692 & 0.703 & \textbf{0.704} \\
+\hline
+$F_2$ score & 0.840 & 0.841 & \textbf{0.844} & 0.844 \\
+\hline
+\hline
+Average precision, small objects & 0.615 & 0.616 & 0.616 & 0.615 \\
+\hline
+Recall, targets below 8 px & 0.743 & 0.746 & \textbf{0.757} & 0.757 \\
+\hline
+\hline
+Parameters (millions) & 20.03 & \textbf{19.08} & 19.57 & 22.01 \\
+\hline
+GFLOPs & 67.7 & \textbf{66.9} & 86.7 & 98.4 \\
+\hline
+Latency (ms) & 13.7 & \textbf{13.5} & 14.6 & 41.1 \\
 \hline
 \end{tabular}
 \end{center}
@@ -330,15 +381,12 @@ band falls from 0.912 to 0.808. That last figure looks severe but rests on 317
 of roughly 72{,}500 test instances, so it is noisy. The net effect is a model
 that is better where the dataset lives, since 99.6\% of instances are below
 32 px. Calibration is stable across the chain, with expected calibration error
-between 0.020 and 0.023, so a reported confidence can be read as an empirical
-precision. Two inference-time procedures were also measured on the recommended
-model without retraining: slicing~\cite{akyon2022sahi} at a 256-pixel tile
-raises sub-8-pixel recall from 0.758 to 0.788 at 162 ms per image against 15 ms,
-while test-time augmentation at 1280-pixel input reaches 0.850 recall and 0.854
-$F_2$ at 60 ms. Both are operating modes that buy recall with latency rather
-than levers on the model.
+between 0.020 and 0.023. Two inference-time procedures were also measured
+without retraining: slicing~\cite{akyon2022sahi} at a 256-pixel tile raises
+sub-8-pixel recall to 0.788 at 162 ms per image against 15 ms, and test-time
+augmentation at 1280 px reaches 0.850 at 60 ms. Both exchange latency for recall.
 
-\subsection{The Supervision Lever}
+\subsection{Ablation: Label Assignment}
 The assignment blend of Equation~\eqref{eq:blend} was evaluated on the
 scene-disjoint split, so its numbers are not comparable to Table~\ref{tab:abl}
 and are reported as a matched difference. Fifty-epoch pilots swept $\gamma$ and
@@ -360,16 +408,15 @@ deviation of 0.49, positive in every seed. One sub-claim did not
 survive that replication: a two-point small-object average-precision gain seen at
 seed 0 averaged to noise across seeds and is therefore not claimed.
 
-The size of this effect is the paper's main observation. A change that adds no
-parameters, no FLOPs and no latency moves recall at the hardest size band by more
-than the three network changes moved it between them, 2.08 points against 1.40.
-The two figures come from different protocols, so this compares effect sizes and
-not levels, but the ordering is not close. For targets a few pixels wide the
-network is not the binding constraint; which predictions get supervised is.
+The magnitude of this effect is the principal observation of this work. A
+modification that adds no parameters, no floating-point operations and no
+latency improves recall in the hardest size band by more than the three network
+modifications achieve together, 2.08 points against 1.40. The two figures derive
+from different protocols and therefore compare effect sizes rather than absolute
+levels, but the ordering is unambiguous.
 
 \begin{table}[htbp]
-\caption{Matched Pair Differing Only in the Assignment Blend, Scene-Disjoint
-Split. Changes are in points; the interval is a paired image-level bootstrap.}
+\caption{Matched Pair Differing Only in the Assignment Blend}
 \label{tab:assign}
 \begin{center}
 \small
@@ -378,7 +425,7 @@ Split. Changes are in points; the interval is a paired image-level bootstrap.}
 \hline
 \textbf{Metric} & $\gamma = 0$ & $\gamma = 0.5$ & \textbf{Change} & \textbf{95\% CI} \\
 \hline
-AP50 & 0.845 & 0.844 & $-0.08$ & $[-0.32, 0.17]$ \\
+mAP@0.5 & 0.845 & 0.844 & $-0.08$ & $[-0.32, 0.17]$ \\
 \hline
 $F_2$ & 0.826 & 0.828 & $+0.27$ & $[0.03, 0.50]$ \\
 \hline
@@ -392,25 +439,59 @@ Recall, 16--32 px & 0.850 & 0.841 & $-0.95$ & $[-1.40, -0.50]$ \\
 \end{center}
 \end{table}
 
-\subsection{Standing Among Published Detectors}
-Table~\ref{tab:sota} places MSA-YOLO against the results reported by Nihal et
-al.~\cite{nihal2024c2a} on the same test split, none of which use slicing or
-test-time augmentation. MSA-YOLO exceeds every convolutional and transformer
-baseline in that study except YOLOv9-e, and it does so with 19.6 million
-parameters against that model's 57.3 million. For a detector that must ride on
-airborne hardware, giving up four points of AP50 for a third of the size is the
-trade worth making.
+\subsection{Results by Object Size}
+Table~\ref{tab:size} breaks the official test set into size bands and reports
+how many instances each holds and what each configuration recovers. It shows
+where the proposed design acts. The stride-4 scale is the only change that moves
+the very-tiny band, and it does so by trading accuracy on the medium band, which
+holds 317 of 72{,}523 instances. Since 99.6\% of this benchmark lies below
+32 px, that trade is favorable here and would not be in a general-purpose
+detector.
 
 \begin{table}[htbp]
-\caption{Comparison with Published Results on C2A. The upper block is as
-reported by Nihal et al.~\cite{nihal2024c2a} on the same test split; no entry
-uses slicing or test-time augmentation.}
+\caption{Recall by Object Size, Official C2A Test Split}
+\label{tab:size}
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Band} & \textbf{$<$8 px} & \textbf{8--16} & \textbf{16--32} & \textbf{32--96} \\
+\hline
+Instances & 25{,}072 & 20{,}520 & 26{,}614 & 317 \\
+\hline
+YOLO11m & 0.743 & 0.869 & 0.894 & \textbf{0.909} \\
+\hline
++ CBAM & 0.746 & \textbf{0.873} & \textbf{0.895} & \textbf{0.912} \\
+\hline
++ CBAM + P2 & \textbf{0.757} & 0.865 & 0.886 & 0.808 \\
+\hline
++ SSM neck & 0.757 & 0.870 & 0.887 & 0.811 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Comparison with Published Detectors}
+Table~\ref{tab:sota} places MSA-YOLO against the results reported by Nihal et
+al.~\cite{nihal2024c2a} on the same test split, none of which use slicing or
+test-time augmentation. The accuracy figures in the upper block are theirs;
+parameter counts are nominal values for the standard implementations, which
+that study does not report. MSA-YOLO exceeds every convolutional and transformer
+baseline in that study except YOLOv9-e, and it does so with 19.6 million
+parameters against that model's 57.3 million. For deployment on airborne
+hardware, a reduction of four points in mAP@0.5 in exchange for approximately one
+third of the parameter count is a favorable trade.
+
+\begin{table}[htbp]
+\caption{Comparison with Published Results on C2A}
 \label{tab:sota}
 \begin{center}
-\small
+\footnotesize
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Model} & \textbf{AP50} & \textbf{AP} & \textbf{Params} \\
+\textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.5:0.95} & \textbf{Params} \\
 \hline
 Faster R-CNN & 0.634 & 0.366 & $\sim$41M \\
 \hline
@@ -434,20 +515,13 @@ MSA-YOLO (ours) & 0.853 & 0.615 & \textbf{19.6M} \\
 \end{center}
 \end{table}
 
-\section{What Survives on Real Footage}
+\subsection{Cross-Domain Validation on Real Footage}
 \label{sec:real}
-C2A is composited, so the question that decides field usefulness is what these
-levers are worth on real imagery. We collected three real training sets and five
-frozen evaluation sets, listed in Table~\ref{tab:real}. The drone and campus
-footage is our own 4K recording at 10, 30 and 50 m altitude over open ground and
-over a university campus where trees hide parts of many people. The disaster
-frames were sampled from public news video of two events, a flood and a building
-collapse, and frames from a third event, unseen in any training, are reserved for
-evaluation. Frames were extracted at fixed intervals, de-duplicated with a
-perceptual hash that also guarantees no training frame is a near-duplicate of any
-evaluation frame, annotated with segmentation-assisted box drawing, and passed
-through an automated audit for degenerate, duplicate and oversized boxes. The
-whole disaster training set took about one afternoon to label.
+Since C2A is composited, field usefulness depends on performance on real
+imagery. The corpus of Section~\ref{sec:corpus} supplies three training sets and
+five frozen evaluation sets, listed in Table~\ref{tab:real}. The disaster
+training set required approximately one working day to annotate, which
+establishes the scale of budget under test.
 
 \begin{table}[htbp]
 \caption{Real-Imagery Sets Collected for This Study}
@@ -459,7 +533,7 @@ whole disaster training set took about one afternoon to label.
 \hline
 \textbf{Set} & \textbf{Role} & \textbf{Frames} & \textbf{People} & \textbf{Med. px} \\
 \hline
-Drone, 3 altitudes & train & 101 & 6{,}313 & --- \\
+Drone, 3 altitudes & train & 101 & 6{,}315 & --- \\
 \hline
 Drone, 3 altitudes & val & 14 & 973 & --- \\
 \hline
@@ -479,45 +553,43 @@ Disaster, unseen event & eval & 23 & 318 & 28 \\
 \end{center}
 \end{table}
 
-Adaptation is a supervised fine-tune with no machinery beyond data mixing. The
-mixture holds the full synthetic training split plus the 248 real training
-frames repeated twenty times, with 4K frames downscaled to 1{,}280 px on the
-long side, at a reduced learning rate of $5 \times 10^{-4}$ for at most 80
-epochs.
+Adaptation is a supervised fine-tune requiring no mechanism beyond data mixing:
+the full synthetic training split plus the 248 real frames oversampled twenty
+times, at a reduced learning rate of $5 \times 10^{-4}$ for at most 80 epochs.
 
-Zero-shot transfer is poor, and the synthetic benchmark gives no warning of it.
-The model that reaches 0.844 AP50 on C2A manages 0.335 on the drone test and
-0.133 on real disaster frames. Adaptation closes most of the drone gap and part
-of the disaster gap, as Fig.~\ref{fig:stages} and Table~\ref{tab:multi} show.
-The drone score reaches 0.795 and recall at the operating threshold rises from
-0.337 to 0.837, meaning 2{,}998 of 3{,}584 people are found where 1{,}206 were
-found before. Disaster footage from the training events reaches 0.411, three
-times its zero-shot value. Fine-tuning on drone footage alone does nothing for
-disaster frames, moving them from 0.133 to 0.124, so the gain comes from
-disaster labels specifically and not from real-image exposure in general. The
-synthetic benchmark is barely touched, falling from 0.844 to 0.837 with
-calibration improving from 0.014 to 0.011, so one model serves the benchmark and
-the real footage.
+Zero-shot transfer is weak, and performance on the synthetic benchmark does not
+predict it. The model attaining 0.844 mAP@0.5 on C2A reaches only 0.335 on the
+drone test set and 0.133 on real disaster frames. Adaptation closes most of the drone gap and part
+of the disaster gap, as Table~\ref{tab:multi} and Fig.~\ref{fig:qual} show. In
+that figure a red box covering a green one is a person found and a lone green
+box is a person missed, so the drone row shows adaptation covering most of the
+ground truth while the disaster row leaves many green boxes uncovered.
+The drone score reaches 0.795, and recall at the operating threshold of 0.25
+rises from 0.337 to 0.837, recovering 2{,}998 of 3{,}584 people against 1{,}206
+previously. Disaster footage from the training events reaches 0.411,
+approximately three times its zero-shot value. Fine-tuning on drone footage alone leaves disaster
+frames unchanged at 0.133 to 0.124, indicating that the improvement derives from
+disaster annotations specifically rather than from exposure to real imagery in
+general. Performance on the synthetic benchmark is largely preserved, declining
+from 0.844 to 0.837 while calibration error improves from 0.014 to 0.011, so a
+single model serves both domains.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=\columnwidth]{figures/fig_adapt_stages_print.png}}
-\caption{AP50 of three training stages on the three real evaluation domains.
-Drone-only fine-tuning leaves disaster footage untouched (middle bars), so what
-helps disaster frames is disaster labels rather than real images in general. On
-an event held out from all training (right group) the adapted and base models are
-statistically indistinguishable, which bounds the result.}
-\label{fig:stages}
+\centerline{\includegraphics[width=\columnwidth]{figures/fig_qualitative.jpg}}
+\caption{Inference before (a, c) and after (b, d) real-data adaptation. Green is
+ground truth, red is detection.}
+\label{fig:qual}
 \end{figure}
 
 \begin{table}[htbp]
-\caption{The Adapted Model on Every Held-Out Set. Rec.\ is recall at the
-operating threshold of 0.25.}
+\caption{The Adapted Model on Every Held-Out Set}
 \label{tab:multi}
 \begin{center}
-\small
+\footnotesize
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
-\textbf{Evaluation set} & \textbf{Images} & \textbf{AP50} & \textbf{F2} & \textbf{Rec.} \\
+\textbf{Evaluation set} & \textbf{Img.} & \textbf{mAP@0.5} & \textbf{$F_2$} & \textbf{Recall} \\
 \hline
 C2A, scene-disjoint test & 2{,}040 & 0.837 & 0.824 & 0.821 \\
 \hline
@@ -533,39 +605,37 @@ Disaster, unseen event & 23 & 0.413 & 0.451 & 0.374 \\
 \end{center}
 \end{table}
 
-Three boundaries belong in the record.
-\begin{itemize}
-\item \textit{The adaptation is specific to the footage it saw.} On the held-out
-event the adapted model scores 0.413 against the base model's 0.396, a difference
-of 1.7 points whose bootstrap interval spans zero ($p = 0.47$), while precision
-at the operating threshold falls by 13.1 points. Sixty frames from two events
-adapt the model to those events, not to disasters in general.
-\item \textit{The absolute level on real disaster imagery is modest.} At the
-operating threshold the adapted model finds 482 of 1{,}070 people and roughly
-half of its detections are false alarms, which suits operator-reviewed triage
-rather than autonomous decisions.
-\item \textit{The size regime the levers targeted is untouched on real data.}
-People below 8 px in real disaster frames are not recovered at all, across all
-54 such instances, by any model tested here. Every gain in
-Fig.~\ref{fig:answer}(a) was measured on composited imagery, and none of it
-reaches the bottom of the size range on real imagery.
-\end{itemize}
+Three boundaries qualify this result. First, the adaptation is specific to the
+footage observed during training. On the held-out event the adapted model scores
+0.413 against 0.396 for the base model, a difference of 1.7 points whose
+bootstrap interval spans zero ($p = 0.47$), while precision at the operating
+threshold falls by 13.1 points. Sixty frames drawn from two events therefore
+adapt the model to those events rather than to disaster imagery in general.
+Second, the absolute level on real disaster footage remains modest, since the
+adapted model recovers 482 of 1{,}070 people at the operating threshold and
+approximately half of its detections are false alarms, which suits
+operator-reviewed triage rather than autonomous decision-making. Third, the size
+regime this work targets is untouched on real data: no model tested here recovers
+any of the 54 instances below 8 px in real disaster frames. Every ablation gain
+reported above was measured on composited imagery and none of it extends to the
+bottom of the size range on real imagery.
 
 \section{Conclusion}
-We asked where recall of sub-8-pixel people comes from and measured four answers
-on one detector. Attention is nearly free and worth 0.3 points. A stride-4
-detection scale is worth a further 1.1 and is the best of the network changes,
-which makes MSA-YOLO, at 0.853 AP50 and 19.6 million parameters, second among
-published C2A results to a model three times its size. A bidirectional
-state-space neck is worth nothing for 2.4 million parameters and 2.8 times the
-latency. The assignment of supervision is worth 2.08 points at no inference cost,
-more than any of them, which says that for targets this small how supervision is
-assigned matters more than what is added to the network. On real footage the same
-detector fell to 0.335 AP50 on drone video and 0.133 on disaster frames until 248
-labeled real frames raised those to 0.795 and 0.411 at almost no cost to the
-benchmark, and below 8 px it recovered nothing at all. The next gains in this
-regime look more likely to come from supervision and from real data than from
-further additions to the network.
+This work examined the sources of sub-8-pixel recall by evaluating four
+candidate modifications on a single detector under one protocol. The attention
+substitution contributes 0.3 points at a reduced parameter count, and a stride-4
+detection scale a further 1.1 points, which together define MSA-YOLO at 0.853
+mAP@0.5 and 19.6 million parameters, second among published C2A results to a
+model three times its size. A bidirectional state-space neck provides no
+improvement for 2.4 million parameters and 2.8 times the latency. The assignment
+of supervision contributes 2.08 points at no inference cost, exceeding all three
+network modifications and indicating that for targets of this size the
+allocation of supervision is more consequential than architectural addition. On
+real footage the same detector attains 0.335 mAP@0.5 on drone video and 0.133 on
+disaster frames, which 248 annotated frames raise to 0.795 and 0.411 at minimal
+cost to benchmark accuracy, while nothing below 8 px is recovered. These results
+suggest that further progress in this regime depends more on supervision and on
+real annotated data than on additional network capacity.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
