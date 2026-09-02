@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  2 SEP 2026 16:50
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  2 SEP 2026 17:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1601,10 +1601,10 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
  [9
 
 
-]
+] [10]
 \openout2 = `frontmatter/abbreviations.aux'.
 
- (./frontmatter/abbreviations.tex) [10
+ (./frontmatter/abbreviations.tex) [11
 
 
 ]
@@ -1708,12 +1708,12 @@ File: figures/figures_png_format/sahi.png Graphic file (type bmp)
  [26]
 File: figures/figures_png_format/tta.png Graphic file (type bmp)
 <figures/figures_png_format/tta.png>
-) [27] [28]
+) [27]
 \openout2 = `chapters/04_implementation_results.aux'.
 
  (./chapters/04_implementation_results.tex
 Chapter IV.
-[29
+[28
 
 
 
@@ -1731,7 +1731,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 64.
 
-[30] [31]
+[29] [30]
 File: figures/c2a_collapsed.png Graphic file (type bmp)
 <figures/c2a_collapsed.png>
 File: figures/c2a_fire.png Graphic file (type bmp)
@@ -1740,10 +1740,11 @@ File: figures/c2a_flood.png Graphic file (type bmp)
 <figures/c2a_flood.png>
 File: figures/c2a_traffic.png Graphic file (type bmp)
 <figures/c2a_traffic.png>
- (./tikz/fig_size_distribution.tex) [32] [33] [34]
-(./tikz/fig_ablation_waterfall.tex) [35] [36]
+ (./tikz/fig_size_distribution.tex) [31] [32] [33]
+(./tikz/fig_ablation_waterfall.tex) [34] [35]
 File: figures/fig_training_worst.png Graphic file (type bmp)
 <figures/fig_training_worst.png>
+ [36]
 File: figures/cbam_p2_pr_curve.png Graphic file (type bmp)
 <figures/cbam_p2_pr_curve.png>
 File: figures/cbam_p2_f1_conf.png Graphic file (type bmp)
@@ -1777,58 +1778,58 @@ Underfull \hbox (badness 1931) in paragraph at lines 557--565
 versions of the full image and
  []
 
-[39] [40]
+[39]
 File: figures/per_size_recall_all_configs.png Graphic file (type bmp)
 <figures/per_size_recall_all_configs.png>
- [41]
+ [40]
 File: figures/fig_partB_chain.png Graphic file (type bmp)
 <figures/fig_partB_chain.png>
- [42]
+ [41]
 File: figures/fig_gamma_dose.png Graphic file (type bmp)
 <figures/fig_gamma_dose.png>
- [43] [44]
+ [42] [43]
 File: figures/fig_real_samples.png Graphic file (type bmp)
 <figures/fig_real_samples.png>
- [45]
+ [44]
 File: figures/fig_sim2real_bars.png Graphic file (type bmp)
 <figures/fig_sim2real_bars.png>
- [46] [47] [48]) [49] [50]
+ [45] [46]) [47] [48]
 \openout2 = `chapters/05_societal_issues.aux'.
 
 
 (./chapters/05_societal_issues.tex
 Chapter V.
-[51
+[49
 
 
 
 
-] [52] [53]) [54]
+] [50] [51]) [52]
 \openout2 = `chapters/06_complex_engineering.aux'.
 
  (./chapters/06_complex_engineering.tex
 Chapter VI.
-[55
+[53
 
 
 
 
-] [56]) [57]
+] [54]) [55]
 \openout2 = `chapters/07_conclusions.aux'.
 
  (./chapters/07_conclusions.tex
 Chapter VII.
-[58
+[56
 
 
 
 
-] [59]) [60] [61
+] [57]) [58] [59
 
 
 
 
-] [62] [63] [64
+] [60] [61] [62
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 200--200
@@ -1836,19 +1837,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 200--200
 it/12 YOLOv3: An incremental improvement\TU/TimesNewRoman(0)/m/n/12 ,
  []
 
-[65] [66]
+[63] [64]
 Underfull \hbox (badness 10000) in paragraph at lines 200--200
 []\TU/TimesNewRoman(0)/m/n/12 Civil Aviation Authority of Bangladesh. “Notice r
 egarding operation of
  []
 
-[67]
+[65]
 Underfull \hbox (badness 7133) in paragraph at lines 200--200
 \TU/TimesNewRoman(0)/m/n/12 petencies, version 4.” (2021), [Online]. Available:
  []$[] [] [] [] []  [] [] [] [] [] []  []
  []
 
-[68] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
+[66] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
 (./frontmatter/acknowledgment.aux) (./frontmatter/abstract.aux)
 (./frontmatter/abbreviations.aux) (./chapters/01_introduction.aux)
 (./chapters/02_literature_review.aux) (./chapters/03_methodology.aux)
@@ -1867,10 +1868,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 Here is how much of TeX's memory you used:
  49410 strings out of 476846
  1151337 string characters out of 5803825
- 2171249 words of memory out of 5000000
+ 2171386 words of memory out of 5000000
  70482 multiletter control sequences out of 15000+600000
  563627 words of font info for 120 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  99i,17n,128p,1058b,5068s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (79 pages).
+Output written on main.pdf (78 pages).

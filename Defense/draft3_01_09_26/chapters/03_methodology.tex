@@ -267,7 +267,7 @@ change.
 
 \begin{figure}[tbp]
   \centering
-  \figorplaceholder{figures/figures_png_format/stride_problem_v2.png}{7.5cm}
+  \figorplaceholder{figures/figures_png_format/stride_problem_v2.png}{5.4cm}
   \caption[Cell coverage of one target at four detection strides.]{Cell coverage
   of one identical target at four detection strides, shown on the same
   $32 \times 32$ px patch of a 640-px input.}
@@ -485,12 +485,8 @@ threshold 0.5, which suits partially-cut boxes at tile borders.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/sahi.png}{9.5cm}
-  \caption[Slicing-aided hyper inference pipeline.]{Slicing-aided hyper
-  inference. The input frame is divided into
-  overlapping tiles and also passed whole; the detector runs on each tile at
-  close to its training resolution, and the per-tile predictions are merged by
-  greedy non-maximum merging using an intersection-over-smaller criterion, which
-  suits boxes cut by a tile border.}
+  \caption{Slicing-aided hyper inference: overlapping tiles and a full-image
+  pass, detected separately and merged.}
   \label{fig:sahipipe}
 \end{figure}
 
@@ -520,11 +516,8 @@ the final model's operating point.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/tta.png}{8cm}
-  \caption[Test-time augmentation pipeline.]{Test-time augmentation. The trained
-  weights are unchanged; the frame
-  is passed a fixed number of times at several input scales and the resulting
-  detections are fused, so the cost is bounded rather than growing with tile
-  count as it does for slicing.}
+  \caption{Test-time augmentation: rescaled and flipped copies of the full
+  frame, merged by non-maximum suppression.}
   \label{fig:ttapipe}
 \end{figure}
 
