@@ -1,0 +1,44 @@
+% ---------- ABSTRACT (spec section 4) : page iii, <= 500 words ----------
+\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Abstract}
+\frontheading{Abstract}
+
+People in aerial disaster imagery are difficult to detect because they are
+often only a few pixels wide, partly occluded, and surrounded by rubble, water,
+or smoke. This thesis asks a practical question: which changes to a compact
+real-time detector improve this case enough to justify their computational
+cost? Starting from YOLO11m, four configurations are trained under the same
+protocol on the C2A disaster-imagery benchmark. The additive ablation replaces
+the baseline attention module with CBAM, adds a stride-4 P2 detection scale,
+and then tests a bidirectional state-space neck. The P2 scale produces the
+clearest architectural gain. It raises recall for targets below 8~px from
+$0.743$ to $0.757$ and $\mathrm{AP}_{50}$ from $0.843$ to $0.853$, while adding
+about $0.5$~million parameters and $1$~ms of latency. CBAM reduces the model by
+about $1$~million parameters while preserving the measured accuracy. The
+state-space neck adds $2.4$~million parameters and increases latency by a
+factor of 2.8 without an accuracy gain, so it is rejected.
+
+The second phase tests whether these conclusions survive a stricter protocol
+and real imagery. A split audit finds that 98\% of the official C2A test scenes
+share a background scene with training. Retraining on a scene-disjoint split
+reduces $\mathrm{AP}_{50}$ by $1.6$ points but does not change the architectural
+conclusion. Further improvement comes from training assignment rather than
+another feature branch. Blending normalised Wasserstein similarity into the
+task-aligned assigner raises sub-8-pixel recall in all three replicated seeds
+(mean $+1.6\pm0.5$ points); in the matched seed-0 pair the gain is $2.08$
+points with a 95\% bootstrap interval of $[1.77,2.38]$. Overall $F_2$ and
+$\mathrm{AP}_{50}$ remain neutral, showing that the method reallocates recall
+towards the smallest targets instead of improving every size band. A
+frequency-gated architecture branch fails its paired test and is also rejected.
+
+Finally, real footage from the author's drone flights, campus scenes, and
+disaster news video is used to measure the synthetic-to-real gap. The
+synthetic-trained model scores $0.335$ $\mathrm{AP}_{50}$ on the drone test;
+supervised adaptation with a few hundred labelled real frames raises this to
+$0.795$ while retaining $0.837$ on C2A. The much larger within-video gain on
+disaster footage does not reproduce on a held-out event, which limits the
+generality of that result. The recommended CBAM+P2 model has $19.6$~million
+parameters, runs in $14.6$~ms per image on an RTX 4070 Ti SUPER, and reaches
+$0.853$ $\mathrm{AP}_{50}$ and $0.844$ $F_2$ on the official C2A test set. The
+thesis therefore contributes both a compact detector and a controlled
+record of which apparently promising changes did, and did not, improve tiny
+aerial-human detection.

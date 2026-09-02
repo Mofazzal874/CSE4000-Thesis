@@ -1,0 +1,74 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Feature-map tile palette" id="tiles">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t0" value="Feature-map tiles (copy into the architecture / module figures)" style="text;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="15" width="700" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ===== Single 3D cube tile (draw.io native 'cube' shape) ===== -->
+        <mxCell id="h1" value="1) Single 3D tile  (shape = cube)" style="text;html=1;fontFamily=Times New Roman;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="55" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cube1" value="160&#215;160&#215;128&#10;(P2)" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=18;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=11;verticalAlign=bottom;spacingBottom=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="85" width="150" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ===== Pyramid tiles: resolution down, channels (depth) up ===== -->
+        <mxCell id="h2" value="2) Multi-scale pyramid  (spatial &#8595;, channels/depth &#8593;)" style="text;html=1;fontFamily=Times New Roman;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="260" y="55" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pP2" value="P2&#10;160&#178;&#215;128" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="290" y="95" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="pP3" value="P3&#10;80&#178;&#215;256" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="430" y="110" width="95" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="pP4" value="P4&#10;40&#178;&#215;512" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=22;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="545" y="125" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pP5" value="P5&#10;20&#178;&#215;512" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=26;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="635" y="138" width="55" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- ===== Stacked-plane slab (fake the CVPR 'channels as planes' look) ===== -->
+        <mxCell id="h3" value="3) Stacked-plane slab  (three offset planes = channel depth)" style="text;html=1;fontFamily=Times New Roman;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="30" y="250" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c7ddf5;strokeColor=#6c8ebf;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="70" y="290" width="110" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d7e6f8;strokeColor=#6c8ebf;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="55" y="278" width="110" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="H &#215; W &#215; C" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf3fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="266" width="110" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- ===== Colour-by-role note ===== -->
+        <mxCell id="h4" value="4) Colour the tile by role (match the block colours)" style="text;html=1;fontFamily=Times New Roman;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="300" y="250" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rc1" value="backbone" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="320" y="290" width="90" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rc2" value="neck" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="430" y="290" width="90" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rc3" value="CBAM" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="540" y="290" width="90" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rc4" value="head" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=16;fillColor=#e1d5e7;strokeColor=#9673a6;fontFamily=Times New Roman;fontSize=10;verticalAlign=bottom;spacingBottom=4;" vertex="1" parent="1">
+          <mxGeometry x="650" y="290" width="90" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note" value="How to use: click a tile, Ctrl+C / Ctrl+V into the architecture file, then drag the corner to resize and edit the W&#215;H&#215;C label. The 'cube' shape has a diamond handle to change the 3D depth (the 'size' value). Keep every label in Times New Roman." style="text;html=1;fontFamily=Times New Roman;fontSize=11;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="30" y="450" width="710" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
