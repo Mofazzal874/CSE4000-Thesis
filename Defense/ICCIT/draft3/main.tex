@@ -249,9 +249,14 @@ as sharp as one likes and this will still be true.
 The assigner is retained and only its overlap term is replaced. For a ground-truth box
 $g$ and a candidate $b$ with centers, widths and heights $(c_x, c_y, w, h)$, the
 squared 2-Wasserstein distance between Gaussians fitted to the boxes is
+% Split across two lines: on one line it filled the column edge to edge and
+% forced the equation number onto a line of its own. The negative thin spaces
+% that were squeezing it to fit are no longer needed.
 \begin{equation}
-  W_2^2(g,b) = (c_{x}^{g}\!-\!c_{x}^{b})^2 + (c_{y}^{g}\!-\!c_{y}^{b})^2
-    + \tfrac{1}{4}\big[(w^{g}\!-\!w^{b})^2 + (h^{g}\!-\!h^{b})^2\big],
+\begin{split}
+  W_2^2(g,b) = {}&(c_{x}^{g} - c_{x}^{b})^2 + (c_{y}^{g} - c_{y}^{b})^2 \\
+                &+ \tfrac{1}{4}\big[(w^{g} - w^{b})^2 + (h^{g} - h^{b})^2\big],
+\end{split}
 \end{equation}
 and the normalized Wasserstein similarity~\cite{xu2022nwdrka} maps it into
 $(0,1]$ as $S(g,b) = \exp(-W_2(g,b)/C)$, where $C$ is a dataset-scale constant.

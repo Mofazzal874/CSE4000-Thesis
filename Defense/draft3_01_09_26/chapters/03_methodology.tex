@@ -207,19 +207,19 @@ shows the detections produced from all four scales.
 
 \begin{figure}[tbp]
   \centering
-  \begin{minipage}{0.44\linewidth}\centering
+  \begin{minipage}[t]{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_input.png}\\[2pt]
     {\small (a) input ($640\times640$)}
   \end{minipage}\hfill
-  \begin{minipage}{0.44\linewidth}\centering
+  \begin{minipage}[t]{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/cbam_overlay.png}\\[2pt]
     {\small (b) CBAM spatial attention}
   \end{minipage}\\[8pt]
-  \begin{minipage}{0.44\linewidth}\centering
+  \begin{minipage}[t]{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/p2_featuremap.png}\\[2pt]
     {\small (c) P2 feature response (stride 4)}
   \end{minipage}\hfill
-  \begin{minipage}{0.44\linewidth}\centering
+  \begin{minipage}[t]{0.44\linewidth}\centering
     \includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/arch_detections.png}\\[2pt]
     {\small (d) detections}
   \end{minipage}
@@ -378,7 +378,7 @@ the two boxes is
   W_2^2(g,b) = (c_{x}^{g}-c_{x}^{b})^2 + (c_{y}^{g}-c_{y}^{b})^2
              + \tfrac{1}{4}\big[(w^{g}-w^{b})^2 + (h^{g}-h^{b})^2\big],
 \end{equation}
-and the normalised Wasserstein similarity of Wang et al.~\cite{wang2021nwd, xu2022nwdrka}
+and the normalised Wasserstein similarity of Xu et al.~\cite{xu2022nwdrka}
 maps it into $(0,1]$ as
 \begin{equation}
   S(g,b) = \exp\!\big(-\,W_2(g,b)\,/\,C\big),
@@ -485,8 +485,10 @@ threshold 0.5, which suits partially-cut boxes at tile borders.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/sahi.png}{9.5cm}
-  \caption{Slicing-aided hyper inference: overlapping tiles and a full-image
-  pass, detected separately and merged.}
+  % Short form for the List of Figures: the full caption wrapped to a second
+  % line there and pushed the last entry onto a page of its own.
+  \caption[Slicing-aided hyper inference.]{Slicing-aided hyper inference:
+  overlapping tiles and a full-image pass, detected separately and merged.}
   \label{fig:sahipipe}
 \end{figure}
 
@@ -516,8 +518,8 @@ the final model's operating point.
 \begin{figure}[tbp]
   \centering
   \figorplaceholder{figures/figures_png_format/tta.png}{8cm}
-  \caption{Test-time augmentation: rescaled and flipped copies of the full
-  frame, merged by non-maximum suppression.}
+  \caption[Test-time augmentation.]{Test-time augmentation: rescaled and
+  flipped copies of the full frame, merged by non-maximum suppression.}
   \label{fig:ttapipe}
 \end{figure}
 

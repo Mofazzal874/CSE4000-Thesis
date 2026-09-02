@@ -90,17 +90,50 @@
 % ---- "n blank lines of size 12" vertical spacer (1.5-spaced 12pt = 18pt) ----
 \newcommand{\vblank}[1]{\vspace{\dimexpr 18pt*#1\relax}}
 
+% ---- Word's blank line, for the template-specified title-page spacing -------
+% The template counts gaps in "blank lines of size 12 with 1.5 line space".
+% Word's line height is fontsize x 1.15 x multiple, not fontsize x multiple, so
+% one such blank line is 12 x 1.15 x 1.5 = 20.7pt, NOT 18pt.
+% Measured against Defense/Template Images: the page-1 department block (12pt,
+% 1.2 spacing) has a 16.7pt line pitch against 16.6pt predicted, and the page-2
+% title (18pt, 1.5 spacing) measures 30.6pt against 31.05pt predicted.
+% A blank line is the empty paragraph's LINE plus whatever Word "space after"
+% that paragraph carries. The two template pages differ, measured from the
+% images by the pitch between consecutive single-line paragraphs:
+%
+%   page 1: name -> roll -> & -> name -> roll all measure 30.5pt, and a 14pt
+%           line at 1.5 is 24.15pt, so each paragraph carries 6pt after.
+%           One blank line of size 12 = 20.7 + 6 = 26.7pt.
+%   page 2: the supervisor block and footer measure 20.7-22.9pt, which is the
+%           12pt line at 1.5 with no space after.
+%           One blank line of size 12 = 20.7pt.
+\newlength{\tblankcover}\setlength{\tblankcover}{26.7pt}
+\newlength{\tblanktitle}\setlength{\tblanktitle}{20.7pt}
+\newlength{\tafter}\setlength{\tafter}{6pt}% Word "space after" on page 1
+% Matching leadings for the sizes the cover and title pages use.
+\newcommand{\tsizeTwelve}{\fontsize{12}{16.56}\selectfont}% 12pt, 1.2 spacing
+\newcommand{\tsizeTwelveHalf}{\fontsize{12}{20.7}\selectfont}% 12pt, 1.5 spacing
+\newcommand{\tsizeFourteen}{\fontsize{14}{24.15}\selectfont}% 14pt, 1.5 spacing
+\newcommand{\tsizeEighteen}{\fontsize{18}{31.05}\selectfont}% 18pt, 1.5 spacing
+
 % ---- Captions (template page 11): 11pt, "Figure 1.1: ..." ------------------
-% Template: caption 11pt, 1.5 line space, space before 12pt / after 6pt.
-% singlelinecheck=true + justification=raggedright  =>  a caption that fits on
-% ONE line is centered; a caption spilling to TWO+ lines is left-aligned
-% (per user rule). Figure caption sits BELOW (skip = fig->caption gap = 12pt);
-% table caption sits ABOVE (skip = caption->table gap = 6pt).
+% Template page 11 is explicit, in both its annotation and its rendering:
+%   "Figure and Table caption will be Times Roman, normal, CENTERED, 11 size,
+%    1.5 line space, space before 12 pt, after 6 pt.
+%    For Figure -> caption below the figure. For Table -> caption above."
+% and it renders "Figure 1.1: A three dimensional TMA ..." centred.
+%
+% This used to be justification=raggedright with singlelinecheck=true, which
+% centres a caption that fits on one line but left-aligns any that wraps -- so
+% figure 4.6 came out centred and figure 3.7 left-aligned. justification=
+% centering centres both, which is what the template asks for.
+% Figure caption sits BELOW (skip = figure->caption gap = 12pt); table caption
+% sits ABOVE (skip = caption->table gap = 6pt).
 \RequirePackage{caption}
 \captionsetup{
   font={stretch=1.5},
   labelsep=colon,
-  justification=raggedright,
+  justification=centering,
   singlelinecheck=true
 }
 \captionsetup{font+={small}}          % ~11pt at a 12pt base
@@ -151,16 +184,43 @@
 % (added numberless) render indented, normal weight. Sections show as bullets,
 % subsections as arrows -- numbers hidden in the TOC (they remain in the body).
 \RequirePackage{titletoc}
-\RequirePackage{pifont}
+% pifont was loaded for the template's subsection arrow; the Contents keeps
+% numeric labels instead, so nothing uses it now.
 \setcounter{tocdepth}{2}
 
+% Measured pitches in the template's Contents / LoT / LoF (12pt at 1.5 spacing
+% is 20.7pt in Word):
+%   front-matter entries   28.7pt   = 20.7 line + 8pt above
+%   CHAPTER entries        57.4pt   = 20.7 line + 36.7pt above
+%   section entries        21.5pt   = the bare line
+%   LoT / LoF entries      22.6pt   = 20.7 line + ~2pt
+% \tocstretch reproduces the 20.7pt line inside these lists without touching the
+% body text, whose spacing is a document-wide setting.
+\newcommand{\tocstretch}{\setstretch{1.43}}% 1.43 x 14.5pt = 20.7pt
+
+% A dedicated level for the front-matter entries (Title Page, Acknowledgment,
+% ...). They used to be added as numberless "chapter" entries, which gave them
+% the chapter's large space above and left them 5pt too loose.
+\makeatletter
+\newcommand*{\l@fmatter}[2]{\@dottedtocline{0}{0pt}{0pt}{#1}{#2}}
+\makeatother
+
 % No dotted leaders (template uses plain right-aligned page numbers).
-\titlecontents{chapter}[0pt]
-  {\addvspace{10pt}}
-  {\bfseries CHAPTER\ \thecontentslabel\hspace{1.2em}}% numbered = real chapters
-  {}%   numberless (front matter indents itself; References/Appendices stay at margin)
+\titlecontents{fmatter}[0.5in]
+  {\addvspace{8pt}}
+  {}{}
   {\hfill\contentspage}
 
+\titlecontents{chapter}[0pt]
+  {\addvspace{36.7pt}}
+  {\bfseries CHAPTER\ \thecontentslabel\hspace{1.2em}}% numbered = real chapters
+  {\bfseries}%  numberless: References / Appendices, at the margin
+  {\hfill\contentspage}
+
+% Template pages 5-7 mark sections with a bullet and subsections with an arrow,
+% but the numbers are kept here on purpose: X.Y and X.Y.Z are more useful for
+% navigating a document this long, and they match the numbering in the body.
+% Everything else about these entries follows the template.
 \titlecontents{section}[0.5in]
   {}
   {\thecontentslabel\hspace{0.75em}}%   numeric label X.Y
@@ -173,9 +233,11 @@
   {}%
   {\hfill\contentspage}
 
-% List of Tables / Figures entries: "2.1  Description ....... page" WITHOUT dots.
-\titlecontents{table}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
-\titlecontents{figure}[0pt]{}{\thecontentslabel\hspace{1.5em}}{}{\hfill\contentspage}
+% List of Tables / Figures: "2.1  Description ....... page" WITHOUT dots.
+% \contentslabel hangs the number to the left of the 0.55in margin so a caption
+% that wraps aligns under the description instead of returning to the margin.
+\titlecontents{table}[0.55in]{}{\contentslabel{0.55in}}{}{\hfill\contentspage}
+\titlecontents{figure}[0.55in]{}{\contentslabel{0.55in}}{}{\hfill\contentspage}
 
 % "PAGE" column header for the Contents, and header rows for LoT/LoF.
 \newcommand{\tocpagehead}{\mbox{}\hfill\textbf{PAGE}\par\vspace{2pt}}
@@ -184,10 +246,27 @@
   \vspace{4pt}}
 
 % ---- Front-matter heading helper (Acknowledgment/Abstract centered 16pt) ---
+% The template puts 2 blank lines of size 12 after the heading, which measures
+% 64.9pt from the heading's baseline to the first body baseline (page 3). The
+% \vblank{2} used before gave 72.7pt, so the gap is set to land on the measured
+% value instead of on the nominal blank-line count.
 \newcommand{\frontheading}[1]{%
   \begin{center}\sizeFrontHd\bfseries #1\end{center}%
-  \vblank{2}% 2 blank lines of size 12 after the heading
+  \vspace{28pt}% -> 64.9pt heading baseline to first body baseline
 }
+
+% Contents / List of Tables / List of Figures use \chapter* in report.cls, which
+% set their headings about 0.5in lower than the Acknowledgment and Abstract.
+% The template puts "Contents" at 1.335in, level with "Acknowledgment" at
+% 1.272in, so all five front-matter headings share \frontheading and land
+% together. (Its List of Tables and List of Figures headings sit 4.5in down the
+% page, which is an artefact of how those screenshots were assembled rather
+% than a specification -- they are treated like the others.)
+\makeatletter
+\renewcommand\tableofcontents{\frontheading{\contentsname}\@starttoc{toc}}
+\renewcommand\listoftables{\frontheading{\listtablename}\@starttoc{lot}}
+\renewcommand\listoffigures{\frontheading{\listfigurename}\@starttoc{lof}}
+\makeatother
 
 % ---- Page numbering: footer centered (report/plain does this) --------------
 \pagestyle{plain}

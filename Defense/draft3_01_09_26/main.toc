@@ -1,11 +1,11 @@
 \tocpagehead 
-\contentsline {chapter}{\hspace *{0.5in}Title Page}{i}{section*.1}%
-\contentsline {chapter}{\hspace *{0.5in}Acknowledgment}{ii}{section*.2}%
-\contentsline {chapter}{\hspace *{0.5in}Abstract}{iii}{section*.3}%
-\contentsline {chapter}{\hspace *{0.5in}Contents}{iv}{section*.4}%
-\contentsline {chapter}{\hspace *{0.5in}List of Tables}{viii}{section*.6}%
-\contentsline {chapter}{\hspace *{0.5in}List of Figures}{ix}{section*.8}%
-\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{xi}{section*.10}%
+\contentsline {fmatter}{Title Page}{i}{section*.1}%
+\contentsline {fmatter}{Acknowledgment}{ii}{section*.2}%
+\contentsline {fmatter}{Abstract}{iii}{section*.3}%
+\contentsline {fmatter}{Contents}{iv}{section*.4}%
+\contentsline {fmatter}{List of Tables}{viii}{section*.5}%
+\contentsline {fmatter}{List of Figures}{ix}{section*.6}%
+\contentsline {fmatter}{List of Abbreviations}{x}{section*.7}%
 \contentsline {chapter}{\numberline {I}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}%
@@ -98,6 +98,6 @@
 \contentsline {section}{\numberline {7.1}Summary}{56}{section.7.1}%
 \contentsline {section}{\numberline {7.2}Limitations}{57}{section.7.2}%
 \contentsline {section}{\numberline {7.3}Recommendations for Future Works}{57}{section.7.3}%
-\contentsline {chapter}{Appendix: Model Selection History}{59}{section*.54}%
-\contentsline {chapter}{References}{62}{section*.59}%
+\contentsline {chapter}{Appendix: Model Selection History}{59}{section*.51}%
+\contentsline {chapter}{References}{62}{section*.56}%
 \contentsfinish 

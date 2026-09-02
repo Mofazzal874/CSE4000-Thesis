@@ -21,18 +21,33 @@
 \include{frontmatter/acknowledgment} % ii (adds its own TOC line)
 \include{frontmatter/abstract}       % iii(adds its own TOC line)
 
-\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}Contents}
-\tableofcontents
+% The three lists run at the template's 20.7pt line (\tocstretch) rather than
+% the body's spacing. \parskip is zero in the Contents, where the per-level
+% \addvspace supplies the gaps, and 2pt in the two lists, which the template
+% shows at a 22.6pt pitch.
+\phantomsection\addcontentsline{toc}{fmatter}{Contents}
+\begingroup\tocstretch\setlength{\parskip}{0pt}\tableofcontents\endgroup
 
+% Two adjustments inside the two lists, both toward the template:
+%   * \addvspace is neutralised. LaTeX injects a 10pt gap at every chapter
+%     boundary, but the template's List of Tables runs its 2.1 / 3.1 / 4.1 /
+%     5.1 entries at a uniform pitch with no group gaps.
+%   * \parskip is zero, leaving the bare 20.7pt line -- exactly the "12 size,
+%     1.5 line space" the template annotates. Its rendered 22.6pt carries about
+%     2pt of noise at the screenshot's 70dpi.
+% Together these recover the lines that were stranding the last figure entries
+% on a page of their own.
 \clearpage
-\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Tables}
+\phantomsection\addcontentsline{toc}{fmatter}{List of Tables}
 \addtocontents{lot}{\protect\lotlofhead{Table}}
-\begingroup\setlength{\parskip}{1pt}\listoftables\endgroup
+\begingroup\tocstretch\setlength{\parskip}{0pt}%
+  \renewcommand{\addvspace}[1]{}\listoftables\endgroup
 
 \clearpage
-\phantomsection\addcontentsline{toc}{chapter}{\protect\hspace*{0.5in}List of Figures}
+\phantomsection\addcontentsline{toc}{fmatter}{List of Figures}
 \addtocontents{lof}{\protect\lotlofhead{Figure}}
-\begingroup\setlength{\parskip}{1pt}\listoffigures\endgroup
+\begingroup\tocstretch\setlength{\parskip}{0pt}%
+  \renewcommand{\addvspace}[1]{}\listoffigures\endgroup
 
 \include{frontmatter/abbreviations}
 

@@ -54,7 +54,7 @@ training step that decides which predictions count as positive samples. Its
 starting observation is that IoU-based matching breaks down for tiny boxes: a
 one-pixel shift between a candidate and a ground-truth box a few pixels wide
 can drive their IoU to zero, so the assigner ranks candidates for the smallest
-targets almost arbitrarily. Wang et al.~\cite{wang2021nwd, xu2022nwdrka} replaced the IoU
+targets almost arbitrarily. Xu et al.~\cite{xu2022nwdrka} replaced the IoU
 with a normalised Wasserstein distance between Gaussians fitted to the boxes,
 which decays smoothly with offset instead of collapsing, and reported the
 largest gains when the substitution is made in the assignment step rather than
