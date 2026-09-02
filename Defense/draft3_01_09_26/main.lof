@@ -1,7 +1,7 @@
 \lotlofhead {Figure}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Aerial drone footage of a flood-affected region~\blx@tocontentsinit {0}\cite {agiindia2024drones}.}}{2}{figure.caption.11}%
-\contentsline {figure}{\numberline {1.2}{\ignorespaces Timeline of the thesis across two thirteen-week terms. Blue bars mark the first term and green bars the experimental phases of the second term.}}{5}{figure.caption.12}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Timeline of the thesis across two thirteen-week terms.}}{5}{figure.caption.12}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces CBAM module with sequential channel and spatial attention~\blx@tocontentsinit {0}\cite {woo2018cbam}.}}{11}{figure.caption.13}%
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Construction of the added stride-4 (P2) detection branch.}}{12}{figure.caption.14}%
@@ -12,25 +12,25 @@
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Layer-level architecture of the proposed detector on a real C2A scene.}}{17}{figure.caption.19}%
 \contentsline {figure}{\numberline {3.3}{\ignorespaces Trained detector on the running-example scene.}}{20}{figure.caption.20}%
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Effect of the CBAM substitution on clutter and target response.}}{21}{figure.caption.21}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Cell coverage of one identical target at four detection strides, shown on the same $32 \times 32$ px patch of a 640-px input.}}{21}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Cell coverage of one target at four detection strides.}}{21}{figure.caption.22}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Tiny-aware blend inside the task-aligned assigner.}}{24}{figure.caption.24}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces SAHI inference pipeline.}}{26}{figure.caption.25}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Slicing-aided hyper inference pipeline.}}{26}{figure.caption.25}%
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Test-time augmentation pipeline.}}{27}{figure.caption.26}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{31}{figure.caption.29}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Measured size distribution of C2A test-set human targets.}}{32}{figure.caption.30}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ on the C2A test set.}}{34}{figure.caption.33}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant.}}{37}{figure.caption.36}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Diagnostic curves and confusion matrix of the recommended model.}}{38}{figure.caption.37}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Dense-scene comparison for the exploratory Mamba+CBAM+P2 checkpoint.}}{39}{figure.caption.38}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}}{39}{figure.caption.39}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Archived per-size recall for the exploratory inference study.}}{41}{figure.caption.42}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Decision chain of the extended study.}}{42}{figure.caption.43}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Assignment blend weight as a recall-against-precision trade dial.}}{43}{figure.caption.46}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Samples from the real-imagery sets with ground-truth boxes.}}{45}{figure.caption.49}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces Adaptation stages across the three real evaluation domains.}}{45}{figure.caption.50}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Representative C2A test samples, one per scene type.}}{32}{figure.caption.29}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Measured size distribution of C2A test-set human targets.}}{33}{figure.caption.30}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Per-component contribution to $\mathrm {AP}_{50}$ on the C2A test set.}}{35}{figure.caption.33}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Training dynamics of the state-space variant.}}{38}{figure.caption.36}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Diagnostic curves and confusion matrix of the recommended model.}}{39}{figure.caption.37}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Dense-scene comparison for the exploratory Mamba+CBAM+P2 checkpoint.}}{40}{figure.caption.38}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Detection-cell granularity on a C2A cluster crop at strides 8 and 4.}}{40}{figure.caption.39}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Archived per-size recall for the exploratory inference study.}}{42}{figure.caption.42}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Decision chain of the extended study.}}{43}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Assignment blend weight as a recall-against-precision trade dial.}}{44}{figure.caption.46}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Samples from the real-imagery sets with ground-truth boxes.}}{46}{figure.caption.49}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Adaptation stages across the three real evaluation domains.}}{46}{figure.caption.50}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Detection accuracy against model size for the baseline benchmark.}}{61}{figure.caption.57}%
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Detection accuracy against model size for the baseline benchmark.}}{62}{figure.caption.57}%
 \contentsfinish 

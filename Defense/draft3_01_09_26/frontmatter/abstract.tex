@@ -16,7 +16,6 @@ about $0.5$~million parameters and $1$~ms of latency. CBAM reduces the model by
 about $1$~million parameters while preserving the measured accuracy. The
 state-space neck adds $2.4$~million parameters and increases latency by a
 factor of 2.8 without an accuracy gain, so it is rejected.
-
 The second phase tests whether these conclusions survive a stricter protocol
 and real imagery. A split audit finds that 98\% of the official C2A test scenes
 share a background scene with training. Retraining on a scene-disjoint split
@@ -29,7 +28,6 @@ points with a 95\% bootstrap interval of $[1.77,2.38]$. Overall $F_2$ and
 $\mathrm{AP}_{50}$ remain neutral, showing that the method reallocates recall
 towards the smallest targets instead of improving every size band. A
 frequency-gated architecture branch fails its paired test and is also rejected.
-
 Finally, real footage from the author's drone flights, campus scenes, and
 disaster news video is used to measure the synthetic-to-real gap. The
 synthetic-trained model scores $0.335$ $\mathrm{AP}_{50}$ on the drone test;

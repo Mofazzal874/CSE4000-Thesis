@@ -120,18 +120,15 @@ RT-DETR~\cite{zhao2024rtdetr}. This work adopts the one-stage YOLO family becaus
 its speed and small model size suit airborne deployment.
 
 Detecting very small objects is a distinct problem~\cite{cheng2023smallobject},
-addressed in the literature at four points in the pipeline. The first adds
-resolution, where feature pyramids and a stride-4 head extend detection to
-targets a few pixels wide~\cite{zhu2021tphyolov5}. The second re-weights
-features, most often through combined channel-and-spatial
-attention~\cite{woo2018cbam}. A third operates at inference time by slicing the
-image into overlapping crops~\cite{akyon2022sahi}. The fourth modifies the
-training step that selects positive samples, motivated by the observation that
-intersection over union collapses for tiny boxes: Wang et
-al.~\cite{wang2021nwd} replaced it with a
-normalized Wasserstein distance, RFLA~\cite{xu2022rfla} built assignment on a
-receptive-field prior, and SimD~\cite{shi2024simd} learned an adaptive
-similarity. Closest to the setting here, YOLOv7-UAV~\cite{zeng2023yolov7uav}
+addressed at four points in the pipeline: added resolution, where feature
+pyramids and a stride-4 head extend detection to targets a few pixels
+wide~\cite{zhu2021tphyolov5}; feature re-weighting, most often by combined
+channel-and-spatial attention~\cite{woo2018cbam}; inference-time slicing into
+overlapping crops~\cite{akyon2022sahi}; and the training step that selects
+positive samples, motivated by the collapse of intersection over union for tiny
+boxes. Xu et al.~\cite{xu2022nwdrka} replaced it with a normalized Wasserstein
+distance, RFLA~\cite{xu2022rfla} built assignment on a receptive-field prior,
+and SimD~\cite{shi2024simd} learned an adaptive similarity. Closest to the setting here, YOLOv7-UAV~\cite{zeng2023yolov7uav}
 weights a Wasserstein term against IoU when allocating positive and negative
 samples for UAV imagery, including tiny people, inside an anchor-based
 pipeline. Modern YOLO versions instead assign samples with the task-aligned
@@ -256,9 +253,9 @@ squared 2-Wasserstein distance between Gaussians fitted to the boxes is
   W_2^2(g,b) = (c_{x}^{g}\!-\!c_{x}^{b})^2 + (c_{y}^{g}\!-\!c_{y}^{b})^2
     + \tfrac{1}{4}\big[(w^{g}\!-\!w^{b})^2 + (h^{g}\!-\!h^{b})^2\big],
 \end{equation}
-and the normalized Wasserstein similarity~\cite{wang2021nwd} maps it into
+and the normalized Wasserstein similarity~\cite{xu2022nwdrka} maps it into
 $(0,1]$ as $S(g,b) = \exp(-W_2(g,b)/C)$, where $C$ is a dataset-scale constant.
-The value of 12.8 used by Wang et al.~\cite{wang2021nwd} is retained, since the
+The value of 12.8 used by Xu et al.~\cite{xu2022nwdrka} is retained, since the
 median person in C2A measures 12.0 px on the square root of area and so lies in
 the same regime. Unlike the IoU, this similarity stays
 informative for disjoint tiny boxes: a near miss scores above a distant one even
@@ -338,6 +335,9 @@ neck is the only configuration that does not repay its cost, adding 2.4 million
 parameters and raising latency from 14.6 to 41.1 ms while matching rather than
 exceeding the preceding configuration. MSA-YOLO is therefore defined as the
 attention and stride-4 configuration, and the state-space neck is not retained.
+Each configuration was trained once at seed 0, so these differences carry no
+confidence interval; only the assignment result below is supported by
+replication and a significance test.
 
 \begin{table}[htbp]
 \caption{Additive Ablation on the Official C2A Test Split}
@@ -390,11 +390,10 @@ augmentation at 1280 px reaches 0.850 at 60 ms. Both exchange latency for recall
 The assignment blend of Equation~\eqref{eq:blend} was evaluated on the
 scene-disjoint split, so its numbers are not comparable to Table~\ref{tab:abl}
 and are reported as a matched difference. Fifty-epoch pilots swept $\gamma$ and
-found a monotonic trade: sub-8-pixel recall rises from 0.693 at $\gamma = 0$ to
-0.712 at $\gamma = 0.5$ and 0.729 at $\gamma = 1$, while small-object average
-precision falls from 0.560 to 0.553 and then to 0.505. The half blend takes about
-half of the available recall gain for an eighth of the precision cost, and was
-carried forward.
+found a monotonic trade: sub-8-pixel recall rises from 0.693 to 0.712 to 0.729
+at $\gamma = 0$, $0.5$ and $1$, while small-object average precision falls from
+0.560 to 0.553 to 0.505. The half blend takes about half the recall gain for an
+eighth of the precision cost, and was carried forward.
 
 Table~\ref{tab:assign} reports the decisive test, a matched pair at the full
 protocol in which two runs share launcher, initialization, split and schedule
@@ -408,11 +407,10 @@ deviation of 0.49, positive in every seed. One sub-claim did not
 survive that replication: a two-point small-object average-precision gain seen at
 seed 0 averaged to noise across seeds and is therefore not claimed.
 
-The magnitude of this effect is the principal observation of this work. A
-modification that adds no parameters, no floating-point operations and no
-latency improves recall in the hardest size band by more than the three network
-modifications achieve together, 2.08 points against 1.40. The two figures derive
-from different protocols and therefore compare effect sizes rather than absolute
+This is the principal observation of the work. A modification adding no
+parameters, no operations and no latency improves recall in the hardest band by
+more than the three network changes together, 2.08 points against 1.40. The two
+derive from different protocols, so this compares effect sizes rather than
 levels, but the ordering is unambiguous.
 
 \begin{table}[htbp]

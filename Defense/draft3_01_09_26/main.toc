@@ -5,7 +5,7 @@
 \contentsline {chapter}{\hspace *{0.5in}Contents}{iv}{section*.4}%
 \contentsline {chapter}{\hspace *{0.5in}List of Tables}{viii}{section*.6}%
 \contentsline {chapter}{\hspace *{0.5in}List of Figures}{ix}{section*.8}%
-\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{xi}{section*.10}%
+\contentsline {chapter}{\hspace *{0.5in}List of Abbreviations}{x}{section*.10}%
 \contentsline {chapter}{\numberline {I}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}%
@@ -30,8 +30,8 @@
 \contentsline {subsection}{\numberline {2.3.2}Attention: CBAM and ECA}{10}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Multi-Scale Detection and the P2 Scale}{11}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}State-Space Models and the C3k2Mamba Block}{11}{subsection.2.3.4}%
-\contentsline {section}{\numberline {2.4}Discussion}{13}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Research Gap and Proposed Solution}{13}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.4}Discussion}{12}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Research Gap and Proposed Solution}{12}{subsection.2.4.1}%
 \contentsline {chapter}{\numberline {III}Methodology}{15}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Introduction}{15}{section.3.1}%
 \contentsline {section}{\numberline {3.2}System Architecture Overview}{15}{section.3.2}%
@@ -52,52 +52,52 @@
 \contentsline {subsection}{\numberline {3.6.3}Supervised Adaptation to Real Imagery}{25}{subsection.3.6.3}%
 \contentsline {section}{\numberline {3.7}Inference-Time Enhancement: SAHI and TTA}{26}{section.3.7}%
 \contentsline {section}{\numberline {3.8}Conclusion}{27}{section.3.8}%
-\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{28}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{28}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Experimental Setup}{28}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Evaluation Metrics}{29}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Operational Scores and the Choice of $F_2$}{29}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Localisation Quality and Threshold Selection}{29}{subsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.3.3}Size-Stratified Recall}{30}{subsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.3.4}Calibration and Efficiency}{30}{subsection.4.3.4}%
-\contentsline {section}{\numberline {4.4}Dataset}{30}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Experimentation}{32}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Quantitative Results}{33}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{33}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}The Additive Ablation}{33}{subsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{34}{subsection.4.6.3}%
-\contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{35}{subsection.4.6.4}%
-\contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{36}{subsection.4.6.5}%
-\contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{36}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{38}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{40}{section.4.9}%
-\contentsline {section}{\numberline {4.10}Extended Study: Protocol Hardening and Real-World Adaptation}{41}{section.4.10}%
-\contentsline {subsection}{\numberline {4.10.1}Scene Leakage and the Scene-Disjoint Re-Split}{41}{subsection.4.10.1}%
-\contentsline {subsection}{\numberline {4.10.2}Tiny-Aware Assignment: Sweep and Matched Pair}{42}{subsection.4.10.2}%
-\contentsline {subsection}{\numberline {4.10.3}Adaptation to Real Imagery}{44}{subsection.4.10.3}%
-\contentsline {subsection}{\numberline {4.10.4}Within-Video Against Cross-Event}{46}{subsection.4.10.4}%
-\contentsline {subsection}{\numberline {4.10.5}Statistical Validation}{47}{subsection.4.10.5}%
-\contentsline {section}{\numberline {4.11}Objectives Achieved}{47}{section.4.11}%
-\contentsline {section}{\numberline {4.12}Financial Analysis and Budget}{48}{section.4.12}%
-\contentsline {section}{\numberline {4.13}Conclusion}{48}{section.4.13}%
-\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{50}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{50}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{50}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Ethical Considerations}{51}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Safety Considerations}{51}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Legal Considerations}{52}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{52}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{52}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{53}{section.5.8}%
-\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{54}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Introduction}{54}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{54}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{55}{section.6.3}%
-\contentsline {section}{\numberline {6.4}Conclusion}{56}{section.6.4}%
-\contentsline {chapter}{\numberline {VII}Conclusions}{57}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Summary}{57}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Limitations}{58}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{58}{section.7.3}%
-\contentsline {chapter}{Appendix: Model Selection History}{60}{section*.54}%
-\contentsline {chapter}{References}{63}{section*.59}%
+\contentsline {chapter}{\numberline {IV}Implementation, Results and Discussions}{29}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{29}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Experimental Setup}{29}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Evaluation Metrics}{30}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Operational Scores and the Choice of $F_2$}{30}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Localisation Quality and Threshold Selection}{30}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Size-Stratified Recall}{31}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Calibration and Efficiency}{31}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Dataset}{31}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Experimentation}{33}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Quantitative Results}{34}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Attention Module Selection}{34}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}The Additive Ablation}{34}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Per-Size Recall}{35}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.4}Operating Thresholds and Calibration}{36}{subsection.4.6.4}%
+\contentsline {subsection}{\numberline {4.6.5}Training Dynamics}{37}{subsection.4.6.5}%
+\contentsline {section}{\numberline {4.7}Qualitative Results and Error Analysis}{37}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Comparison with State-of-the-Art}{39}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Inference-Time Enhancement: SAHI and TTA}{41}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Extended Study: Protocol Hardening and Real-World Adaptation}{42}{section.4.10}%
+\contentsline {subsection}{\numberline {4.10.1}Scene Leakage and the Scene-Disjoint Re-Split}{42}{subsection.4.10.1}%
+\contentsline {subsection}{\numberline {4.10.2}Tiny-Aware Assignment: Sweep and Matched Pair}{43}{subsection.4.10.2}%
+\contentsline {subsection}{\numberline {4.10.3}Adaptation to Real Imagery}{45}{subsection.4.10.3}%
+\contentsline {subsection}{\numberline {4.10.4}Within-Video Against Cross-Event}{47}{subsection.4.10.4}%
+\contentsline {subsection}{\numberline {4.10.5}Statistical Validation}{48}{subsection.4.10.5}%
+\contentsline {section}{\numberline {4.11}Objectives Achieved}{48}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Financial Analysis and Budget}{49}{section.4.12}%
+\contentsline {section}{\numberline {4.13}Conclusion}{49}{section.4.13}%
+\contentsline {chapter}{\numberline {V}Societal, Health, Environment, Safety, Ethical, Legal and Cultural Issues}{51}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{51}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Intellectual Property Considerations}{51}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Ethical Considerations}{52}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Safety Considerations}{52}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Legal Considerations}{53}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Impact of the Project on Societal, Health, and Cultural Issues}{53}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Impact of Project on the Environment and Sustainability}{53}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{54}{section.5.8}%
+\contentsline {chapter}{\numberline {VI}Addressing Complex Engineering Problems and Activities}{55}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{55}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Complex Engineering Problems Associated with the Current Thesis}{55}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Complex Engineering Activities Associated with the Current Thesis}{56}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conclusion}{57}{section.6.4}%
+\contentsline {chapter}{\numberline {VII}Conclusions}{58}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary}{58}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitations}{59}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Recommendations for Future Works}{59}{section.7.3}%
+\contentsline {chapter}{Appendix: Model Selection History}{61}{section*.54}%
+\contentsline {chapter}{References}{64}{section*.59}%
 \contentsfinish 

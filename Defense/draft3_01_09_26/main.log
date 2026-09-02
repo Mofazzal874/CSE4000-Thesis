@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  2 SEP 2026 15:43
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.2)  2 SEP 2026 16:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1601,10 +1601,10 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
  [9
 
 
-] [10]
+]
 \openout2 = `frontmatter/abbreviations.aux'.
 
- (./frontmatter/abbreviations.tex) [11
+ (./frontmatter/abbreviations.tex) [10
 
 
 ]
@@ -1656,7 +1656,7 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
 (Font)              scaled to size 7.99915pt on input line 218.
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesMath(3)/m/n' will be
 (Font)              scaled to size 5.99936pt on input line 218.
- [13]) [14]
+) [13] [14]
 \openout2 = `chapters/03_methodology.aux'.
 
  (./chapters/03_methodology.tex
@@ -1708,12 +1708,12 @@ File: figures/figures_png_format/sahi.png Graphic file (type bmp)
  [26]
 File: figures/figures_png_format/tta.png Graphic file (type bmp)
 <figures/figures_png_format/tta.png>
-) [27]
+) [27] [28]
 \openout2 = `chapters/04_implementation_results.aux'.
 
  (./chapters/04_implementation_results.tex
 Chapter IV.
-[28
+[29
 
 
 
@@ -1731,7 +1731,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 64.
 
-[29] [30]
+[30] [31]
 File: figures/c2a_collapsed.png Graphic file (type bmp)
 <figures/c2a_collapsed.png>
 File: figures/c2a_fire.png Graphic file (type bmp)
@@ -1740,8 +1740,8 @@ File: figures/c2a_flood.png Graphic file (type bmp)
 <figures/c2a_flood.png>
 File: figures/c2a_traffic.png Graphic file (type bmp)
 <figures/c2a_traffic.png>
- (./tikz/fig_size_distribution.tex) [31] [32] [33]
-(./tikz/fig_ablation_waterfall.tex) [34] [35]
+ (./tikz/fig_size_distribution.tex) [32] [33] [34]
+(./tikz/fig_ablation_waterfall.tex) [35] [36]
 File: figures/fig_training_worst.png Graphic file (type bmp)
 <figures/fig_training_worst.png>
 File: figures/cbam_p2_pr_curve.png Graphic file (type bmp)
@@ -1758,7 +1758,7 @@ Underfull \hbox (badness 1383) in paragraph at lines 458--468
 oint used for the exploratory
  []
 
-[36]
+[37]
 File: figures/qual_gt.png Graphic file (type bmp)
 <figures/qual_gt.png>
 File: figures/qual_baseline.png Graphic file (type bmp)
@@ -1771,64 +1771,64 @@ File: figures/detgrid_c2a_s8.png Graphic file (type bmp)
 <figures/detgrid_c2a_s8.png>
 File: figures/detgrid_c2a_s4.png Graphic file (type bmp)
 <figures/detgrid_c2a_s4.png>
- [37]
+ [38]
 Underfull \hbox (badness 1931) in paragraph at lines 557--565
 \TU/TimesNewRoman(0)/m/n/12 test-time augmentation (TTA) evaluates transformed 
 versions of the full image and
  []
 
-[38] [39]
+[39] [40]
 File: figures/per_size_recall_all_configs.png Graphic file (type bmp)
 <figures/per_size_recall_all_configs.png>
- [40]
+ [41]
 File: figures/fig_partB_chain.png Graphic file (type bmp)
 <figures/fig_partB_chain.png>
- [41]
+ [42]
 File: figures/fig_gamma_dose.png Graphic file (type bmp)
 <figures/fig_gamma_dose.png>
- [42] [43]
+ [43] [44]
 File: figures/fig_real_samples.png Graphic file (type bmp)
 <figures/fig_real_samples.png>
- [44]
+ [45]
 File: figures/fig_sim2real_bars.png Graphic file (type bmp)
 <figures/fig_sim2real_bars.png>
- [45] [46] [47]) [48] [49]
+ [46] [47] [48]) [49] [50]
 \openout2 = `chapters/05_societal_issues.aux'.
 
 
 (./chapters/05_societal_issues.tex
 Chapter V.
-[50
+[51
 
 
 
 
-] [51] [52]) [53]
+] [52] [53]) [54]
 \openout2 = `chapters/06_complex_engineering.aux'.
 
  (./chapters/06_complex_engineering.tex
 Chapter VI.
-[54
+[55
 
 
 
 
-] [55]) [56]
+] [56]) [57]
 \openout2 = `chapters/07_conclusions.aux'.
 
  (./chapters/07_conclusions.tex
 Chapter VII.
-[57
+[58
 
 
 
 
-] [58]) [59] [60
+] [59]) [60] [61
 
 
 
 
-] [61] [62] [63
+] [62] [63] [64
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 200--200
@@ -1836,19 +1836,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 200--200
 it/12 YOLOv3: An incremental improvement\TU/TimesNewRoman(0)/m/n/12 ,
  []
 
-[64] [65]
+[65] [66]
 Underfull \hbox (badness 10000) in paragraph at lines 200--200
 []\TU/TimesNewRoman(0)/m/n/12 Civil Aviation Authority of Bangladesh. “Notice r
 egarding operation of
  []
 
-[66]
+[67]
 Underfull \hbox (badness 7133) in paragraph at lines 200--200
 \TU/TimesNewRoman(0)/m/n/12 petencies, version 4.” (2021), [Online]. Available:
  []$[] [] [] [] []  [] [] [] [] [] []  []
  []
 
-[67] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
+[68] (./main.aux (./frontmatter/cover.aux) (./frontmatter/titlepage.aux)
 (./frontmatter/acknowledgment.aux) (./frontmatter/abstract.aux)
 (./frontmatter/abbreviations.aux) (./chapters/01_introduction.aux)
 (./chapters/02_literature_review.aux) (./chapters/03_methodology.aux)
@@ -1867,7 +1867,7 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 Here is how much of TeX's memory you used:
  49410 strings out of 476846
  1151337 string characters out of 5803825
- 2171388 words of memory out of 5000000
+ 2171249 words of memory out of 5000000
  70482 multiletter control sequences out of 15000+600000
  563627 words of font info for 120 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191

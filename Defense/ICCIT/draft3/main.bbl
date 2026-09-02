@@ -25,7 +25,7 @@
 R.~A. Nihal, B.~Yen, K.~Itoyama, and K.~Nakadai, ``{UAV}-enhanced combination
   to application: Comprehensive analysis and benchmarking of a human detection
   dataset for disaster scenarios,'' in \emph{Proc. Int. Conf. Pattern
-  Recognition (ICPR)}, 2024, arXiv:2408.04922.
+  Recognition (ICPR)}, 2024.
 
 \bibitem{jocher2024yolo11}
 G.~Jocher and J.~Qiu, ``Ultralytics {YOLO11},''
@@ -40,7 +40,7 @@ T.-Y. Lin, P.~Goyal, R.~Girshick, K.~He, and P.~Doll{\'a}r, ``Focal loss for
 \bibitem{wang2024yolov9}
 C.-Y. Wang, I.-H. Yeh, and H.-Y.~M. Liao, ``{YOLOv9}: Learning what you want to
   learn using programmable gradient information,'' in \emph{Proc. European
-  Conf. Computer Vision (ECCV)}, 2024, arXiv:2402.13616.
+  Conf. Computer Vision (ECCV)}, 2024.
 
 \bibitem{zhao2024rtdetr}
 Y.~Zhao, W.~Lv, S.~Xu, J.~Wei, G.~Wang, Q.~Dang, Y.~Liu, and J.~Chen, ``{DETRs}
@@ -69,19 +69,20 @@ F.~C. Akyon, S.~O. Altinuc, and A.~Temizel, ``Slicing aided hyper inference and
   fine-tuning for small object detection,'' in \emph{Proc. IEEE Int. Conf.
   Image Processing (ICIP)}, 2022, pp. 966--970.
 
-\bibitem{wang2021nwd}
-J.~Wang, C.~Xu, W.~Yang, and L.~Yu, ``A normalized {Gaussian Wasserstein}
-  distance for tiny object detection,'' 2021, arXiv:2110.13389.
+\bibitem{xu2022nwdrka}
+C.~Xu, J.~Wang, W.~Yang, H.~Yu, L.~Yu, and G.-S. Xia, ``Detecting tiny objects
+  in aerial images: A normalized {Wasserstein} distance and a new benchmark,''
+  \emph{ISPRS J. Photogramm. Remote Sens.}, vol. 190, pp. 79--93, 2022.
 
 \bibitem{xu2022rfla}
-C.~Xu, J.~Wang, W.~Yang, H.~Yu, L.~Yu, and G.-S. Xia, ``{RFLA}: {Gaussian}
-  receptive field based label assignment for tiny object detection,'' in
-  \emph{Proc. European Conf. Computer Vision (ECCV)}, 2022, arXiv:2208.08738.
+------, ``{RFLA}: {Gaussian} receptive field based label assignment for tiny
+  object detection,'' in \emph{Proc. European Conf. Computer Vision (ECCV)},
+  2022.
 
 \bibitem{shi2024simd}
 S.~Shi, Q.~Fang, T.~Zhao, and X.~Xu, ``Similarity distance-based label
   assignment for tiny object detection,'' in \emph{Proc. IEEE/RSJ Int. Conf.
-  Intelligent Robots and Systems (IROS)}, 2024, arXiv:2407.02394.
+  Intelligent Robots and Systems (IROS)}, 2024.
 
 \bibitem{zeng2023yolov7uav}
 Y.~Zeng, T.~Zhang, W.~He, and Z.~Zhang, ``{YOLOv7-UAV}: An unmanned aerial
@@ -119,11 +120,10 @@ J.~Tremblay, A.~Prakash, D.~Acuna, M.~Brophy, V.~Jampani, C.~Anil, T.~To,
 
 \bibitem{gu2023mamba}
 A.~Gu and T.~Dao, ``Mamba: Linear-time sequence modeling with selective state
-  spaces,'' \emph{arXiv preprint arXiv:2312.00752}, 2023.
+  spaces,'' in \emph{Proc. Conf. Language Modeling (COLM)}, 2024.
 
 \bibitem{wang2025mambayolo}
 Z.~Wang, C.~Li, H.~Xu, and X.~Zhu, ``Mamba {YOLO}: {SSMs}-based object
-  detection model,'' in \emph{Proc. AAAI Conf. Artificial Intelligence}, 2025,
-  arXiv:2406.05835.
+  detection model,'' in \emph{Proc. AAAI Conf. Artificial Intelligence}, 2025.
 
 \end{thebibliography}
