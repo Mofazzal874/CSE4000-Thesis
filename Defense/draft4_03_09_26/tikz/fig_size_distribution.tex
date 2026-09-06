@@ -1,0 +1,90 @@
+% ============================================================================
+%  fig_size_distribution.tex -- C2A test-set human-size distribution (real counts).
+%  Counts from runs_sahi_tta baseline_640 per_size_gt_count (sqrt-area bins,
+%  2,043 test images, 72,523 instances). Needs \usepackage{tikz} + the patterns
+%  library (both loaded in thesisstyle.sty).
+%  Include with:  \input{tikz/fig_size_distribution}
+%
+%  LOG Y-AXIS. On a linear axis the medium bar (317) stood 1.2% as tall as the
+%  small bar (26,614) and was invisible, which is what the supervisor flagged.
+%  A decade scale shows every non-zero bar at readable height while keeping the
+%  three-orders-of-magnitude difference legible.
+%      y = log10(count) * 0.88 cm   so a decade is 0.88 cm and 10^5 is 4.4 cm
+%      25,072 -> 3.871   20,520 -> 3.795   26,614 -> 3.894   317 -> 2.201
+%  The >=96 px "large" bin holds 0 of the 72,523 instances and is not plotted:
+%  an empty category earns no axis slot, and log10(0) has no position on a
+%  logarithmic axis in any case. The absence is stated in the body text
+%  ("none exceed 96 px"), which is where it belongs. The four plotted bins
+%  still account for 100% of the instances.
+%
+%  Bars carry a colour AND a hatch pattern so the two regimes stay separable in
+%  greyscale printing and for readers with colour-vision deficiency.
+% ============================================================================
+\definecolor{sdBlueFill}{HTML}{DAE8FC}
+\definecolor{sdBlueStroke}{HTML}{6C8EBF}
+\definecolor{sdRedFill}{HTML}{F8CECC}
+\definecolor{sdRedStroke}{HTML}{B85450}
+\definecolor{sdGrey}{HTML}{888888}
+\begin{tikzpicture}[font=\footnotesize]
+  % ---- axes: log10 decades, 0.88cm each ----
+  \draw[black] (0.9,0) -- (0.9,5.6);
+  \draw[black] (0.9,0) -- (9.8,0);
+  \foreach \lab/\y in {1/0, 10/0.88, 100/1.76, 1{,}000/2.64, 10{,}000/3.52,
+                       100{,}000/4.40}{%
+    \draw[black] (0.8,\y) -- (0.9,\y);
+    \node[left,font=\scriptsize] at (0.8,\y) {\lab};
+  }
+  % faint decade guides, so the log spacing is readable as such
+  \foreach \y in {0.88,1.76,2.64,3.52,4.40}{%
+    \draw[sdGrey!35,very thin] (0.9,\y) -- (9.8,\y);
+  }
+  \node[rotate=90,anchor=south] at (-0.95,2.8)
+       {number of C2A test instances (log scale)};
+
+  % ---- 32 px boundary (between small and medium) ----
+  \draw[sdGrey,dashed] (7.5,0) -- (7.5,4.6);
+  \node[sdGrey,font=\scriptsize,anchor=south] at (7.5,4.62) {32\,px};
+
+  % ---- bars: blue (<32 px, P2/P3 regime), red (>=32 px, P4/P5 regime) ----
+  % Each bar is filled, then overlaid with a hatch in its own stroke colour.
+  \filldraw[fill=sdBlueFill,draw=sdBlueStroke] (1.25,0) rectangle (2.75,3.871);
+  \path[pattern=north east lines,pattern color=sdBlueStroke]
+        (1.25,0) rectangle (2.75,3.871);
+  \filldraw[fill=sdBlueFill,draw=sdBlueStroke] (3.45,0) rectangle (4.95,3.795);
+  \path[pattern=north east lines,pattern color=sdBlueStroke]
+        (3.45,0) rectangle (4.95,3.795);
+  \filldraw[fill=sdBlueFill,draw=sdBlueStroke] (5.65,0) rectangle (7.15,3.894);
+  \path[pattern=north east lines,pattern color=sdBlueStroke]
+        (5.65,0) rectangle (7.15,3.894);
+  \filldraw[fill=sdRedFill,draw=sdRedStroke]   (7.85,0) rectangle (9.35,2.201);
+  \path[pattern=dots,pattern color=sdRedStroke]
+        (7.85,0) rectangle (9.35,2.201);
+
+  % ---- count + percent above each bar ----
+  \node[above,align=center] at (2.0,3.871) {25{,}072\\34.6\%};
+  \node[above,align=center] at (4.2,3.795) {20{,}520\\28.3\%};
+  \node[above,align=center] at (6.4,3.894) {26{,}614\\36.7\%};
+  \node[above,align=center] at (8.6,2.201) {317\\0.4\%};
+
+  % ---- x labels: size range + class ----
+  \node[below,align=center,font=\scriptsize] at (2.0,-0.12)  {$<$8\,px\\very tiny};
+  \node[below,align=center,font=\scriptsize] at (4.2,-0.12)  {8--16\,px\\tiny};
+  \node[below,align=center,font=\scriptsize] at (6.4,-0.12)  {16--32\,px\\small};
+  \node[below,align=center,font=\scriptsize] at (8.6,-0.12)  {32--96\,px\\medium};
+
+  % ---- annotations ----
+  \draw[sdBlueStroke,thick] (1.25,5.1) -- (7.15,5.1);
+  \node[above,text=sdBlueStroke] at (4.2,5.1)
+       {99.6\% of targets $<$ 32\,px  (P2 / P3 regime)};
+
+  % ---- legend ----
+  \filldraw[fill=sdBlueFill,draw=sdBlueStroke] (1.0,-1.55) rectangle (1.35,-1.30);
+  \path[pattern=north east lines,pattern color=sdBlueStroke]
+        (1.0,-1.55) rectangle (1.35,-1.30);
+  \node[anchor=west] at (1.45,-1.425) {reached by P2 / P3 ($<$32\,px)};
+  \filldraw[fill=sdRedFill,draw=sdRedStroke] (6.0,-1.55) rectangle (6.35,-1.30);
+  \path[pattern=dots,pattern color=sdRedStroke] (6.0,-1.55) rectangle (6.35,-1.30);
+  \node[anchor=west] at (6.45,-1.425) {P4 / P5 regime ($\geq$32\,px)};
+  \node[anchor=west,font=\itshape\scriptsize] at (1.0,-1.98)
+        {counts from this run: C2A test, 2{,}043 images, $\sqrt{\text{area}}$ bins};
+\end{tikzpicture}
