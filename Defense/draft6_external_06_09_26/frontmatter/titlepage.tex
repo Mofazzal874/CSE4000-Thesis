@@ -1,0 +1,97 @@
+% ---------- TITLE PAGE (spec section 2) : page i, Standard case ----------
+% Measured from Defense/Template Images/page (2).png at 72.88 px/in.
+%
+% PARAGRAPH MODEL, and it is NOT the cover's. Measured baseline pitches on this
+% page: supervisor block 19.8-25.7pt, footer block 22.7 / 23.7 / 22.3pt, author
+% block 20.7pt. A 12pt line at 1.5 spacing is 12 x 1.15 x 1.5 = 20.7pt, so this
+% page carries no 6pt "space after" -- unlike page 1, whose consecutive
+% paragraphs measure 30.5pt. \parskip is therefore zero here, and one blank
+% line of size 12 is 20.7pt (\tblanktitle).
+% The title's own two lines measure 30.6pt apart against 31.05 predicted, which
+% confirms 18pt at 1.5 with nothing added.
+%
+% ELEMENTS, in order:
+%   Title              18pt Bold, centred, standard case (not small caps).
+%   3 blank lines      title -> By     = 3 x 20.7pt
+%   By                 12pt Normal, centred.
+%   2 blank lines      By -> author    = 2 x 20.7pt
+%   Author / Roll      12pt Bold / 12pt Normal, centred.
+%   Degree lines       12pt Normal, centred.
+%   2 blank lines      degree -> supervisor
+%   Supervisor:        12pt Bold, left aligned at the margin.
+%   Supervisor block   name 12pt Bold, rest 12pt Normal, 0.8in left indent.
+%   Signature          rule and label, right side.
+%   Footer block       12pt Normal, centred.
+%   Page number        i, footer, 0.4in from the bottom.
+%
+% FOOTER CONFLICT, resolved from the image as instructed. The template carries
+% two contradictory annotations on that block: "12, Normal, Centered" and
+% "Times Roman, Bold, Centered, 16 size, 1.5 line space". The image settles it:
+%   line pitch   22.7 / 23.7 / 22.3pt, the same as the 12pt body above it
+%                (a 16pt block at 1.5 would be 27.6pt)
+%   ink height   10.9pt, identical to the 12pt degree line
+%   ink density  20.4%, against 19.8% for known-Normal text on this page and
+%                39.2% for known-Bold
+% It is 12pt Normal. Page 1's identical string measures 28.0% and is genuinely
+% Bold, so the two pages really do differ here.
+\thispagestyle{plain}
+\phantomsection\addcontentsline{toc}{fmatter}{Title Page}
+
+\begin{spacing}{1}
+\setlength{\parskip}{0pt}% no Word "space after" on this page
+\begin{center}
+% Title identical to the cover but in standard case, not small caps.
+{\tsizeEighteen\bfseries
+MSA-YOLO: A Multi-Scale Attention Enhancement of YOLO for Tiny-Human Detection in Aerial Search-and-Rescue Imagery\par}
+
+\vspace{3\tblanktitle}% 3 blank lines of size 12, title -> By
+
+{\tsizeTwelveHalf By\par}
+
+\vspace{2\tblanktitle}% 2 blank lines of size 12, By -> author
+
+{\tsizeTwelveHalf\bfseries Md Mofazzal Hosen\\
+\normalfont Roll: 2007074\par}
+
+\vspace{\tblanktitle}% 1 blank line, author -> degree statement
+
+{\tsizeTwelveHalf A thesis submitted in partial fulfillment of the requirements for the degree of\\
+``Bachelor of Science in Computer Science \& Engineering''\par}
+\end{center}
+
+\vspace{2\tblanktitle}% 2 blank lines of size 12, degree -> supervisor
+
+% Supervisor label at the margin; details 0.8in-indented, with the signature
+% rule beside them on the right (template page-2 layout).
+\noindent{\tsizeTwelveHalf\bfseries Supervisor:}
+
+\vspace{\tblanktitle}
+% "Sk.\ Md.\ " -- the backslash-space keeps normal inter-word spacing; without
+% it LaTeX reads the periods as sentence ends and sets a wider gap.
+\noindent\hspace*{0.8in}\begin{minipage}[t]{0.60\textwidth}
+{\tsizeTwelveHalf\bfseries Dr.\ Sk.\ Md.\ Masudul Ahsan\\
+\normalfont Professor\\
+Department of Computer Science and Engineering\\
+Khulna University of Engineering \& Technology\par}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.24\textwidth}\centering
+  \vspace*{2.4\baselineskip}
+  \rule{3.4cm}{0.4pt}\\ {\tsizeTwelveHalf Signature}
+\end{minipage}
+
+\vfill
+\begin{center}
+{\tsizeTwelveHalf
+Department of Computer Science and Engineering\\
+Khulna University of Engineering \& Technology\\
+Khulna 9203, Bangladesh\\
+July, 2026\par}
+\end{center}
+% \vfill alone drove the block down until the last baseline sat on the bottom
+% margin, putting the descender of "July, 2026" 0.09in past it. The template
+% leaves 0.32in of clearance below its own footer block (its last line ends at
+% 10.37in against a 10.69in margin), so that clearance is reserved here.
+\vspace*{0.32in}
+\end{spacing}
+\clearpage
