@@ -31,31 +31,30 @@ limit of a standard detection head. Existing remedies introduce attention
 modules, higher-resolution detection scales, sliced inference or state-space
 blocks, but each is reported in isolation and on different datasets, so their
 relative contribution is unknown. This paper proposes MSA-YOLO, a multi-scale
-attention detector in
-which every component is selected by evaluating four candidates on one detector
-under a single training protocol and preprocessing pipeline. A stride-4
-detection scale provides the largest network-side improvement at 1.1 points of
-sub-8-pixel recall, an attention substitution contributes a further 0.3 points
-while reducing parameter count, and a bidirectional state-space neck yields no
-improvement for 2.4 million additional parameters and 2.8 times the latency. The
-resulting detector attains 0.853 mean average precision with 19.6 million
-parameters, second among published results on the C2A benchmark to a model three
-times its size. The largest single improvement originates in training rather
-than architecture: a tiny-aware modification to label assignment improves
-sub-8-pixel recall by 2.08 points at no inference cost, with a bootstrap interval
-excluding zero and a consistent effect across three seeds. A scene-level audit
-further establishes that 98 percent of the benchmark test scenes also occur in
-training, an inflation of 1.6 points, so this result is measured on a
-scene-disjoint re-split. Evaluation on drone and disaster footage collected for
-this study yields 0.335 and 0.133 mean average precision without adaptation, and
-248 annotated real frames raise these to 0.795 and 0.411 while synthetic
-performance is retained at 0.837. No instance below eight pixels is recovered on
-real footage.
+attention detector whose components are selected by evaluating four candidates
+on one detector under a single training protocol. A stride-4 detection scale
+provides the largest network-side improvement at 1.1 points of sub-8-pixel
+recall, an attention substitution adds 0.3 points while reducing parameters,
+and a bidirectional state-space neck yields no improvement for 2.8 times the
+latency. The resulting detector attains 0.853 mean average precision with 19.6
+million parameters, second among published results on the C2A benchmark to a
+model three times its size. The largest single improvement originates in
+training rather than architecture: a tiny-aware modification to label
+assignment improves sub-8-pixel recall by 2.08 points at no inference cost,
+replicated across three seeds. A scene-level audit further establishes that 98
+percent of the benchmark test scenes also occur in training, so this result is
+measured on a scene-disjoint re-split. Evaluation on drone and disaster footage
+collected for this study yields 0.335 and 0.133 mean average precision without
+adaptation, and 248 annotated real frames raise these to 0.795 and 0.411. No
+instance below eight pixels is recovered on real footage.
 \end{abstract}
 
+% IEEE Editorial Style Manual, p. 10: Index Terms appear in alphabetical order;
+% capitalise the first word of the list and lowercase the rest unless they are
+% capitalised in text.
 \begin{IEEEkeywords}
-tiny object detection, aerial human detection, search and rescue, attention,
-multi-scale detection, label assignment, UAV imagery
+Aerial human detection, attention, label assignment, multi-scale detection,
+search and rescue, tiny object detection, UAV imagery
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -152,7 +151,8 @@ Section~\ref{sec:real}.
 
 \begin{figure*}[t]
 \centerline{\includegraphics[width=0.92\textwidth]{figures/fig_arch_v2.jpg}}
-\caption{The proposed MSA-YOLO pipeline, shown on a C2A scene.}
+% IEEE Editorial Style Manual, p. 15: do not open a caption with A, An or The.
+\caption{Proposed MSA-YOLO pipeline, shown on a C2A scene.}
 \label{fig:arch}
 \end{figure*}
 
@@ -344,7 +344,7 @@ Each configuration was trained once at seed 0, so these differences carry no
 confidence interval; only the assignment result below is supported by
 replication and a significance test.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Additive Ablation on the Official C2A Test Split}
 \label{tab:abl}
 \begin{center}
@@ -418,7 +418,7 @@ more than the three network changes together, 2.08 points against 1.40. The two
 derive from different protocols, so this compares effect sizes rather than
 levels, but the ordering is unambiguous.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Matched Pair Differing Only in the Assignment Blend}
 \label{tab:assign}
 \begin{center}
@@ -451,7 +451,7 @@ holds 317 of 72{,}523 instances. Since 99.6\% of this benchmark lies below
 32 px, that trade is favorable here and would not be in a general-purpose
 detector.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Recall by Object Size, Official C2A Test Split}
 \label{tab:size}
 \begin{center}
@@ -486,7 +486,7 @@ parameters against that model's 57.3 million. For deployment on airborne
 hardware, a reduction of four points in mAP@0.5 in exchange for approximately one
 third of the parameter count is a favorable trade.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Comparison with Published Results on C2A}
 \label{tab:sota}
 \begin{center}
@@ -526,7 +526,7 @@ five frozen evaluation sets, listed in Table~\ref{tab:real}. The disaster
 training set required approximately one working day to annotate, which
 establishes the scale of budget under test.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Real-Imagery Sets Collected for This Study}
 \label{tab:real}
 \begin{center}
@@ -577,15 +577,15 @@ general. Performance on the synthetic benchmark is largely preserved, declining
 from 0.844 to 0.837 while calibration error improves from 0.014 to 0.011, so a
 single model serves both domains.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centerline{\includegraphics[width=\columnwidth]{figures/fig_qualitative.jpg}}
 \caption{Inference before (a, c) and after (b, d) real-data adaptation. Green is
 ground truth, red is detection.}
 \label{fig:qual}
 \end{figure}
 
-\begin{table}[htbp]
-\caption{The Adapted Model on Every Held-Out Set}
+\begin{table}[t]
+\caption{Adapted Model on Every Held-Out Set}
 \label{tab:multi}
 \begin{center}
 \footnotesize
