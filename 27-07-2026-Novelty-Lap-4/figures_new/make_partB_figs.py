@@ -128,19 +128,23 @@ plt.rcParams.update({"font.size": P2, "axes.labelsize": P2,
 fig, ax = plt.subplots(figsize=FS2)
 
 
-def bars(offset, vals, color, label):
+def bars(offset, vals, color, label, hatch=None):
+    # Colour AND pattern, so the three stages stay separable in greyscale and
+    # for readers with colour-vision deficiency. matplotlib draws the hatch in
+    # the edge colour, so the edge is dark rather than white.
     xs = [xi + offset for xi, v in zip(x, vals) if v is not None]
     vs = [v for v in vals if v is not None]
-    b = ax.bar(xs, vs, width=w, color=color, label=label, edgecolor="white", linewidth=1.5)
+    b = ax.bar(xs, vs, width=w, color=color, label=label, hatch=hatch,
+               edgecolor="black", linewidth=0.6)
     for xi, v in zip(xs, vs):
         ax.annotate(f"{v:.3f}", (xi, v), textcoords="offset points", xytext=(0, 3),
                     ha="center", fontsize=P2, color=INK)
     return b
 
 
-bars(-w, zero_shot, BLUE, "C2A-trained (zero-shot)")
-bars(0.0, drone_ft, ORANGE, "+ drone fine-tune")
-bars(w, all_real, GREEN, "+ all-real fine-tune (drone+disaster+campus)")
+bars(-w, zero_shot, BLUE, "C2A-trained (zero-shot)", hatch="/")
+bars(0.0, drone_ft, ORANGE, "+ drone fine-tune", hatch=".")
+bars(w, all_real, GREEN, "+ all-real fine-tune (drone+disaster+campus)", hatch="x")
 ax.annotate("n.m.", (2, 0.02), textcoords="offset points", xytext=(0, 4),
             ha="center", fontsize=P2, color=MUTED)          # drone-ft not measured on cross-event
 # n.s. bracket over the cross-event pair (base vs all-real): p=0.47
