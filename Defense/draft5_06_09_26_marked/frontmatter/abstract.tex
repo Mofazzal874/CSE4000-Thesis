@@ -1,0 +1,46 @@
+% ---------- ABSTRACT (spec section 4) : page iii ----------
+% Rewritten 2026-09-05 to CSE_Thesis_Final_Abstract_Guidelines.pdf:
+%   * 200-300 words (was 414)
+%   * flow Background/Problem -> Objective -> Methodology -> Key Results ->
+%     Contribution/Conclusion
+%   * only the essential numbers (7, was about 21) -- the supervisor's note was
+%     that too many results were reported
+%   * past tense for methods and completed experiments, present tense for the
+%     conclusion
+%   * no citations, equations, or implementation detail; no limitations or
+%     future work
+% Revised again for cohesion: the findings were previously four free-standing
+% sentences. Each now carries the argument to the next -- the second phase is
+% given its reason, the architectural results are framed as one set, the
+% assignment result is set against them as a contrast, and the real-imagery
+% result follows from it.
+\phantomsection\addcontentsline{toc}{fmatter}{Abstract}
+\frontheading{Abstract}
+
+Finding people in aerial disaster imagery is a search-and-rescue problem in
+which the targets are often only a few pixels wide, partly occluded, and set
+against rubble, water, or smoke. Detectors tuned for ordinary object sizes lose
+them, and published work on the task reports strong aggregate scores without
+isolating which design change earns them. This thesis presents a compact
+real-time detector for that regime together with the evidence for each of its
+parts: four configurations were trained under a single frozen protocol on the
+C2A disaster-imagery benchmark, beginning from a YOLO11m baseline and adding,
+one change at a time, a channel-and-spatial attention module, a stride-4
+detection scale, and a bidirectional state-space neck. Because a benchmark
+result can be an artefact of how the data is divided, those conclusions were
+then retested on a scene-disjoint partition of the same images, under a
+modified label-assignment rule, and on real footage from drone flights, campus
+scenes, and disaster news video. Of the three architectural changes only the
+stride-4 scale mattered, raising $\mathrm{AP}_{50}$ from $0.843$ to $0.853$;
+the state-space neck cost a factor of $2.8$ in latency for no accuracy gain and
+was rejected. The larger improvement on the smallest targets came not from
+architecture but from supervision, as blending a scale-tolerant similarity into
+label assignment raised recall below eight pixels by $1.6$ points across
+replicated seeds while leaving the coarser size bands unchanged. That advantage
+did not carry to real imagery unaided, where the synthetically trained model
+reached $0.335$~$\mathrm{AP}_{50}$ until adaptation on a few hundred labelled
+frames lifted it to $0.795$. The resulting detector uses $19.6$~million
+parameters and runs in $14.6$~ms per image, and the wider lesson is that at
+this target size the supervision signal is worth more than added network
+capacity.
+\clearpage

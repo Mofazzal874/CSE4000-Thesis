@@ -1,0 +1,364 @@
+% ============================================================================
+%  thesisstyle.sty  --  CSE-4000 KUET thesis formatting
+%  Encodes Defense/TEMPLATE_FORMATTING_SPEC.md. Compile with XeLaTeX + biber.
+% ============================================================================
+\ProvidesPackage{thesisstyle}[2026/07/01 CSE-4000 KUET thesis style]
+
+% ---- Page geometry (spec section 0) ---------------------------------------
+\RequirePackage{geometry}
+\geometry{
+  a4paper,
+  left=1.2in, right=1.0in, top=1.2in, bottom=1.0in,
+  headsep=0.25in, footskip=0.4in
+}
+
+% ---- Fonts: real Times New Roman via bundled .ttf (XeLaTeX) ----------------
+% Font files live in fonts/ so this works on Overleaf without a system install.
+\RequirePackage{fontspec}
+\setmainfont{Times New Roman}[
+  Path         = fonts/,
+  Extension    = .ttf,
+  UprightFont  = times,
+  BoldFont     = timesbd,
+  ItalicFont   = timesi,
+  BoldItalicFont = timesbi
+]
+% If the bundled fonts are ever unavailable, comment the block above and use:
+%   \setmainfont{TeX Gyre Termes}   % metric-compatible Times clone, ships with TeX Live
+
+\RequirePackage{amsmath}       % must load BEFORE unicode-math
+\RequirePackage{unicode-math}  % load last among math packages
+\setmathfont{TeX Gyre Termes Math}  % Times-matching math; falls back cleanly
+
+% ---- Line spacing (spec: 1.5 body, 1.2 references) -------------------------
+% The spec says 1.5, which in Word means 1.5 x the font's own line height, and
+% Times New Roman's is about 1.15 em: 12 x 1.15 x 1.5 = 20.7pt. Measured on
+% Template Images/page (11).png, whose body lines sit at y = 444, 464 and 484,
+% a 20.5pt pitch.
+%
+% \onehalfspacing is NOT that. setspace sets \baselinestretch to about 1.241 at
+% a 12pt base, giving 18.0pt, so the body ran roughly 13% tighter than the
+% template all the way through. \setstretch{1.43} x 14.5pt = 20.7pt, matching
+% both the template and \tocstretch, which the front-matter lists already use.
+\RequirePackage{setspace}
+\setstretch{1.43}
+
+% ---- Paragraph style: block paragraphs, justified --------------------------
+% Word "space before 12pt / after 6pt" approximated as block spacing.
+\setlength{\parindent}{0pt}
+% Template page 10: consecutive body lines inside a paragraph sit 20.7pt apart,
+% and the first line of the next paragraph sits 33.1pt from the last line of the
+% previous one. The difference, 12.4pt, is the paragraph separation. It was 6pt,
+% so paragraphs ran together more tightly than the template's.
+\setlength{\parskip}{12pt plus 2pt minus 1pt}
+
+% ---- Heading fonts/sizes (spec section 6) ----------------------------------
+\RequirePackage{titlesec}
+\newcommand{\sizeChapNum}{\fontsize{14}{21}\selectfont}   % CHAPTER I  -> 14pt
+\newcommand{\sizeChapTtl}{\fontsize{16}{24}\selectfont}   % chapter title -> 16pt
+\newcommand{\sizeFrontHd}{\fontsize{16}{24}\selectfont}   % Abstract/LoT/LoF -> 16pt
+\newcommand{\sizeTitle}{\fontsize{18}{32}\selectfont}     % thesis title -> 18pt, 1.5 line space (Word-style)
+
+% Chapter heading prints "CHAPTER <Roman>" (14pt) then title (16pt), both centered.
+% NOTE: \thechapter stays ARABIC so sections/figures/tables number as 3.1, Figure 3.2
+% (template style), while only the heading label shows the Roman numeral.
+\titleformat{\chapter}[display]
+  {\centering\bfseries}
+  {\sizeChapNum CHAPTER \Roman{chapter}}
+  {6pt}%  label -> title. The template's "CHAPTER I" and "Introduction"
+          % baselines sit 51.8pt apart; 18pt here gave 63.4pt because \parskip
+          % is added on top of the title's own stretched line.
+  {\sizeChapTtl}
+% Measured on template page 10: "CHAPTER I" has its ink top at 1.265in, which
+% is the 1.2in margin plus one cap height, so the label starts at the top of the
+% text block. With a 0pt "before" it was landing at 1.720in, 0.46in low, because
+% the stretched 14pt line box exceeds \topskip and LaTeX drops the first
+% baseline to fit it. The negative before cancels that.
+%
+% The "after" is 2 blank lines of size 12 (2 x 20.7 = 41.4pt), which the
+% template's own gap confirms: its chapter title to first section heading
+% measures 81.8pt = 41.4 + 12pt section-before + the 24.15pt heading line.
+\titlespacing*{\chapter}{0pt}{-33pt}{41.4pt}
+
+% Sections: 14pt bold (template page-10 callout); subsections: 12pt bold.
+% Both left-aligned, space before 12pt after 6pt.
+\titleformat{\section}{\bfseries\fontsize{14}{21}\selectfont}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% ---- Numbering scheme (template rules) -------------------------------------
+% Chapter heading + TOC show Roman ("CHAPTER III"); body sections show arabic
+% ("3.1"); figures/tables/equations show arabic ("Figure 3.2"). We make
+% \thechapter Roman for the heading/TOC, but force the cross-reference numbers
+% to use the arabic chapter value so nothing becomes "III.1".
+\renewcommand{\thechapter}{\Roman{chapter}}
+\setcounter{secnumdepth}{2}% number chapter + section (X.Y) + subsection (X.Y.Z)
+\RequirePackage{graphicx}
+\RequirePackage{float}             % [H] exact placement to avoid stacking/gaps
+\RequirePackage{tikz}              % native vector figures (e.g. the ablation waterfall)
+\usetikzlibrary{patterns}          % colour + pattern fill on bars, so a series is
+                                   % identifiable in greyscale and to a reader with
+                                   % colour-vision deficiency
+\RequirePackage{pgfplots}          % appendix performance-vs-parameter scatter
+\pgfplotsset{compat=1.17}
+\RequirePackage{pgfgantt}          % project-planning Gantt chart (Chapter I)
+\numberwithin{equation}{chapter}   % resets per chapter
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+
+% ---- "n blank lines of size 12" vertical spacer (1.5-spaced 12pt = 18pt) ----
+\newcommand{\vblank}[1]{\vspace{\dimexpr 18pt*#1\relax}}
+
+% ---- Word's blank line, for the template-specified title-page spacing -------
+% The template counts gaps in "blank lines of size 12 with 1.5 line space".
+% Word's line height is fontsize x 1.15 x multiple, not fontsize x multiple, so
+% one such blank line is 12 x 1.15 x 1.5 = 20.7pt, NOT 18pt.
+% Measured against Defense/Template Images: the page-1 department block (12pt,
+% 1.2 spacing) has a 16.7pt line pitch against 16.6pt predicted, and the page-2
+% title (18pt, 1.5 spacing) measures 30.6pt against 31.05pt predicted.
+% A blank line is the empty paragraph's LINE plus whatever Word "space after"
+% that paragraph carries. The two template pages differ, measured from the
+% images by the pitch between consecutive single-line paragraphs:
+%
+%   page 1: name -> roll -> & -> name -> roll all measure 30.5pt, and a 14pt
+%           line at 1.5 is 24.15pt, so each paragraph carries 6pt after.
+%           One blank line of size 12 = 20.7 + 6 = 26.7pt.
+%   page 2: the supervisor block and footer measure 20.7-22.9pt, which is the
+%           12pt line at 1.5 with no space after.
+%           One blank line of size 12 = 20.7pt.
+\newlength{\tblankcover}\setlength{\tblankcover}{26.7pt}
+\newlength{\tblanktitle}\setlength{\tblanktitle}{20.7pt}
+\newlength{\tafter}\setlength{\tafter}{6pt}% Word "space after" on page 1
+% Matching leadings for the sizes the cover and title pages use.
+\newcommand{\tsizeTwelve}{\fontsize{12}{16.56}\selectfont}% 12pt, 1.2 spacing
+\newcommand{\tsizeTwelveHalf}{\fontsize{12}{20.7}\selectfont}% 12pt, 1.5 spacing
+\newcommand{\tsizeFourteen}{\fontsize{14}{24.15}\selectfont}% 14pt, 1.5 spacing
+\newcommand{\tsizeEighteen}{\fontsize{18}{31.05}\selectfont}% 18pt, 1.5 spacing
+
+% ---- Captions (template page 11): 11pt, "Figure 1.1: ..." ------------------
+% Template page 11 is explicit, in both its annotation and its rendering:
+%   "Figure and Table caption will be Times Roman, normal, CENTERED, 11 size,
+%    1.5 line space, space before 12 pt, after 6 pt.
+%    For Figure -> caption below the figure. For Table -> caption above."
+% and it renders "Figure 1.1: A three dimensional TMA ..." centred.
+%
+% This used to be justification=raggedright with singlelinecheck=true, which
+% centres a caption that fits on one line but left-aligns any that wraps -- so
+% figure 4.6 came out centred and figure 3.7 left-aligned. justification=
+% centering centres both, which is what the template asks for.
+% Figure caption sits BELOW (skip = figure->caption gap = 12pt); table caption
+% sits ABOVE (skip = caption->table gap = 6pt).
+\RequirePackage{caption}
+\captionsetup{
+  font={stretch=1.5},
+  labelsep=colon,
+  justification=centering,
+  singlelinecheck=true
+}
+\captionsetup{font+={small}}          % ~11pt at a 12pt base
+\captionsetup[figure]{skip=12pt}      % 12pt between figure and caption below
+\captionsetup[table]{skip=6pt}        % 6pt between caption above and table
+
+% ---- Tables ---------------------------------------------------------------
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{longtable}   % tables that split across pages with a repeated header
+
+% ---- Float placement / whitespace control ----------------------------------
+% Template page 11: "Each figure or table should be on top or bottom of the
+% page." Every float in this document uses [tbp], so none can land inside a
+% paragraph. The counters below enforce the rest of it.
+%
+% ONE float at the top and ONE at the bottom. That is the setting that stops
+% two figures or tables printing back to back: with topnumber 3 a page could
+% stack three of them against each other with no prose in between, which is
+% exactly what was happening. At 1 and 1, any second float on a page must sit
+% at the other end, so body text necessarily separates them.
+%
+% textfraction is the minimum share of a page that must be text. It was 0.06,
+% which permitted a page that is 94% float; 0.18 keeps a real paragraph on any
+% page that also carries a float, and pushes anything larger onto a float page
+% of its own rather than leaving a token line stranded.
+\raggedbottom
+% ---- Widow and orphan control ----------------------------------------------
+% LaTeX's defaults for these are 150, low enough that it will happily push the
+% last line of a paragraph onto the next page on its own. That is what left
+% fragments like "restating it." stranded under a table. At 10000 the break is
+% refused outright. This is safe only because \raggedbottom is set above: the
+% page simply ends a line or two short instead of stretching to compensate.
+\widowpenalty=10000         % last line of a paragraph alone at the top
+\clubpenalty=10000          % first line of a paragraph alone at the foot
+\displaywidowpenalty=10000  % the same around displayed equations
+\brokenpenalty=10000        % no page break straight after a hyphenated line
+\setcounter{topnumber}{1}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{2}
+\renewcommand{\topfraction}{0.78}
+\renewcommand{\bottomfraction}{0.45}
+\renewcommand{\textfraction}{0.18}
+\renewcommand{\floatpagefraction}{0.65}
+% When a float is large enough to take a page of its own, LaTeX centres it
+% vertically, which left Table A.2 floating in the middle of an otherwise empty
+% page with 3.9in of white above it. \@fptop 0pt puts a float page's content at
+% the top margin instead, which is where the template says a figure or table
+% belongs, and lets the slack fall at the bottom.
+% \@fpsep must NOT be stretchable. With "plus 2fil" the gap between two floats
+% sharing a float page absorbed the slack and drove them apart: page 57 had
+% Figure 4.7 at the top and Table 4.7 at the bottom with 2.5in of white between
+% them. A fixed 12pt keeps them together and \@fpbot takes all the slack, so a
+% float page fills from the top down.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+% Template "space before 12pt / after 6pt" around floats: keep separations near
+% one 12pt line so floats read as one block with text, without loose gaps.
+\setlength{\textfloatsep}{12pt plus 3pt minus 2pt}
+\setlength{\floatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+% \FloatBarrier keeps a figure with its own paragraph so two figures never stack
+% on one page without text between them (used at a few figure-dense boundaries).
+\RequirePackage{placeins}
+
+% ---- IEEE references via biblatex (spec 9) ---------------------------------
+\RequirePackage[backend=biber,style=ieee,sorting=none,doi=true,url=false]{biblatex}
+% Reference list: 1.2 line spacing, hanging indent 0.31in. \sloppy + URL break
+% penalties keep long venue strings, arXiv ids, and URLs inside the margin.
+\setlength{\biblabelsep}{0.31in}
+\renewcommand*{\bibfont}{\normalfont\setstretch{1.2}\sloppy}
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+
+% ---- Mild global stretch so justified lines never cross the margin ---------
+\setlength{\emergencystretch}{1.5em}
+
+% ---- Table of Contents formatting (template page 5-7) ----------------------
+% Chapters: "CHAPTER <Roman>  Title ..... page" (bold). Front-matter items
+% (added numberless) render indented, normal weight. Sections show as bullets,
+% subsections as arrows -- numbers hidden in the TOC (they remain in the body).
+\RequirePackage{titletoc}
+% pifont was loaded for the template's subsection arrow; the Contents keeps
+% numeric labels instead, so nothing uses it now.
+\setcounter{tocdepth}{2}
+
+% Measured pitches in the template's Contents / LoT / LoF (12pt at 1.5 spacing
+% is 20.7pt in Word):
+%   front-matter entries   28.7pt   = 20.7 line + 8pt above
+%   CHAPTER entries        57.4pt   = 20.7 line + 36.7pt above
+%   section entries        21.5pt   = the bare line
+%   LoT / LoF entries      22.6pt   = 20.7 line + ~2pt
+% \tocstretch reproduces the 20.7pt line inside these lists without touching the
+% body text, whose spacing is a document-wide setting.
+\newcommand{\tocstretch}{\setstretch{1.43}}% 1.43 x 14.5pt = 20.7pt
+
+% A dedicated level for the front-matter entries (Title Page, Acknowledgment,
+% ...). They used to be added as numberless "chapter" entries, which gave them
+% the chapter's large space above and left them 5pt too loose.
+\makeatletter
+\newcommand*{\l@fmatter}[2]{\@dottedtocline{0}{0pt}{0pt}{#1}{#2}}
+\makeatother
+
+% No dotted leaders (template uses plain right-aligned page numbers).
+\titlecontents{fmatter}[0.5in]
+  {\addvspace{8pt}}
+  {}{}
+  {\hfill\contentspage}
+
+\titlecontents{chapter}[0pt]
+  {\addvspace{36.7pt}}
+  {\bfseries CHAPTER\ \thecontentslabel\hspace{1.2em}}% numbered = real chapters
+  {\bfseries}%  numberless: References / Appendices, at the margin
+  {\hfill\contentspage}
+
+% Template pages 5-7 mark sections with a bullet and subsections with an arrow,
+% but the numbers are kept here on purpose: X.Y and X.Y.Z are more useful for
+% navigating a document this long, and they match the numbering in the body.
+% Everything else about these entries follows the template.
+\titlecontents{section}[0.5in]
+  {}
+  {\thecontentslabel\hspace{0.75em}}%   numeric label X.Y
+  {}%
+  {\hfill\contentspage}
+
+\titlecontents{subsection}[1.0in]
+  {}
+  {\thecontentslabel\hspace{0.75em}}%   numeric label X.Y.Z
+  {}%
+  {\hfill\contentspage}
+
+% List of Tables / Figures: "2.1  Description ....... page" WITHOUT dots.
+% \contentslabel hangs the number to the left of the 0.55in margin so a caption
+% that wraps aligns under the description instead of returning to the margin.
+\titlecontents{table}[0.55in]{}{\contentslabel{0.55in}}{}{\hfill\contentspage}
+\titlecontents{figure}[0.55in]{}{\contentslabel{0.55in}}{}{\hfill\contentspage}
+
+% "PAGE" column header for the Contents, and header rows for LoT/LoF.
+\newcommand{\tocpagehead}{\mbox{}\hfill\textbf{PAGE}\par\vspace{2pt}}
+\newcommand{\lotlofhead}[1]{%
+  \noindent\textbf{#1 No.}\hfill\textbf{Description}\hfill\textbf{Page}\par
+  \vspace{4pt}}
+
+% ---- Front-matter heading helper (Acknowledgment/Abstract centered 16pt) ---
+% The template puts 2 blank lines of size 12 after the heading, which measures
+% 64.9pt from the heading's baseline to the first body baseline (page 3). The
+% \vblank{2} used before gave 72.7pt, so the gap is set to land on the measured
+% value instead of on the nominal blank-line count.
+\newcommand{\frontheading}[1]{%
+  \begin{center}\sizeFrontHd\bfseries #1\end{center}%
+  \vspace{28pt}% -> 64.9pt heading baseline to first body baseline
+}
+
+% Contents / List of Tables / List of Figures use \chapter* in report.cls, which
+% set their headings about 0.5in lower than the Acknowledgment and Abstract.
+% The template puts "Contents" at 1.335in, level with "Acknowledgment" at
+% 1.272in, so all five front-matter headings share \frontheading and land
+% together. (Its List of Tables and List of Figures headings sit 4.5in down the
+% page, which is an artefact of how those screenshots were assembled rather
+% than a specification -- they are treated like the others.)
+\makeatletter
+\renewcommand\tableofcontents{\frontheading{\contentsname}\@starttoc{toc}}
+\renewcommand\listoftables{\frontheading{\listtablename}\@starttoc{lot}}
+\renewcommand\listoffigures{\frontheading{\listfigurename}\@starttoc{lof}}
+\makeatother
+
+% ---- Page numbering: footer centered (report/plain does this) --------------
+\pagestyle{plain}
+
+% ---- Hyperlinks (kept subtle; black for print) -----------------------------
+\RequirePackage[hidelinks]{hyperref}
+% DOIs and URLs in the reference list default to a typewriter face, which jumps
+% out against the Times body text. The IEEE Editorial Style Manual states no
+% font rule for them, but every DOI it prints appears in ordinary running text,
+% so they are set in the body font here.
+\urlstyle{same}
+% microtype removed: on XeLaTeX its benefit is small and it adds compile time.
+
+% ---- Draft placeholder (remove as sections get written) --------------------
+\newcommand{\tbd}{\textit{[Content to be written.]}\par}
+
+% ---- Figure include-or-placeholder -----------------------------------------
+% Reserves EXACTLY the given height whether or not the file exists, so swapping a
+% placeholder for the real export never shifts page spacing. The real image is
+% scaled to fit width x height with keepaspectratio (no distortion). The border
+% appears ONLY on the pending placeholder (final figures have no border).
+% Usage: \figorplaceholder{path}{height}   (alias: \figbox)
+\newcommand{\figorplaceholder}[2]{%
+  \begin{minipage}[c][#2][c]{\linewidth}\centering
+    \IfFileExists{#1}%
+      {\includegraphics[width=\linewidth,height=#2,keepaspectratio]{#1}}%
+      {\fbox{\begin{minipage}[c][\dimexpr#2-2\fboxsep-2\fboxrule\relax][c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+         \centering\itshape [Figure pending export: \detokenize{#1}]%
+       \end{minipage}}}%
+  \end{minipage}}
+\let\figbox\figorplaceholder

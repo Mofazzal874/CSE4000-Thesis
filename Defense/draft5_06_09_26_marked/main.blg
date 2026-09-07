@@ -1,0 +1,18 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[1] Config.pm:310> INFO - Logfile is 'main.blg'
+[137] biber:340> INFO - === Mon Sep  7, 2026, 22:10:30
+[180] Biber.pm:419> INFO - Reading 'main.bcf'
+[340] Biber.pm:979> INFO - Found 50 citekeys in bib section 0
+[366] Biber.pm:4419> INFO - Processing section 0
+[388] Biber.pm:4610> INFO - Looking for bibtex file 'references.bib' for section 0
+[406] bibtex.pm:1713> INFO - LaTeX decoding ...
+[469] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[1282] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[1283] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[1284] Biber.pm:4239> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
+[1284] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[1362] bbl.pm:660> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[1448] bbl.pm:763> INFO - Output to main.bbl
+[1450] Biber.pm:131> WARN - I didn't find a database entry for 'redmon2018yolov3' (section 0)
+[1451] Biber.pm:131> WARN - I didn't find a database entry for 'bochkovskiy2020yolov4' (section 0)
+[1451] Biber.pm:133> INFO - WARNINGS: 2
