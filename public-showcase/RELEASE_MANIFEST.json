@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "prepared": "2026-09-19",
+  "scope": "research companion, no detector code or model weights",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 183,
+      "sha256": "8464dc38d1c80a3927f7d9c39a4cdb02fae18920584816faa8f70e601c1b5321"
+    },
+    {
+      "path": "analysis/verify_results.py",
+      "bytes": 5604,
+      "sha256": "c3567367152353a4f387925fcdda606a5e31127c9b558927bc43229de9159b26"
+    },
+    {
+      "path": "assets/examples/improved-baseline.jpg",
+      "bytes": 71207,
+      "sha256": "44c599be2355d2b48f69355f112ad8f0de4b9440f955fe02f871ca0a6adf9df8"
+    },
+    {
+      "path": "assets/examples/improved-cbam_p2.jpg",
+      "bytes": 71133,
+      "sha256": "8836003bed7f404d1eea2918debb0ad58c74dfaa17b956261fe2608a96938f06"
+    },
+    {
+      "path": "assets/examples/missed-people.jpg",
+      "bytes": 4468775,
+      "sha256": "f6de89025a404458586112f955d6c53ea81895eea85c8717cfa91f616f2c7e36"
+    },
+    {
+      "path": "assets/examples/regressed-baseline.jpg",
+      "bytes": 153618,
+      "sha256": "0d3421e569051479bae0cdd4b5ff25ed6b33fa38cc57bfbacf12b8c1874d5ce9"
+    },
+    {
+      "path": "assets/examples/regressed-cbam_p2.jpg",
+      "bytes": 153731,
+      "sha256": "03c1aa3e1ef40679e3e7971bd2c8c4f64ed37b8463fb9abf34acc0f9ba7746e9"
+    },
+    {
+      "path": "assets/method.svg",
+      "bytes": 3008,
+      "sha256": "e85b5eee1094a624c1dfe3c241c35044b13c3a23a0c5d79e9bd10f4a1139d8fa"
+    },
+    {
+      "path": "assets/research-overview.svg",
+      "bytes": 2293,
+      "sha256": "29c74b0c8d51848816abaf24815a8f9914617ef0e3297affe6bb9324509d5cf8"
+    },
+    {
+      "path": "assets/results-overview.png",
+      "bytes": 114557,
+      "sha256": "495ba1ef97615a3170c56a68b57ab621d2f7cc4864e9c3f695516b582e37096d"
+    },
+    {
+      "path": "CITATION.cff",
+      "bytes": 694,
+      "sha256": "93b76dd19602370728884b55f1c18e95725f51f3fc88dce029b6d93ec2b43035"
+    },
+    {
+      "path": "demos/drone-10m.jpg",
+      "bytes": 88057,
+      "sha256": "fdedff3ccf216a4b7ed966c379d2d9b792aa3c22a718971f782b25fa4d137e48"
+    },
+    {
+      "path": "demos/drone-10m.mp4",
+      "bytes": 13683337,
+      "sha256": "07631fd3425632069f112d8d656b93380a54afa1224afe14503d0c4761a0c334"
+    },
+    {
+      "path": "demos/drone-50m.jpg",
+      "bytes": 89130,
+      "sha256": "ab097f8d80e472b909ef049fde1a8ed579c3694d621cd8f1906ce73882c97056"
+    },
+    {
+      "path": "demos/drone-50m.mp4",
+      "bytes": 11989691,
+      "sha256": "38c010eb8394edd04a99c3e9d0822563acda6010b1a692a620ddfced02cdc988"
+    },
+    {
+      "path": "demos/media.json",
+      "bytes": 1185,
+      "sha256": "b4ce9a6588fb70c9728ff8d785cdd89eff44e9f44982fdbbc33efc3d1fdf22f7"
+    },
+    {
+      "path": "demos/README.md",
+      "bytes": 2524,
+      "sha256": "58bdfa9571018bcf3e640bf544eade41a5a362465e6c7fbab25e4d08ddff3c2a"
+    },
+    {
+      "path": "docs/AVAILABILITY.md",
+      "bytes": 3238,
+      "sha256": "1751fe7badcac2e8ef9b3db5cf1f355bcd99bf1e095c06cda21c063c25ce610c"
+    },
+    {
+      "path": "docs/EVIDENCE.md",
+      "bytes": 6475,
+      "sha256": "fea7cb72c3f0cc943a0edc214fe61f42a7f33cd3f8a5155931ba711c2ed8126e"
+    },
+    {
+      "path": "docs/GALLERY.md",
+      "bytes": 3294,
+      "sha256": "e783933e3a35344ae2432a6f62642d65ad70cc5962e0453ac93efaddbde1aea2"
+    },
+    {
+      "path": "documents/thesis.pdf",
+      "bytes": 23912984,
+      "sha256": "63eb7cf24f10ce54eda0bbd55c7c3ec1b47e427b4f7044c70b1d6f5ae0ee024d"
+    },
+    {
+      "path": "presentation/defense-presentation.pdf",
+      "bytes": 4589657,
+      "sha256": "939e789fb251acfe505b682df5bbee4a51de2f00c613382b7603ea66ce7f09bb"
+    },
+    {
+      "path": "presentation/README.md",
+      "bytes": 2985,
+      "sha256": "de1da6f24cd82fdd6655577a1a84dee25a70456afd43f28248aae727c4253ccc"
+    },
+    {
+      "path": "presentation/slide-01.png",
+      "bytes": 303838,
+      "sha256": "a5fe25ef872930bfe4e7f66d772861566de7a04a1f6fbbc5e086d844494a6205"
+    },
+    {
+      "path": "presentation/slide-14.png",
+      "bytes": 248141,
+      "sha256": "f10f5b8f60549adab72cc9c56adea1a62e23f67df83bb17905b259213a476e6b"
+    },
+    {
+      "path": "presentation/slide-18.png",
+      "bytes": 129446,
+      "sha256": "5870aa6c2f66f0f890475799d5885ab481cef68d51721fed1d2907b1a12f978f"
+    },
+    {
+      "path": "presentation/slide-26.png",
+      "bytes": 107324,
+      "sha256": "61bb5c1399d50e1d8af91fe189c4ed24f18c6b042d0f92d7f3b88b93ed4da1b1"
+    },
+    {
+      "path": "presentation/slide-28.png",
+      "bytes": 92842,
+      "sha256": "3fb520f306ccfa269a9f0bb00254cb37d6929a399cfcd4e03fb48b0d8a518a86"
+    },
+    {
+      "path": "presentation/slide-30.png",
+      "bytes": 668013,
+      "sha256": "4a8338370c58c888951cfd543e9cdeb3995f276ef18da6a7538a6a0b0766ebc0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 16167,
+      "sha256": "c468765c0b9fb465037c8e6d42acd496a3254b774ca7e3adc53a57e4b54c6318"
+    },
+    {
+      "path": "results/bootstrap_s3_control_full_vs_s3_assign_full.json",
+      "bytes": 1640,
+      "sha256": "ea9810f8cff4639e5ac00badecea251ad2e273a1a89343a9580404cdc2981c12"
+    },
+    {
+      "path": "results/bootstrap_s3_xevent_vs_d3all_xevent.json",
+      "bytes": 1433,
+      "sha256": "b02f3a178db90cf5b005d64ce215f68c7dac47c9df843b2169e3fb44616949ba"
+    },
+    {
+      "path": "results/failure_and_comparison_cases.csv",
+      "bytes": 5047,
+      "sha256": "d7c69a3c68464750daf4b3d7d5d9cea9ec6ab9b92d521524a6001d7b65ef8806"
+    },
+    {
+      "path": "results/gallery_overlay_counts.csv",
+      "bytes": 576,
+      "sha256": "2f455f53f530c73f746b463e22df03a75ece2910c956d68f50790c1a0e879761"
+    },
+    {
+      "path": "results/SHA256SUMS.txt",
+      "bytes": 1123,
+      "sha256": "331f9c4ba1c29008daaef64dead218859c1da6fb9aa1d582d3bd4aa4ceacfe65"
+    },
+    {
+      "path": "results/tab_4_11_matched_pair_bootstrap.csv",
+      "bytes": 447,
+      "sha256": "9f98339440f83f9481a0fe087f5b96609fa438a0cf3fec115a7dc4a51980e0ca"
+    },
+    {
+      "path": "results/tab_4_11b_three_seed_replication.csv",
+      "bytes": 219,
+      "sha256": "4ef4c92b15f8d60365838c9b321d4a2eceffb8a687462a14af2a3a70dfdf8fe4"
+    },
+    {
+      "path": "results/tab_4_13_final_model_all_heldout_sets.csv",
+      "bytes": 382,
+      "sha256": "3c3946cdc59f286dc0a51930eec0daa6f13b1028232c58897bac071d78a19f9b"
+    },
+    {
+      "path": "results/tab_4_13b_adaptation_stages.csv",
+      "bytes": 822,
+      "sha256": "9ed3f775d585c2829ecf6c34e6def1c4eb7b340a71d35060cffa00375226628c"
+    },
+    {
+      "path": "results/tab_4_4_additive_ablation.csv",
+      "bytes": 351,
+      "sha256": "f4ff07efb4d1d9120dc2c64a38f1279f1073e35a1da04fdc4ba3196fee1a7cc3"
+    },
+    {
+      "path": "results/tab_4_5_per_size_recall.csv",
+      "bytes": 571,
+      "sha256": "0b87d19ec88b0bbd009cf231954645042d1cda473e97e81fe886e9f22525425a"
+    },
+    {
+      "path": "results/tab_4_9_scene_leakage_cost.csv",
+      "bytes": 163,
+      "sha256": "9ed5f8f92f48811ea96e7c738c6d7695e2e6044ddad63dcb9bec706b59a58a95"
+    }
+  ]
+}

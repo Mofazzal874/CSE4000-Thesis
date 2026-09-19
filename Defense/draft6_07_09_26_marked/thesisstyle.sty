@@ -175,6 +175,11 @@
 % them visibly different sizes from each other.
 \RequirePackage{booktabs}
 \RequirePackage{array}
+% Lets a header cell hold its label and its unit on two lines inside ONE row.
+% Tables 4.4 and 4.5 used to put the unit on a separate row, which read fine
+% under booktabs but became its own boxed row of empty cells once the tables
+% took the template's full borders.
+\RequirePackage{makecell}
 \renewcommand{\arraystretch}{1.25}
 \RequirePackage{multirow}
 \RequirePackage{longtable}   % tables that split across pages with a repeated header

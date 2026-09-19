@@ -1,7 +1,7 @@
 % ============================================================================
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/o6.tex   Tue Sep  8 03:27:20 2026
-%DIF ADD /tmp/n6.tex   Tue Sep  8 03:27:20 2026
+%DIF DEL /tmp/o6.tex   Tue Sep  8 10:51:23 2026
+%DIF ADD /tmp/n6.tex   Tue Sep  8 10:51:23 2026
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF 3-4c3-4
 %DIF < %DIF DEL main.tex   Sun Sep  6 10:23:32 2026
@@ -1047,29 +1047,18 @@ axes, is set out in Table~\ref{tab:gap}.
   \label{tab:gap}
   \small
   \setlength{\tabcolsep}{5pt}
-  \DIFdelbeginFL %DIFDELCMD < \renewcommand{\arraystretch}{1.15}
-%DIFDELCMD <   \begin{tabular}{@{}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{3.8cm}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{4.7cm}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{4.7cm}@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|p{3.8cm}|p{4.7cm}|p{4.7cm}|}
+  \begin{tabular}{|p{3.8cm}|p{4.7cm}|p{4.7cm}|}
     \hline
-    \DIFaddendFL Aspect & Prior work & This thesis \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Small-object techniques & reported individually & compared in one controlled ablation \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Attention choice & asserted or single option & CBAM vs ECA measured on the task \\ \DIFaddbeginFL \hline
-    \DIFaddendFL State-space neck & proposed as a backbone, on generic data & tested in the neck against an identical baseline; reported honestly \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Target domain & mostly generic aerial imagery & disaster/SAR imagery (C2A), very small human targets \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Tiny-object assignment & shown outside YOLO's assigner, on generic tiny-object benchmarks & blended into the task-aligned assigner; matched pair with confidence intervals \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Real-footage validation & rarely reported for disaster models & own drone, campus, and disaster sets, plus a held-out unseen event \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Aspect & Prior work & This thesis \\
+    \hline
+    Small-object techniques & reported individually & compared in one controlled ablation \\ \hline
+    Attention choice & asserted or single option & CBAM vs ECA measured on the task \\ \hline
+    State-space neck & proposed as a backbone, on generic data & tested in the neck against an identical baseline; reported honestly \\ \hline
+    Target domain & mostly generic aerial imagery & disaster/SAR imagery (C2A), very small human targets \\ \hline
+    Tiny-object assignment & shown outside YOLO's assigner, on generic tiny-object benchmarks & blended into the task-aligned assigner; matched pair with confidence intervals \\ \hline
+    Real-footage validation & rarely reported for disaster models & own drone, campus, and disaster sets, plus a held-out unseen event \\
+    \hline
+  \end{tabular}
 \end{table}
 
 Read row by row, the table marks the departure from prior work. Where earlier
@@ -1240,37 +1229,26 @@ YOLO11m width of 1.0, channel cap of 512, and depth of 0.5.
   \caption{Layer configuration of the proposed detector at 640-px input.}
   \label{tab:layers}
 {\small
-\DIFdelbeginFL %DIFDELCMD < \setlength{\tabcolsep}{7pt}
-%DIFDELCMD < \renewcommand{\arraystretch}{1.3}
-%DIFDELCMD < \begin{tabular}{@{}c l l l@{}}
-%DIFDELCMD <   \toprule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|c|l|l|l|}
+\begin{tabular}{|c|l|l|l|}
   \hline
-  \DIFaddendFL Layers & Module (arguments) & Output & Role \\
-  \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL 0      & Conv(64, $3{\times}3$, s2)   & $320^2 \times 64$   & stem, P1/2 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 1--2   & Conv(128, s2); C3k2(256)     & $160^2 \times 256$  & P2/4 (skip source) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 3--4   & Conv(256, s2); C3k2(512)     & $80^2 \times 512$   & P3/8 (skip source) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 5--6   & Conv(512, s2); C3k2(512)     & $40^2 \times 512$   & P4/16 (skip source) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 7--9   & Conv(512, s2); C3k2; SPPF    & $20^2 \times 512$   & P5/32 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{10} & \textbf{CBAM ($r{=}16$, $k{=}7$)} & $20^2 \times 512$ & \textbf{replaces C2PSA} \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL 11--13 & Upsample; Concat(6); C3k2(512)  & $40^2 \times 512$  & top-down, P4 fused \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 14--16 & Upsample; Concat(4); C3k2(256)  & $80^2 \times 256$  & top-down, P3 fused \\ \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{17--19} & \textbf{Upsample; Concat(2); C3k2(128)} & $160^2 \times 128$ & \textbf{added P2 branch} \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 20--22 & Conv(s2); Concat(16); C3k2(256) & $80^2 \times 256$  & bottom-up, P3 out \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 23--25 & Conv(s2); Concat(13); C3k2(512) & $40^2 \times 512$  & bottom-up, P4 out \\ \DIFaddbeginFL \hline
-    \DIFaddendFL 26--28 & Conv(s2); Concat(10); C3k2(512) & $20^2 \times 512$  & bottom-up, P5 out \\ \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{29} & \textbf{Detect[19, 22, 25, 28]} & strides 4--32 & \textbf{four-scale head} \\
-  \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD < %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-\DIFaddendFL \end{tabular}}
+  Layers & Module (arguments) & Output & Role \\
+  \hline
+    0      & Conv(64, $3{\times}3$, s2)   & $320^2 \times 64$   & stem, P1/2 \\ \hline
+    1--2   & Conv(128, s2); C3k2(256)     & $160^2 \times 256$  & P2/4 (skip source) \\ \hline
+    3--4   & Conv(256, s2); C3k2(512)     & $80^2 \times 512$   & P3/8 (skip source) \\ \hline
+    5--6   & Conv(512, s2); C3k2(512)     & $40^2 \times 512$   & P4/16 (skip source) \\ \hline
+    7--9   & Conv(512, s2); C3k2; SPPF    & $20^2 \times 512$   & P5/32 \\ \hline
+    \textbf{10} & \textbf{CBAM ($r{=}16$, $k{=}7$)} & $20^2 \times 512$ & \textbf{replaces C2PSA} \\
+    \hline
+    11--13 & Upsample; Concat(6); C3k2(512)  & $40^2 \times 512$  & top-down, P4 fused \\ \hline
+    14--16 & Upsample; Concat(4); C3k2(256)  & $80^2 \times 256$  & top-down, P3 fused \\ \hline
+    \textbf{17--19} & \textbf{Upsample; Concat(2); C3k2(128)} & $160^2 \times 128$ & \textbf{added P2 branch} \\ \hline
+    20--22 & Conv(s2); Concat(16); C3k2(256) & $80^2 \times 256$  & bottom-up, P3 out \\ \hline
+    23--25 & Conv(s2); Concat(13); C3k2(512) & $40^2 \times 512$  & bottom-up, P4 out \\ \hline
+    26--28 & Conv(s2); Concat(10); C3k2(512) & $20^2 \times 512$  & bottom-up, P5 out \\ \hline
+    \textbf{29} & \textbf{Detect[19, 22, 25, 28]} & strides 4--32 & \textbf{four-scale head} \\
+  \hline
+\end{tabular}}
 \end{table}
 
 \subsection{Data Preprocessing}
@@ -1443,27 +1421,20 @@ under conditions in which the P2 head demonstrably succeeds.
   \centering
   \caption{Additive ablation configurations, one change per step.}
   \label{tab:variants}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l l l l@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL %DIF >  \small to match Table 3.1 and the other wide tables: the bordered layout
-  %DIF >  restores the outer cell padding that @{} suppressed, and the Neck column
-  %DIF >  ran past the right margin without it.
-  \DIFaddbeginFL \small
+  % \small to match Table 3.1 and the other wide tables: the bordered layout
+  % restores the outer cell padding that @{} suppressed, and the Neck column
+  % ran past the right margin without it.
+  \small
   \begin{tabular}{|l|l|l|l|}
     \hline
-    \DIFaddendFL Configuration & Backbone attention & Detection scales & Neck \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m (baseline)   & C2PSA            & P3, P4, P5         & C3k2 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM               & CBAM             & P3, P4, P5         & C3k2 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM + P2          & CBAM             & P2, P3, P4, P5     & C3k2 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + Mamba + CBAM + P2  & CBAM             & P2, P3, P4, P5     & C3k2Mamba (6 layers) \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Configuration & Backbone attention & Detection scales & Neck \\
+    \hline
+    YOLO11m (baseline)   & C2PSA            & P3, P4, P5         & C3k2 \\ \hline
+    + CBAM               & CBAM             & P3, P4, P5         & C3k2 \\ \hline
+    + CBAM + P2          & CBAM             & P2, P3, P4, P5     & C3k2 \\ \hline
+    + Mamba + CBAM + P2  & CBAM             & P2, P3, P4, P5     & C3k2Mamba (6 layers) \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \section{Loss Function Design}
@@ -1764,26 +1735,19 @@ also prevents one architecture from receiving a more favourable stopping rule.
   \centering
   \caption{Training configuration shared by all four models.}
   \label{tab:setup}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l l@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|l|}
+  \begin{tabular}{|l|l|}
     \hline
-    \DIFaddendFL Setting & Value \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Input resolution & $640 \times 640$ (letterbox) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Optimiser & AdamW, $\text{lr}_0 = 0.001$, $\text{lr}_f = 0.01$, cosine schedule \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Epochs (max) & 300, early stop on fitness (patience 50) and $F_2$ (patience 40) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Batch size & 16 (baseline, CBAM); 8 physical for P2 models, effective 16 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Mixed precision & enabled (AMP) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Augmentation & YOLO11 defaults; \texttt{close\_mosaic} = 10; no copy--paste/mixup \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Seed & 0 (deterministic cuDNN) \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Setting & Value \\
+    \hline
+    Input resolution & $640 \times 640$ (letterbox) \\ \hline
+    Optimiser & AdamW, $\text{lr}_0 = 0.001$, $\text{lr}_f = 0.01$, cosine schedule \\ \hline
+    Epochs (max) & 300, early stop on fitness (patience 50) and $F_2$ (patience 40) \\ \hline
+    Batch size & 16 (baseline, CBAM); 8 physical for P2 models, effective 16 \\ \hline
+    Mixed precision & enabled (AMP) \\ \hline
+    Augmentation & YOLO11 defaults; \texttt{close\_mosaic} = 10; no copy--paste/mixup \\ \hline
+    Seed & 0 (deterministic cuDNN) \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \section{Evaluation Metrics}
@@ -1873,20 +1837,13 @@ the single-seed comparison between configurations fair.
   \centering
   \caption{C2A dataset split used for all experiments.}
   \label{tab:split}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|l|r|r|r|}
     \hline
-    \DIFaddendFL & Train & Validation & Test \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Images & 6{,}129 & 2{,}043 & 2{,}043 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    & Train & Validation & Test \\
+    \hline
+    Images & 6{,}129 & 2{,}043 & 2{,}043 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 Representative samples of the four scene types are shown in
@@ -1899,41 +1856,24 @@ which is what makes the detection problem hard even for a human reader.
 
 \begin{figure}[tbp]
   \centering
-  \DIFdelbeginFL %DIFDELCMD < \begin{minipage}[t]{0.44\linewidth}\centering
-%DIFDELCMD <     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_collapsed.png}\\[2pt]
-%DIFDELCMD <     %%%
-\DIFdelendFL %DIF >  The four samples previously used width=\linewidth with a 3.7cm height cap.
-  %DIF >  Every one hit the height cap and none hit the width cap, so their heights
-  %DIF >  matched but their widths followed each image's aspect (1.35cm to 1.57cm
-  %DIF >  apart), which made the top row visibly narrower than the bottom one; each
-  %DIF >  narrow image then sat centred in a 0.44\linewidth box, which is where the
-  %DIF >  wide gap came from. They are now centre-cropped to square (*_sq.png,
-  %DIF >  originals untouched) and set at one fixed size, with the column gap given
-  %DIF >  explicitly rather than left to \hfill.
-  \DIFaddbeginFL \setlength{\tabcolsep}{0pt}
+  % The four samples previously used width=\linewidth with a 3.7cm height cap.
+  % Every one hit the height cap and none hit the width cap, so their heights
+  % matched but their widths followed each image's aspect (1.35cm to 1.57cm
+  % apart), which made the top row visibly narrower than the bottom one; each
+  % narrow image then sat centred in a 0.44\linewidth box, which is where the
+  % wide gap came from. They are now centre-cropped to square (*_sq.png,
+  % originals untouched) and set at one fixed size, with the column gap given
+  % explicitly rather than left to \hfill.
+  \setlength{\tabcolsep}{0pt}
   \begin{tabular}{@{}c@{\hspace{1.1cm}}c@{}}
     \includegraphics[width=3.8cm,height=3.8cm]{figures/c2a_collapsed_sq.png} &
     \includegraphics[width=3.8cm,height=3.8cm]{figures/c2a_fire_sq.png} \\[3pt]
-    \DIFaddendFL {\small (a) collapsed building} \DIFdelbeginFL %DIFDELCMD < \end{minipage}\hfill
-%DIFDELCMD <   \begin{minipage}[t]{0.44\linewidth}\centering
-%DIFDELCMD <     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_fire.png}\\[2pt]
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL & \DIFaddendFL {\small (b) fire} \DIFdelbeginFL %DIFDELCMD < \end{minipage}\\[8pt]
-%DIFDELCMD <   \begin{minipage}[t]{0.44\linewidth}\centering
-%DIFDELCMD <     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_flood.png}\\[2pt]
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \\[9pt]
+    {\small (a) collapsed building} & {\small (b) fire} \\[9pt]
     \includegraphics[width=3.8cm,height=3.8cm]{figures/c2a_flood_sq.png} &
     \includegraphics[width=3.8cm,height=3.8cm]{figures/c2a_traffic_sq.png} \\[3pt]
-    \DIFaddendFL {\small (c) flood} \DIFdelbeginFL %DIFDELCMD < \end{minipage}\hfill
-%DIFDELCMD <   \begin{minipage}[t]{0.44\linewidth}\centering
-%DIFDELCMD <     \includegraphics[width=\linewidth,height=3.7cm,keepaspectratio]{figures/c2a_traffic.png}\\[2pt]
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL & \DIFaddendFL {\small (d) traffic incident}
-  \DIFdelbeginFL %DIFDELCMD < \end{minipage}
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \end{tabular}
-  \DIFaddendFL \caption{Representative C2A test samples, one per scene type.}
+    {\small (c) flood} & {\small (d) traffic incident}
+  \end{tabular}
+  \caption{Representative C2A test samples, one per scene type.}
   \label{fig:dataset_samples}
 \end{figure}
 
@@ -2123,22 +2063,15 @@ attempted and its outcome (Table~\ref{tab:apphistory}).
   \centering
   \caption{Preliminary attention-module comparison on C2A.}
   \label{tab:eca}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|l|r|r|r|}
     \hline
-    \DIFaddendFL Model & $F_2$ & Small-object recall & $F_1$ \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline & 0.844 & 0.881 & 0.837 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + ECA            & 0.844 & 0.884 & 0.840 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM           & \textbf{0.849} & \textbf{0.892} & \textbf{0.842} \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & $F_2$ & Small-object recall & $F_1$ \\
+    \hline
+    YOLO11m baseline & 0.844 & 0.881 & 0.837 \\ \hline
+    + ECA            & 0.844 & 0.884 & 0.840 \\ \hline
+    + CBAM           & \textbf{0.849} & \textbf{0.892} & \textbf{0.842} \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsubsection{The Additive Ablation}
@@ -2168,24 +2101,16 @@ CBAM~+~P2, and the state-space neck is not carried forward.
   \label{tab:main}
   \small
   \setlength{\tabcolsep}{3pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r r r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|r|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|r|r|r|r|r|}
     \hline
-    \DIFaddendFL Model & Params & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL & (M) & & & & & & & & \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline    & 20.03 & 67.7 & 0.615 & 0.843 & 0.655 & 0.691 & 0.850 & 0.840 & 13.7 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM              & 19.08 & 66.9 & 0.616 & 0.847 & 0.656 & 0.692 & 0.850 & 0.841 & 13.5 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM + P2         & 19.57 & 86.7 & 0.615 & \textbf{0.853} & 0.660 & 0.703 & 0.848 & \textbf{0.844} & 14.6 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + Mamba + CBAM + P2 & 22.01 & 98.4 & 0.614 & 0.852 & 0.662 & 0.704 & 0.846 & 0.844 & 41.1 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & \makecell{Params\\(M)} & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\
+    \hline
+    YOLO11m baseline    & 20.03 & 67.7 & 0.615 & 0.843 & 0.655 & 0.691 & 0.850 & 0.840 & 13.7 \\ \hline
+    + CBAM              & 19.08 & 66.9 & 0.616 & 0.847 & 0.656 & 0.692 & 0.850 & 0.841 & 13.5 \\ \hline
+    + CBAM + P2         & 19.57 & 86.7 & 0.615 & \textbf{0.853} & 0.660 & 0.703 & 0.848 & \textbf{0.844} & 14.6 \\ \hline
+    + Mamba + CBAM + P2 & 22.01 & 98.4 & 0.614 & 0.852 & 0.662 & 0.704 & 0.846 & 0.844 & 41.1 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 Figure~\ref{fig:waterfall} shows the same story as a per-component waterfall.
@@ -2326,25 +2251,17 @@ module does not explain the null result.
   \centering
   \caption{Per-size recall on the C2A test set with ground-truth counts.}
   \label{tab:persize}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|}
     \hline
-    \DIFaddendFL Model & very-tiny & tiny & small & medium \\ \DIFaddbeginFL \hline
-    \DIFaddendFL & ($<8$px) & ($8$--$16$) & ($16$--$32$) & ($32$--$96$) \\ \DIFaddbeginFL \hline
-    \DIFaddendFL GT instances & 25{,}072 & 20{,}520 & 26{,}614 & 317 \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline    & 0.743 & 0.869 & 0.894 & 0.909 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM              & 0.746 & 0.873 & 0.895 & 0.912 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM + P2         & \textbf{0.757} & 0.865 & 0.886 & 0.808 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + Mamba + CBAM + P2 & 0.757 & 0.870 & 0.887 & 0.811 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & \makecell{very-tiny\\($<8$px)} & \makecell{tiny\\($8$--$16$)} & \makecell{small\\($16$--$32$)} & \makecell{medium\\($32$--$96$)} \\ \hline
+    GT instances & 25{,}072 & 20{,}520 & 26{,}614 & 317 \\
+    \hline
+    YOLO11m baseline    & 0.743 & 0.869 & 0.894 & 0.909 \\ \hline
+    + CBAM              & 0.746 & 0.873 & 0.895 & 0.912 \\ \hline
+    + CBAM + P2         & \textbf{0.757} & 0.865 & 0.886 & 0.808 \\ \hline
+    + Mamba + CBAM + P2 & 0.757 & 0.870 & 0.887 & 0.811 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsubsection{Operating Thresholds and Calibration}
@@ -2361,23 +2278,16 @@ calibrated probability.
   \centering
   \caption{Operating threshold and calibration per configuration.}
   \label{tab:thrcal}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|l|r|r|r|}
     \hline
-    \DIFaddendFL Model & Optimal conf.\ ($F_2$) & Best $F_2$ & ECE \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline    & 0.19 & 0.840 & 0.023 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM              & 0.20 & 0.841 & 0.021 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM + P2         & 0.16 & \textbf{0.844} & 0.021 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + Mamba + CBAM + P2 & 0.17 & 0.844 & 0.020 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & Optimal conf.\ ($F_2$) & Best $F_2$ & ECE \\
+    \hline
+    YOLO11m baseline    & 0.19 & 0.840 & 0.023 \\ \hline
+    + CBAM              & 0.20 & 0.841 & 0.021 \\ \hline
+    + CBAM + P2         & 0.16 & \textbf{0.844} & 0.021 \\ \hline
+    + Mamba + CBAM + P2 & 0.17 & 0.844 & 0.020 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsubsection{Training Dynamics}
@@ -2529,31 +2439,22 @@ for this thesis.
   \centering
   \caption{Comparison with published detectors on the C2A test set~\cite{nihal2024c2a}.}
   \label{tab:sota}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|l|r|r|r|}
     \hline
-    \DIFaddendFL Model & $\mathrm{AP}_{50}$ & AP & Params \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Faster R-CNN            & 0.634 & 0.366 & $\sim$41M \\ \DIFaddbeginFL \hline
-    \DIFaddendFL RetinaNet               & 0.693 & 0.383 & $\sim$37M \\ \DIFaddbeginFL \hline
-    \DIFaddendFL RTMDet                  & 0.708 & 0.442 & --- \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Cascade R-CNN           & 0.735 & 0.486 & $\sim$69M \\ \DIFaddbeginFL \hline
-    \DIFaddendFL DINO                    & 0.789 & 0.471 & $\sim$47M \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv5                  & 0.808 & 0.492 & --- \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv9-e                & 0.893 & 0.688 & 57.3M \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline (ours) & 0.843 & 0.615 & 20.1M \\ \DIFaddbeginFL \hline
-    \DIFaddendFL CBAM + P2 (ours)        & 0.853 & 0.615 & \textbf{19.6M} \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & $\mathrm{AP}_{50}$ & AP & Params \\
+    \hline
+    Faster R-CNN            & 0.634 & 0.366 & $\sim$41M \\ \hline
+    RetinaNet               & 0.693 & 0.383 & $\sim$37M \\ \hline
+    RTMDet                  & 0.708 & 0.442 & --- \\ \hline
+    Cascade R-CNN           & 0.735 & 0.486 & $\sim$69M \\ \hline
+    DINO                    & 0.789 & 0.471 & $\sim$47M \\ \hline
+    YOLOv5                  & 0.808 & 0.492 & --- \\ \hline
+    YOLOv9-e                & 0.893 & 0.688 & 57.3M \\
+    \hline
+    YOLO11m baseline (ours) & 0.843 & 0.615 & 20.1M \\ \hline
+    CBAM + P2 (ours)        & 0.853 & 0.615 & \textbf{19.6M} \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \section{Inference-Time Enhancement: SAHI and TTA}
@@ -2582,22 +2483,15 @@ tiny-target recall. It is not included in the thesis headline metrics.
   \caption{Exploratory SAHI sweep on the older Mamba+CBAM+P2 checkpoint.}
   \label{tab:sahi}
   \setlength{\tabcolsep}{5pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|r|r|}
     \hline
-    \DIFaddendFL Setting & Size & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny R \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL no SAHI & --- & 0.855 & 0.845 & 0.850 & 0.847 & 0.767 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + SAHI  & 512 & 0.867 & 0.865 & \textbf{0.866} & \textbf{0.865} & 0.808 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + SAHI  & 256 & 0.790 & \textbf{0.872} & 0.829 & 0.854 & \textbf{0.829} \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Setting & Size & $P$ & $R$ & $F_1$ & $F_2$ & very-tiny R \\
+    \hline
+    no SAHI & --- & 0.855 & 0.845 & 0.850 & 0.847 & 0.767 \\ \hline
+    + SAHI  & 512 & 0.867 & 0.865 & \textbf{0.866} & \textbf{0.865} & 0.808 \\ \hline
+    + SAHI  & 256 & 0.790 & \textbf{0.872} & 0.829 & 0.854 & \textbf{0.829} \\
+    \hline
+  \end{tabular}
 \end{table}
 
 Figure~\ref{fig:sahibars} visualises the archived size-wise measurements. It
@@ -2659,22 +2553,15 @@ and 410 at 32--96~px.
   \centering
   \caption{Scene-leakage cost for the recommended model.}
   \label{tab:leak}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|l|r|r|r|}
     \hline
-    \DIFaddendFL Protocol & $\mathrm{AP}_{50}$ & $\mathrm{AP}_S$ & Very-tiny recall \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Official split          & 0.853 & 0.616 & 0.757 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Scene-disjoint re-split & 0.837 & 0.613 & 0.745 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Difference (points)     & $-1.6$ & $-0.2$ & $-1.2$ \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Protocol & $\mathrm{AP}_{50}$ & $\mathrm{AP}_S$ & Very-tiny recall \\
+    \hline
+    Official split          & 0.853 & 0.616 & 0.757 \\ \hline
+    Scene-disjoint re-split & 0.837 & 0.613 & 0.745 \\ \hline
+    Difference (points)     & $-1.6$ & $-0.2$ & $-1.2$ \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsection{Tiny-Aware Assignment: Sweep and Matched Pair}
@@ -2694,22 +2581,15 @@ most of the gain at a tenth of the cost. The half-blend was carried forward.
   \centering
   \caption{Dose--response of the assignment blend in fifty-epoch pilots.}
   \label{tab:gamma}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|r|}
     \hline
-    \DIFaddendFL Blend & Very-tiny & Tiny & Small & $\mathrm{AP}_S$ & $\mathrm{AP}_{50}$ \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL $\gamma=0$ (CIoU only)   & 0.693 & 0.812 & 0.830 & 0.560 & 0.821 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL $\gamma=0.5$ (chosen)    & 0.712 & 0.809 & 0.820 & 0.553 & 0.823 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL $\gamma=1.0$ (NWD only)  & 0.729 & 0.795 & 0.797 & 0.505 & 0.808 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Blend & Very-tiny & Tiny & Small & $\mathrm{AP}_S$ & $\mathrm{AP}_{50}$ \\
+    \hline
+    $\gamma=0$ (CIoU only)   & 0.693 & 0.812 & 0.830 & 0.560 & 0.821 \\ \hline
+    $\gamma=0.5$ (chosen)    & 0.712 & 0.809 & 0.820 & 0.553 & 0.823 \\ \hline
+    $\gamma=1.0$ (NWD only)  & 0.729 & 0.795 & 0.797 & 0.505 & 0.808 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \begin{figure}[tbp]
@@ -2758,26 +2638,19 @@ gives this section its title.
   \label{tab:d2pair}
   \small
   \setlength{\tabcolsep}{4.5pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r c r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|c|r|}
+  \begin{tabular}{|l|r|r|r|c|r|}
     \hline
-    \DIFaddendFL Metric & $\gamma=0$ & $\gamma=0.5$ & $\Delta$ (points) & 95\% CI & $p$ \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL $\mathrm{AP}_{50}$    & 0.845 & 0.844 & $-0.08$ & $[-0.32, 0.17]$ & 0.54 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL $F_2$ (operational)   & 0.826 & 0.828 & $+0.27$ & $[0.03, 0.50]$  & 0.024 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL $\mathrm{AP}_S$       & 0.595 & 0.615 & $+2.00$ & --- & --- \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Very-tiny recall      & 0.730 & 0.751 & $\mathbf{+2.08}$ & $[1.77, 2.38]$  & $<0.001$ \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Tiny recall           & 0.834 & 0.823 & $-1.15$ & $[-1.48, -0.84]$ & $<0.001$ \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Small recall          & 0.850 & 0.841 & $-0.95$ & $[-1.40, -0.50]$ & $<0.001$ \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Medium recall         & 0.363 & 0.232 & $-13.2$ & $[-17.9, -9.3]$ & $<0.001$ \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Metric & $\gamma=0$ & $\gamma=0.5$ & $\Delta$ (points) & 95\% CI & $p$ \\
+    \hline
+    $\mathrm{AP}_{50}$    & 0.845 & 0.844 & $-0.08$ & $[-0.32, 0.17]$ & 0.54 \\ \hline
+    $F_2$ (operational)   & 0.826 & 0.828 & $+0.27$ & $[0.03, 0.50]$  & 0.024 \\ \hline
+    $\mathrm{AP}_S$       & 0.595 & 0.615 & $+2.00$ & --- & --- \\ \hline
+    Very-tiny recall      & 0.730 & 0.751 & $\mathbf{+2.08}$ & $[1.77, 2.38]$  & $<0.001$ \\ \hline
+    Tiny recall           & 0.834 & 0.823 & $-1.15$ & $[-1.48, -0.84]$ & $<0.001$ \\ \hline
+    Small recall          & 0.850 & 0.841 & $-0.95$ & $[-1.40, -0.50]$ & $<0.001$ \\ \hline
+    Medium recall         & 0.363 & 0.232 & $-13.2$ & $[-17.9, -9.3]$ & $<0.001$ \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsection{Adaptation to Real Imagery}
@@ -2799,27 +2672,20 @@ targets.
   \label{tab:owndata}
   \small
   \setlength{\tabcolsep}{5pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l l r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|l|r|r|r|}
+  \begin{tabular}{|l|l|r|r|r|}
     \hline
-    \DIFaddendFL Set & Role & Frames & Persons & Median (px) \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL Drone, 3 altitudes  & fine-tune train      & 101 & 6{,}313 & --- \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Drone, 3 altitudes  & fine-tune validation & 14  & 973     & --- \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Drone test          & evaluation, frozen   & 60  & 3{,}584 & 44 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Campus              & fine-tune train      & 87  & 4{,}510 & 37 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Campus test         & evaluation, frozen   & 25  & 663     & 37 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Disaster, 2 events  & fine-tune train      & 60  & 1{,}341 & 23 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Disaster R-set      & evaluation, frozen   & 25  & 1{,}070 & 17 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Unseen third event  & evaluation, frozen   & 23  & 318     & 28 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Set & Role & Frames & Persons & Median (px) \\
+    \hline
+    Drone, 3 altitudes  & fine-tune train      & 101 & 6{,}313 & --- \\ \hline
+    Drone, 3 altitudes  & fine-tune validation & 14  & 973     & --- \\ \hline
+    Drone test          & evaluation, frozen   & 60  & 3{,}584 & 44 \\ \hline
+    Campus              & fine-tune train      & 87  & 4{,}510 & 37 \\ \hline
+    Campus test         & evaluation, frozen   & 25  & 663     & 37 \\ \hline
+    Disaster, 2 events  & fine-tune train      & 60  & 1{,}341 & 23 \\ \hline
+    Disaster R-set      & evaluation, frozen   & 25  & 1{,}070 & 17 \\ \hline
+    Unseen third event  & evaluation, frozen   & 23  & 318     & 28 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \begin{figure}[tbp]
@@ -2864,24 +2730,17 @@ model.
   \centering
   \caption{Final adapted model on every held-out evaluation set.}
   \label{tab:multidomain}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|}
     \hline
-    \DIFaddendFL Evaluation set & Images & $\mathrm{AP}_{50}$ & $F_2$ & Recall@$0.25$ \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL C2A scene-disjoint test   & 2{,}040 & 0.837 & 0.824 & 0.821 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Drone test                & 60      & 0.795 & 0.771 & 0.837 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Disaster R-set            & 25      & 0.411 & 0.472 & 0.451 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Unseen disaster event     & 23      & 0.413 & 0.451 & 0.374 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Campus                    & 25      & 0.689 & 0.666 & 0.718 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Evaluation set & Images & $\mathrm{AP}_{50}$ & $F_2$ & Recall@$0.25$ \\
+    \hline
+    C2A scene-disjoint test   & 2{,}040 & 0.837 & 0.824 & 0.821 \\ \hline
+    Drone test                & 60      & 0.795 & 0.771 & 0.837 \\ \hline
+    Disaster R-set            & 25      & 0.411 & 0.472 & 0.451 \\ \hline
+    Unseen disaster event     & 23      & 0.413 & 0.451 & 0.374 \\ \hline
+    Campus                    & 25      & 0.689 & 0.666 & 0.718 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsection{Within-Video Against Cross-Event}
@@ -2999,28 +2858,19 @@ cloud compute, or licences were used.
   \centering
   \caption{Cost estimate of the experimental workstation (Dhaka retail, mid-2026).}
   \label{tab:budget}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l l r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|l|r|}
+  \begin{tabular}{|l|l|r|}
     \hline
-    \DIFaddendFL Component & Specification & Cost (BDT) \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL GPU & NVIDIA RTX 4070 Ti SUPER, 16 GB & 115{,}000 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL CPU & Intel Core i7-14700K & 55{,}000 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Memory & 128 GB DDR5 & 45{,}000 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Storage & 2 TB NVMe SSD & 18{,}000 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL Board, PSU, cooling, case & --- & 52{,}000 \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{Total} & & \textbf{285{,}000} \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Component & Specification & Cost (BDT) \\
+    \hline
+    GPU & NVIDIA RTX 4070 Ti SUPER, 16 GB & 115{,}000 \\ \hline
+    CPU & Intel Core i7-14700K & 55{,}000 \\ \hline
+    Memory & 128 GB DDR5 & 45{,}000 \\ \hline
+    Storage & 2 TB NVMe SSD & 18{,}000 \\ \hline
+    Board, PSU, cooling, case & --- & 52{,}000 \\
+    \hline
+    \textbf{Total} & & \textbf{285{,}000} \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \section{Conclusion}
@@ -3187,30 +3037,21 @@ future deployment of the system.
   \centering
   \caption{Measured training cost and CO$_2$ of the four configurations.}
   \label{tab:carbon}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL %DIF >  \small, as the other wide tables use: the bordered layout restores the outer
-  %DIF >  cell padding that @{} used to suppress, which pushed this past the margin.
-  \DIFaddbeginFL \small
+  % \small, as the other wide tables use: the bordered layout restores the outer
+  % cell padding that @{} used to suppress, which pushed this past the margin.
+  \small
   \begin{tabular}{|l|r|r|r|r|}
     \hline
-    \DIFaddendFL Configuration & Wall clock (h) & Mean power (W) & Energy (kWh) & CO$_2$ (kg) \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11m baseline    & 7.3  & 216 & 1.6 & 1.31 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM              & 7.0  & 218 & 1.5 & 1.28 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + CBAM + P2         & 10.2 & 207 & 2.1 & 1.78 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL + Mamba + CBAM + P2 & 29.5 & 182 & 5.4 & 4.65 \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{Total}      & \textbf{54.0} & --- & \textbf{10.6} & \textbf{9.02} \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Configuration & Wall clock (h) & Mean power (W) & Energy (kWh) & CO$_2$ (kg) \\
+    \hline
+    YOLO11m baseline    & 7.3  & 216 & 1.6 & 1.31 \\ \hline
+    + CBAM              & 7.0  & 218 & 1.5 & 1.28 \\ \hline
+    + CBAM + P2         & 10.2 & 207 & 2.1 & 1.78 \\ \hline
+    + Mamba + CBAM + P2 & 29.5 & 182 & 5.4 & 4.65 \\
+    \hline
+    \textbf{Total}      & \textbf{54.0} & --- & \textbf{10.6} & \textbf{9.02} \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \section{Conclusion}
@@ -3506,28 +3347,21 @@ the one whose first results were invalidated by an implementation fault.
   \caption{Detector-family benchmark used to select the baseline.}
   \label{tab:appfamily}
   \setlength{\tabcolsep}{5pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}l r r r r r r@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|l|r|r|r|r|r|r|}
+  \begin{tabular}{|l|r|r|r|r|r|r|}
     \hline
-    \DIFaddendFL Model & mAP50 & mAP50-95 & $P$ & $R$ & $F_1$ & Size (MB) \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv9-e   & 0.855 & 0.619 & 0.884 & 0.805 & 0.843 & 111.8 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11-s   & 0.803 & 0.535 & 0.845 & 0.757 & 0.798 & 18.3 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL \textbf{YOLO11m (selected)} & 0.841 & 0.592 & 0.867 & 0.794 & 0.829 & 38.6 \\ \DIFaddbeginFL \hline
-    \DIFaddendFL YOLO11-l   & 0.847 & 0.603 & 0.876 & 0.796 & 0.834 & 48.8 \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Model & mAP50 & mAP50-95 & $P$ & $R$ & $F_1$ & Size (MB) \\
+    \hline
+    YOLOv9-s   & 0.787 & 0.504 & 0.841 & 0.736 & 0.785 & 14.5 \\ \hline
+    YOLOv9-m   & 0.823 & 0.565 & 0.863 & 0.772 & 0.815 & 38.9 \\ \hline
+    YOLOv9-e   & 0.855 & 0.619 & 0.884 & 0.805 & 0.843 & 111.8 \\ \hline
+    YOLOv10-s  & 0.792 & 0.517 & 0.836 & 0.738 & 0.784 & 15.8 \\ \hline
+    YOLOv10-m  & 0.827 & 0.571 & 0.857 & 0.777 & 0.815 & 31.9 \\ \hline
+    YOLOv10-l  & 0.843 & 0.598 & 0.870 & 0.792 & 0.829 & 49.8 \\ \hline
+    YOLO11-s   & 0.803 & 0.535 & 0.845 & 0.757 & 0.798 & 18.3 \\ \hline
+    \textbf{YOLO11m (selected)} & 0.841 & 0.592 & 0.867 & 0.794 & 0.829 & 38.6 \\ \hline
+    YOLO11-l   & 0.847 & 0.603 & 0.876 & 0.796 & 0.834 & 48.8 \\
+    \hline
+  \end{tabular}
 \end{table}
 
 The choice of backbone was an accuracy-against-cost trade-off, and
@@ -3604,33 +3438,22 @@ impressions.
 
 \begin{table}[tbp]
   \centering
-  \caption{Architectural variants attempted\DIFdelbeginFL \DIFdelFL{during the project}\DIFdelendFL , with outcome and decision.}
+  \caption{Architectural variants attempted, with outcome and decision.}
   \label{tab:apphistory}
   \small
   \setlength{\tabcolsep}{3pt}
-  \DIFdelbeginFL %DIFDELCMD < \begin{tabular}{@{}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{2.4cm}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{3.5cm}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{5.1cm}
-%DIFDELCMD <     >{\raggedright\arraybackslash}p{2.7cm}@{}}
-%DIFDELCMD <     \toprule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \begin{tabular}{|p{2.4cm}|p{3.5cm}|p{5.1cm}|p{2.7cm}|}
+  \begin{tabular}{|p{2.4cm}|p{3.5cm}|p{5.1cm}|p{2.7cm}|}
     \hline
-    \DIFaddendFL Variant & What it changes & Outcome & Decision \\
-    \DIFdelbeginFL %DIFDELCMD < \midrule
-%DIFDELCMD <     %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-    \DIFaddendFL ECA attention & C2PSA $\to$ ECA & $F_2$ 0.844 and small-object recall 0.884 under the earlier protocol; no gain over baseline & not adopted \\ \DIFaddbeginFL \hline
-    \DIFaddendFL CBAM attention & C2PSA $\to$ CBAM & $F_2$ 0.849 and small-object recall 0.892 under the earlier protocol; efficiency confirmed in Table~\ref{tab:main} & adopted \\ \DIFaddbeginFL \hline
-    \DIFaddendFL P2 detection scale & add stride-4 head & $\mathrm{AP}_{50}$ $0.843 \to 0.853$ and very-tiny recall $0.743 \to 0.757$ & core of recommended model \\ \DIFaddbeginFL \hline
-    \DIFaddendFL C3k2Mamba, first attempt & inject SSM blocks after model construction & invalid: the training rebuild removed the injected blocks, so CBAM+P2 trained instead & discarded; added module-presence check \\ \DIFaddbeginFL \hline
-    \DIFaddendFL AtrousSSM & dilated SSM scans in neck & smoke tests showed no reliable gain; no protocol-compliant full run completed & set aside \\ \DIFaddbeginFL \hline
-    \DIFaddendFL C3k2Mamba, corrected & verify SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy gain; scan diagnostics confirmed execution & excluded \\
-    \DIFdelbeginFL %DIFDELCMD < \bottomrule
-%DIFDELCMD <   %%%
-\DIFdelendFL \DIFaddbeginFL \hline
-  \DIFaddendFL \end{tabular}
+    Variant & What it changes & Outcome & Decision \\
+    \hline
+    ECA attention & C2PSA $\to$ ECA & $F_2$ 0.844 and small-object recall 0.884 under the earlier protocol; no gain over baseline & not adopted \\ \hline
+    CBAM attention & C2PSA $\to$ CBAM & $F_2$ 0.849 and small-object recall 0.892 under the earlier protocol; efficiency confirmed in Table~\ref{tab:main} & adopted \\ \hline
+    P2 detection scale & add stride-4 head & $\mathrm{AP}_{50}$ $0.843 \to 0.853$ and very-tiny recall $0.743 \to 0.757$ & core of recommended model \\ \hline
+    C3k2Mamba, first attempt & inject SSM blocks after model construction & invalid: the training rebuild removed the injected blocks, so CBAM+P2 trained instead & discarded; added module-presence check \\ \hline
+    AtrousSSM & dilated SSM scans in neck & smoke tests showed no reliable gain; no protocol-compliant full run completed & set aside \\ \hline
+    C3k2Mamba, corrected & verify SSM blocks at six neck layers & genuine null: $+2.4$~M parameters, $2.8\times$ latency, no accuracy gain; scan diagnostics confirmed execution & excluded \\
+    \hline
+  \end{tabular}
 \end{table}
 
 % ---------- REFERENCES (IEEE) : template places references last ------------

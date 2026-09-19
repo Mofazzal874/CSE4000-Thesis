@@ -306,8 +306,7 @@ CBAM~+~P2, and the state-space neck is not carried forward.
   \setlength{\tabcolsep}{3pt}
   \begin{tabular}{|l|r|r|r|r|r|r|r|r|r|}
     \hline
-    Model & Params & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\ \hline
-    & (M) & & & & & & & & \\
+    Model & \makecell{Params\\(M)} & GFLOPs & AP & $\mathrm{AP}_{50}$ & $\mathrm{AP}_{75}$ & $\mathrm{AR}_{100}$ & $F_1$ & $F_2$ & Lat.\ (ms) \\
     \hline
     YOLO11m baseline    & 20.03 & 67.7 & 0.615 & 0.843 & 0.655 & 0.691 & 0.850 & 0.840 & 13.7 \\ \hline
     + CBAM              & 19.08 & 66.9 & 0.616 & 0.847 & 0.656 & 0.692 & 0.850 & 0.841 & 13.5 \\ \hline
@@ -375,8 +374,7 @@ module does not explain the null result.
   \label{tab:persize}
   \begin{tabular}{|l|r|r|r|r|}
     \hline
-    Model & very-tiny & tiny & small & medium \\ \hline
-    & ($<8$px) & ($8$--$16$) & ($16$--$32$) & ($32$--$96$) \\ \hline
+    Model & \makecell{very-tiny\\($<8$px)} & \makecell{tiny\\($8$--$16$)} & \makecell{small\\($16$--$32$)} & \makecell{medium\\($32$--$96$)} \\ \hline
     GT instances & 25{,}072 & 20{,}520 & 26{,}614 & 317 \\
     \hline
     YOLO11m baseline    & 0.743 & 0.869 & 0.894 & 0.909 \\ \hline

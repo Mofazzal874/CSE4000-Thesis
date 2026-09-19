@@ -1,0 +1,6 @@
+case,image,model,confidence,gt,TP,FP,FN,precision,recall,F2
+improved,collapsed_building_image0509_0.png,baseline_yolo11m,0.19,24,15,9,9,0.625,0.625,0.625
+regressed,collapsed_building_image0124_3.png,baseline_yolo11m,0.19,35,31,7,4,0.815789,0.885714,0.870787
+improved,collapsed_building_image0509_0.png,cbam_p2_RECOMMENDED,0.16,24,20,7,4,0.740741,0.833333,0.813008
+regressed,collapsed_building_image0124_3.png,cbam_p2_RECOMMENDED,0.16,35,27,12,8,0.692308,0.771429,0.75419
+missed-people,flood_image0087_1.png,cbam_p2_RECOMMENDED,0.16,30,1,12,29,0.076923,0.033333,0.037594

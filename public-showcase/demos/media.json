@@ -1,0 +1,24 @@
+[
+  {
+    "file": "drone-10m.mp4",
+    "source_filename": "10m_cbam_p2_plain_conf0.40.mp4",
+    "source_sha256": "707e02269ec5b49e1f324558aae529608c597e23de4ca6a9094e6688c3b2a1e2",
+    "altitude_m": 10,
+    "confidence": 0.4,
+    "inference": "plain",
+    "model": "YOLO11m + CBAM + P2 (original defense demo)",
+    "checkpoint_provenance": "filename token, annotate_video.py model map, and model archive; generating-run hash unavailable",
+    "transform": "complete clip; H.264 1280px width; source frame cadence retained; no audio; no inference rerun"
+  },
+  {
+    "file": "drone-50m.mp4",
+    "source_filename": "50m_cbam_p2_sahi_tta_conf0.40.mp4",
+    "source_sha256": "b9086c0c6fe700054a841414ec9f54bf75dfb58d450cf2f695c6acd23e912b2d",
+    "altitude_m": 50,
+    "confidence": 0.4,
+    "inference": "SAHI 256 / overlap 0.30 + TTA (archived label)",
+    "model": "YOLO11m + CBAM + P2 (original defense demo)",
+    "checkpoint_provenance": "filename token, annotate_video.py model map, and model archive; generating-run hash unavailable",
+    "transform": "complete clip; H.264 1280px width; source frame cadence retained; no audio; no inference rerun"
+  }
+]

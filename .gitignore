@@ -122,3 +122,12 @@ RealDisaster/**/*.png
 /Defense/draft2_generated_stale_*/
 /Defense/draft2_06_8_26/build_editorial*.log
 /tmp/
+
+# Submission archive (built locally, never committed)
+pendrive/
+
+# Explicitly selected public companion documents and demonstrations.
+!public-showcase/documents/thesis.pdf
+!public-showcase/presentation/defense-presentation.pdf
+!public-showcase/demos/drone-10m.mp4
+!public-showcase/demos/drone-50m.mp4

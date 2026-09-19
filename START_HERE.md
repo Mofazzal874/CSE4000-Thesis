@@ -1,17 +1,38 @@
 # START HERE — map of this whole research project (plain words)
 
-*Last updated: 2026-07-12 by Claude. Rule: this file's "RIGHT NOW" block gets refreshed at the
+*Last updated: 2026-09-19. Rule: this file's "RIGHT NOW" block gets refreshed at the
 end of every working session, so it is always the truthful current state.*
 
 ## What this project is (one paragraph)
-Undergrad thesis being upgraded into a journal/conference paper: detecting tiny (often <16 px)
-and partially hidden PEOPLE in drone images of disasters. Base model: YOLO11m. Data: C2A (big
-but synthetic — people pasted onto disaster photos), SARD (small but real), and our own 4K drone
-videos at 10/30/50 m. The paper we are building = a new "context-gated evidence" architecture
-(FCCG) + a synthetic-to-real pipeline proven on our own real footage. Full plain-words plan:
-`10-07-2026-Novelty-Lap-3\PLAN_IN_PLAIN_WORDS.md`.
+Undergrad thesis and paper study of tiny and partially hidden people in aerial disaster imagery.
+The completed study combines a YOLO11m architectural ablation (CBAM + P2), a scene-disjoint
+benchmark audit, tiny-aware assignment, and supervised adaptation to real drone/campus/disaster
+imagery. FCCG was tested and closed as a null result. The current research narrative is in
+`README.md`; the historical proposal remains in the lap-3 plain-words plan.
 
-## RIGHT NOW (2026-08-17)
+## RIGHT NOW (2026-09-19)
+- **FULL SHOWCASE AUDIT COMPLETE:** inventoried 101,390 files; revised `README.md` and
+  `public-showcase/`. The standalone 43-file package contains the 88-page thesis, 43-page defense
+  presentation with reading notes, two complete drone demos, diagrams/charts, a corrected gallery,
+  nine CSVs, two bootstrap summaries, and a passing full-package checker. Portable copy:
+  `pendrive/PUBLIC_SHOWCASE/`; ZIP: `pendrive/PUBLIC_SHOWCASE_2007074.zip` (56.9 MiB).
+- **NEW GALLERY CORRECTION:** archived ranking counts use conf=0.25; pictures use 0.16/0.19.
+  Recomputed displayed-threshold counts and corrected public captions. Original archive untouched.
+  Presentation also contains a one-point AP50-gap claim where its table implies about four points.
+- **RELEASE DECISION PENDING:** GitHub API confirms `Mofazzal874/CSE4000-Thesis` is PUBLIC
+  (no Pages site, zero forks reported). Proposed separate public repository:
+  `Mofazzal874/aerial-human-detection-results`. Asked user to approve initial showcase commit /
+  publication and choose whether to make the original research repository private. No commit,
+  upload, repository creation, or visibility change has been made. Full record:
+  `docs/2026-09-19_showcase_full_audit.md`.
+- **ICCIT TITLE AUDIT COMPLETE:** MSA-YOLO collides with existing 2023/2025/2026
+  methods, including Multi-Scale Attention YOLO for aerial pedestrians. Recommended title:
+  "Attention, Scale, and Supervision for Tiny Human Detection in Aerial Search-and-Rescue Imagery";
+  user selection pending. See `10-07-2026-Novelty-Lap-3/docs/2026-09-13_iccit_title_and_name_audit.md`.
+  Earlier venue dates below are historical August findings, not a current deadline check.
+- **TITLE FOLLOW-UP CORRECTION:** full ICCIT draft3 source read; paper includes the full
+  architecture/assignment/audit/adaptation study, not the earlier narrow proposal. Close assignment
+  prior art was already recognized in its August 27 audit. DRAFT3_PLAN records August 31 submission.
 - **ACTIVE LAP = `27-07-2026-Novelty-Lap-4/`.** Experiments and data collection are substantially
   complete; the active task is paper writing and publication positioning.
 - **PRIMARY RESULT:** D2 tiny-aware assignment raises <8 px recall by +1.62 +/- 0.49 percentage
@@ -21,7 +42,8 @@ videos at 10/30/50 m. The paper we are building = a new "context-gated evidence"
   Same-video disaster adaptation is strong, but unseen-event AP50 improves only +1.7 pp and is
   non-significant (p=.47). Claim target-domain adaptation, not broad disaster robustness.
 - **FCCG IS A DOCUMENTED NULL RESULT** and is not the paper headline. Model profile remains
-  19.57M params / 86.7 GFLOPs / ~8.7 ms.
+  19.57M params / 86.7 GFLOPs. The official-split ablation reports 14.6 ms; other run timings
+  use different protocols and must not be substituted into that table.
 - **DATA COLLECTION DONE:** 5 sets, 317 images / 17,365 boxes; see `DATA_MAP.md`.
 - **VENUE AUDIT CORRECTED, UNCOMMITTED:** ICCIT 2026's official deadline is now August 31
   (extended; the earlier July 31 result was a stale cache). Risk-managed recommendation =
@@ -114,5 +136,5 @@ only (its old ultralytics can't load YOLO11 checkpoints).
 ## Session resume protocol
 - **Claude, at session start:** CLAUDE.md loads automatically → read this file's RIGHT NOW block →
   read the active lap README → continue from its first unchecked box.
-- **Claude, at session end:** update RIGHT NOW here + the lap README checklist + commit.
+- **Agent, at session end:** update RIGHT NOW here + the active lap README checklist; present a review summary and suggested commit message. Do not commit without user approval (standing rule since 2026-07-12).
 - **Human:** if Claude ever seems lost, paste it this file's path and say "resume".

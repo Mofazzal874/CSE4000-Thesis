@@ -1,0 +1,4 @@
+protocol,AP50,AP_small,very_tiny_recall
+official split,0.8533,0.6156,0.7575
+scene-disjoint re-split,0.8372,0.6132,0.7451
+difference (points),-1.61,-0.24,-1.24

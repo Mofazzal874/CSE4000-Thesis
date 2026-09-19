@@ -1,0 +1,13 @@
+stage,domain,images,AP50,best_F2,recall_at_0.25,ECE
+un-adapted (C2A + assignment),drone,60,0.3354,0.3759,0.3365,0.0198
+un-adapted (C2A + assignment),rset,25,0.1326,0.2016,0.1271,0.021
+un-adapted (C2A + assignment),xevent,23,0.3957,0.4348,0.3428,0.0115
+un-adapted (C2A + assignment),c2a,2040,0.8441,0.8284,0.8212,0.0142
+drone-only fine-tune,drone,60,0.7825,0.7552,0.8281,0.0727
+drone-only fine-tune,rset,25,0.1235,0.187,0.1224,0.0198
+drone-only fine-tune,c2a,2040,0.8366,0.8233,0.8198,0.0113
+all-real fine-tune (final),drone,60,0.795,0.7708,0.8365,0.0738
+all-real fine-tune (final),rset,25,0.4109,0.4715,0.4505,0.0416
+all-real fine-tune (final),xevent,23,0.4126,0.451,0.3742,0.0172
+all-real fine-tune (final),c2a,2040,0.837,0.8239,0.8211,0.0111
+all-real fine-tune (final),campus,25,0.6885,0.6657,0.7179,0.0403

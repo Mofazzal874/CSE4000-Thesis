@@ -1,0 +1,87 @@
+% ---------- COVER PAGE (spec section 1) : SMALL CAPS, unnumbered ----------
+% Measured from Defense/Template Images/page (1).png at 73.14 px/in.
+%
+% PARAGRAPH MODEL. The template's regular gaps fix it exactly: the baselines of
+% name -> roll -> & -> name -> roll all sit 30.5pt apart, and a 14pt line at 1.5
+% spacing is 14 x 1.15 x 1.5 = 24.15pt, so every paragraph on this page carries
+% Word's 6pt "space after". The title's two lines sit 36.4pt apart = 31.05 + 6,
+% confirming it. So \parskip stays at the document's 6pt here, and one blank
+% line of size 12 is 20.7 + 6 = 26.7pt (\tblankcover), not 20.7pt.
+%
+% ELEMENTS, in order, with what the template gives for each:
+%   Project/Thesis No.:  12pt Normal, left at the 1.2in margin, cap-top 0.615in
+%                        from the paper edge, no rule after the colon.
+%                        The annotation box reads "[12,Normal, Left]"; the
+%                        template's own rendering of the line looks bold, but
+%                        the annotation is the specification and is what is
+%                        followed here.
+%   CSE 4000: ...        14pt Normal, centred, first line of the 1.2in block.
+%   Title                18pt Bold, centred, SMALL CAPS, 1.5 spacing (31.05pt).
+%   2 blank lines        title -> By      = 2 x 26.7pt
+%   By                   14pt Normal, centred.
+%   3 blank lines        By -> author     = 3 x 26.7pt
+%   Author               14pt Bold, centred.
+%   Roll                 14pt Normal, centred (6pt below the name: 30.15pt).
+%   KUET logo            1.14in HIGH. The annotation reads "1.14in x 1.0in",
+%                        but the rendered logo measures 0.998in wide by 1.148in
+%                        tall, so the first figure is the height. kuet_logo.png
+%                        has aspect 0.880 against the template's 0.869, so
+%                        setting the height alone reproduces it undistorted.
+%   2 blank lines        logo -> footer
+%   Footer block         12pt Bold, centred, 1.2 spacing (16.56pt pitch), at
+%                        the bottom of the page.
+%
+% setspace's \onehalfspacing would multiply every leading below by about 1.237,
+% so the page is wrapped in spacing{1} to make the stated leadings exact.
+
+% Header line: a one-page page style, so it sits in the 0.5in header band and
+% costs the body no vertical space.
+\makeatletter
+\newcommand{\ps@coverhdr}{%
+  \renewcommand{\@oddhead}{%
+    \raisebox{0.225in}[0pt][0pt]{\tsizeTwelve Project/Thesis No.: CSER-26-88}\hfil}%
+  \let\@evenhead\@oddhead
+  \renewcommand{\@oddfoot}{}\let\@evenfoot\@oddfoot}
+\makeatother
+\thispagestyle{coverhdr}
+
+\begin{spacing}{1}
+\setlength{\parskip}{\tafter}% Word "space after 6pt" on every paragraph
+\begin{center}
+{\tsizeFourteen CSE 4000: Thesis/ Project\par}
+
+% Cover title: small caps with every word initial-capped (template page-1
+% "Capitalize Each Word" style; the title page keeps normal title case).
+{\tsizeEighteen\bfseries\scshape
+MSA-YOLO: A Multi-Scale Attention Enhancement Of YOLO For Tiny-Human Detection In Aerial Search-And-Rescue Imagery\par}
+
+\vspace{2\tblankcover}% 2 blank lines of size 12, title -> By
+
+{\tsizeFourteen By\par}
+
+\vspace{3\tblankcover}% 3 blank lines of size 12, By -> author
+
+{\tsizeFourteen\bfseries Md Mofazzal Hosen\par}
+{\tsizeFourteen Roll: 2007074\par}
+\end{center}
+
+% Flexible gap: pushes the logo and footer block down together so the footer
+% sits at the bottom of the page, as the template shows.
+\vfill
+
+\begin{center}
+\includegraphics[height=1.14in]{figures/kuet_logo.png}
+
+\vspace{2\tblankcover}% 2 blank lines of size 12, logo -> footer
+
+% One paragraph with \\ breaks: the 1.2-spaced 16.56pt pitch the template
+% shows, with no 6pt creeping in between the four lines.
+{\tsizeTwelve\bfseries
+Department of Computer Science and Engineering\\
+Khulna University of Engineering \& Technology\\
+Khulna 9203, Bangladesh\\
+% ==== TODO: set actual submission month/year ====
+July, 2026\par}
+\end{center}
+\end{spacing}
+\clearpage

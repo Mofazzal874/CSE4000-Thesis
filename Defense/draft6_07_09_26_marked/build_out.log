@@ -240,6 +240,7 @@ s.geometric.code.tex))
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty))
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
@@ -351,19 +352,19 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\uwave' on input line 927.
 
 [13] [14] [15] [16]
-Underfull \hbox (badness 1117) in paragraph at lines 1065--1065
+Underfull \hbox (badness 1117) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 proposed as a backbone, on
 
-Underfull \hbox (badness 8056) in paragraph at lines 1065--1065
+Underfull \hbox (badness 8056) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 tested in the neck against
 
-Underfull \hbox (badness 4673) in paragraph at lines 1067--1067
+Underfull \hbox (badness 4673) in paragraph at lines 1058--1058
 []|\TU/TimesNewRoman(0)/m/n/10.95 shown outside YOLO’s as-
 
-Underfull \hbox (badness 1997) in paragraph at lines 1067--1067
+Underfull \hbox (badness 1997) in paragraph at lines 1058--1058
 \TU/TimesNewRoman(0)/m/n/10.95 assigner; matched pair with
 
-Underfull \hbox (badness 7451) in paragraph at lines 1068--1068
+Underfull \hbox (badness 7451) in paragraph at lines 1059--1059
 []|\TU/TimesNewRoman(0)/m/n/10.95 rarely reported for disaster
 [17]
 Chapter III.
@@ -372,22 +373,22 @@ Chapter IV.
 [33]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1798.
+(hyperref)                removing `subscript' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42]
-Underfull \hbox (badness 1383) in paragraph at lines 2443--2453
+Underfull \hbox (badness 1383) in paragraph at lines 2353--2363
 \TU/TimesNewRoman(0)/m/n/12 Figure []4.6[] shows the older Mamba+CBAM+P2 checkp
 oint used for the exploratory
 [43] [44] [45]
-Underfull \hbox (badness 1931) in paragraph at lines 2561--2569
+Underfull \hbox (badness 1931) in paragraph at lines 2462--2470
 \TU/TimesNewRoman(0)/m/n/12 test-time augmentation (TTA) evaluates transformed 
 versions of the full image and
 [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56]
@@ -395,67 +396,67 @@ Chapter V.
 [57] [58] [59] [60] [61]
 Chapter VI.
 
-Overfull \hbox (16.97914pt too wide) in paragraph at lines 3240--3240
+Overfull \hbox (16.97914pt too wide) in paragraph at lines 3081--3081
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Problems Associated with the
  []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3240.
+(hyperref)                removing `\sout' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3240.
+(hyperref)                removing `\uwave' on input line 3081.
 
 [62]
-Overfull \hbox (16.44594pt too wide) in paragraph at lines 3296--3296
+Overfull \hbox (16.44594pt too wide) in paragraph at lines 3137--3137
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Activities Associated with t
 he []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3296.
+(hyperref)                removing `\sout' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3296.
+(hyperref)                removing `\uwave' on input line 3137.
 
 [63] [64] [65]
 Chapter VII.
 [66] [67] [68] [69] [70]
-Underfull \hbox (badness 10000) in paragraph at lines 3625--3625
+Underfull \hbox (badness 10000) in paragraph at lines 3450--3450
 []|\TU/TimesNewRoman(0)/m/n/10.95 CBAM atten-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 P2 detection
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 core of recom-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 
-Underfull \hbox (badness 1803) in paragraph at lines 3627--3627
+Underfull \hbox (badness 1803) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 moved the injected blocks, so
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 module-presence
 
-Underfull \hbox (badness 10000) in paragraph at lines 3629--3629
+Underfull \hbox (badness 10000) in paragraph at lines 3454--3454
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 [71] [72] [73] [74] [75] [76] [77] (./main.aux)
 
@@ -486,8 +487,8 @@ INFO - Processing section 0
 INFO - Looking for bibtex file 'references.bib' for section 0
 INFO - LaTeX decoding ...
 INFO - Found BibTeX data source 'references.bib'
-INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
 INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
 INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
 INFO - No sort tailoring available for locale 'en-US'
 INFO - Writing 'main.bbl' with encoding 'UTF-8'
@@ -734,6 +735,7 @@ s.geometric.code.tex))
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty))
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
@@ -830,19 +832,19 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\uwave' on input line 927.
 
 [13] [14] [15] [16]
-Underfull \hbox (badness 1117) in paragraph at lines 1065--1065
+Underfull \hbox (badness 1117) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 proposed as a backbone, on
 
-Underfull \hbox (badness 8056) in paragraph at lines 1065--1065
+Underfull \hbox (badness 8056) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 tested in the neck against
 
-Underfull \hbox (badness 4673) in paragraph at lines 1067--1067
+Underfull \hbox (badness 4673) in paragraph at lines 1058--1058
 []|\TU/TimesNewRoman(0)/m/n/10.95 shown outside YOLO’s as-
 
-Underfull \hbox (badness 1997) in paragraph at lines 1067--1067
+Underfull \hbox (badness 1997) in paragraph at lines 1058--1058
 \TU/TimesNewRoman(0)/m/n/10.95 assigner; matched pair with
 
-Underfull \hbox (badness 7451) in paragraph at lines 1068--1068
+Underfull \hbox (badness 7451) in paragraph at lines 1059--1059
 []|\TU/TimesNewRoman(0)/m/n/10.95 rarely reported for disaster
 [17]
 Chapter III.
@@ -851,22 +853,22 @@ Chapter IV.
 [33]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1798.
+(hyperref)                removing `subscript' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42]
-Underfull \hbox (badness 1383) in paragraph at lines 2443--2453
+Underfull \hbox (badness 1383) in paragraph at lines 2353--2363
 \TU/TimesNewRoman(0)/m/n/12 Figure []4.6[] shows the older Mamba+CBAM+P2 checkp
 oint used for the exploratory
 [43] [44] [45]
-Underfull \hbox (badness 1931) in paragraph at lines 2561--2569
+Underfull \hbox (badness 1931) in paragraph at lines 2462--2470
 \TU/TimesNewRoman(0)/m/n/12 test-time augmentation (TTA) evaluates transformed 
 versions of the full image and
 [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56]
@@ -874,67 +876,67 @@ Chapter V.
 [57] [58] [59] [60] [61]
 Chapter VI.
 
-Overfull \hbox (16.97914pt too wide) in paragraph at lines 3240--3240
+Overfull \hbox (16.97914pt too wide) in paragraph at lines 3081--3081
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Problems Associated with the
  []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3240.
+(hyperref)                removing `\sout' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3240.
+(hyperref)                removing `\uwave' on input line 3081.
 
 [62]
-Overfull \hbox (16.44594pt too wide) in paragraph at lines 3296--3296
+Overfull \hbox (16.44594pt too wide) in paragraph at lines 3137--3137
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Activities Associated with t
 he []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3296.
+(hyperref)                removing `\sout' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3296.
+(hyperref)                removing `\uwave' on input line 3137.
 
 [63] [64] [65]
 Chapter VII.
 [66] [67] [68] [69] [70]
-Underfull \hbox (badness 10000) in paragraph at lines 3625--3625
+Underfull \hbox (badness 10000) in paragraph at lines 3450--3450
 []|\TU/TimesNewRoman(0)/m/n/10.95 CBAM atten-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 P2 detection
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 core of recom-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 
-Underfull \hbox (badness 1803) in paragraph at lines 3627--3627
+Underfull \hbox (badness 1803) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 moved the injected blocks, so
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 module-presence
 
-Underfull \hbox (badness 10000) in paragraph at lines 3629--3629
+Underfull \hbox (badness 10000) in paragraph at lines 3454--3454
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 [71] [72] [73] [74] [75] [76] [77] (./main.aux)
 
@@ -1189,6 +1191,7 @@ s.geometric.code.tex))
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty))
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
@@ -1285,19 +1288,19 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\uwave' on input line 927.
 
 [13] [14] [15] [16]
-Underfull \hbox (badness 1117) in paragraph at lines 1065--1065
+Underfull \hbox (badness 1117) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 proposed as a backbone, on
 
-Underfull \hbox (badness 8056) in paragraph at lines 1065--1065
+Underfull \hbox (badness 8056) in paragraph at lines 1056--1056
 []|\TU/TimesNewRoman(0)/m/n/10.95 tested in the neck against
 
-Underfull \hbox (badness 4673) in paragraph at lines 1067--1067
+Underfull \hbox (badness 4673) in paragraph at lines 1058--1058
 []|\TU/TimesNewRoman(0)/m/n/10.95 shown outside YOLO’s as-
 
-Underfull \hbox (badness 1997) in paragraph at lines 1067--1067
+Underfull \hbox (badness 1997) in paragraph at lines 1058--1058
 \TU/TimesNewRoman(0)/m/n/10.95 assigner; matched pair with
 
-Underfull \hbox (badness 7451) in paragraph at lines 1068--1068
+Underfull \hbox (badness 7451) in paragraph at lines 1059--1059
 []|\TU/TimesNewRoman(0)/m/n/10.95 rarely reported for disaster
 [17]
 Chapter III.
@@ -1306,22 +1309,22 @@ Chapter IV.
 [33]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1798.
+(hyperref)                removing `subscript' on input line 1762.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1798.
+(hyperref)                removing `math shift' on input line 1762.
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42]
-Underfull \hbox (badness 1383) in paragraph at lines 2443--2453
+Underfull \hbox (badness 1383) in paragraph at lines 2353--2363
 \TU/TimesNewRoman(0)/m/n/12 Figure []4.6[] shows the older Mamba+CBAM+P2 checkp
 oint used for the exploratory
 [43] [44] [45]
-Underfull \hbox (badness 1931) in paragraph at lines 2561--2569
+Underfull \hbox (badness 1931) in paragraph at lines 2462--2470
 \TU/TimesNewRoman(0)/m/n/12 test-time augmentation (TTA) evaluates transformed 
 versions of the full image and
 [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56]
@@ -1329,67 +1332,67 @@ Chapter V.
 [57] [58] [59] [60] [61]
 Chapter VI.
 
-Overfull \hbox (16.97914pt too wide) in paragraph at lines 3240--3240
+Overfull \hbox (16.97914pt too wide) in paragraph at lines 3081--3081
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Problems Associated with the
  []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3240.
+(hyperref)                removing `\sout' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3240.
+(hyperref)                removing `\@ifnextchar' on input line 3081.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3240.
+(hyperref)                removing `\uwave' on input line 3081.
 
 [62]
-Overfull \hbox (16.44594pt too wide) in paragraph at lines 3296--3296
+Overfull \hbox (16.44594pt too wide) in paragraph at lines 3137--3137
 |[]\TU/TimesNewRoman(0)/b/n/14 Complex Engineering Activities Associated with t
 he []|   []   |   [][][]|   [][]| 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sout' on input line 3296.
+(hyperref)                removing `\sout' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ifnextchar' on input line 3296.
+(hyperref)                removing `\@ifnextchar' on input line 3137.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\uwave' on input line 3296.
+(hyperref)                removing `\uwave' on input line 3137.
 
 [63] [64] [65]
 Chapter VII.
 [66] [67] [68] [69] [70]
-Underfull \hbox (badness 10000) in paragraph at lines 3625--3625
+Underfull \hbox (badness 10000) in paragraph at lines 3450--3450
 []|\TU/TimesNewRoman(0)/m/n/10.95 CBAM atten-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 P2 detection
 
-Underfull \hbox (badness 10000) in paragraph at lines 3626--3626
+Underfull \hbox (badness 10000) in paragraph at lines 3451--3451
 []|\TU/TimesNewRoman(0)/m/n/10.95 core of recom-
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 
-Underfull \hbox (badness 1803) in paragraph at lines 3627--3627
+Underfull \hbox (badness 1803) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 moved the injected blocks, so
 
-Underfull \hbox (badness 10000) in paragraph at lines 3627--3627
+Underfull \hbox (badness 10000) in paragraph at lines 3452--3452
 \TU/TimesNewRoman(0)/m/n/10.95 module-presence
 
-Underfull \hbox (badness 10000) in paragraph at lines 3629--3629
+Underfull \hbox (badness 10000) in paragraph at lines 3454--3454
 []|\TU/TimesNewRoman(0)/m/n/10.95 C3k2Mamba,
 [71] [72] [73] [74] [75] [76] [77] (./main.aux) )
 (see the transcript file for additional information)
