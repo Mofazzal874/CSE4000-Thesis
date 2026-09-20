@@ -28,6 +28,10 @@ imagery. FCCG was tested and closed as a null result. The current research narra
   45-file showcase. All 45 files were fetched anonymously from GitHub and verified byte-for-byte;
   the downloaded package passes its result/hash/link checks. Research navigation links explicitly
   target `novelty-lap-4`; unrelated research history was not merged into `main`.
+- **RELEASE COMPLETE:** `CSE4000-Thesis/releases/tag/showcase-v1.0.1` provides the 56.90 MiB
+  portable ZIP. Its public download was fetched without authentication and matched the local
+  SHA-256. All five research-navigation links also passed anonymous checks. The research branch
+  contains the synchronized documentation at `a48182b`; no publication approval remains pending.
 - **EARLIER PUBLICATION:** the earlier approved separate repository
   `Mofazzal874/aerial-human-detection-results` and v1.0.0 release already exist. Work there stopped
   after the user's correction; neither was deleted. Original repository visibility is unchanged.

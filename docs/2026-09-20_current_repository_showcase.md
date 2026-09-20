@@ -46,3 +46,9 @@ Staging includes `git add --renormalize -- public-showcase` so previously tracke
 Main commit: [`0188dee923eedcade0d2b1059ae07950e9ef27f1`](https://github.com/Mofazzal874/CSE4000-Thesis/commit/0188dee923eedcade0d2b1059ae07950e9ef27f1), a normal forward update from `1161667`. Exactly 47 files changed: the root README, four media exceptions in `.gitignore`, and the 45-file companion. No existing research implementation or experiment files were changed on `main`.
 
 Anonymous GitHub checks confirm the repository remains public, its default branch is `main`, and the landing README matches the reviewed revision. All 45 companion files, including both PDFs and both videos, were fetched without authentication and matched byte-for-byte. Running the verifier on that downloaded copy passes the full integrity, links, numerical, and gallery checks.
+
+The synchronized research-branch revision was committed and pushed as `a48182b`. All five research-navigation links from the main README resolve anonymously, including this record.
+
+Release: [showcase-v1.0.1](https://github.com/Mofazzal874/CSE4000-Thesis/releases/tag/showcase-v1.0.1). The [portable ZIP](https://github.com/Mofazzal874/CSE4000-Thesis/releases/download/showcase-v1.0.1/PUBLIC_SHOWCASE_2007074.zip) is 59,659,073 bytes (56.90 MiB), SHA-256 `874bac00a118512331e91b164a37df4df7440370f4f812e4a4ad48f34bad3b6f`. Its final public download was fetched without authentication and matched that hash. An initial upload timed out; only its incomplete zero-byte draft asset was removed before a successful streamed retry. The release is public, not a draft.
+
+All requested publication work is complete on the current repository's default `main` branch. Main remains the default; repository visibility and the separate repository were not changed.

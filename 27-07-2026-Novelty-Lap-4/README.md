@@ -38,6 +38,8 @@ real disaster *training* data (SAM3-assisted, no tedious manual boxing) and then
       on `main` at `0188dee`; every public package file was downloaded anonymously and verified.
       Root navigation points to research-branch records without merging unrelated experiments.
       See `../docs/2026-09-20_current_repository_showcase.md`.
+- [x] Published `showcase-v1.0.1` release in CSE4000-Thesis with the 56.90 MiB portable ZIP.
+      Anonymous download matches local SHA-256; all five research-navigation links also pass.
 - [x] extract disaster training frames (dedup; exclude R-set 25)
 - [x] annotate/normalize disaster data and build the combined training set
 - [x] retrain joint (C2A + drone + campus + disaster) and evaluate R-set/void behavior
