@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "prepared": "2026-09-20",
-  "scope": "curated companion inside CSE4000-Thesis; no detector code or model weights in this folder",
+  "scope": "selected results, diagrams, and recorded demos",
   "files": [
     {
       "path": ".gitattributes",
@@ -10,8 +10,8 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 183,
-      "sha256": "8464dc38d1c80a3927f7d9c39a4cdb02fae18920584816faa8f70e601c1b5321"
+      "bytes": 221,
+      "sha256": "57ee68100850826a22875579c729d585864829a631e413541434d0ae8a954a01"
     },
     {
       "path": "analysis/verify_results.py",
@@ -59,11 +59,6 @@
       "sha256": "495ba1ef97615a3170c56a68b57ab621d2f7cc4864e9c3f695516b582e37096d"
     },
     {
-      "path": "CITATION.cff",
-      "bytes": 706,
-      "sha256": "2cc4d2dd779c458da1fd9c61d7fd1be45fdcd8786d85f56068a383f89851952c"
-    },
-    {
       "path": "demos/drone-10m.jpg",
       "bytes": 88057,
       "sha256": "fdedff3ccf216a4b7ed966c379d2d9b792aa3c22a718971f782b25fa4d137e48"
@@ -90,78 +85,33 @@
     },
     {
       "path": "demos/README.md",
-      "bytes": 2500,
-      "sha256": "2355408130eea9ddb5c6d6c84296cf51a7019c33a803f0fcb77c921522215aff"
+      "bytes": 1069,
+      "sha256": "9f76113cd99bb2e247449e9f1ae9d55b90088b82c8922ed362eb836671370d59"
     },
     {
       "path": "docs/AVAILABILITY.md",
-      "bytes": 3665,
-      "sha256": "4e6d83c19cab9d81ee0f532c6efc26305c8fbd93a0b03da0bcbac1b7c6f4a925"
+      "bytes": 721,
+      "sha256": "a7c3c63070c996de5de78919a9fdeb0a4a6d79be5937cfc659b6ae4ed8bcb77d"
     },
     {
       "path": "docs/EVIDENCE.md",
-      "bytes": 6478,
-      "sha256": "afe317545900cfc5fe4dd42abd138b803eff68c5eb2df5f0a93b2c7c74de69c6"
+      "bytes": 2902,
+      "sha256": "133d6b65c4c618ec0310f1a83397b29c8169766e4d12a06191ff9d04c07d5a8c"
     },
     {
       "path": "docs/GALLERY.md",
-      "bytes": 3294,
-      "sha256": "e783933e3a35344ae2432a6f62642d65ad70cc5962e0453ac93efaddbde1aea2"
+      "bytes": 2006,
+      "sha256": "a893c440b39f3378f38dd57e7892057c9b063068eb10d2ddc7d20a1d8b2db34f"
     },
     {
-      "path": "docs/PROFESSOR_GUIDE.md",
-      "bytes": 4691,
-      "sha256": "d56f5df99ae88eaaf4e365779da4ac5922e9f80137f3ca2ad4b06077a9e643d7"
-    },
-    {
-      "path": "documents/thesis.pdf",
-      "bytes": 23912984,
-      "sha256": "63eb7cf24f10ce54eda0bbd55c7c3ec1b47e427b4f7044c70b1d6f5ae0ee024d"
-    },
-    {
-      "path": "presentation/defense-presentation.pdf",
-      "bytes": 4589657,
-      "sha256": "939e789fb251acfe505b682df5bbee4a51de2f00c613382b7603ea66ce7f09bb"
-    },
-    {
-      "path": "presentation/README.md",
-      "bytes": 2985,
-      "sha256": "de1da6f24cd82fdd6655577a1a84dee25a70456afd43f28248aae727c4253ccc"
-    },
-    {
-      "path": "presentation/slide-01.png",
-      "bytes": 303838,
-      "sha256": "a5fe25ef872930bfe4e7f66d772861566de7a04a1f6fbbc5e086d844494a6205"
-    },
-    {
-      "path": "presentation/slide-14.png",
-      "bytes": 248141,
-      "sha256": "f10f5b8f60549adab72cc9c56adea1a62e23f67df83bb17905b259213a476e6b"
-    },
-    {
-      "path": "presentation/slide-18.png",
-      "bytes": 129446,
-      "sha256": "5870aa6c2f66f0f890475799d5885ab481cef68d51721fed1d2907b1a12f978f"
-    },
-    {
-      "path": "presentation/slide-26.png",
-      "bytes": 107324,
-      "sha256": "61bb5c1399d50e1d8af91fe189c4ed24f18c6b042d0f92d7f3b88b93ed4da1b1"
-    },
-    {
-      "path": "presentation/slide-28.png",
-      "bytes": 92842,
-      "sha256": "3fb520f306ccfa269a9f0bb00254cb37d6929a399cfcd4e03fb48b0d8a518a86"
-    },
-    {
-      "path": "presentation/slide-30.png",
-      "bytes": 668013,
-      "sha256": "4a8338370c58c888951cfd543e9cdeb3995f276ef18da6a7538a6a0b0766ebc0"
+      "path": "docs/READING_GUIDE.md",
+      "bytes": 769,
+      "sha256": "b22a40525b4cda046f176b1312c4899ceeb7581e444cc003228c51232cd3a480"
     },
     {
       "path": "README.md",
-      "bytes": 17029,
-      "sha256": "1c12c8b31b8bf0b112d49e029ed1e2f1a83ea010a0139e795af41a481ab8aa05"
+      "bytes": 4133,
+      "sha256": "762ac467e4c073fb9599e0a8779986afebbcde15cedd8cb66c35bf43610b3a32"
     },
     {
       "path": "results/bootstrap_s3_control_full_vs_s3_assign_full.json",

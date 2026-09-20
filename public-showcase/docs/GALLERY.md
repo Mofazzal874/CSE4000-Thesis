@@ -1,35 +1,31 @@
-# Measured successes and failure cases
+# Detection examples
 
-These examples come from the official C2A test set and the architectural ablation. They compare the YOLO11m baseline with CBAM + P2. They are separate from the later assignment and adaptation experiments.
+These C2A examples compare YOLO11m with CBAM + P2. They were selected for large gains, regressions, or low recall, so they do not represent average performance.
 
-The archive selected cases by measured F2 gain/loss or recall at **confidence 0.25**, restricted to images with at least ten annotated people. These are intentionally extreme examples, not a random estimate of average performance. [Original ranked selection at 0.25](../results/failure_and_comparison_cases.csv).
+Green boxes are matched detections, blue boxes are false positives, and red boxes are missed annotations. Matching uses IoU >= 0.5. The displayed confidence thresholds are 0.19 for the baseline and 0.16 for CBAM + P2.
 
-**Overlay legend:** green = matched detection (TP), blue = unmatched detection (FP), red = missed ground truth (FN). Matching uses IoU at least 0.5. The baseline uses confidence 0.19 and CBAM + P2 uses 0.16, their respective archived F2-optimal settings. These are model-specific operating points.
+The [ranking table](../results/failure_and_comparison_cases.csv) uses confidence 0.25. The counts below instead use the [displayed-threshold counts](../results/gallery_overlay_counts.csv), recomputed from cached detections.
 
-**Audit correction:** the original ranking CSV and the pictures use different thresholds. The captions below use [newly recomputed overlay counts](../results/gallery_overlay_counts.csv) from the cached detections at **0.19/0.16**, so their counts correspond to the pictures. The original 0.25 table is preserved separately.
+## More detections
 
-## Improved case
+This image contains 24 annotated people. The baseline matches 15, misses 9, and has 9 false positives. CBAM + P2 matches 20, misses 4, and has 7 false positives. Recall rises from 0.6250 to 0.8333.
 
-`collapsed_building_image0509_0.png` has 24 annotated person instances. At the displayed thresholds, recall rises from 0.6250 to 0.8333 and per-image F2 from 0.6250 to 0.8130. CBAM + P2 matches 20 instances, misses 4, and produces 7 false positives. The baseline matches 15, misses 9, and produces 9 false positives.
-
-| YOLO11m baseline | CBAM + P2 |
+| Baseline | CBAM + P2 |
 |---|---|
-| ![Baseline detections in the improved case](../assets/examples/improved-baseline.jpg) | ![CBAM and P2 detections in the improved case](../assets/examples/improved-cbam_p2.jpg) |
+| ![Baseline: 15 matches, 9 misses, 9 false positives](../assets/examples/improved-baseline.jpg) | ![CBAM + P2: 20 matches, 4 misses, 7 false positives](../assets/examples/improved-cbam_p2.jpg) |
 
-## Regressed case
+## A regression
 
-`collapsed_building_image0124_3.png` has 35 annotated instances. At the displayed thresholds, recall falls from 0.8857 to 0.7714 and per-image F2 from 0.8708 to 0.7542. CBAM + P2 matches 27 instances, misses 8, and produces 12 false positives. The baseline matches 31, misses 4, and produces 7 false positives.
+This image contains 35 annotated people. The baseline matches 31, misses 4, and has 7 false positives. CBAM + P2 matches 27, misses 8, and has 12 false positives. Recall falls from 0.8857 to 0.7714.
 
-| YOLO11m baseline | CBAM + P2 |
+| Baseline | CBAM + P2 |
 |---|---|
-| ![Baseline detections in the regressed case](../assets/examples/regressed-baseline.jpg) | ![CBAM and P2 detections in the regressed case](../assets/examples/regressed-cbam_p2.jpg) |
+| ![Baseline: 31 matches, 4 misses, 7 false positives](../assets/examples/regressed-baseline.jpg) | ![CBAM + P2: 27 matches, 8 misses, 12 false positives](../assets/examples/regressed-cbam_p2.jpg) |
 
-The architecture improves the aggregate tiny-target result while still making some individual scenes worse. This pair makes that limitation visible.
+## Most people missed
 
-## Severe missed-detection case
+Of 30 annotated people, CBAM + P2 matches 1 and misses 29, with 12 false positives at confidence 0.16. Recall is 0.0333. The ranking table's zero matches and six false positives use the different 0.25 threshold.
 
-`flood_image0087_1.png` contains 30 annotated person instances. At confidence **0.16**, the displayed CBAM + P2 overlay matches **1**, misses **29**, and produces **12 false positives**. Recall is 0.0333 and precision is 0.0769. At confidence **0.25**, the original ranking table records zero matches and six false positives; those different counts must not be attached to this picture.
+![CBAM + P2: 1 match, 29 misses, 12 false positives](../assets/examples/missed-people.jpg)
 
-![CBAM and P2 failure case: twenty-nine of thirty annotated people missed at confidence 0.16](../assets/examples/missed-people.jpg)
-
-These overlays were copied from the archive. They were drawn from cached detections rather than produced by a fresh inference run for this companion. C2A is credited to Nihal et al.; see [attribution and availability](AVAILABILITY.md). Click an image to inspect its original resolution.
+These are existing outputs; no new inference was run for this page. The underlying images are from C2A by Nihal et al. [Credits](AVAILABILITY.md).

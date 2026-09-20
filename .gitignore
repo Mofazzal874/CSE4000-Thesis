@@ -100,8 +100,9 @@ Defense/demo/.venv/
 Defense/demo/data/
 Defense/demo/results/
 
-# Selected thesis showcase documents and demonstrations.
-!public-showcase/documents/thesis.pdf
-!public-showcase/presentation/defense-presentation.pdf
+# Exclude academic documents; retain selected demonstrations.
+public-showcase/documents/
+public-showcase/presentation/
+public-showcase/CITATION.cff
 !public-showcase/demos/drone-10m.mp4
 !public-showcase/demos/drone-50m.mp4
