@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="530" viewBox="0 0 1200 530" role="img" aria-labelledby="title desc">
+<title id="title">Conceptual detector and training-only assignment</title>
+<desc id="desc">An aerial frame passes through a YOLO11m backbone with CBAM replacing C2PSA, then multi-scale fusion with P2 and four detection scales, producing person boxes. Tiny-aware assignment changes training supervision only. Labelled real data are used during subsequent adaptation.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#426775"/></marker></defs>
+<rect x="1" y="1" width="1198" height="528" rx="18" fill="#f7fafc" stroke="#dae4eb"/>
+<g font-family="sans-serif">
+<text x="36" y="47" fill="#153247" font-size="25" font-weight="700">The retained detector and the training intervention</text>
+<text x="36" y="79" fill="#596f7d" font-size="16">Conceptual flow · P2/P3/P4/P5 correspond to strides 4/8/16/32.</text>
+<g fill="#fff" stroke="#b5cbd5" stroke-width="1.5"><rect x="36" y="120" width="188" height="135" rx="10"/><rect x="270" y="120" width="257" height="135" rx="10"/><rect x="573" y="120" width="264" height="135" rx="10"/><rect x="883" y="120" width="280" height="135" rx="10"/></g>
+<g stroke="#426775" stroke-width="2" marker-end="url(#arrow)"><path d="M224 187H267"/><path d="M527 187H570"/><path d="M837 187H880"/></g>
+<g fill="#163f50" font-size="20" font-weight="700"><text x="57" y="162">Aerial frame</text><text x="291" y="162">YOLO11m + CBAM</text><text x="595" y="162">Multi-scale fusion</text><text x="905" y="162">Person detections</text></g>
+<g fill="#536977" font-size="16"><text x="57" y="199">Image preparation</text><text x="57" y="227">and resizing</text><text x="291" y="199">CBAM replaces C2PSA</text><text x="291" y="227">in the tested configuration</text><text x="595" y="199">Added P2 / stride-4 branch</text><text x="595" y="227">Heads: P2 · P3 · P4 · P5</text><text x="905" y="199">Boxes and confidence</text><text x="905" y="227">Review detections + misses</text></g>
+<rect x="270" y="317" width="567" height="108" rx="10" fill="#e5f3ef" stroke="#76b2a3"/>
+<path d="M706 317V258" stroke="#426775" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="292" y="348" fill="#176a58" font-size="13" font-weight="700" letter-spacing="1.4">TRAINING ONLY</text>
+<text x="292" y="379" fill="#163f50" font-size="20" font-weight="700">Tiny-aware positive assignment · CIoU + NWD</text>
+<text x="292" y="406" fill="#41685f" font-size="16">Selected blend γ = 0.5; compared with the matched γ = 0 control.</text>
+<text x="36" y="474" fill="#536977" font-size="17">Adaptation stage: fine-tune with labelled real imagery, then evaluate on held-out domains.</text>
+<text x="36" y="504" fill="#536977" font-size="15">This schematic omits layer-level wiring and does not include the rejected Mamba or frequency-gated variants.</text>
+</g></svg>

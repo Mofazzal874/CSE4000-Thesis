@@ -1,0 +1,31 @@
+category,why,rank,image,gt,rec_TP,rec_FP,rec_FN,rec_recall,rec_precision,rec_F2,base_recall,base_precision,base_F2,d_recall,d_F2
+01_worst_recall,failure - most people missed,1,flood_image0087_1.png,30,0,6,30,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+01_worst_recall,failure - most people missed,2,collapsed_building_image0398_1.png,26,0,6,26,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+01_worst_recall,failure - most people missed,3,collapsed_building_image0098_0.png,28,1,1,27,0.035714,0.5,0.04386,0.035714,0.2,0.042735,0.0,0.001125000000000001
+01_worst_recall,failure - most people missed,4,flood_image0087_4.png,42,2,5,40,0.047619,0.285714,0.057143,0.047619,0.666667,0.05848,0.0,-0.001336999999999998
+01_worst_recall,failure - most people missed,5,flood_image0087_2.png,41,2,5,39,0.04878,0.285714,0.05848,0.02439,0.5,0.03012,0.02439,0.028359999999999996
+01_worst_recall,failure - most people missed,6,flood_image0466_1.png,35,2,14,33,0.057143,0.125,0.064103,0.028571,0.333333,0.034965,0.028572,0.02913799999999999
+01_worst_recall,failure - most people missed,7,flood_image0152_1.png,32,2,3,30,0.0625,0.4,0.075188,0.125,0.8,0.150376,-0.0625,-0.075188
+01_worst_recall,failure - most people missed,8,flood_image0119_1.png,29,2,2,27,0.068966,0.5,0.083333,0.0,0.0,0.0,0.068966,0.083333
+02_worst_precision,failure - most false alarms,1,collapsed_building_image0398_1.png,26,0,6,26,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+02_worst_precision,failure - most false alarms,2,flood_image0087_1.png,30,0,6,30,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+02_worst_precision,failure - most false alarms,3,flood_image0466_1.png,35,2,14,33,0.057143,0.125,0.064103,0.028571,0.333333,0.034965,0.028572,0.02913799999999999
+02_worst_precision,failure - most false alarms,4,flood_image0485_2.png,41,3,16,38,0.073171,0.157895,0.081967,0.04878,0.666667,0.05988,0.024391000000000003,0.022086999999999996
+02_worst_precision,failure - most false alarms,5,flood_image0485_4.png,33,6,16,27,0.181818,0.272727,0.194805,0.060606,0.5,0.073529,0.12121200000000001,0.12127600000000001
+02_worst_precision,failure - most false alarms,6,flood_image0466_3.png,45,5,13,40,0.111111,0.277778,0.126263,0.022222,0.5,0.027473,0.088889,0.09878999999999999
+03_best,"best cases, for contrast",1,flood_image0236_2.png,43,43,0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0
+03_best,"best cases, for contrast",2,fire_image0281_2.png,32,32,0,0,1.0,1.0,1.0,1.0,0.941176,0.987654,0.0,0.012345999999999968
+03_best,"best cases, for contrast",3,fire_image0466_1.png,25,25,0,0,1.0,1.0,1.0,1.0,0.961538,0.992063,0.0,0.007936999999999972
+03_best,"best cases, for contrast",4,fire_image0013_1.png,24,24,0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,1,collapsed_building_image0509_0.png,24,20,3,4,0.833333,0.869565,0.840336,0.625,0.652174,0.630252,0.208333,0.21008399999999994
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,2,flood_image0147_1.png,31,22,5,9,0.709677,0.814815,0.728477,0.516129,0.695652,0.544218,0.19354800000000005,0.18425900000000006
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,3,flood_image0327_0.png,25,17,1,8,0.68,0.944444,0.720339,0.56,0.608696,0.569106,0.12,0.15123299999999995
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,4,fire_image0149_2.png,27,25,3,2,0.925926,0.892857,0.919118,0.777778,0.75,0.772059,0.14814800000000006,0.14705899999999994
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,5,flood_image0094_3.png,51,30,5,21,0.588235,0.857143,0.627615,0.45098,0.676471,0.483193,0.13725499999999996,0.14442200000000005
+04_improved_vs_baseline,comparison - P2 gains most over the baseline,6,flood_image0136_4.png,47,38,5,9,0.808511,0.883721,0.822511,0.659574,0.775,0.679825,0.14893699999999999,0.14268599999999998
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,1,collapsed_building_image0124_3.png,35,24,9,11,0.685714,0.727273,0.693642,0.857143,0.833333,0.852273,-0.17142899999999994,-0.15863099999999997
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,2,traffic_incident_image0249_2.png,55,32,6,23,0.581818,0.842105,0.620155,0.745455,0.732143,0.742754,-0.16363700000000003,-0.12259900000000001
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,3,collapsed_building_image0092_3.png,33,24,4,9,0.727273,0.857143,0.75,0.848485,0.933333,0.864198,-0.1212120000000001,-0.11419800000000002
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,4,flood_image0306_1.png,33,22,4,11,0.666667,0.846154,0.696203,0.787879,0.896552,0.807453,-0.12121199999999999,-0.11124999999999996
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,5,flood_image0200_1.png,24,16,6,8,0.666667,0.727273,0.677966,0.791667,0.76,0.785124,-0.125,-0.10715800000000009
+05_regressed_vs_baseline,comparison - P2 loses most against the baseline,6,collapsed_building_image0199_1.png,31,27,5,4,0.870968,0.84375,0.865385,1.0,0.861111,0.96875,-0.12903200000000004,-0.10336500000000004

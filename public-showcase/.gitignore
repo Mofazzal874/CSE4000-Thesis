@@ -1,0 +1,14 @@
+# Keep future local inference experiments out of the public companion.
+__pycache__/
+.venv/
+.env
+.env.*
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+*.safetensors
+raw-data/
+checkpoints/
+private/

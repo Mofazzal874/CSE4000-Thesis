@@ -4,13 +4,17 @@
 
 ![Research overview: architecture, tiny-aware assignment, and real-domain adaptation](public-showcase/assets/research-overview.svg)
 
-**Md Mofazzal Hosen** · B.Sc. in Computer Science and Engineering  
-**Khulna University of Engineering & Technology (KUET), Bangladesh**  
+**Md Mofazzal Hosen** · B.Sc. in Computer Science and Engineering<br>
+**Khulna University of Engineering & Technology (KUET), Bangladesh**<br>
 Supervisor: **Prof. Dr. Sk. Md. Masudul Ahsan** · Thesis/project: **CSER-26-88** · September 2026
 
-[Thesis PDF](public-showcase/documents/thesis.pdf) · [Presentation](public-showcase/presentation/README.md) · [Video demos](public-showcase/demos/README.md) · [Results](#results) · [Visual evidence](public-showcase/docs/GALLERY.md) · [Evidence](public-showcase/docs/EVIDENCE.md)
+[Professor guide](public-showcase/docs/PROFESSOR_GUIDE.md) · [Thesis PDF](public-showcase/documents/thesis.pdf) · [Presentation](public-showcase/presentation/README.md) · [Video demos](public-showcase/demos/README.md) · [Results](#results) · [Visual evidence](public-showcase/docs/GALLERY.md) · [Evidence](public-showcase/docs/EVIDENCE.md)
+
+[Download the complete showcase ZIP](https://github.com/Mofazzal874/CSE4000-Thesis/releases/download/showcase-v1.0.1/PUBLIC_SHOWCASE_2007074.zip) · [Release notes](https://github.com/Mofazzal874/CSE4000-Thesis/releases/tag/showcase-v1.0.1)
 
 > Research companion to the undergraduate thesis archived under **MSA-YOLO**. Read the report, watch the demonstrations, inspect the exported measurements, or run the independent result checker. This package includes no detector implementation, model weights, or raw datasets. The README covers the completed extended study; the original defense presentation documents the earlier architectural study.
+
+This companion belongs to [CSE4000-Thesis](https://github.com/Mofazzal874/CSE4000-Thesis). It can be read independently of the implementation. **The repository is public: this folder does not hide source code or history elsewhere in the repository.** See [artifact availability](public-showcase/docs/AVAILABILITY.md) for the distinction between this curated export and repository access.
 
 ## Explore the work
 
@@ -26,8 +30,6 @@ Supervisor: **Prof. Dr. Sk. Md. Masudul Ahsan** · Thesis/project: **CSER-26-88*
 [![Annotated own-drone footage at 50 m; click to play the complete video](public-showcase/demos/drone-50m.jpg)](public-showcase/demos/drone-50m.mp4)
 
 *Own-drone footage, 50 m. Original defense-demo CBAM + P2 with SAHI/TTA at confidence 0.40. Green boxes in this video are predictions, not independently verified true positives. The clip illustrates behaviour; it does not establish the final adapted model's benchmark scores.*
-
-
 
 ## Research question
 
@@ -161,13 +163,15 @@ This is a research prototype for human review. The study does not establish reli
 
 ## Inspect the results without the training code
 
-The companion includes selected CSV tables and a small, independent Python script that checks the reported arithmetic. It does not import the detector, load weights, or access the private repository.
+The companion includes selected CSV tables and a small, independent Python script that checks the reported arithmetic. It does not import the detector, load weights, or require files outside this folder. Run it from the repository root:
 
 ```powershell
 python public-showcase/analysis/verify_results.py
 ```
 
-Python 3.10 or newer and the standard library are sufficient. The script verifies the three-seed summary, per-size count consistency, adaptation deltas, and packaged-file hashes. These checks establish consistency of the shared exports; reproducing model training or inference requires the private research artifacts.
+Python 3.10 or newer and the standard library are sufficient. The script verifies the three-seed summary, per-size count consistency, adaptation deltas, and packaged-file hashes. These checks establish consistency of the shared exports; reproducing model training or inference also requires the appropriate implementation, checkpoints, datasets, and environment described in the full handover.
+
+Inside `public-showcase/`:
 
 ```text
 README.md              Research narrative and headline findings
@@ -178,7 +182,8 @@ results/               Tables, bootstrap summaries, and result manifest
 analysis/              Independent result-arithmetic checker
 docs/EVIDENCE.md        Table provenance and interpretation notes
 docs/GALLERY.md         Measured successes, regressions, and failure cases
-docs/AVAILABILITY.md    Public/private artifact boundaries
+docs/PROFESSOR_GUIDE.md Guided academic review and questions to assess
+docs/AVAILABILITY.md    Included artifacts, access, and attribution
 demos/                 Two complete video demos, posters, and provenance
 RELEASE_MANIFEST.json   File sizes and SHA-256 for the complete companion
 ```
@@ -196,11 +201,11 @@ The report's cover records July 2026; this companion was assembled and audited i
 
 ## Research workspace navigation
 
-The portable companion is the folder to share when detector source access is not intended. This research workspace also contains the implementation and working history; its repository visibility must be managed separately.
+The research narrative, professor reading guide, diagrams, presentation, videos, and selected numerical evidence are maintained in this repository. The `public-showcase/` folder also works as a portable offline copy.
 
-- [Professor guide](pendrive/README.md): complete local handover and portable showcase.
-- [Project status](START_HERE.md) and [active lap](27-07-2026-Novelty-Lap-4/README.md).
-- [Dataset map](DATA_MAP.md).
-- [Showcase audit and release record](docs/2026-09-19_showcase_full_audit.md).
+- [Professor guide](public-showcase/docs/PROFESSOR_GUIDE.md): guided review using the material in this repository.
+- [Project status](https://github.com/Mofazzal874/CSE4000-Thesis/blob/novelty-lap-4/START_HERE.md) and [active lap](https://github.com/Mofazzal874/CSE4000-Thesis/blob/novelty-lap-4/27-07-2026-Novelty-Lap-4/README.md) on the research branch.
+- [Dataset map](https://github.com/Mofazzal874/CSE4000-Thesis/blob/novelty-lap-4/DATA_MAP.md).
+- [Full evidence audit](https://github.com/Mofazzal874/CSE4000-Thesis/blob/novelty-lap-4/docs/2026-09-19_showcase_full_audit.md) and [current-repository integration record](https://github.com/Mofazzal874/CSE4000-Thesis/blob/novelty-lap-4/docs/2026-09-20_current_repository_showcase.md).
 
-The pendrive links are local-workspace links; that folder is not tracked in the research repository.
+For the complete offline submission, open `pendrive/README.md` in the local handover. The pendrive archive is not tracked here; it contains additional reproduction materials and the editable presentation.

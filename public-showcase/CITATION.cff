@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Please cite the thesis when discussing the findings in this research companion."
+title: "Tiny Human Detection in Aerial Search-and-Rescue Imagery: Research Companion"
+type: dataset
+authors:
+  - family-names: Hosen
+    given-names: Md Mofazzal
+url: "https://github.com/Mofazzal874/CSE4000-Thesis"
+preferred-citation:
+  type: thesis
+  title: "MSA-YOLO: A Multi-Scale Attention Enhancement of YOLO for Tiny-Human Detection in Aerial Search-and-Rescue Imagery"
+  authors:
+    - family-names: Hosen
+      given-names: Md Mofazzal
+  year: 2026
+  institution:
+    name: "Khulna University of Engineering & Technology"
+  thesis-type: "B.Sc. thesis in Computer Science and Engineering"

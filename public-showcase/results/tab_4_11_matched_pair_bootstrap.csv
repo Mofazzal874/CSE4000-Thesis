@@ -1,0 +1,8 @@
+metric,gamma_0,gamma_0.5,delta_pp,ci95_lo_pp,ci95_hi_pp,p_value,significant
+AP50,0.8449,0.8441,-0.08,-0.32,0.17,0.536,False
+F2 (operational),0.8257,0.8284,0.27,0.03,0.5,0.024,True
+AP_S,0.5951,0.6151,2.0,,,,not bootstrapped
+very-tiny recall,0.7299,0.7508,2.08,1.77,2.38,0.0,True
+tiny recall,0.8343,0.8228,-1.15,-1.48,-0.84,0.0,True
+small recall,0.8504,0.841,-0.95,-1.4,-0.5,0.0,True
+medium recall,0.3634,0.2317,-13.17,-17.94,-9.28,0.0,True

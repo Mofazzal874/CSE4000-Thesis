@@ -99,3 +99,9 @@ drone_inference_out/
 Defense/demo/.venv/
 Defense/demo/data/
 Defense/demo/results/
+
+# Selected thesis showcase documents and demonstrations.
+!public-showcase/documents/thesis.pdf
+!public-showcase/presentation/defense-presentation.pdf
+!public-showcase/demos/drone-10m.mp4
+!public-showcase/demos/drone-50m.mp4

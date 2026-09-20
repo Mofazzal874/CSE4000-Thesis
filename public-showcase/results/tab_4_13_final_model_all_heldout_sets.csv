@@ -1,0 +1,6 @@
+evaluation_set,images,gt_instances,AP50,best_F2,recall_at_0.25,precision_at_0.25,ECE
+C2A scene-disjoint test,2040,72847,0.837,0.8239,0.8211,0.8345,0.0111
+Drone test,60,3584,0.795,0.7708,0.8365,0.5315,0.0738
+Disaster R-set,25,1070,0.4109,0.4715,0.4505,0.5133,0.0416
+Unseen disaster event,23,318,0.4126,0.451,0.3742,0.601,0.0172
+Campus,25,663,0.6885,0.6657,0.7179,0.5053,0.0403

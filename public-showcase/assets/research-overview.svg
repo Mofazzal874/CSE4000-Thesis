@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+<title id="title">Finding people at the limits of aerial visibility</title>
+<desc id="desc">Three connected research questions: attention and resolution, tiny-aware supervision, and supervised real-domain adaptation. Their evidence is evaluated with split audits, matched comparisons, seed replication, and held-out real imagery.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#10283f"/><stop offset="1" stop-color="#163f4c"/></linearGradient></defs>
+<rect width="1200" height="430" rx="20" fill="#102f43"/>
+<g font-family="sans-serif">
+<text x="42" y="48" font-size="14" font-weight="700" letter-spacing="3" fill="#7ee0d0">AERIAL HUMAN DETECTION · RESEARCH COMPANION</text>
+<text x="42" y="100" font-size="34" font-weight="700" fill="#ffffff">Finding people when every pixel matters.</text>
+<text x="42" y="136" font-size="18" fill="#bed4df">A measured study of architecture, supervision, and transfer to real footage.</text>
+<g fill="#f4f8fa"><rect x="42" y="171" width="354" height="159" rx="12"/><rect x="423" y="171" width="354" height="159" rx="12"/><rect x="804" y="171" width="354" height="159" rx="12"/></g>
+<g fill="#176c68" font-size="13" font-weight="700" letter-spacing="1.5"><text x="64" y="202">01 / REPRESENTATION</text><text x="445" y="202">02 / SUPERVISION</text><text x="826" y="202">03 / DOMAIN TRANSFER</text></g>
+<g fill="#10283f" font-size="24" font-weight="700"><text x="64" y="243">Attention + P2</text><text x="445" y="243">Tiny-aware assignment</text><text x="826" y="243">Supervised adaptation</text></g>
+<g fill="#475c6b" font-size="17"><text x="64" y="278">Retain finer spatial detail.</text><text x="64" y="306">Measure accuracy and cost.</text><text x="445" y="278">Change positive supervision.</text><text x="445" y="306">Measure recall by target size.</text><text x="826" y="278">Learn from real imagery.</text><text x="826" y="306">Test the limits of transfer.</text></g>
+<path d="M60 359H1140" stroke="#48717b"/>
+<text x="42" y="391" fill="#d6e7ec" font-size="17">EVIDENCE  /  Split audit · Matched controls · Three seeds · Held-out real imagery · Negative findings</text>
+</g></svg>
