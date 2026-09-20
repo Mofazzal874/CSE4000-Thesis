@@ -1,5 +1,7 @@
 # Full showcase audit and release record — 2026-09-19
 
+> Withdrawn after the privacy correction. Both repositories are now private and the old ZIP releases are drafts. See [current privacy status](2026-09-20_showcase_privacy_correction.md). This document records the earlier publication, not the current sharing policy.
+
 > Updated September 20: the user now requires all work in the existing `CSE4000-Thesis` repository. See the [current integration record](2026-09-20_current_repository_showcase.md). The separate-repository publication described below is historical and is not the ongoing workflow.
 
 ## Scope

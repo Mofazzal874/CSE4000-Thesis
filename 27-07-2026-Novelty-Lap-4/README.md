@@ -22,6 +22,14 @@ real disaster *training* data (SAM3-assisted, no tedious manual boxing) and then
 4. **S5 tables** + write the report + paper.
 
 ## Status
+- [x] Privacy correction: both repositories made private with user approval; both earlier ZIP
+      releases withdrawn. Keep them private unless the user explicitly approves a later change.
+- [x] Removed full PDFs, six slide previews, personal citation and identifiers from the showcase;
+      rewrote the README to 583 words. Results, diagrams, demos and scientific limits remain.
+- [x] New 35-file results-only package passes hashes, links, arithmetic, and identifying-text
+      checks. Original local handover preserved. Earlier publication entries below are historical.
+- [ ] Any future public return requires a decision about identifying material in older history;
+      no history rewrite is authorized or performed. See the privacy correction record in docs.
 - [x] Full public-showcase audit and packaging (2026-09-19): inventoried 101,390 files;
       `../README.md`, `../public-showcase/`, and `../pendrive/README.md` revised.
       45-file package (revised September 20) includes thesis, original presentation, two complete video demos,

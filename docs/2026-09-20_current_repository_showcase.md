@@ -1,5 +1,7 @@
 # Current-repository showcase revision — 2026-09-20
 
+> Withdrawn after the privacy correction. Both repositories are now private and the old ZIP releases are drafts. See [current privacy status](2026-09-20_showcase_privacy_correction.md). This document records the earlier publication, not the current sharing policy.
+
 ## Decision and access
 
 The user requires the README, professor guide, presentation, videos, diagrams, and results in the existing **Mofazzal874/CSE4000-Thesis** repository. Its public visibility is retained. A curated folder makes the work easier to inspect and download; it cannot hide tracked code or Git history elsewhere in a public repository.

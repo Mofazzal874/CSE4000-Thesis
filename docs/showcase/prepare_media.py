@@ -1,7 +1,7 @@
 """Prepare an explicit selection of existing thesis artifacts for the public companion.
 
 Does not run the detector or modify the original submission archive.
-Requires the workstation's PyMuPDF, Pillow, matplotlib and imageio-ffmpeg.
+Requires the workstation's Pillow, matplotlib and imageio-ffmpeg.
 """
 from pathlib import Path
 import csv
@@ -10,7 +10,6 @@ import json
 import shutil
 import subprocess
 
-import fitz
 import imageio_ffmpeg
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,15 +33,7 @@ def copy(source, destination):
 
 
 def main():
-    copy("01_THESIS/2007074_MSA-YOLO_Thesis_Final.pdf", "documents/thesis.pdf")
-    deck = copy("01_THESIS/presentation/2007074_Mofazzal_Disaster_human.pdf", "presentation/defense-presentation.pdf")
-    # The PPTX contains embedded videos and is 94.7 MiB; the PDF provides all 43 pages.
-    d = fitz.open(deck)
-    for page_no in (1, 14, 18, 26, 28, 30):
-        p = d[page_no - 1]
-        p.get_pixmap(matrix=fitz.Matrix(1200 / p.rect.width, 1200 / p.rect.width), alpha=False).save(
-            str(PUBLIC / "presentation" / f"slide-{page_no:02}.png"))
-
+    # Academic documents and slide previews remain in the private handover.
     cases = "04_OUTPUTS/04_failure_and_comparison_cases/"
     pairs = [
         ("04_improved_vs_baseline/01_collapsed_building_image0509_0", "improved"),
@@ -89,7 +80,7 @@ def main():
     private.parent.mkdir(parents=True, exist_ok=True)
     private.write_text(json.dumps(PROVENANCE, indent=2) + "\n", encoding="utf-8")
     make_charts()
-    print("Prepared documents, six slide previews, five qualitative images, two videos, and result charts.")
+    print("Prepared five detection examples, two videos, and result charts.")
 
 
 def make_charts():

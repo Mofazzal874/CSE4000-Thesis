@@ -126,8 +126,10 @@ RealDisaster/**/*.png
 # Submission archive (built locally, never committed)
 pendrive/
 
-# Explicitly selected public companion documents and demonstrations.
-!public-showcase/documents/thesis.pdf
-!public-showcase/presentation/defense-presentation.pdf
+# The public companion excludes personal academic documents and slide previews.
+public-showcase/documents/
+public-showcase/presentation/
+public-showcase/CITATION.cff
+# Selected demonstrations.
 !public-showcase/demos/drone-10m.mp4
 !public-showcase/demos/drone-50m.mp4

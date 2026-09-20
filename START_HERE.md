@@ -11,31 +11,25 @@ imagery. FCCG was tested and closed as a null result. The current research narra
 `README.md`; the historical proposal remains in the lap-3 plain-words plan.
 
 ## RIGHT NOW (2026-09-20)
-- **FULL SHOWCASE AUDIT COMPLETE:** inventoried 101,390 files; revised `README.md` and
-  `public-showcase/`. The standalone 45-file package contains the 88-page thesis, 43-page defense
-  presentation with reading notes, two complete drone demos, diagrams/charts, a corrected gallery,
-  nine CSVs, two bootstrap summaries, and a passing full-package checker. Portable copy:
-  `pendrive/PUBLIC_SHOWCASE/`; ZIP: `pendrive/PUBLIC_SHOWCASE_2007074.zip` (56.9 MiB).
-- **NEW GALLERY CORRECTION:** archived ranking counts use conf=0.25; pictures use 0.16/0.19.
-  Recomputed displayed-threshold counts and corrected public captions. Original archive untouched.
-  Presentation also contains a one-point AP50-gap claim where its table implies about four points.
-- **CURRENT REPOSITORY ONLY:** user corrected the release direction: keep all showcase work in
-  PUBLIC `Mofazzal874/CSE4000-Thesis`. A public folder cannot conceal other tracked code/history.
-  Added a tracked professor guide and corrected all current access wording. Portable exports remain
-  useful for offline review. `public-showcase/.gitattributes` preserves exact artifact bytes.
-- **MAIN SHOWCASE LIVE:** user authorized publication on the existing default `main` branch.
-  Commit `0188dee923eedcade0d2b1059ae07950e9ef27f1` adds the revised root README and complete
-  45-file showcase. All 45 files were fetched anonymously from GitHub and verified byte-for-byte;
-  the downloaded package passes its result/hash/link checks. Research navigation links explicitly
-  target `novelty-lap-4`; unrelated research history was not merged into `main`.
-- **RELEASE COMPLETE:** `CSE4000-Thesis/releases/tag/showcase-v1.0.1` provides the 56.90 MiB
-  portable ZIP. Its public download was fetched without authentication and matched the local
-  SHA-256. All five research-navigation links also passed anonymous checks. The research branch
-  contains the synchronized documentation at `a48182b`; no publication approval remains pending.
-- **EARLIER PUBLICATION:** the earlier approved separate repository
-  `Mofazzal874/aerial-human-detection-results` and v1.0.0 release already exist. Work there stopped
-  after the user's correction; neither was deleted. Original repository visibility is unchanged.
-  See `docs/2026-09-20_current_repository_showcase.md` for validation and publication details.
+- **PRIVACY CORRECTION:** the user rejected the identifying public package and requested
+  removal of the full PDFs/previews while retaining results and demos. Both CSE4000-Thesis and
+  the separate showcase repository are now PRIVATE with explicit user approval. Anonymous
+  repository, old-release download, and old thesis-file checks returned 404. Do not make either
+  repository public again automatically.
+- **WITHDRAWN RELEASES:** both previous ZIP releases are drafts. They have not been replaced
+  with a new public release. The old 45-file package and publication record are historical.
+- **REDUCED PACKAGE:** 35 files: results, diagrams, detection examples, demos, and checker.
+  Personal citation, full thesis/slides, six slide previews, and academic identifiers were removed
+  from the current showcase. The root README is 583 words, down from 2,420. The default branches
+  receive this cleanup; the working research branch is synchronized with it.
+- **LOCAL HANDOVER PRESERVED:** original thesis/Defense materials remain unchanged. The new
+  results-only local copy is `pendrive/RESULTS_SHOWCASE/`, ZIP `pendrive/RESULTS_SHOWCASE.zip`
+  (29.27 MiB). Earlier `PUBLIC_SHOWCASE` materials are withdrawn private archives, not anonymous
+  downloads. Packaging now excludes academic documents and checks known identifying text.
+- **HISTORY STILL IDENTIFYING:** older branches/commits and the full research tree retain
+  personal details. No force-push or history rewrite was performed. Privacy containment depends
+  on keeping the repositories private; previously downloaded copies cannot be recalled.
+  See `docs/2026-09-20_showcase_privacy_correction.md`.
 - **ICCIT TITLE AUDIT COMPLETE:** MSA-YOLO collides with existing 2023/2025/2026
   methods, including Multi-Scale Attention YOLO for aerial pedestrians. Recommended title:
   "Attention, Scale, and Supervision for Tiny Human Detection in Aerial Search-and-Rescue Imagery";
