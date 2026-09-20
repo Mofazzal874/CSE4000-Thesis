@@ -1,0 +1,2 @@
+# Preserve exact archived bytes so result and package hashes survive Git checkout.
+* -text whitespace=cr-at-eol

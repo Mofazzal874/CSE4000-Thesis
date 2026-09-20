@@ -1,6 +1,6 @@
 # Public showcase and professor handover — 2026-09-19
 
-> Initial preparation record. Superseded by the same-day [full audit and release record](2026-09-19_showcase_full_audit.md): the companion now includes the actual thesis, presentation, videos, and corrected gallery. The existing GitHub research repository was found to be public, so the earlier assumption that it was private must not be relied on.
+> Historical preparation record; its separate-repository recommendation is superseded by the [September 20 current-repository decision](2026-09-20_current_repository_showcase.md). The [full evidence audit](2026-09-19_showcase_full_audit.md) records the thesis, presentation, videos, and corrected gallery. The research repository is public; the earlier assumption that it was private must not be relied on. Publication occurred after this initial record, as documented in the updated audit.
 
 ## Request and outcome
 

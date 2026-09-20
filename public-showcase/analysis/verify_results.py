@@ -1,4 +1,4 @@
-"""Check the published result exports without the private detector implementation."""
+"""Check the shared result exports without loading the detector implementation."""
 
 import csv
 import hashlib

@@ -1,6 +1,6 @@
 # START HERE — map of this whole research project (plain words)
 
-*Last updated: 2026-09-19. Rule: this file's "RIGHT NOW" block gets refreshed at the
+*Last updated: 2026-09-20. Rule: this file's "RIGHT NOW" block gets refreshed at the
 end of every working session, so it is always the truthful current state.*
 
 ## What this project is (one paragraph)
@@ -10,21 +10,28 @@ benchmark audit, tiny-aware assignment, and supervised adaptation to real drone/
 imagery. FCCG was tested and closed as a null result. The current research narrative is in
 `README.md`; the historical proposal remains in the lap-3 plain-words plan.
 
-## RIGHT NOW (2026-09-19)
+## RIGHT NOW (2026-09-20)
 - **FULL SHOWCASE AUDIT COMPLETE:** inventoried 101,390 files; revised `README.md` and
-  `public-showcase/`. The standalone 43-file package contains the 88-page thesis, 43-page defense
+  `public-showcase/`. The standalone 45-file package contains the 88-page thesis, 43-page defense
   presentation with reading notes, two complete drone demos, diagrams/charts, a corrected gallery,
   nine CSVs, two bootstrap summaries, and a passing full-package checker. Portable copy:
   `pendrive/PUBLIC_SHOWCASE/`; ZIP: `pendrive/PUBLIC_SHOWCASE_2007074.zip` (56.9 MiB).
 - **NEW GALLERY CORRECTION:** archived ranking counts use conf=0.25; pictures use 0.16/0.19.
   Recomputed displayed-threshold counts and corrected public captions. Original archive untouched.
   Presentation also contains a one-point AP50-gap claim where its table implies about four points.
-- **RELEASE DECISION PENDING:** GitHub API confirms `Mofazzal874/CSE4000-Thesis` is PUBLIC
-  (no Pages site, zero forks reported). Proposed separate public repository:
-  `Mofazzal874/aerial-human-detection-results`. Asked user to approve initial showcase commit /
-  publication and choose whether to make the original research repository private. No commit,
-  upload, repository creation, or visibility change has been made. Full record:
-  `docs/2026-09-19_showcase_full_audit.md`.
+- **CURRENT REPOSITORY ONLY:** user corrected the release direction: keep all showcase work in
+  PUBLIC `Mofazzal874/CSE4000-Thesis`. A public folder cannot conceal other tracked code/history.
+  Added a tracked professor guide and corrected all current access wording. Portable exports remain
+  useful for offline review. `public-showcase/.gitattributes` preserves exact artifact bytes.
+- **MAIN SHOWCASE LIVE:** user authorized publication on the existing default `main` branch.
+  Commit `0188dee923eedcade0d2b1059ae07950e9ef27f1` adds the revised root README and complete
+  45-file showcase. All 45 files were fetched anonymously from GitHub and verified byte-for-byte;
+  the downloaded package passes its result/hash/link checks. Research navigation links explicitly
+  target `novelty-lap-4`; unrelated research history was not merged into `main`.
+- **EARLIER PUBLICATION:** the earlier approved separate repository
+  `Mofazzal874/aerial-human-detection-results` and v1.0.0 release already exist. Work there stopped
+  after the user's correction; neither was deleted. Original repository visibility is unchanged.
+  See `docs/2026-09-20_current_repository_showcase.md` for validation and publication details.
 - **ICCIT TITLE AUDIT COMPLETE:** MSA-YOLO collides with existing 2023/2025/2026
   methods, including Multi-Scale Attention YOLO for aerial pedestrians. Recommended title:
   "Attention, Scale, and Supervision for Tiny Human Detection in Aerial Search-and-Rescue Imagery";

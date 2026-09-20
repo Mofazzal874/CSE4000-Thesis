@@ -24,13 +24,20 @@ real disaster *training* data (SAM3-assisted, no tedious manual boxing) and then
 ## Status
 - [x] Full public-showcase audit and packaging (2026-09-19): inventoried 101,390 files;
       `../README.md`, `../public-showcase/`, and `../pendrive/README.md` revised.
-      43-file release includes thesis, original presentation, two complete video demos,
+      45-file package (revised September 20) includes thesis, original presentation, two complete video demos,
       corrected gallery, nine CSVs, two bootstrap summaries, diagrams/charts, and checker.
       Portable copy and 56.9 MiB ZIP in `../pendrive/`; all release checks pass.
 - [x] Gallery threshold mismatch identified: ranking table conf 0.25 vs overlays 0.16/0.19;
       public captions now use recomputed overlay counts. Original archive/Defense preserved.
-- [ ] User release approval: initial public-showcase commit/publication and decision on making
-      existing PUBLIC `Mofazzal874/CSE4000-Thesis` private. No remote changes made.
+- [x] Current-repository direction (2026-09-20): keep all showcase material in PUBLIC
+      `Mofazzal874/CSE4000-Thesis`; added a tracked professor guide and truthful access notes.
+      Local package hashes/links/arithmetic and Git-byte preservation checks pass.
+- [x] Record prior publication honestly: separate showcase repository/v1.0.0 was published
+      under earlier approval; user then rejected that workflow. Work there stopped, no deletion.
+- [x] User authorized default-branch publication. The revised README and 45-file showcase are
+      on `main` at `0188dee`; every public package file was downloaded anonymously and verified.
+      Root navigation points to research-branch records without merging unrelated experiments.
+      See `../docs/2026-09-20_current_repository_showcase.md`.
 - [x] extract disaster training frames (dedup; exclude R-set 25)
 - [x] annotate/normalize disaster data and build the combined training set
 - [x] retrain joint (C2A + drone + campus + disaster) and evaluate R-set/void behavior

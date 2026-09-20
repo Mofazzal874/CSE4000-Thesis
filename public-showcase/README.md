@@ -4,13 +4,17 @@
 
 ![Research overview: architecture, tiny-aware assignment, and real-domain adaptation](assets/research-overview.svg)
 
-**Md Mofazzal Hosen** · B.Sc. in Computer Science and Engineering  
-**Khulna University of Engineering & Technology (KUET), Bangladesh**  
+**Md Mofazzal Hosen** · B.Sc. in Computer Science and Engineering<br>
+**Khulna University of Engineering & Technology (KUET), Bangladesh**<br>
 Supervisor: **Prof. Dr. Sk. Md. Masudul Ahsan** · Thesis/project: **CSER-26-88** · September 2026
 
-[Thesis PDF](documents/thesis.pdf) · [Presentation](presentation/README.md) · [Video demos](demos/README.md) · [Results](#results) · [Visual evidence](docs/GALLERY.md) · [Evidence](docs/EVIDENCE.md)
+[Professor guide](docs/PROFESSOR_GUIDE.md) · [Thesis PDF](documents/thesis.pdf) · [Presentation](presentation/README.md) · [Video demos](demos/README.md) · [Results](#results) · [Visual evidence](docs/GALLERY.md) · [Evidence](docs/EVIDENCE.md)
+
+[Download the complete showcase ZIP](https://github.com/Mofazzal874/CSE4000-Thesis/releases/download/showcase-v1.0.1/PUBLIC_SHOWCASE_2007074.zip) · [Release notes](https://github.com/Mofazzal874/CSE4000-Thesis/releases/tag/showcase-v1.0.1)
 
 > Research companion to the undergraduate thesis archived under **MSA-YOLO**. Read the report, watch the demonstrations, inspect the exported measurements, or run the independent result checker. This package includes no detector implementation, model weights, or raw datasets. The README covers the completed extended study; the original defense presentation documents the earlier architectural study.
+
+This companion belongs to [CSE4000-Thesis](https://github.com/Mofazzal874/CSE4000-Thesis). It can be read independently of the implementation. **The repository is public: this folder does not hide source code or history elsewhere in the repository.** See [artifact availability](docs/AVAILABILITY.md) for the distinction between this curated export and repository access.
 
 ## Explore the work
 
@@ -159,13 +163,13 @@ This is a research prototype for human review. The study does not establish reli
 
 ## Inspect the results without the training code
 
-The companion includes selected CSV tables and a small, independent Python script that checks the reported arithmetic. It does not import the detector, load weights, or access the private repository.
+The companion includes selected CSV tables and a small, independent Python script that checks the reported arithmetic. It does not import the detector, load weights, or require files outside this folder. Run it from the companion directory:
 
 ```powershell
 python analysis/verify_results.py
 ```
 
-Python 3.10 or newer and the standard library are sufficient. The script verifies the three-seed summary, per-size count consistency, adaptation deltas, and packaged-file hashes. These checks establish consistency of the shared exports; reproducing model training or inference requires the private research artifacts.
+Python 3.10 or newer and the standard library are sufficient. The script verifies the three-seed summary, per-size count consistency, adaptation deltas, and packaged-file hashes. These checks establish consistency of the shared exports; reproducing model training or inference also requires the appropriate implementation, checkpoints, datasets, and environment described in the full handover.
 
 ```text
 README.md              Research narrative and headline findings
@@ -176,7 +180,8 @@ results/               Tables, bootstrap summaries, and result manifest
 analysis/              Independent result-arithmetic checker
 docs/EVIDENCE.md        Table provenance and interpretation notes
 docs/GALLERY.md         Measured successes, regressions, and failure cases
-docs/AVAILABILITY.md    Public/private artifact boundaries
+docs/PROFESSOR_GUIDE.md Guided academic review and questions to assess
+docs/AVAILABILITY.md    Included artifacts, access, and attribution
 demos/                 Two complete video demos, posters, and provenance
 RELEASE_MANIFEST.json   File sizes and SHA-256 for the complete companion
 ```

@@ -5,8 +5,7 @@ type: dataset
 authors:
   - family-names: Hosen
     given-names: Md Mofazzal
-version: 1.0.0
-date-released: 2026-09-19
+url: "https://github.com/Mofazzal874/CSE4000-Thesis"
 preferred-citation:
   type: thesis
   title: "MSA-YOLO: A Multi-Scale Attention Enhancement of YOLO for Tiny-Human Detection in Aerial Search-and-Rescue Imagery"

@@ -4,9 +4,9 @@ Prepared 2026-09-19 from the thesis submission archive's numerical exports and i
 
 ## Source map
 
-The filenames retain their thesis table identifiers. All CSVs below are copied without altering the source bytes from `05_NUMERICAL_RESULTS/paper_tables/` in the private handover. The matching run records remain in that handover.
+The filenames retain their thesis table identifiers. All CSVs below are copied without altering the source bytes from `05_NUMERICAL_RESULTS/paper_tables/` in the complete professor handover. The matching run records remain in that handover.
 
-| Shared file | Private source record described by the archive |
+| Shared file | Source record described by the archive |
 |---|---|
 | [4.4: architectural ablation](../results/tab_4_4_additive_ablation.csv) | Four official-split runs' `metrics/summary.json` |
 | [4.5: size-bin counts and recall](../results/tab_4_5_per_size_recall.csv) | Four runs' `metrics/per_size.csv`, including matched and ground-truth counts |

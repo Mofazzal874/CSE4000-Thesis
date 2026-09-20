@@ -1,5 +1,7 @@
 # Full showcase audit and release record — 2026-09-19
 
+> Updated September 20: the user now requires all work in the existing `CSE4000-Thesis` repository. See the [current integration record](2026-09-20_current_repository_showcase.md). The separate-repository publication described below is historical and is not the ongoing workflow.
+
 ## Scope
 
 User request: complete the process, scan the thesis-folder directory, check what adds up, include the presentation, and revise the research showcase.
@@ -23,7 +25,7 @@ Largest groups: C2A 51,089 files; pendrive 32,388; Defense 6,605; original C2A-p
 | Demo lineage | Filename generation and `cbam_p2` model map point to the earlier official-split CBAM+P2 demo model | Remove blanket final-adapted-model attribution |
 | Video processing | Existing videos are 1920×1080, about 33.83 and 37.34 seconds | Full-duration H.264 sharing copies at 1280×720; no inference rerun or speed change |
 | Gallery consistency | Ranking CSV at conf 0.25, overlays at baseline 0.19 / CBAM+P2 0.16 | Recompute displayed counts from cached detections; distinguish protocols |
-| Current repository access | Authenticated read-only GitHub API reported `Mofazzal874/CSE4000-Thesis` has `private: false` | Do not pretend the source is private; request a concrete visibility decision at the release step |
+| Current repository access | Authenticated read-only GitHub API reported `Mofazzal874/CSE4000-Thesis` has `private: false` | User chose to leave it public and subsequently required all showcase work in this repository |
 
 ## Newly established gallery correction
 
@@ -63,11 +65,13 @@ No claim is made that the full experiments were independently reproduced. No new
 
 Existing research repository: `https://github.com/Mofazzal874/CSE4000-Thesis` (public at audit time).
 
-Proposed new public companion: `Mofazzal874/aerial-human-detection-results`, populated only from `public-showcase/`, with fresh history. No repository has yet been created and no upload, visibility change, or commit has been performed.
+The user initially approved **"Publish showcase; leave research public"**. The separate companion was then published at [Mofazzal874/aerial-human-detection-results](https://github.com/Mofazzal874/aerial-human-detection-results), commit `4e829b9a0c2663ce7b521e02ea694472d906561e`, with a [v1.0.0 release and ZIP](https://github.com/Mofazzal874/aerial-human-detection-results/releases/tag/v1.0.0). The original repository's visibility was not changed.
 
-The remaining owner decision is whether to publish this prepared companion and make the existing research repository private. A privacy change cannot recall copies or forks already obtained while the repository was public. Keep this operational decision separate from the paper's scientific claims.
+The user then corrected the scope: **everything must stay in the current repository**. Work on the separate repository stopped; it has not been deleted. The current docs therefore point to CSE4000-Thesis, and no access restriction is implied by the showcase folder.
 
-AGENTS.md explicitly states: **“NO self-initiated git commits … finish changes, present a review summary … then WAIT.”** Therefore the reviewed package and proposed action are prepared first; approval is the final release step. Suggested commit message: `docs: publish audited thesis showcase with presentation and video demos`.
+Post-publication checking found Git newline conversion changed some bytes in the separate repository, invalidating its source-tree hash manifest. The directly uploaded ZIP passed its integrity checks. The September 20 local revision adds scoped Git attributes and verifies a Git archive round trip for the current-repository package. This correction has not been applied to the abandoned separate repository.
+
+AGENTS.md explicitly states: **“NO self-initiated git commits … finish changes, present a review summary … then WAIT.”** The initial separate-repository commit was approved. The current-repository revision was then presented for review, and the user explicitly directed completing publication on the default `main` branch. That later instruction authorizes the current publication; see the [September 20 record](2026-09-20_current_repository_showcase.md).
 
 ## Maintenance commands
 

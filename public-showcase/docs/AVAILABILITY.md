@@ -1,6 +1,6 @@
 # Artifact availability and attribution
 
-This is a self-contained research companion: its documents, figures, result exports, and videos can be inspected without the detector implementation. The files have been prepared locally. External publication status is recorded separately in the release notes; the package itself does not assume a particular host.
+This is a self-contained research companion within [CSE4000-Thesis](https://github.com/Mofazzal874/CSE4000-Thesis): its documents, figures, result exports, and videos can be inspected without running the detector implementation. A portable copy is also included in the local professor handover.
 
 | Artifact | Included here | What the reader receives |
 |---|---|---|
@@ -30,4 +30,8 @@ No blanket open-source licence is applied to this mixed-material companion. Shar
 
 ## Repository boundary
 
-This folder contains an explicit selection of research artifacts. It grants no technical access to files outside the folder. However, publishing a companion does not change the visibility of any existing research repository. The owner must manage the original repository's access separately.
+**CSE4000-Thesis is a public repository.** Anyone can inspect its tracked files and accessible Git history, including source code outside this folder. The exclusions in the table describe this companion's contents; they are not access restrictions on the enclosing repository.
+
+GitHub visibility applies to a repository, not individual folders or branches. A README link, a selected download, or a `.gitignore` rule cannot make already tracked source private. [GitHub repository visibility](https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories).
+
+A ZIP containing only this companion is useful for offline reading without installing the research code. It does not revoke access to code already available in the public repository.

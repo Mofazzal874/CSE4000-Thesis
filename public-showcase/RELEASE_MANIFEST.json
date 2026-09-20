@@ -1,8 +1,13 @@
 {
-  "version": "1.0.0",
-  "prepared": "2026-09-19",
-  "scope": "research companion, no detector code or model weights",
+  "version": "1.0.1",
+  "prepared": "2026-09-20",
+  "scope": "curated companion inside CSE4000-Thesis; no detector code or model weights in this folder",
   "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 112,
+      "sha256": "e5559486b699c8499d96ac60b05a888eb3bd1752f63a86ca800b71525da8883f"
+    },
     {
       "path": ".gitignore",
       "bytes": 183,
@@ -10,8 +15,8 @@
     },
     {
       "path": "analysis/verify_results.py",
-      "bytes": 5604,
-      "sha256": "c3567367152353a4f387925fcdda606a5e31127c9b558927bc43229de9159b26"
+      "bytes": 5601,
+      "sha256": "99b5d80081cf8b5b225f1a456e529c92514e9e439fbc2619565381144bdc91a2"
     },
     {
       "path": "assets/examples/improved-baseline.jpg",
@@ -55,8 +60,8 @@
     },
     {
       "path": "CITATION.cff",
-      "bytes": 694,
-      "sha256": "93b76dd19602370728884b55f1c18e95725f51f3fc88dce029b6d93ec2b43035"
+      "bytes": 706,
+      "sha256": "2cc4d2dd779c458da1fd9c61d7fd1be45fdcd8786d85f56068a383f89851952c"
     },
     {
       "path": "demos/drone-10m.jpg",
@@ -85,23 +90,28 @@
     },
     {
       "path": "demos/README.md",
-      "bytes": 2524,
-      "sha256": "58bdfa9571018bcf3e640bf544eade41a5a362465e6c7fbab25e4d08ddff3c2a"
+      "bytes": 2500,
+      "sha256": "2355408130eea9ddb5c6d6c84296cf51a7019c33a803f0fcb77c921522215aff"
     },
     {
       "path": "docs/AVAILABILITY.md",
-      "bytes": 3238,
-      "sha256": "1751fe7badcac2e8ef9b3db5cf1f355bcd99bf1e095c06cda21c063c25ce610c"
+      "bytes": 3665,
+      "sha256": "4e6d83c19cab9d81ee0f532c6efc26305c8fbd93a0b03da0bcbac1b7c6f4a925"
     },
     {
       "path": "docs/EVIDENCE.md",
-      "bytes": 6475,
-      "sha256": "fea7cb72c3f0cc943a0edc214fe61f42a7f33cd3f8a5155931ba711c2ed8126e"
+      "bytes": 6478,
+      "sha256": "afe317545900cfc5fe4dd42abd138b803eff68c5eb2df5f0a93b2c7c74de69c6"
     },
     {
       "path": "docs/GALLERY.md",
       "bytes": 3294,
       "sha256": "e783933e3a35344ae2432a6f62642d65ad70cc5962e0453ac93efaddbde1aea2"
+    },
+    {
+      "path": "docs/PROFESSOR_GUIDE.md",
+      "bytes": 4691,
+      "sha256": "d56f5df99ae88eaaf4e365779da4ac5922e9f80137f3ca2ad4b06077a9e643d7"
     },
     {
       "path": "documents/thesis.pdf",
@@ -150,8 +160,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 16167,
-      "sha256": "c468765c0b9fb465037c8e6d42acd496a3254b774ca7e3adc53a57e4b54c6318"
+      "bytes": 17029,
+      "sha256": "1c12c8b31b8bf0b112d49e029ed1e2f1a83ea010a0139e795af41a481ab8aa05"
     },
     {
       "path": "results/bootstrap_s3_control_full_vs_s3_assign_full.json",
@@ -175,8 +185,8 @@
     },
     {
       "path": "results/SHA256SUMS.txt",
-      "bytes": 1123,
-      "sha256": "331f9c4ba1c29008daaef64dead218859c1da6fb9aa1d582d3bd4aa4ceacfe65"
+      "bytes": 1112,
+      "sha256": "824afefb7f90bae46afad6a1229f8ce9acee1d6fb0053e4387c9c0cf4dc2f135"
     },
     {
       "path": "results/tab_4_11_matched_pair_bootstrap.csv",
